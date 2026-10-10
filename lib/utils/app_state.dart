@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AppState extends ChangeNotifier {
+  bool _isLoaded = false;
   bool _hasCompletedOnboarding = false;
   String _userName = '';
   int _age = 8;
@@ -15,6 +16,7 @@ class AppState extends ChangeNotifier {
   int draftAge = 8;
   String draftLanguage = 'bn';
 
+  bool get isLoaded => _isLoaded;
   bool get hasCompletedOnboarding => _hasCompletedOnboarding;
   String get userName => _userName;
   int get age => _age;
@@ -45,6 +47,7 @@ class AppState extends ChangeNotifier {
     _lessonActivity
       ..clear()
       ..addAll(prefs.getStringList('lesson_activity') ?? const []);
+    _isLoaded = true;
     notifyListeners();
   }
 
@@ -125,6 +128,7 @@ class AppState extends ChangeNotifier {
     draftName = '';
     draftAge = 8;
     draftLanguage = 'bn';
+    _isLoaded = true;
     notifyListeners();
   }
 }
