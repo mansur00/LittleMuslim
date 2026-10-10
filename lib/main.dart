@@ -54,8 +54,18 @@ class _AppEntryPoint extends StatelessWidget {
   Widget build(BuildContext context) {
     final appState = context.watch<AppState>();
 
-    // Show loading while prefs are loading (very short)
-    // After loadFromPrefs, hasCompletedOnboarding will be correct
+    // Wait until SharedPreferences have been read to avoid flashing onboarding
+    if (!appState.isLoaded) {
+      return const Scaffold(
+        backgroundColor: AppTheme.cream,
+        body: Center(
+          child: CircularProgressIndicator(
+            color: AppTheme.primaryGreen,
+          ),
+        ),
+      );
+    }
+
     if (appState.hasCompletedOnboarding) {
       return const HomeScreen();
     } else {
