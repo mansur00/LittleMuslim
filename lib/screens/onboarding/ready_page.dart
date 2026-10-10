@@ -3,7 +3,6 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:provider/provider.dart';
 import '../../theme/app_theme.dart';
 import '../../utils/app_state.dart';
-import '../home/home_screen.dart';
 
 class ReadyPage extends StatelessWidget {
   final bool isTablet;
@@ -18,15 +17,9 @@ class ReadyPage extends StatelessWidget {
   Future<void> _finishOnboarding(BuildContext context) async {
     final appState = context.read<AppState>();
 
-    // Use the real values collected during onboarding
+    // Persist onboarding data. Root _AppEntryPoint watches hasCompletedOnboarding
+    // and will automatically show HomeScreen — no Navigator push needed.
     await appState.completeOnboarding();
-
-    if (context.mounted) {
-      // Navigate to Home and remove onboarding from stack
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (_) => const HomeScreen()),
-      );
-    }
   }
 
   @override
