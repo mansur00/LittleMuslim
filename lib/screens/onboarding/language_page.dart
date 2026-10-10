@@ -3,6 +3,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:provider/provider.dart';
 import '../../theme/app_theme.dart';
 import '../../utils/app_state.dart';
+import '../../widgets/vector_icons.dart';
 
 class LanguagePage extends StatefulWidget {
   final bool isTablet;
@@ -24,24 +25,34 @@ class _LanguagePageState extends State<LanguagePage> {
   String _selectedLang = 'bn';
   bool _initialized = false;
 
+  VectorIconType _getFlagType(String code) {
+    switch (code) {
+      case 'bn':
+        return VectorIconType.flagBd;
+      case 'en':
+        return VectorIconType.flagGb;
+      case 'ar':
+        return VectorIconType.flagSa;
+      default:
+        return VectorIconType.globe;
+    }
+  }
+
   final List<Map<String, String>> _languages = [
     {
       'code': 'bn',
       'name': 'বাংলা',
       'native': 'Bengali',
-      'flag': '🇧🇩',
     },
     {
       'code': 'en',
       'name': 'English',
       'native': 'ইংরেজি',
-      'flag': '🇬🇧',
     },
     {
       'code': 'ar',
       'name': 'العربية',
       'native': 'Arabic',
-      'flag': '🇸🇦',
     },
   ];
 
@@ -134,9 +145,9 @@ class _LanguagePageState extends State<LanguagePage> {
                   ),
                   child: Row(
                     children: [
-                      Text(
-                        lang['flag']!,
-                        style: TextStyle(fontSize: widget.isTablet ? 32 : 28),
+                      VectorIcon(
+                        type: _getFlagType(lang['code']!),
+                        size: widget.isTablet ? 36 : 30,
                       ),
                       const SizedBox(width: 16),
                       Expanded(
@@ -159,8 +170,8 @@ class _LanguagePageState extends State<LanguagePage> {
                               style: TextStyle(
                                 fontSize: widget.isTablet ? 14 : 13,
                                 color: isSelected
-                                    ? Colors.white.withOpacity(0.85)
-                                    : AppTheme.darkText.withOpacity(0.6),
+                                    ? Colors.white.withValues(alpha: 0.85)
+                                    : AppTheme.darkText.withValues(alpha: 0.6),
                               ),
                             ),
                           ],
@@ -192,7 +203,11 @@ class _LanguagePageState extends State<LanguagePage> {
             ),
             child: Row(
               children: [
-                const Text('🌍', style: TextStyle(fontSize: 20)),
+                const VectorIcon(
+                  type: VectorIconType.globe,
+                  size: 22,
+                  color: AppTheme.primaryGreen,
+                ),
                 const SizedBox(width: 10),
                 Expanded(
                   child: Text(

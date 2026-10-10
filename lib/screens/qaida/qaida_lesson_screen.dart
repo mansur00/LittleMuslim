@@ -5,7 +5,10 @@ import 'package:speech_to_text/speech_to_text.dart';
 
 import '../../theme/app_theme.dart';
 import '../../utils/app_state.dart';
+import '../../widgets/vector_icons.dart';
+import '../../widgets/vector_mascot.dart';
 import 'qaida_letters.dart';
+import 'qaida_next_course_screen.dart';
 
 class QaidaNextLesson {
   const QaidaNextLesson({
@@ -32,6 +35,7 @@ class QaidaLessonScreen extends StatefulWidget {
     required this.options,
     this.nextLesson,
     this.makhrajNote,
+    this.chapterEndLessonId,
   });
 
   final String lessonId;
@@ -41,6 +45,7 @@ class QaidaLessonScreen extends StatefulWidget {
   final List<String> options;
   final QaidaNextLesson? nextLesson;
   final String? makhrajNote;
+  final String? chapterEndLessonId;
 
   @override
   State<QaidaLessonScreen> createState() => _QaidaLessonScreenState();
@@ -473,7 +478,16 @@ class _QaidaLessonScreenState extends State<QaidaLessonScreen> {
         decoration: BoxDecoration(
             color: Colors.white, borderRadius: BorderRadius.circular(25)),
         child: Column(children: [
-          const Text('🌟', style: TextStyle(fontSize: 48)),
+          const VectorMascot(
+            size: 80,
+            mood: MascotMood.celebrating,
+          ),
+          const SizedBox(height: 8),
+          const VectorIcon(
+            type: VectorIconType.star,
+            size: 36,
+            color: Color(0xFFFFC800),
+          ),
           const SizedBox(height: 10),
           Text(
               _lessonAlreadyCompleted
@@ -687,9 +701,19 @@ class _QaidaLessonScreenState extends State<QaidaLessonScreen> {
       _earnedXp = context.read<AppState>().completeLesson(widget.lessonId);
       _lessonAlreadyCompleted = true;
     }
+    if (widget.chapterEndLessonId == widget.lessonId) {
+      Navigator.pop(context);
+      return;
+    }
     final next = widget.nextLesson;
     if (next == null) {
-      Navigator.pop(context);
+      if (Navigator.canPop(context)) {
+        Navigator.pop(context);
+        return;
+      }
+      Navigator.of(context).pushReplacement(MaterialPageRoute<void>(
+        builder: (_) => const QaidaNextCourseScreen(),
+      ));
       return;
     }
     Navigator.of(context).pushReplacement(MaterialPageRoute<void>(
@@ -700,6 +724,7 @@ class _QaidaLessonScreenState extends State<QaidaLessonScreen> {
         letterName: next.letterName,
         options: next.options,
         makhrajNote: next.makhrajNote,
+        chapterEndLessonId: widget.chapterEndLessonId,
         nextLesson: _nextAfter(next.lessonId),
       ),
     ));

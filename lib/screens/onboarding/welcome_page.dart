@@ -192,6 +192,19 @@ class _FeatureChip extends StatelessWidget {
         color: bg,
         borderRadius: BorderRadius.circular(30),
         border: Border.all(color: color.withValues(alpha: 0.3), width: 1.5),
+        boxShadow: [
+          BoxShadow(
+            color: HSLColor.fromColor(color)
+                .withLightness(
+                  (HSLColor.fromColor(color).lightness - .18)
+                      .clamp(0.0, 1.0),
+                )
+                .toColor()
+                .withValues(alpha: .55),
+            blurRadius: 0,
+            offset: const Offset(0, 3),
+          ),
+        ],
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,

@@ -95,7 +95,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('তোমার শেখার পথ'), findsOneWidget);
-    expect(find.text('0 / 28 ⭐'), findsOneWidget);
+    expect(find.text('0 / 28'), findsOneWidget);
     expect(find.text('ক্বায়দা'), findsOneWidget);
     expect(find.text('কুরআন'), findsOneWidget);
 

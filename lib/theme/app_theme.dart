@@ -3,12 +3,13 @@ import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
   // Islamic Middle-East inspired palette
-  static const Color primaryGreen = Color(0xFF0D7377);      // Deep teal-green
-  static const Color secondaryGold = Color(0xFFD4A017);     // Warm gold
-  static const Color cream = Color(0xFFF8F1E3);             // Soft cream background
-  static const Color softGreen = Color(0xFFE8F5E9);         // Light green cards
-  static const Color darkText = Color(0xFF1A3C34);          // Deep forest text
-  static const Color accentCoral = Color(0xFFE07A5F);       // Soft coral for buttons/fun
+  static const Color primaryGreen = Color(0xFF0D7377); // Deep teal-green
+  static const Color secondaryGold = Color(0xFFD4A017); // Warm gold
+  static const Color cream = Color(0xFFF8F1E3); // Soft cream background
+  static const Color softGreen = Color(0xFFE8F5E9); // Light green cards
+  static const Color darkText = Color(0xFF1A3C34); // Deep forest text
+  static const Color accentCoral =
+      Color(0xFFE07A5F); // Soft coral for buttons/fun
   static const Color white = Color(0xFFFFFFFF);
   static const Color lightGold = Color(0xFFF5E6C8);
 
@@ -23,9 +24,37 @@ class AppTheme {
         primary: primaryGreen,
         secondary: secondaryGold,
         surface: cream,
-        background: cream,
         onPrimary: white,
         onSecondary: darkText,
+      ),
+      cardTheme: CardThemeData(
+        color: white,
+        elevation: 0,
+        margin: EdgeInsets.zero,
+        shadowColor: primaryGreen.withValues(alpha: .16),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(22),
+          side: BorderSide(
+              color: primaryGreen.withValues(alpha: .14), width: 1.4),
+        ),
+      ),
+      inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: white,
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(18),
+          borderSide: BorderSide(color: primaryGreen.withValues(alpha: .16)),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(18),
+          borderSide: BorderSide(color: primaryGreen.withValues(alpha: .16)),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(18),
+          borderSide: const BorderSide(color: primaryGreen, width: 2),
+        ),
       ),
       textTheme: GoogleFonts.poppinsTextTheme().copyWith(
         displayLarge: GoogleFonts.poppins(
@@ -54,14 +83,15 @@ class AppTheme {
         ),
         bodyMedium: GoogleFonts.poppins(
           fontSize: 14,
-          color: darkText.withOpacity(0.85),
+          color: darkText.withValues(alpha: 0.85),
         ),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: primaryGreen,
           foregroundColor: white,
-          elevation: 0,
+          elevation: 5,
+          shadowColor: const Color(0xFF084D4F),
           padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
@@ -71,6 +101,82 @@ class AppTheme {
             fontWeight: FontWeight.w600,
           ),
         ),
+      ),
+      filledButtonTheme: FilledButtonThemeData(
+        style: ButtonStyle(
+          elevation: const WidgetStatePropertyAll(5),
+          shadowColor: const WidgetStatePropertyAll(Color(0xFF084D4F)),
+          padding: const WidgetStatePropertyAll(
+            EdgeInsets.symmetric(horizontal: 22, vertical: 15),
+          ),
+          shape: WidgetStatePropertyAll(
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(17)),
+          ),
+        ),
+      ),
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: ButtonStyle(
+          padding: const WidgetStatePropertyAll(
+            EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+          ),
+          shape: WidgetStatePropertyAll(
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(17)),
+          ),
+          side: WidgetStatePropertyAll(
+            BorderSide(color: primaryGreen.withValues(alpha: .55), width: 1.5),
+          ),
+        ),
+      ),
+      iconButtonTheme: IconButtonThemeData(
+        style: ButtonStyle(
+          shape: WidgetStatePropertyAll(
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+          ),
+        ),
+      ),
+      dialogTheme: DialogThemeData(
+        backgroundColor: cream,
+        elevation: 10,
+        shadowColor: primaryGreen.withValues(alpha: .28),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(28),
+          side: BorderSide(color: primaryGreen.withValues(alpha: .18), width: 1.5),
+        ),
+        titleTextStyle: GoogleFonts.poppins(
+          color: darkText,
+          fontSize: 19,
+          fontWeight: FontWeight.w900,
+        ),
+        contentTextStyle: GoogleFonts.poppins(
+          color: darkText.withValues(alpha: .78),
+          fontSize: 13,
+          height: 1.5,
+        ),
+      ),
+      bottomSheetTheme: BottomSheetThemeData(
+        backgroundColor: cream,
+        modalBackgroundColor: cream,
+        elevation: 12,
+        shadowColor: primaryGreen.withValues(alpha: .25),
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
+        ),
+        showDragHandle: true,
+        dragHandleColor: primaryGreen.withValues(alpha: .22),
+      ),
+      snackBarTheme: SnackBarThemeData(
+        behavior: SnackBarBehavior.floating,
+        backgroundColor: const Color(0xFF1A3C34),
+        contentTextStyle: GoogleFonts.poppins(
+          color: white,
+          fontWeight: FontWeight.w700,
+        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      ),
+      listTileTheme: ListTileThemeData(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        iconColor: primaryGreen,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
       ),
       appBarTheme: AppBarTheme(
         backgroundColor: Colors.transparent,

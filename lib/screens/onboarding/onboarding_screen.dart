@@ -29,7 +29,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       if (appState.draftName.trim().isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: const Text('তোমার নাম লিখো প্লিজ 😊'),
+            content: const Text('তোমার নাম লিখো প্লিজ'),
             backgroundColor: AppTheme.accentCoral,
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),

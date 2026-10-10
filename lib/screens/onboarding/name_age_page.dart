@@ -3,6 +3,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:provider/provider.dart';
 import '../../theme/app_theme.dart';
 import '../../utils/app_state.dart';
+import '../../widgets/vector_icons.dart';
 
 class NameAgePage extends StatefulWidget {
   final bool isTablet;
@@ -191,29 +192,33 @@ class _NameAgePageState extends State<NameAgePage> {
 
           const Spacer(),
 
-          Container(
-            padding: const EdgeInsets.all(14),
-            decoration: BoxDecoration(
-              color: AppTheme.lightGold.withOpacity(0.5),
-              borderRadius: BorderRadius.circular(14),
-            ),
-            child: Row(
-              children: [
-                const Text('💡', style: TextStyle(fontSize: 20)),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Text(
-                    '৬-১৪ বছরের বাচ্চাদের জন্য তৈরি। তোমার বয়স অনুযায়ী কন্টেন্ট দেখানো হবে।',
-                    style: TextStyle(
-                      fontSize: widget.isTablet ? 14 : 12.5,
-                      color: AppTheme.darkText.withOpacity(0.8),
-                      height: 1.35,
+            Container(
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(
+                color: AppTheme.lightGold.withValues(alpha: 0.5),
+                borderRadius: BorderRadius.circular(14),
+              ),
+              child: Row(
+                children: [
+                  const VectorIcon(
+                    type: VectorIconType.lightbulb,
+                    size: 24,
+                    color: Color(0xFFD4A017),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      '৬-১৪ বছরের বাচ্চাদের জন্য তৈরি। তোমার বয়স অনুযায়ী কন্টেন্ট দেখানো হবে।',
+                      style: TextStyle(
+                        fontSize: widget.isTablet ? 14 : 12.5,
+                        color: AppTheme.darkText.withValues(alpha: 0.8),
+                        height: 1.35,
+                      ),
                     ),
                   ),
-                ),
-              ],
-            ),
-          )
+                ],
+              ),
+            )
               .animate()
               .fadeIn(delay: 450.ms, duration: 400.ms),
 

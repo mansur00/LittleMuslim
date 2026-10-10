@@ -4,6 +4,7 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 
 import '../../theme/app_theme.dart';
+import '../../widgets/duolingo_appbar.dart';
 import 'quran_data.dart';
 
 class QuranReaderScreen extends StatefulWidget {
@@ -227,11 +228,10 @@ class _SurahHeading extends StatelessWidget {
   final bool isPlaying;
   final VoidCallback onAudio;
   @override
-  Widget build(BuildContext context) => Container(
-        width: double.infinity,
+  Widget build(BuildContext context) => DuolingoCard(
+        accentColor: AppTheme.primaryGreen,
+        margin: EdgeInsets.zero,
         padding: const EdgeInsets.symmetric(vertical: 22, horizontal: 18),
-        decoration: BoxDecoration(
-            color: Colors.white, borderRadius: BorderRadius.circular(23)),
         child: Column(children: [
           Text(surah.arabicName,
               textDirection: TextDirection.rtl,
@@ -272,11 +272,10 @@ class _VerseCard extends StatelessWidget {
   final int number;
   final double fontSize;
   @override
-  Widget build(BuildContext context) => Container(
-        width: double.infinity,
+  Widget build(BuildContext context) => DuolingoCard(
+        accentColor: const Color(0xFF0D7377),
+        margin: EdgeInsets.zero,
         padding: const EdgeInsets.fromLTRB(16, 14, 16, 12),
-        decoration: BoxDecoration(
-            color: Colors.white, borderRadius: BorderRadius.circular(18)),
         child:
             Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
           Text.rich(

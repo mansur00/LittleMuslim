@@ -4,6 +4,8 @@ import 'package:provider/provider.dart';
 import '../../theme/app_theme.dart';
 import '../../utils/app_state.dart';
 import '../../widgets/vector_icons.dart';
+import '../../widgets/duolingo_appbar.dart';
+import '../../widgets/duolingo_button.dart';
 import '../qaida/qaida_lesson_screen.dart';
 import '../qaida/qaida_letters.dart';
 
@@ -17,7 +19,7 @@ class DailyMissionsScreen extends StatelessWidget {
     final tablet = MediaQuery.sizeOf(context).shortestSide >= 600;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF7F7F7),
+      backgroundColor: const Color(0xFFFFF8EE),
       body: SafeArea(
         child: Center(
           child: ConstrainedBox(
@@ -26,212 +28,136 @@ class DailyMissionsScreen extends StatelessWidget {
               physics: const BouncingScrollPhysics(),
               padding: EdgeInsets.all(tablet ? 32 : 18),
               children: [
-                Row(children: [
-                  IconButton.filledTonal(
-                    onPressed: () => Navigator.pop(context),
-                    icon: const Icon(Icons.arrow_back_rounded),
-                    style: IconButton.styleFrom(backgroundColor: Colors.white),
-                  ),
-                  const SizedBox(width: 8),
-                  const Text(
-                    'আজকের মিশন',
-                    style: TextStyle(
-                      color: AppTheme.darkText,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w900,
+                // ── Duolingo Header ──
+                DuolingoPageHeader(
+                  title: 'আজকের মিশন',
+                  subtitle: 'প্রতিদিনের শেখার লক্ষ্য',
+                  iconType: VectorIconType.target,
+                  gradientColors: const [Color(0xFFFF9600), Color(0xFFFF6B00)],
+                  onBack: () => Navigator.pop(context),
+                  trailing: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.25),
+                      borderRadius: BorderRadius.circular(12),
                     ),
-                  ),
-                ]),
-                const SizedBox(height: 20),
-                Container(
-                  padding: const EdgeInsets.all(22),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(26),
-                    gradient: const LinearGradient(
-                      colors: [Color(0xFFFF9600), Color(0xFFFF6B00)],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
+                    child: Text(
+                      done ? 'সম্পন্ন' : 'চলমান',
+                      style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 12),
                     ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: const Color(0xFFFF6B00).withValues(alpha: 0.3),
-                        blurRadius: 16,
-                        offset: const Offset(0, 8),
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        width: 56,
-                        height: 56,
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.22),
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Center(
-                          child: VectorIcon(
-                            type: VectorIconType.target,
-                            size: 30,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      const Text(
-                        'আজ একটু শিখি',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 22,
-                          fontWeight: FontWeight.w900,
-                        ),
-                      ),
-                      const SizedBox(height: 6),
-                      Text(
-                        done
-                            ? 'মাশাআল্লাহ! আজকের শেখার লক্ষ্য পূরণ হয়েছে।'
-                            : 'একটি নতুন ক্বায়দা পাঠ শেষ করো। ছোট্ট অগ্রগতিও অনেক মূল্যবান।',
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 13,
-                          height: 1.5,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      const SizedBox(height: 18),
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(12),
-                        child: LinearProgressIndicator(
-                          value: done ? 1 : 0,
-                          minHeight: 12,
-                          backgroundColor: Colors.white30,
-                          color: const Color(0xFFFFD66B),
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        done ? '১ / ১ পাঠ সম্পন্ন' : '০ / ১ পাঠ সম্পন্ন',
-                        style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.85),
-                          fontSize: 12,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    ],
                   ),
                 ),
-                const SizedBox(height: 18),
+
+                // ── Progress card ──
                 Container(
-                  padding: const EdgeInsets.all(16),
+                  margin: const EdgeInsets.only(bottom: 18),
+                  padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.circular(22),
-                    border: Border.all(color: const Color(0xFFE5E5E5), width: 2),
+                    borderRadius: BorderRadius.circular(24),
+                    border: Border.all(color: const Color(0xFFFF9600).withValues(alpha: 0.3), width: 2),
+                    boxShadow: [BoxShadow(color: const Color(0xFFFF9600).withValues(alpha: 0.15), blurRadius: 0, offset: const Offset(0, 4))],
                   ),
-                  child: Row(children: [
-                    IconBadge(
-                      type: VectorIconType.qaida,
-                      bgColor: const Color(0xFFE8F8D8),
-                      size: 52,
-                      iconColor: const Color(0xFF58A700),
-                    ),
-                    const SizedBox(width: 13),
-                    const Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'একটি ক্বায়দা পাঠ',
-                            style: TextStyle(
-                              color: AppTheme.darkText,
-                              fontSize: 15,
-                              fontWeight: FontWeight.w800,
-                            ),
-                          ),
-                          SizedBox(height: 4),
-                          Text(
-                            'শেষ করলে +১০ XP',
-                            style: TextStyle(
-                              color: Color(0xFF58A700),
-                              fontSize: 12,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                        ],
+                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    Row(children: [
+                      const Icon(Icons.bolt_rounded, color: Color(0xFFFF9600), size: 22),
+                      const SizedBox(width: 6),
+                      Text(
+                        done ? 'মাশাআল্লাহ! আজকের শেখার লক্ষ্য পূরণ হয়েছে।' : 'একটি নতুন ক্বায়দা পাঠ শেষ করো।',
+                        style: TextStyle(color: done ? const Color(0xFF58A700) : AppTheme.darkText, fontSize: 13, fontWeight: FontWeight.w700),
+                      ),
+                    ]),
+                    const SizedBox(height: 14),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: LinearProgressIndicator(
+                        value: done ? 1 : 0,
+                        minHeight: 14,
+                        backgroundColor: const Color(0xFFE5E7EB),
+                        color: const Color(0xFF58CC02),
                       ),
                     ),
+                    const SizedBox(height: 8),
+                    Text(
+                      done ? '১ / ১ পাঠ সম্পন্ন' : '০ / ১ পাঠ সম্পন্ন',
+                      style: const TextStyle(color: Color(0xFF6B7280), fontSize: 12, fontWeight: FontWeight.w700),
+                    ),
+                  ]),
+                ),
+
+                DuolingoSectionLabel(label: 'আজকের কাজ', badgeText: done ? 'সম্পন্ন' : 'বাকি আছে', badgeColor: done ? const Color(0xFFE8F8D8) : const Color(0xFFFFF3CD), badgeTextColor: done ? const Color(0xFF58A700) : const Color(0xFFCC8800)),
+                const SizedBox(height: 12),
+
+                // ── Mission task card ──
+                DuolingoCard(
+                  accentColor: const Color(0xFF58CC02),
+                  showAccentStripe: true,
+                  child: Row(children: [
+                    const IconBadge(type: VectorIconType.qaida, bgColor: Color(0xFFE8F8D8), size: 52, iconColor: Color(0xFF58A700)),
+                    const SizedBox(width: 13),
+                    const Expanded(
+                      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                        Text('একটি ক্বায়দা পাঠ', style: TextStyle(color: AppTheme.darkText, fontSize: 15, fontWeight: FontWeight.w800)),
+                        SizedBox(height: 4),
+                        Text('শেষ করলে +১০ XP', style: TextStyle(color: Color(0xFF58A700), fontSize: 12, fontWeight: FontWeight.w700)),
+                      ]),
+                    ),
                     if (done)
-                      const VectorIcon(
-                        type: VectorIconType.check,
-                        size: 32,
-                        color: Color(0xFF58CC02),
-                      )
+                      const VectorIcon(type: VectorIconType.check, size: 32, color: Color(0xFF58CC02))
                     else
                       Container(
                         width: 28,
                         height: 28,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: const Color(0xFFD0D0D0),
-                            width: 3,
-                          ),
-                        ),
+                        decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: const Color(0xFFD0D0D0), width: 3)),
                       ),
                   ]),
                 ),
+
                 if (!done) ...[
-                  const SizedBox(height: 18),
-                  SizedBox(
-                    height: 54,
-                    child: FilledButton(
-                      onPressed: () => Navigator.of(context).push(
-                        MaterialPageRoute<void>(
-                          builder: (_) => QaidaLessonScreen(
-                            lessonId: state.todayQaidaMissionLessonId,
-                            lessonTitle: 'আজকের আলিফ পাঠ',
-                            letter: 'ا',
-                            letterName: 'আলিফ',
-                            makhrajNote: qaidaLetters.first.makhraj,
-                            options: const ['ب', 'ا', 'ت'],
-                          ),
+                  const SizedBox(height: 20),
+                  Duolingo3DButton(
+                    text: 'মিশন শুরু করো',
+                    onPressed: () => Navigator.of(context).push(
+                      MaterialPageRoute<void>(
+                        builder: (_) => QaidaLessonScreen(
+                          lessonId: state.todayQaidaMissionLessonId,
+                          lessonTitle: 'আজকের আলিফ পাঠ',
+                          letter: 'ا',
+                          letterName: 'আলিফ',
+                          makhrajNote: qaidaLetters.first.makhraj,
+                          options: const ['ب', 'ا', 'ت'],
                         ),
-                      ),
-                      style: FilledButton.styleFrom(
-                        backgroundColor: const Color(0xFF58CC02),
-                        foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(18),
-                        ),
-                        elevation: 0,
-                      ),
-                      child: const Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.play_arrow_rounded, size: 26),
-                          SizedBox(width: 6),
-                          Text(
-                            'মিশন শুরু করো',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w800,
-                            ),
-                          ),
-                        ],
                       ),
                     ),
+                    icon: const Icon(Icons.play_arrow_rounded, color: Colors.white, size: 24),
+                  ),
+                ] else ...[
+                  const SizedBox(height: 16),
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFE8F8D8),
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(color: const Color(0xFF58A700).withValues(alpha: 0.3), width: 2),
+                    ),
+                    child: const Row(children: [
+                      VectorIcon(type: VectorIconType.star, size: 28, color: Color(0xFFFFC800)),
+                      SizedBox(width: 10),
+                      Expanded(
+                        child: Text(
+                          'দারুণ! আজকের লক্ষ্য পূরণ হয়েছে। কাল আবার শিখবো!',
+                          style: TextStyle(color: Color(0xFF2D7A00), fontSize: 13, fontWeight: FontWeight.w700, height: 1.4),
+                        ),
+                      ),
+                    ]),
                   ),
                 ],
-                const SizedBox(height: 18),
+
+                const SizedBox(height: 20),
                 Text(
-                  'আজকের মিশন এই ডিভাইসে সংরক্ষিত পাঠের তারিখ থেকে হিসাব করা হয়।',
+                  'আজকের মিশন এই ডিভাইসে সংরক্ষিত পাঠের তারিখ থেকে হিসাব করা হয়।',
                   textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: AppTheme.darkText.withValues(alpha: 0.45),
-                    fontSize: 11,
-                    height: 1.5,
-                  ),
+                  style: TextStyle(color: AppTheme.darkText.withValues(alpha: 0.45), fontSize: 11, height: 1.5),
                 ),
               ],
             ),
