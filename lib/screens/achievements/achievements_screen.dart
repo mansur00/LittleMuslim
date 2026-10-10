@@ -3,12 +3,20 @@ import 'package:provider/provider.dart';
 
 import '../../theme/app_theme.dart';
 import '../../utils/app_state.dart';
+import '../../widgets/vector_icons.dart';
 
 class _BadgeInfo {
-  const _BadgeInfo(
-      this.title, this.description, this.emoji, this.color, this.unlocked);
-  final String title, description, emoji;
-  final Color color;
+  const _BadgeInfo({
+    required this.title,
+    required this.description,
+    required this.iconType,
+    required this.color,
+    required this.accent,
+    required this.unlocked,
+  });
+  final String title, description;
+  final VectorIconType iconType;
+  final Color color, accent;
   final bool unlocked;
 }
 
@@ -29,7 +37,7 @@ class AchievementsScreen extends StatelessWidget {
     final lessonCount = state.completedQaidaLessons;
     final levelIndex =
         _levels.lastIndexWhere((level) => state.xp >= level.threshold);
-    final level = _levels[levelIndex];
+    final level = _levels[levelIndex < 0 ? 0 : levelIndex];
     final nextLevel =
         levelIndex + 1 < _levels.length ? _levels[levelIndex + 1] : null;
     final progress = nextLevel == null
@@ -37,148 +45,253 @@ class AchievementsScreen extends StatelessWidget {
         : ((state.xp - level.threshold) /
                 (nextLevel.threshold - level.threshold))
             .clamp(0.0, 1.0);
+
     final badges = [
-      _BadgeInfo('প্রথম পাঠ', 'একটি ক্বায়দা পাঠ শেষ করো', '🌱',
-          const Color(0xFFE3F1D4), lessonCount >= 1),
-      _BadgeInfo('তিন ধাপ এগিয়ে', '৩টি ক্বায়দা পাঠ শেষ করো', '🌟',
-          const Color(0xFFFFE7A8), lessonCount >= 3),
-      _BadgeInfo('পাঁচ পাঠের বন্ধু', '৫টি ক্বায়দা পাঠ শেষ করো', '📚',
-          const Color(0xFFDCEFFA), lessonCount >= 5),
-      _BadgeInfo('XP সংগ্রাহক', '১০০ XP অর্জন করো', '🏅',
-          const Color(0xFFF4DDF0), state.xp >= 100),
+      _BadgeInfo(
+        title: 'প্রথম পাঠ',
+        description: '১টি ক্বায়দা পাঠ শেষ করো',
+        iconType: VectorIconType.qaida,
+        color: const Color(0xFFE8F8D8),
+        accent: const Color(0xFF58A700),
+        unlocked: lessonCount >= 1,
+      ),
+      _BadgeInfo(
+        title: 'তিন ধাপ এগিয়ে',
+        description: '৩টি ক্বায়দা পাঠ শেষ করো',
+        iconType: VectorIconType.star,
+        color: const Color(0xFFFFF6D0),
+        accent: const Color(0xFFD4A017),
+        unlocked: lessonCount >= 3,
+      ),
+      _BadgeInfo(
+        title: 'পাঁচ পাঠের বন্ধু',
+        description: '৫টি ক্বায়দা পাঠ শেষ করো',
+        iconType: VectorIconType.book,
+        color: const Color(0xFFDCEBFF),
+        accent: const Color(0xFF3B82C4),
+        unlocked: lessonCount >= 5,
+      ),
+      _BadgeInfo(
+        title: 'XP সংগ্রাহক',
+        description: '১০০ XP অর্জন করো',
+        iconType: VectorIconType.trophy,
+        color: const Color(0xFFF3E8FF),
+        accent: const Color(0xFF9B6BC9),
+        unlocked: state.xp >= 100,
+      ),
     ];
-    final unlocked = badges.where((badge) => badge.unlocked).length;
+    final unlocked = badges.where((b) => b.unlocked).length;
 
     return Scaffold(
-      backgroundColor: AppTheme.cream,
+      backgroundColor: const Color(0xFFF7F7F7),
       body: SafeArea(
         child: Center(
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 900),
-            child: CustomScrollView(slivers: [
-              SliverPadding(
-                padding: EdgeInsets.fromLTRB(
-                    tablet ? 36 : 20, 16, tablet ? 36 : 20, 32),
-                sliver: SliverList(
-                  delegate: SliverChildListDelegate([
-                    Row(children: [
-                      IconButton.filledTonal(
-                        onPressed: () => Navigator.pop(context),
-                        icon: const Icon(Icons.arrow_back_rounded),
-                        style:
-                            IconButton.styleFrom(backgroundColor: Colors.white),
-                      ),
-                      const SizedBox(width: 8),
-                      const Text('আমার অর্জন',
+            child: CustomScrollView(
+              physics: const BouncingScrollPhysics(),
+              slivers: [
+                SliverPadding(
+                  padding: EdgeInsets.fromLTRB(
+                      tablet ? 36 : 18, 12, tablet ? 36 : 18, 32),
+                  sliver: SliverList(
+                    delegate: SliverChildListDelegate([
+                      Row(children: [
+                        IconButton.filledTonal(
+                          onPressed: () => Navigator.pop(context),
+                          icon: const Icon(Icons.arrow_back_rounded),
+                          style: IconButton.styleFrom(
+                              backgroundColor: Colors.white),
+                        ),
+                        const SizedBox(width: 8),
+                        const Text(
+                          'আমার অর্জন',
                           style: TextStyle(
-                              color: AppTheme.darkText,
-                              fontSize: 18,
-                              fontWeight: FontWeight.w800)),
-                    ]),
-                    const SizedBox(height: 20),
-                    Container(
-                      padding: const EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(24),
-                        gradient: const LinearGradient(
-                            colors: [AppTheme.primaryGreen, Color(0xFF16877B)]),
-                      ),
-                      child: Column(
+                            color: AppTheme.darkText,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w900,
+                          ),
+                        ),
+                      ]),
+                      const SizedBox(height: 18),
+                      Container(
+                        padding: const EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(24),
+                          gradient: const LinearGradient(
+                            colors: [Color(0xFF0D7377), Color(0xFF14919B)],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppTheme.primaryGreen.withValues(alpha: 0.3),
+                              blurRadius: 16,
+                              offset: const Offset(0, 8),
+                            ),
+                          ],
+                        ),
+                        child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Row(children: [
-                              const Text('🌙', style: TextStyle(fontSize: 34)),
+                              Container(
+                                width: 52,
+                                height: 52,
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withValues(alpha: 0.2),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: const Center(
+                                  child: VectorIcon(
+                                    type: VectorIconType.shield,
+                                    size: 28,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
                               const SizedBox(width: 12),
                               Expanded(
-                                  child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                    const Text('তোমার বর্তমান লেভেল',
-                                        style: TextStyle(
-                                            color: Colors.white70,
-                                            fontSize: 12)),
-                                    Text(level.name,
-                                        style: const TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 19,
-                                            fontWeight: FontWeight.w800)),
-                                  ])),
-                              Text('${state.xp} XP',
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'তোমার বর্তমান লেভেল',
+                                      style: TextStyle(
+                                        color: Colors.white.withValues(alpha: 0.8),
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                    Text(
+                                      level.name,
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w900,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 12, vertical: 8),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFFFD66B),
+                                  borderRadius: BorderRadius.circular(14),
+                                ),
+                                child: Text(
+                                  '${state.xp} XP',
                                   style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w800)),
+                                    color: Color(0xFF8A6A00),
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w900,
+                                  ),
+                                ),
+                              ),
                             ]),
-                            const SizedBox(height: 18),
+                            const SizedBox(height: 16),
                             ClipRRect(
                               borderRadius: BorderRadius.circular(12),
                               child: LinearProgressIndicator(
                                 value: progress,
-                                minHeight: 10,
+                                minHeight: 12,
                                 backgroundColor: Colors.white24,
                                 color: const Color(0xFFFFD66B),
                               ),
                             ),
-                            const SizedBox(height: 7),
+                            const SizedBox(height: 8),
                             Text(
-                                nextLevel == null
-                                    ? 'সব লেভেল শেষ! শেখা চালিয়ে যাও।'
-                                    : 'পরের লেভেল: ${nextLevel.name} · আর ${nextLevel.threshold - state.xp} XP',
-                                style: const TextStyle(
-                                    color: Colors.white, fontSize: 11)),
-                          ]),
-                    ),
-                    const SizedBox(height: 24),
-                    Row(children: [
-                      const Expanded(
-                          child: Text('ব্যাজ সংগ্রহ',
+                              nextLevel == null
+                                  ? 'সব লেভেল শেষ! শেখা চালিয়ে যাও।'
+                                  : 'পরের লেভেল: ${nextLevel.name} · আর ${nextLevel.threshold - state.xp} XP',
                               style: TextStyle(
-                                  color: AppTheme.darkText,
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.w800))),
-                      Text('$unlocked / ${badges.length} পাওয়া',
-                          style: const TextStyle(
-                              color: AppTheme.primaryGreen,
+                                color: Colors.white.withValues(alpha: 0.9),
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      Row(children: [
+                        const Expanded(
+                          child: Text(
+                            'ব্যাজ সংগ্রহ',
+                            style: TextStyle(
+                              color: AppTheme.darkText,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w900,
+                            ),
+                          ),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 10, vertical: 5),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFE8F8D8),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Text(
+                            '$unlocked / ${badges.length}',
+                            style: const TextStyle(
+                              color: Color(0xFF58A700),
                               fontSize: 12,
-                              fontWeight: FontWeight.w700)),
-                    ]),
-                    const SizedBox(height: 12),
-                    GridView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: badges.length,
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: tablet ? 4 : 2,
-                        crossAxisSpacing: 12,
-                        mainAxisSpacing: 12,
-                        childAspectRatio: tablet ? 0.9 : 0.92,
-                      ),
-                      itemBuilder: (context, index) => _BadgeCard(
-                        badge: badges[index],
-                      ),
-                    ),
-                    const SizedBox(height: 18),
-                    Container(
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(18)),
-                      child: Row(children: [
-                        const Icon(Icons.menu_book_rounded,
-                            color: AppTheme.primaryGreen),
-                        const SizedBox(width: 11),
-                        Expanded(
-                            child: Text('সম্পন্ন ক্বায়দা পাঠ: $lessonCount',
-                                style: const TextStyle(
-                                    color: AppTheme.darkText,
-                                    fontWeight: FontWeight.w700))),
+                              fontWeight: FontWeight.w800,
+                            ),
+                          ),
+                        ),
                       ]),
-                    ),
-                  ]),
+                      const SizedBox(height: 14),
+                      GridView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: badges.length,
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: tablet ? 4 : 2,
+                          crossAxisSpacing: 12,
+                          mainAxisSpacing: 12,
+                          childAspectRatio: tablet ? 0.88 : 0.9,
+                        ),
+                        itemBuilder: (context, index) =>
+                            _BadgeCard(badge: badges[index]),
+                      ),
+                      const SizedBox(height: 18),
+                      Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(18),
+                          border: Border.all(
+                              color: const Color(0xFFE5E5E5), width: 2),
+                        ),
+                        child: Row(children: [
+                          IconBadge(
+                            type: VectorIconType.qaida,
+                            bgColor: const Color(0xFFE8F8D8),
+                            size: 42,
+                            iconColor: const Color(0xFF58A700),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Text(
+                              'সম্পন্ন ক্বায়দা পাঠ: $lessonCount',
+                              style: const TextStyle(
+                                color: AppTheme.darkText,
+                                fontWeight: FontWeight.w800,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ),
+                        ]),
+                      ),
+                    ]),
+                  ),
                 ),
-              ),
-            ]),
+              ],
+            ),
           ),
         ),
       ),
@@ -191,39 +304,64 @@ class _BadgeCard extends StatelessWidget {
   final _BadgeInfo badge;
 
   @override
-  Widget build(BuildContext context) => Container(
-        padding: const EdgeInsets.all(14),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(21),
-          border: Border.all(
-              color: badge.unlocked ? badge.color : const Color(0xFFE9E8DF),
-              width: 2),
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(22),
+        border: Border.all(
+          color: badge.unlocked ? badge.accent.withValues(alpha: 0.4) : const Color(0xFFE5E5E5),
+          width: 2.5,
         ),
-        child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-          Container(
-            width: 60,
-            height: 60,
-            decoration: BoxDecoration(
-              color: badge.unlocked ? badge.color : const Color(0xFFF1F0EB),
-              shape: BoxShape.circle,
+        boxShadow: badge.unlocked
+            ? [
+                BoxShadow(
+                  color: badge.accent.withValues(alpha: 0.15),
+                  blurRadius: 0,
+                  offset: const Offset(0, 4),
+                ),
+              ]
+            : null,
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Opacity(
+            opacity: badge.unlocked ? 1 : 0.4,
+            child: IconBadge(
+              type: badge.unlocked ? badge.iconType : VectorIconType.lock,
+              bgColor: badge.unlocked ? badge.color : const Color(0xFFF0F0F0),
+              size: 56,
+              iconColor:
+                  badge.unlocked ? badge.accent : const Color(0xFFAFAFAF),
             ),
-            alignment: Alignment.center,
-            child: Text(badge.unlocked ? badge.emoji : '🔒',
-                style: const TextStyle(fontSize: 29)),
           ),
           const SizedBox(height: 10),
-          Text(badge.title,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                  color: badge.unlocked ? AppTheme.darkText : Colors.black45,
-                  fontSize: 13,
-                  fontWeight: FontWeight.w800)),
-          const SizedBox(height: 5),
-          Text(badge.unlocked ? 'পেয়ে গেছ!' : badge.description,
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                  color: Colors.black54, fontSize: 10, height: 1.4)),
-        ]),
-      );
+          Text(
+            badge.title,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: badge.unlocked ? AppTheme.darkText : Colors.black38,
+              fontSize: 13,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            badge.unlocked ? 'আনলক!' : badge.description,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: badge.unlocked
+                  ? badge.accent
+                  : AppTheme.darkText.withValues(alpha: 0.4),
+              fontSize: 10,
+              height: 1.35,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }
