@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../theme/app_theme.dart';
 import '../../utils/app_state.dart';
+import '../../widgets/vector_icons.dart';
 import '../qaida/qaida_lesson_screen.dart';
 import '../qaida/qaida_letters.dart';
 import '../prayer/prayer_screen.dart';
@@ -22,329 +23,543 @@ class HomeScreen extends StatelessWidget {
     final name = appState.userName.isNotEmpty ? appState.userName : 'বন্ধু';
 
     return Scaffold(
-      backgroundColor: AppTheme.cream,
+      backgroundColor: const Color(0xFFF7F7F7),
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: EdgeInsets.symmetric(
-            horizontal: isTablet ? 40 : 20,
-            vertical: 20,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Header
-              Row(
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'আসসালামু আলাইকুম',
-                          style: TextStyle(
-                            fontSize: isTablet ? 16 : 14,
-                            color: AppTheme.darkText.withOpacity(0.6),
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          name,
-                          style: TextStyle(
-                            fontSize: isTablet ? 28 : 22,
-                            fontWeight: FontWeight.bold,
-                            color: AppTheme.darkText,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    width: isTablet ? 56 : 48,
-                    height: isTablet ? 56 : 48,
-                    decoration: BoxDecoration(
-                      color: AppTheme.softGreen,
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Center(
-                      child: Text('🌙', style: TextStyle(fontSize: 24)),
-                    ),
-                  ),
-                ],
-              ),
-
-              SizedBox(height: isTablet ? 32 : 24),
-
-              // Streak / XP card (placeholder)
-              Container(
-                width: double.infinity,
-                padding: EdgeInsets.all(isTablet ? 24 : 18),
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [AppTheme.primaryGreen, Color(0xFF14919B)],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  borderRadius: BorderRadius.circular(20),
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppTheme.primaryGreen.withOpacity(0.3),
-                      blurRadius: 16,
-                      offset: const Offset(0, 8),
-                    ),
-                  ],
+        child: CustomScrollView(
+          physics: const BouncingScrollPhysics(),
+          slivers: [
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(
+                  isTablet ? 36 : 18,
+                  12,
+                  isTablet ? 36 : 18,
+                  0,
                 ),
-                child: Row(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text('🔥', style: TextStyle(fontSize: 36)),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'আজকের স্ট্রিক',
-                            style: TextStyle(
-                              color: Colors.white.withOpacity(0.9),
-                              fontSize: 14,
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          const Text(
-                            '0 দিন',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 22,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
+                    _TopBar(name: name, xp: appState.xp, isTablet: isTablet),
+                    SizedBox(height: isTablet ? 22 : 16),
+                    _StreakBanner(
+                      streakDays: 0,
+                      xp: appState.xp,
+                      isTablet: isTablet,
                     ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 14, vertical: 8),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.2),
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      child: Text(
-                        '${appState.xp} XP',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
+                    SizedBox(height: isTablet ? 20 : 14),
+                    _MissionTile(isTablet: isTablet),
+                    SizedBox(height: isTablet ? 24 : 18),
+                    _SectionTitle(
+                      title: 'শেখার পথ',
+                      subtitle: 'প্রতিটি নোডে ট্যাপ করে শেখো',
+                      isTablet: isTablet,
                     ),
+                    SizedBox(height: isTablet ? 14 : 10),
                   ],
                 ),
               ),
-
-              SizedBox(height: isTablet ? 36 : 28),
-
-              _DailyMissionCard(isTablet: isTablet),
-
-              SizedBox(height: isTablet ? 22 : 18),
-
-              _LearningTrail(isTablet: isTablet),
-
-              SizedBox(height: isTablet ? 32 : 24),
-
-              Text(
-                'আরও শিখি',
-                style: TextStyle(
-                  fontSize: isTablet ? 20 : 18,
-                  fontWeight: FontWeight.w600,
-                  color: AppTheme.darkText,
+            ),
+            SliverToBoxAdapter(
+              child: _LearningPath(isTablet: isTablet),
+            ),
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(
+                  isTablet ? 36 : 18,
+                  isTablet ? 28 : 22,
+                  isTablet ? 36 : 18,
+                  isTablet ? 40 : 28,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _SectionTitle(
+                      title: 'মডিউল',
+                      subtitle: 'যেখান থেকে খুশি শুরু করো',
+                      isTablet: isTablet,
+                    ),
+                    SizedBox(height: isTablet ? 16 : 12),
+                    _ModulesGrid(isTablet: isTablet),
+                  ],
                 ),
               ),
-
-              SizedBox(height: isTablet ? 20 : 16),
-
-              // Modules grid
-              GridView.count(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                crossAxisCount: isTablet ? 3 : 2,
-                mainAxisSpacing: 16,
-                crossAxisSpacing: 16,
-                childAspectRatio: isTablet ? 1.1 : 1.0,
-                children: [
-                  _ModuleCard(
-                    emoji: '🔤',
-                    title: 'ক্বায়দা',
-                    subtitle: 'বর্ণমালা শেখো',
-                    color: const Color(0xFFE8F5E9),
-                    isTablet: isTablet,
-                    onTap: () => _openQaidaLesson(
-                      context,
-                      letterIndex: 0,
-                    ),
-                  ),
-                  _ModuleCard(
-                    emoji: '📖',
-                    title: 'কুরআন',
-                    subtitle: 'তিলাওয়াত করো',
-                    color: const Color(0xFFFFF3E0),
-                    isTablet: isTablet,
-                    onTap: () => Navigator.of(context).push(
-                      MaterialPageRoute<void>(
-                          builder: (_) => const QuranScreen()),
-                    ),
-                  ),
-                  _ModuleCard(
-                    emoji: '🕌',
-                    title: 'নামাজ',
-                    subtitle: 'সময় + নিয়ম',
-                    color: const Color(0xFFE3F2FD),
-                    isTablet: isTablet,
-                    onTap: () => Navigator.of(context).push(
-                      MaterialPageRoute<void>(
-                          builder: (_) => const PrayerScreen()),
-                    ),
-                  ),
-                  _ModuleCard(
-                    emoji: '✨',
-                    title: 'দোয়া',
-                    subtitle: 'মাসনুন দোয়া',
-                    color: const Color(0xFFF3E5F5),
-                    isTablet: isTablet,
-                    onTap: () => Navigator.of(context).push(
-                      MaterialPageRoute<void>(
-                          builder: (_) => const DuasScreen()),
-                    ),
-                  ),
-                  _ModuleCard(
-                    emoji: '📜',
-                    title: 'সীরাত',
-                    subtitle: 'নবীর গল্প',
-                    color: const Color(0xFFFFEBEE),
-                    isTablet: isTablet,
-                    onTap: () => Navigator.of(context).push(
-                      MaterialPageRoute<void>(
-                          builder: (_) => const SeerahScreen()),
-                    ),
-                  ),
-                  _ModuleCard(
-                    emoji: '🏆',
-                    title: 'অর্জন',
-                    subtitle: 'ব্যাজ ও লেভেল',
-                    color: const Color(0xFFFFF8E1),
-                    isTablet: isTablet,
-                    onTap: () => Navigator.of(context).push(
-                      MaterialPageRoute<void>(
-                          builder: (_) => const AchievementsScreen()),
-                    ),
-                  ),
-                ],
-              ),
-
-              SizedBox(height: isTablet ? 40 : 30),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
   }
 }
 
-class _DailyMissionCard extends StatelessWidget {
-  const _DailyMissionCard({required this.isTablet});
+class _TopBar extends StatelessWidget {
+  const _TopBar({
+    required this.name,
+    required this.xp,
+    required this.isTablet,
+  });
+  final String name;
+  final int xp;
+  final bool isTablet;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        IconBadge(
+          type: VectorIconType.crescent,
+          bgColor: const Color(0xFFD4F0EC),
+          size: isTablet ? 54 : 46,
+          iconColor: AppTheme.primaryGreen,
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'আসসালামু আলাইকুম',
+                style: TextStyle(
+                  fontSize: isTablet ? 13 : 12,
+                  color: AppTheme.darkText.withValues(alpha: 0.55),
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              Text(
+                name,
+                style: TextStyle(
+                  fontSize: isTablet ? 22 : 18,
+                  fontWeight: FontWeight.w800,
+                  color: AppTheme.darkText,
+                ),
+              ),
+            ],
+          ),
+        ),
+        _XpChip(xp: xp),
+      ],
+    );
+  }
+}
+
+class _XpChip extends StatelessWidget {
+  const _XpChip({required this.xp});
+  final int xp;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: const Color(0xFFFFF3C4),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: const Color(0xFFFFD54F), width: 2),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          VectorIcon(
+            type: VectorIconType.star,
+            size: 18,
+            color: const Color(0xFFE6A800),
+          ),
+          const SizedBox(width: 6),
+          Text(
+            '$xp XP',
+            style: const TextStyle(
+              fontWeight: FontWeight.w800,
+              fontSize: 13,
+              color: Color(0xFF8A6A00),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _StreakBanner extends StatelessWidget {
+  const _StreakBanner({
+    required this.streakDays,
+    required this.xp,
+    required this.isTablet,
+  });
+  final int streakDays;
+  final int xp;
+  final bool isTablet;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.all(isTablet ? 20 : 16),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [Color(0xFFFF9600), Color(0xFFFF6B00)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(22),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFFFF6B00).withValues(alpha: 0.35),
+            blurRadius: 16,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: isTablet ? 64 : 56,
+            height: isTablet ? 64 : 56,
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.22),
+              shape: BoxShape.circle,
+            ),
+            child: Center(
+              child: VectorIcon(
+                type: VectorIconType.flame,
+                size: isTablet ? 36 : 30,
+                color: Colors.white,
+              ),
+            ),
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'স্ট্রিক',
+                  style: TextStyle(
+                    color: Colors.white.withValues(alpha: 0.9),
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  '$streakDays দিন',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: isTablet ? 26 : 22,
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.2),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Column(
+              children: [
+                Text(
+                  '$xp',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w900,
+                    fontSize: 18,
+                  ),
+                ),
+                Text(
+                  'XP',
+                  style: TextStyle(
+                    color: Colors.white.withValues(alpha: 0.85),
+                    fontSize: 11,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _MissionTile extends StatelessWidget {
+  const _MissionTile({required this.isTablet});
   final bool isTablet;
 
   @override
   Widget build(BuildContext context) {
     final done = context.watch<AppState>().todayQaidaLessons > 0;
     return Material(
-      color: const Color(0xFFFFF4D7),
+      color: Colors.white,
       borderRadius: BorderRadius.circular(20),
+      elevation: 0,
       child: InkWell(
         borderRadius: BorderRadius.circular(20),
-        onTap: () => Navigator.of(context).push(MaterialPageRoute<void>(
-          builder: (_) => const DailyMissionsScreen(),
-        )),
-        child: Padding(
-          padding: EdgeInsets.all(isTablet ? 18 : 15),
-          child: Row(children: [
-            const Text('🎯', style: TextStyle(fontSize: 30)),
-            const SizedBox(width: 12),
-            Expanded(
+        onTap: () => Navigator.of(context).push(
+          MaterialPageRoute<void>(builder: (_) => const DailyMissionsScreen()),
+        ),
+        child: Container(
+          padding: EdgeInsets.all(isTablet ? 18 : 14),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: const Color(0xFFE5E5E5), width: 2),
+          ),
+          child: Row(
+            children: [
+              IconBadge(
+                type: VectorIconType.target,
+                bgColor: const Color(0xFFFFE8DE),
+                size: isTablet ? 52 : 46,
+                iconColor: const Color(0xFFFF6B4A),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
                 child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                  const Text('আজকের মিশন',
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'আজকের মিশন',
                       style: TextStyle(
-                          color: AppTheme.darkText,
-                          fontWeight: FontWeight.w800,
-                          fontSize: 14)),
-                  const SizedBox(height: 3),
-                  Text(
-                      done ? 'আজকের পাঠ সম্পন্ন ✓' : '১টি পাঠ শেষ করো · +১০ XP',
-                      style:
-                          const TextStyle(color: Colors.black54, fontSize: 11)),
-                ])),
-            const Icon(Icons.chevron_right_rounded,
-                color: AppTheme.primaryGreen),
-          ]),
+                        fontWeight: FontWeight.w800,
+                        fontSize: 15,
+                        color: AppTheme.darkText,
+                      ),
+                    ),
+                    const SizedBox(height: 3),
+                    Text(
+                      done ? 'সম্পন্ন — দারুণ কাজ!' : '১টি পাঠ শেষ করো · +১০ XP',
+                      style: TextStyle(
+                        color: done
+                            ? const Color(0xFF58A700)
+                            : AppTheme.darkText.withValues(alpha: 0.55),
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              if (done)
+                const VectorIcon(
+                  type: VectorIconType.check,
+                  size: 28,
+                  color: Color(0xFF58CC02),
+                )
+              else
+                const Icon(
+                  Icons.chevron_right_rounded,
+                  color: Color(0xFFAFAFAF),
+                  size: 28,
+                ),
+            ],
+          ),
         ),
       ),
     );
   }
 }
 
-class _ModuleCard extends StatelessWidget {
-  final String emoji;
-  final String title;
-  final String subtitle;
-  final Color color;
-  final bool isTablet;
-  final VoidCallback onTap;
-
-  const _ModuleCard({
-    required this.emoji,
+class _SectionTitle extends StatelessWidget {
+  const _SectionTitle({
     required this.title,
     required this.subtitle,
-    required this.color,
     required this.isTablet,
-    required this.onTap,
   });
+  final String title;
+  final String subtitle;
+  final bool isTablet;
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: color,
-      borderRadius: BorderRadius.circular(20),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(20),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: TextStyle(
+            fontSize: isTablet ? 20 : 17,
+            fontWeight: FontWeight.w900,
+            color: AppTheme.darkText,
+          ),
+        ),
+        const SizedBox(height: 2),
+        Text(
+          subtitle,
+          style: TextStyle(
+            fontSize: 12,
+            color: AppTheme.darkText.withValues(alpha: 0.5),
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _ModulesGrid extends StatelessWidget {
+  const _ModulesGrid({required this.isTablet});
+  final bool isTablet;
+
+  @override
+  Widget build(BuildContext context) {
+    final modules = [
+      _ModuleData(
+        type: VectorIconType.qaida,
+        title: 'ক্বায়দা',
+        subtitle: 'বর্ণমালা',
+        bg: const Color(0xFFE8F8D8),
+        accent: const Color(0xFF58A700),
+        onTap: () => _openQaidaLesson(context, letterIndex: 0),
+      ),
+      _ModuleData(
+        type: VectorIconType.book,
+        title: 'কুরআন',
+        subtitle: 'তিলাওয়াত',
+        bg: const Color(0xFFFFF0DB),
+        accent: const Color(0xFFE8913A),
+        onTap: () => Navigator.of(context).push(
+          MaterialPageRoute<void>(builder: (_) => const QuranScreen()),
+        ),
+      ),
+      _ModuleData(
+        type: VectorIconType.mosque,
+        title: 'নামাজ',
+        subtitle: 'সময় + নিয়ম',
+        bg: const Color(0xFFDCEBFF),
+        accent: const Color(0xFF3B82C4),
+        onTap: () => Navigator.of(context).push(
+          MaterialPageRoute<void>(builder: (_) => const PrayerScreen()),
+        ),
+      ),
+      _ModuleData(
+        type: VectorIconType.dua,
+        title: 'দোয়া',
+        subtitle: 'মাসনুন',
+        bg: const Color(0xFFF3E8FF),
+        accent: const Color(0xFF9B6BC9),
+        onTap: () => Navigator.of(context).push(
+          MaterialPageRoute<void>(builder: (_) => const DuasScreen()),
+        ),
+      ),
+      _ModuleData(
+        type: VectorIconType.scroll,
+        title: 'সীরাত',
+        subtitle: 'নবীর গল্প',
+        bg: const Color(0xFFFFE8EE),
+        accent: const Color(0xFFE05A7A),
+        onTap: () => Navigator.of(context).push(
+          MaterialPageRoute<void>(builder: (_) => const SeerahScreen()),
+        ),
+      ),
+      _ModuleData(
+        type: VectorIconType.trophy,
+        title: 'অর্জন',
+        subtitle: 'ব্যাজ · লেভেল',
+        bg: const Color(0xFFFFF6D0),
+        accent: const Color(0xFFD4A017),
+        onTap: () => Navigator.of(context).push(
+          MaterialPageRoute<void>(builder: (_) => const AchievementsScreen()),
+        ),
+      ),
+    ];
+
+    return GridView.count(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      crossAxisCount: isTablet ? 3 : 2,
+      mainAxisSpacing: 14,
+      crossAxisSpacing: 14,
+      childAspectRatio: isTablet ? 1.05 : 0.95,
+      children: [
+        for (final m in modules) _ModuleCard(data: m, isTablet: isTablet),
+      ],
+    );
+  }
+}
+
+class _ModuleData {
+  const _ModuleData({
+    required this.type,
+    required this.title,
+    required this.subtitle,
+    required this.bg,
+    required this.accent,
+    required this.onTap,
+  });
+  final VectorIconType type;
+  final String title;
+  final String subtitle;
+  final Color bg;
+  final Color accent;
+  final VoidCallback onTap;
+}
+
+class _ModuleCard extends StatefulWidget {
+  const _ModuleCard({required this.data, required this.isTablet});
+  final _ModuleData data;
+  final bool isTablet;
+
+  @override
+  State<_ModuleCard> createState() => _ModuleCardState();
+}
+
+class _ModuleCardState extends State<_ModuleCard> {
+  bool _pressed = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final d = widget.data;
+    return GestureDetector(
+      onTapDown: (_) => setState(() => _pressed = true),
+      onTapUp: (_) {
+        setState(() => _pressed = false);
+        d.onTap();
+      },
+      onTapCancel: () => setState(() => _pressed = false),
+      child: AnimatedScale(
+        scale: _pressed ? 0.94 : 1.0,
+        duration: const Duration(milliseconds: 100),
+        curve: Curves.easeOut,
         child: Container(
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
+            color: d.bg,
+            borderRadius: BorderRadius.circular(24),
+            border: Border.all(
+              color: d.accent.withValues(alpha: 0.25),
+              width: 2.5,
+            ),
             boxShadow: [
               BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.05),
-                  blurRadius: 10,
-                  offset: const Offset(0, 4))
+                color: d.accent.withValues(alpha: 0.18),
+                blurRadius: 0,
+                offset: Offset(0, _pressed ? 2 : 6),
+              ),
             ],
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(emoji, style: TextStyle(fontSize: isTablet ? 40 : 34)),
-              const SizedBox(height: 12),
+              VectorIcon(
+                type: d.type,
+                size: widget.isTablet ? 52 : 44,
+                color: d.accent,
+              ),
+              SizedBox(height: widget.isTablet ? 14 : 10),
               Text(
-                title,
+                d.title,
                 style: TextStyle(
-                  fontSize: isTablet ? 17 : 15,
-                  fontWeight: FontWeight.w600,
+                  fontSize: widget.isTablet ? 17 : 15,
+                  fontWeight: FontWeight.w800,
                   color: AppTheme.darkText,
                 ),
               ),
-              const SizedBox(height: 4),
+              const SizedBox(height: 3),
               Text(
-                subtitle,
+                d.subtitle,
                 style: TextStyle(
-                  fontSize: isTablet ? 13 : 12,
-                  color: AppTheme.darkText.withOpacity(0.6),
+                  fontSize: widget.isTablet ? 13 : 11,
+                  fontWeight: FontWeight.w600,
+                  color: AppTheme.darkText.withValues(alpha: 0.5),
                 ),
               ),
             ],
@@ -355,149 +570,316 @@ class _ModuleCard extends StatelessWidget {
   }
 }
 
-class _LearningTrail extends StatelessWidget {
-  const _LearningTrail({required this.isTablet});
+class _LearningPath extends StatelessWidget {
+  const _LearningPath({required this.isTablet});
   final bool isTablet;
+
+  static const _nodeColors = [
+    Color(0xFFFFC800),
+    Color(0xFF1CB0F6),
+    Color(0xFFCE82FF),
+    Color(0xFFFF9600),
+    Color(0xFF58CC02),
+    Color(0xFFFF4B4B),
+  ];
 
   @override
   Widget build(BuildContext context) {
     final progressState = context.watch<AppState>();
-    const nodeColors = [
-      Color(0xFFFFC94F),
-      Color(0xFF56B6D9),
-      Color(0xFF9A7AD1),
-      Color(0xFFFF906A),
-      Color(0xFF69B77B),
-      Color(0xFFE17B9B),
-    ];
     const lessons = qaidaLetters;
     final progress = lessons
-        .where((lesson) => progressState.hasCompletedLesson(lesson.id))
+        .where((l) => progressState.hasCompletedLesson(l.id))
         .length;
+
+    // Find first unlocked incomplete index for "current" highlight
+    var currentIndex = 0;
+    for (var i = 0; i < lessons.length; i++) {
+      if (!progressState.hasCompletedLesson(lessons[i].id)) {
+        currentIndex = i;
+        break;
+      }
+      currentIndex = i;
+    }
+
     return Container(
-      padding: EdgeInsets.all(isTablet ? 22 : 16),
+      margin: EdgeInsets.symmetric(horizontal: isTablet ? 36 : 18),
+      padding: EdgeInsets.fromLTRB(
+        isTablet ? 20 : 14,
+        isTablet ? 20 : 16,
+        isTablet ? 20 : 14,
+        isTablet ? 16 : 12,
+      ),
       decoration: BoxDecoration(
+        color: Colors.white,
         borderRadius: BorderRadius.circular(24),
-        gradient: const LinearGradient(
-            colors: [Color(0xFFBFE58A), Color(0xFF91CC70)],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight),
-        boxShadow: const [
+        border: Border.all(color: const Color(0xFFE5E5E5), width: 2),
+        boxShadow: [
           BoxShadow(
-              color: Color(0x244A7D43), blurRadius: 12, offset: Offset(0, 5))
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
         ],
       ),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Row(children: [
-          const Expanded(
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                Text('তোমার শেখার পথ',
-                    style: TextStyle(
-                        color: AppTheme.darkText,
-                        fontSize: 19,
-                        fontWeight: FontWeight.w800)),
-                SizedBox(height: 3),
-                Text('প্রতিদিন একটু করে এগিয়ে চলো',
-                    style: TextStyle(color: Color(0xBB1A3C34), fontSize: 12)),
-              ])),
-          Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
-              decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: .8),
-                  borderRadius: BorderRadius.circular(16)),
-              child: Text('$progress / ${lessons.length} ⭐',
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  'ক্বায়দা পথ',
                   style: TextStyle(
-                      color: AppTheme.darkText,
-                      fontWeight: FontWeight.w800,
-                      fontSize: 12))),
-        ]),
-        const SizedBox(height: 18),
-        LayoutBuilder(builder: (context, constraints) {
-          const nodeWidth = 94.0;
-          final contentWidth = nodeWidth * lessons.length;
-          return SizedBox(
-            height: isTablet ? 145 : 137,
-            child: Scrollbar(
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: SizedBox(
-                  width: contentWidth,
-                  child: Stack(children: [
-                    Positioned(
-                        left: nodeWidth / 2,
-                        right: nodeWidth / 2,
-                        top: 35,
-                        child: Container(
-                            height: 8,
-                            decoration: BoxDecoration(
-                                color: Colors.white.withValues(alpha: .65),
-                                borderRadius: BorderRadius.circular(10)))),
-                    Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          for (var i = 0; i < lessons.length; i++)
-                            SizedBox(
-                              width: nodeWidth,
-                              child: _TrailNode(
-                                letter: lessons[i].letter,
-                                title: lessons[i].name,
-                                subtitle: progressState
-                                        .hasCompletedLesson(lessons[i].id)
-                                    ? 'সম্পন্ন'
-                                    : i > 0 &&
-                                            !progressState.hasCompletedLesson(
-                                                lessons[i - 1].id)
-                                        ? 'লক করা'
-                                        : i == 0
-                                            ? 'শুরু করো'
-                                            : 'পরের পাঠ',
-                                color: progressState
-                                        .hasCompletedLesson(lessons[i].id)
-                                    ? AppTheme.primaryGreen
-                                    : nodeColors[i % nodeColors.length],
-                                locked: i > 0 &&
-                                    !progressState
-                                        .hasCompletedLesson(lessons[i - 1].id),
-                                onTap: () =>
-                                    _openQaidaLesson(context, letterIndex: i),
+                    fontSize: isTablet ? 18 : 16,
+                    fontWeight: FontWeight.w900,
+                    color: AppTheme.darkText,
+                  ),
+                ),
+              ),
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFE8F8D8),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    VectorIcon(
+                      type: VectorIconType.star,
+                      size: 14,
+                      color: const Color(0xFF58A700),
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      '$progress / ${lessons.length}',
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w800,
+                        fontSize: 12,
+                        color: Color(0xFF58A700),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 6),
+          // Progress bar
+          ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: LinearProgressIndicator(
+              value: lessons.isEmpty ? 0 : progress / lessons.length,
+              minHeight: 10,
+              backgroundColor: const Color(0xFFE5E5E5),
+              valueColor:
+                  const AlwaysStoppedAnimation<Color>(Color(0xFF58CC02)),
+            ),
+          ),
+          const SizedBox(height: 18),
+          SizedBox(
+            height: isTablet ? 130 : 120,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              physics: const BouncingScrollPhysics(),
+              itemCount: lessons.length,
+              itemBuilder: (context, i) {
+                final lesson = lessons[i];
+                final done = progressState.hasCompletedLesson(lesson.id);
+                final locked = i > 0 &&
+                    !progressState.hasCompletedLesson(lessons[i - 1].id);
+                final isCurrent = i == currentIndex && !done;
+                final color = done
+                    ? const Color(0xFF58CC02)
+                    : _nodeColors[i % _nodeColors.length];
+
+                return Padding(
+                  padding: EdgeInsets.only(
+                    right: 8,
+                    left: i == 0 ? 4 : 0,
+                  ),
+                  child: _PathNode(
+                    letter: lesson.letter,
+                    name: lesson.name,
+                    color: color,
+                    locked: locked,
+                    done: done,
+                    isCurrent: isCurrent,
+                    onTap: locked
+                        ? null
+                        : () => _openQaidaLesson(context, letterIndex: i),
+                  ),
+                );
+              },
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            'আলিফ → ইয়া · পাশে স্ক্রল করো',
+            style: TextStyle(
+              fontSize: 11,
+              color: AppTheme.darkText.withValues(alpha: 0.45),
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _PathNode extends StatefulWidget {
+  const _PathNode({
+    required this.letter,
+    required this.name,
+    required this.color,
+    required this.locked,
+    required this.done,
+    required this.isCurrent,
+    required this.onTap,
+  });
+
+  final String letter;
+  final String name;
+  final Color color;
+  final bool locked;
+  final bool done;
+  final bool isCurrent;
+  final VoidCallback? onTap;
+
+  @override
+  State<_PathNode> createState() => _PathNodeState();
+}
+
+class _PathNodeState extends State<_PathNode>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _pulse;
+
+  @override
+  void initState() {
+    super.initState();
+    _pulse = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1200),
+    );
+    if (widget.isCurrent) _pulse.repeat(reverse: true);
+  }
+
+  @override
+  void didUpdateWidget(covariant _PathNode old) {
+    super.didUpdateWidget(old);
+    if (widget.isCurrent && !_pulse.isAnimating) {
+      _pulse.repeat(reverse: true);
+    } else if (!widget.isCurrent && _pulse.isAnimating) {
+      _pulse.stop();
+      _pulse.value = 0;
+    }
+  }
+
+  @override
+  void dispose() {
+    _pulse.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: widget.onTap,
+      child: SizedBox(
+        width: 72,
+        child: Column(
+          children: [
+            AnimatedBuilder(
+              animation: _pulse,
+              builder: (context, child) {
+                final scale =
+                    widget.isCurrent ? 1.0 + (_pulse.value * 0.08) : 1.0;
+                return Transform.scale(scale: scale, child: child);
+              },
+              child: Container(
+                width: 62,
+                height: 62,
+                decoration: BoxDecoration(
+                  color: widget.locked
+                      ? const Color(0xFFE5E5E5)
+                      : widget.color,
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: Colors.white,
+                    width: 4,
+                  ),
+                  boxShadow: widget.locked
+                      ? null
+                      : [
+                          BoxShadow(
+                            color: widget.color.withValues(alpha: 0.45),
+                            blurRadius: 0,
+                            offset: const Offset(0, 5),
+                          ),
+                        ],
+                ),
+                child: Center(
+                  child: widget.locked
+                      ? VectorIcon(
+                          type: VectorIconType.lock,
+                          size: 24,
+                          color: const Color(0xFFAFAFAF),
+                        )
+                      : widget.done
+                          ? VectorIcon(
+                              type: VectorIconType.check,
+                              size: 28,
+                              color: Colors.white,
+                            )
+                          : Text(
+                              widget.letter,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 26,
+                                fontWeight: FontWeight.w900,
                               ),
                             ),
-                        ]),
-                  ]),
                 ),
               ),
             ),
-          );
-        }),
-        const Padding(
-          padding: EdgeInsets.only(top: 3, bottom: 9),
-          child: Text('আলিফ থেকে ইয়া পর্যন্ত ২৮টি হরফ · পথটি পাশে টেনে দেখো',
-              style: TextStyle(color: Color(0xBB1A3C34), fontSize: 10)),
+            const SizedBox(height: 8),
+            Text(
+              widget.name,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.w800,
+                color: widget.locked
+                    ? const Color(0xFFAFAFAF)
+                    : AppTheme.darkText,
+              ),
+            ),
+            const SizedBox(height: 2),
+            Text(
+              widget.done
+                  ? 'সম্পন্ন'
+                  : widget.locked
+                      ? 'লক'
+                      : widget.isCurrent
+                          ? 'এখন'
+                          : 'খোলা',
+              style: TextStyle(
+                fontSize: 10,
+                fontWeight: FontWeight.w600,
+                color: widget.done
+                    ? const Color(0xFF58A700)
+                    : widget.isCurrent
+                        ? widget.color
+                        : const Color(0xFFAFAFAF),
+              ),
+            ),
+          ],
         ),
-        Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-            decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: .78),
-                borderRadius: BorderRadius.circular(15)),
-            child: const Row(children: [
-              Icon(Icons.auto_awesome_rounded,
-                  color: AppTheme.secondaryGold, size: 18),
-              SizedBox(width: 8),
-              Expanded(
-                  child: Text('আজকের মিশন: ৩টি নতুন বর্ণ শেখো',
-                      style: TextStyle(
-                          color: AppTheme.darkText,
-                          fontWeight: FontWeight.w700,
-                          fontSize: 12))),
-              Text('+১০ XP',
-                  style: TextStyle(
-                      color: AppTheme.primaryGreen,
-                      fontWeight: FontWeight.w800,
-                      fontSize: 12))
-            ])),
-      ]),
+      ),
     );
   }
 }
@@ -529,58 +911,4 @@ void _openQaidaLesson(
             ),
     ),
   ));
-}
-
-class _TrailNode extends StatelessWidget {
-  const _TrailNode(
-      {required this.letter,
-      required this.title,
-      required this.subtitle,
-      required this.color,
-      required this.locked,
-      required this.onTap});
-  final String letter, title, subtitle;
-  final Color color;
-  final bool locked;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) => GestureDetector(
-        onTap: locked ? null : onTap,
-        child: Column(children: [
-          Container(
-              width: 66,
-              height: 66,
-              decoration: BoxDecoration(
-                  color: color,
-                  shape: BoxShape.circle,
-                  border: Border.all(color: Colors.white, width: 4),
-                  boxShadow: const [
-                    BoxShadow(
-                        color: Color(0x33436A37),
-                        offset: Offset(0, 4),
-                        blurRadius: 0)
-                  ]),
-              child: Center(
-                  child: locked
-                      ? const Icon(Icons.lock_rounded, color: Colors.white)
-                      : Text(letter,
-                          style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 29,
-                              fontWeight: FontWeight.w800)))),
-          const SizedBox(height: 7),
-          Text(title,
-              textAlign: TextAlign.center,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                  color: AppTheme.darkText,
-                  fontSize: 11,
-                  fontWeight: FontWeight.w800)),
-          const SizedBox(height: 2),
-          Text(subtitle,
-              style: const TextStyle(color: Color(0xAA1A3C34), fontSize: 10)),
-        ]),
-      );
 }
