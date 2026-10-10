@@ -33,6 +33,9 @@ migrate_working_dir/
 /build/
 /coverage/
 
+# Local duplicate project copy; the canonical Flutter app is at repository root.
+/LittleMuslim/
+
 # Symbolication related
 app.*.symbols
 

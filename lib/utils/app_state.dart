@@ -15,7 +15,7 @@ class AppState extends ChangeNotifier {
   final Set<String> _lessonActivity = {};
   final Set<String> _openedChests = {};
 
-  // Temporary values while user is going through onboarding
+  // In-progress onboarding values, kept separate until setup is completed.
   String draftName = '';
   int draftAge = 8;
   String draftLanguage = 'bn';
