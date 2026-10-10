@@ -26,6 +26,10 @@
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>আরবি অক্ষরের উচ্চারণ অনুশীলনের জন্য মাইক্রোফোন ব্যবহার করা হয়।</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>তোমার বলা আরবি অক্ষরটি চিনে অনুশীলনে সাহায্য করার জন্য speech recognition ব্যবহার করা হয়।</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

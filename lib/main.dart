@@ -1,33 +1,65 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
+import 'theme/app_theme.dart';
+import 'screens/onboarding/onboarding_screen.dart';
+import 'screens/home/home_screen.dart';
+import 'utils/app_state.dart';
 
-void main() => runApp(const MyApp());
+void main() {
+  WidgetsFlutterBinding.ensureInitialized();
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  // Portrait + Landscape support (phone & tablet friendly)
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+    DeviceOrientation.landscapeLeft,
+    DeviceOrientation.landscapeRight,
+  ]);
 
-  @override
-  Widget build(BuildContext context) => MaterialApp(
-        title: 'Flutter Demo',
-        theme: ThemeData(colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple)),
-        home: const MyHomePage(title: 'Flutter Demo Home Page'),
-      );
+  // Status bar style
+  SystemChrome.setSystemUIOverlayStyle(
+    const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: Brightness.dark,
+    ),
+  );
+
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => AppState()..loadFromPrefs(),
+      child: const LittleMuslimApp(),
+    ),
+  );
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-  final String title;
+class LittleMuslimApp extends StatelessWidget {
+  const LittleMuslimApp({super.key});
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'LittleMuslim',
+      debugShowCheckedModeBanner: false,
+      theme: AppTheme.lightTheme,
+      home: const _AppEntryPoint(),
+    );
+  }
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+class _AppEntryPoint extends StatelessWidget {
+  const _AppEntryPoint();
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(title: Text(widget.title), backgroundColor: Theme.of(context).colorScheme.inversePrimary),
-        body: Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [const Text('You have pushed the button this many times:'), Text('$_counter', style: Theme.of(context).textTheme.headlineMedium)])),
-        floatingActionButton: FloatingActionButton(onPressed: () => setState(() => _counter++), tooltip: 'Increment', child: const Icon(Icons.add)),
-      );
+  Widget build(BuildContext context) {
+    final appState = context.watch<AppState>();
+
+    // Show loading while prefs are loading (very short)
+    // After loadFromPrefs, hasCompletedOnboarding will be correct
+    if (appState.hasCompletedOnboarding) {
+      return const HomeScreen();
+    } else {
+      return const OnboardingScreen();
+    }
+  }
 }
