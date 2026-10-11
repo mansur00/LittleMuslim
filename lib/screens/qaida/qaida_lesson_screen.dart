@@ -1,3 +1,4 @@
+import '../../l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:provider/provider.dart';
@@ -250,20 +251,20 @@ class _QaidaLessonScreenState extends State<QaidaLessonScreen> {
           ),
           const SizedBox(width: 10),
           Expanded(
-            child: Text(stepData.$2,
+            child: LocalizedText(stepData.$2,
                 style: const TextStyle(
                     color: AppTheme.darkText,
                     fontWeight: FontWeight.w800,
                     fontSize: 16)),
           ),
-          Text('${_step + 1} / ${_stepNames.length}',
+          LocalizedText('${_step + 1} / ${_stepNames.length}',
               style: const TextStyle(
                   color: AppTheme.primaryGreen,
                   fontWeight: FontWeight.w800,
                   fontSize: 11)),
         ]),
         const SizedBox(height: 13),
-        Text(_stepPrompt,
+        LocalizedText(_stepPrompt,
             style: const TextStyle(
                 color: AppTheme.darkText,
                 fontSize: 17,
@@ -284,7 +285,7 @@ class _QaidaLessonScreenState extends State<QaidaLessonScreen> {
           FilledButton.icon(
             onPressed: _advanceStep,
             icon: const Icon(Icons.arrow_forward_rounded),
-            label: const Text('পরের ধাপে যাই'),
+            label: const LocalizedText('পরের ধাপে যাই'),
             style: FilledButton.styleFrom(
                 backgroundColor: AppTheme.primaryGreen,
                 minimumSize: const Size.fromHeight(48),
@@ -309,7 +310,7 @@ class _QaidaLessonScreenState extends State<QaidaLessonScreen> {
         OutlinedButton.icon(
           onPressed: _ttsAvailable ? _speakTarget : null,
           icon: const Icon(Icons.volume_up_rounded),
-          label: const Text('শব্দটি শুনি'),
+          label: const LocalizedText('শব্দটি শুনি'),
           style: OutlinedButton.styleFrom(
               foregroundColor: AppTheme.primaryGreen,
               minimumSize: const Size.fromHeight(45),
@@ -319,7 +320,7 @@ class _QaidaLessonScreenState extends State<QaidaLessonScreen> {
         const SizedBox(height: 12),
         _letterChoices(widget.options),
         const SizedBox(height: 6),
-        Text(
+        LocalizedText(
             _heardLetter
                 ? 'শুনে সঠিক হরফটি বেছে নাও।'
                 : 'অডিও না চললেও নমুনা দেখে হরফটি বেছে নিতে পারো।',
@@ -366,7 +367,7 @@ class _QaidaLessonScreenState extends State<QaidaLessonScreen> {
             color: const Color(0xFFEAF4EA),
             borderRadius: BorderRadius.circular(18)),
         alignment: Alignment.center,
-        child: Text(_dotlessLetter[widget.letter] ?? widget.letter,
+        child: LocalizedText(_dotlessLetter[widget.letter] ?? widget.letter,
             textDirection: TextDirection.rtl,
             style: const TextStyle(
                 color: AppTheme.primaryGreen,
@@ -374,7 +375,7 @@ class _QaidaLessonScreenState extends State<QaidaLessonScreen> {
                 fontWeight: FontWeight.w700)),
       ),
       const SizedBox(height: 10),
-      const Text('হরফের গায়ে ঠিক বিন্দুটি বসাও',
+      const LocalizedText('হরফের গায়ে ঠিক বিন্দুটি বসাও',
           style: TextStyle(color: Colors.black54, fontSize: 12)),
       const SizedBox(height: 12),
       Wrap(
@@ -411,7 +412,7 @@ class _QaidaLessonScreenState extends State<QaidaLessonScreen> {
             decoration: BoxDecoration(
                 color: const Color(0xFFEAF4EA),
                 borderRadius: BorderRadius.circular(15)),
-            child: Text(
+            child: LocalizedText(
               _recognizedWords.isEmpty
                   ? 'শান্তভাবে বলো: $_arabicName'
                   : 'শোনা গেছে: $_recognizedWords',
@@ -429,7 +430,7 @@ class _QaidaLessonScreenState extends State<QaidaLessonScreen> {
             FilledButton.icon(
               onPressed: _isListening ? _stopListening : _startListening,
               icon: Icon(_isListening ? Icons.stop_rounded : Icons.mic_rounded),
-              label: Text(_isListening ? 'শোনা বন্ধ করো' : 'চেপে বলো'),
+              label: LocalizedText(_isListening ? 'শোনা বন্ধ করো' : 'চেপে বলো'),
               style: FilledButton.styleFrom(
                   backgroundColor: _isListening
                       ? AppTheme.accentCoral
@@ -448,13 +449,13 @@ class _QaidaLessonScreenState extends State<QaidaLessonScreen> {
               FilledButton.icon(
                 onPressed: _confirmSelfPractice,
                 icon: const Icon(Icons.record_voice_over_rounded),
-                label: const Text('আমি উচ্চারণ করে ফেলেছি'),
+                label: const LocalizedText('আমি উচ্চারণ করে ফেলেছি'),
               ),
               const SizedBox(height: 4),
               OutlinedButton.icon(
                 onPressed: _confirmWithGuardian,
                 icon: const Icon(Icons.family_restroom_rounded),
-                label: const Text('অভিভাবক শুনে নিশ্চিত করবেন'),
+                label: const LocalizedText('অভিভাবক শুনে নিশ্চিত করবেন'),
               ),
             ]),
           if (_speechAvailable && !_stagePassed) ...[
@@ -462,11 +463,11 @@ class _QaidaLessonScreenState extends State<QaidaLessonScreen> {
             OutlinedButton.icon(
               onPressed: _confirmWithGuardian,
               icon: const Icon(Icons.family_restroom_rounded),
-              label: const Text('অভিভাবক শুনে নিশ্চিত করবেন'),
+              label: const LocalizedText('অভিভাবক শুনে নিশ্চিত করবেন'),
             ),
           ],
           const SizedBox(height: 10),
-          const Text(
+          const LocalizedText(
               'ভয়েস মিলিয়ে দেখা একটি প্রাথমিক অনুশীলন। সঠিক মাখরাজের জন্য শিক্ষক/অভিভাবকের শোনা জরুরি।',
               textAlign: TextAlign.center,
               style:
@@ -490,8 +491,8 @@ class _QaidaLessonScreenState extends State<QaidaLessonScreen> {
             color: Color(0xFFFFC800),
           ),
           const SizedBox(height: 10),
-          Text(
-              _lessonAlreadyCompleted
+          LocalizedText(
+              _lessonAlreadyCompleted && !_earnedXp
                   ? 'এই পাঠটি আগেই শেষ করেছ!'
                   : 'সব ধাপ শেষ করেছ, মাশাআল্লাহ!',
               textAlign: TextAlign.center,
@@ -500,7 +501,7 @@ class _QaidaLessonScreenState extends State<QaidaLessonScreen> {
                   fontSize: 20,
                   fontWeight: FontWeight.w900)),
           const SizedBox(height: 7),
-          const Text('শোনা · রূপ চেনা · বিন্দুর পাজল · কুইজ · বলা',
+          const LocalizedText('শোনা · রূপ চেনা · বিন্দুর পাজল · কুইজ · বলা',
               textAlign: TextAlign.center,
               style: TextStyle(color: Colors.black54, fontSize: 12)),
           const SizedBox(height: 16),
@@ -509,10 +510,10 @@ class _QaidaLessonScreenState extends State<QaidaLessonScreen> {
             decoration: BoxDecoration(
                 color: const Color(0xFFFFF4D7),
                 borderRadius: BorderRadius.circular(14)),
-            child: Text(
-                _earnedXp || _lessonAlreadyCompleted
-                    ? 'এই পাঠের +১০ XP আগেই পেয়েছ!'
-                    : 'পাঠ শেষ হলে +১০ XP পাবে',
+            child: LocalizedText(
+                _earnedXp
+                    ? 'এই পাঠ শেষ করে +১০ XP পেয়েছ!'
+                    : 'এই পাঠের +১০ XP আগেই পেয়েছ!',
                 style: const TextStyle(
                     color: AppTheme.darkText,
                     fontWeight: FontWeight.w800,
@@ -527,7 +528,7 @@ class _QaidaLessonScreenState extends State<QaidaLessonScreen> {
               icon: Icon(widget.nextLesson == null
                   ? Icons.check_circle_rounded
                   : Icons.arrow_forward_rounded),
-              label: Text(widget.nextLesson == null
+              label: LocalizedText(widget.nextLesson == null
                   ? 'পাঠ শেষ করি'
                   : 'পরের পাঠ: ${widget.nextLesson!.lessonTitle}'),
               style: FilledButton.styleFrom(
@@ -577,9 +578,12 @@ class _QaidaLessonScreenState extends State<QaidaLessonScreen> {
   Future<void> _advanceStep() async {
     if (!_stagePassed || _step >= 5) return;
     final nextStep = _step + 1;
-    await context
-        .read<AppState>()
-        .saveQaidaLessonStep(widget.lessonId, nextStep);
+    final appState = context.read<AppState>();
+    await appState.saveQaidaLessonStep(widget.lessonId, nextStep);
+    if (nextStep == 5) {
+      _earnedXp = await appState.completeLesson(widget.lessonId);
+      _lessonAlreadyCompleted = true;
+    }
     if (!mounted) return;
     setState(() {
       _step = nextStep;
@@ -596,8 +600,8 @@ class _QaidaLessonScreenState extends State<QaidaLessonScreen> {
     } catch (_) {
       if (!mounted) return;
       setState(() => _ttsAvailable = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('এই ডিভাইসে শব্দ শোনানো যাচ্ছে না।')));
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: LocalizedText('এই ডিভাইসে শব্দ শোনানো যাচ্ছে না।')));
     }
   }
 
@@ -673,16 +677,16 @@ class _QaidaLessonScreenState extends State<QaidaLessonScreen> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('অভিভাবকের সাহায্য'),
-        content: Text(
+        title: const LocalizedText('অভিভাবকের সাহায্য'),
+        content: LocalizedText(
             'শিশুটি কি “$_arabicName” বলার চেষ্টা করেছে? শুনে ঠিক মনে হলে নিশ্চিত করুন।'),
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(context, false),
-              child: const Text('আবার চেষ্টা')),
+              child: const LocalizedText('আবার চেষ্টা')),
           FilledButton(
               onPressed: () => Navigator.pop(context, true),
-              child: const Text('শুনেছি, ঠিক বলেছে')),
+              child: const LocalizedText('শুনেছি, ঠিক বলেছে')),
         ],
       ),
     );
@@ -777,7 +781,7 @@ class _LessonHeader extends StatelessWidget {
               const Icon(Icons.star_rounded,
                   color: AppTheme.secondaryGold, size: 19),
               const SizedBox(width: 3),
-              Text('$xp',
+              LocalizedText('$xp',
                   style: const TextStyle(
                       color: AppTheme.darkText,
                       fontWeight: FontWeight.w800,
@@ -809,7 +813,7 @@ class _StepIndicator extends StatelessWidget {
                         ? const Color(0xFFDCEEDC)
                         : Colors.white,
                 borderRadius: BorderRadius.circular(15)),
-            child: Text(names[index],
+            child: LocalizedText(names[index],
                 style: TextStyle(
                     color: index == step
                         ? Colors.white
@@ -856,7 +860,7 @@ class _LetterHero extends StatelessWidget {
                 gradient: LinearGradient(
                     colors: [Color(0xFFE8F5E9), Color(0xFFF7F4E9)])),
             alignment: Alignment.center,
-            child: Text(letter,
+            child: LocalizedText(letter,
                 textDirection: TextDirection.rtl,
                 style: const TextStyle(
                     color: AppTheme.primaryGreen,
@@ -869,19 +873,19 @@ class _LetterHero extends StatelessWidget {
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                Text(title,
+                LocalizedText(title,
                     style: const TextStyle(
                         color: AppTheme.darkText,
                         fontSize: 14,
                         fontWeight: FontWeight.w800)),
                 const SizedBox(height: 3),
-                Text('$name · $arabicName',
+                LocalizedText('$name · $arabicName',
                     style:
                         const TextStyle(color: Colors.black54, fontSize: 12)),
               ])),
           IconButton.filledTonal(
             onPressed: canSpeak ? onSpeak : null,
-            tooltip: 'হরফের নাম শোনো',
+            tooltip: context.uiText('হরফের নাম শোনো'),
             icon: const Icon(Icons.volume_up_rounded),
             style: IconButton.styleFrom(
                 foregroundColor: AppTheme.primaryGreen,
@@ -920,12 +924,12 @@ class _ChoiceTile extends StatelessWidget {
             child:
                 Column(mainAxisAlignment: MainAxisAlignment.center, children: [
               if (glyph != null)
-                Text(glyph!,
+                LocalizedText(glyph!,
                     style: const TextStyle(
                         color: AppTheme.primaryGreen,
                         fontSize: 22,
                         fontWeight: FontWeight.w800)),
-              Text(label,
+              LocalizedText(label,
                   textDirection: isArabic ? TextDirection.rtl : null,
                   textAlign: TextAlign.center,
                   style: TextStyle(
@@ -950,7 +954,7 @@ class _FeedbackBanner extends StatelessWidget {
         decoration: BoxDecoration(
             color: success ? const Color(0xFFE8F5E9) : const Color(0xFFFFF1E9),
             borderRadius: BorderRadius.circular(15)),
-        child: Text(text,
+        child: LocalizedText(text,
             textAlign: TextAlign.center,
             style: TextStyle(
                 color: success ? AppTheme.primaryGreen : AppTheme.accentCoral,
@@ -1088,13 +1092,13 @@ class _MakhrajNote extends StatelessWidget {
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                const Text('শুরুর মাখরাজ নোট',
+                const LocalizedText('শুরুর মাখরাজ নোট',
                     style: TextStyle(
                         color: AppTheme.primaryGreen,
                         fontSize: 12,
                         fontWeight: FontWeight.w800)),
                 const SizedBox(height: 3),
-                Text(note,
+                LocalizedText(note,
                     style: const TextStyle(
                         color: AppTheme.darkText, fontSize: 12, height: 1.45)),
               ])),

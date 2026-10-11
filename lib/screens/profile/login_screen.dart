@@ -1,3 +1,4 @@
+import '../../l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 
 import '../../theme/app_theme.dart';
@@ -35,7 +36,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   gradientColors: const [Color(0xFF0D7377), Color(0xFF159A8C)],
                   onBack: () => Navigator.pop(context),
                 ),
-                Text(
+                LocalizedText(
                   _createAccount ? 'নতুন account তৈরি করো' : 'আবার স্বাগতম',
                   textAlign: TextAlign.center,
                   style: const TextStyle(
@@ -44,7 +45,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       fontWeight: FontWeight.w900),
                 ),
                 const SizedBox(height: 7),
-                const Text(
+                const LocalizedText(
                     'অভিভাবকের email দিয়ে শিক্ষার্থীর profile সংযুক্ত করো',
                     textAlign: TextAlign.center,
                     style: TextStyle(
@@ -83,7 +84,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         onPressed: () =>
                             ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
-                              content: Text(
+                              content: LocalizedText(
                                   'Login service এখনো যুক্ত হয়নি; কোনো password সংরক্ষণ করা হয়নি।')),
                         ),
                         text: _createAccount ? 'Account তৈরি করো' : 'Login',
@@ -92,7 +93,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     TextButton(
                       onPressed: () =>
                           setState(() => _createAccount = !_createAccount),
-                      child: Text(_createAccount
+                      child: LocalizedText(_createAccount
                           ? 'আগে থেকেই account আছে? Login'
                           : 'নতুন account তৈরি করো'),
                     ),
@@ -104,7 +105,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   decoration: BoxDecoration(
                       color: const Color(0xFFFFF0D1),
                       borderRadius: BorderRadius.circular(16)),
-                  child: const Text(
+                  child: const LocalizedText(
                     'এটি login page-এর preview। নিরাপদ account চালুর জন্য authentication backend, email verification ও password recovery যুক্ত করতে হবে।',
                     textAlign: TextAlign.center,
                     style: TextStyle(

@@ -1,3 +1,4 @@
+import '../../l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 
 import '../../theme/app_theme.dart';
@@ -345,7 +346,7 @@ class PrayerScreen extends StatelessWidget {
                         ],
                       ),
                       const SizedBox(height: 12),
-                      const Text(
+                      const LocalizedText(
                           'ঘড়ির সঠিক ওয়াক্ত শহর, তারিখ ও হিসাব-পদ্ধতি অনুযায়ী বদলায়। এই screen-এ এখন ওয়াক্তের সীমা শেখানো হচ্ছে; নির্দিষ্ট আজকের সময় জানতে স্থানীয় মসজিদ/বিশ্বস্ত ক্যালেন্ডার দেখো।',
                           style: TextStyle(
                               color: Colors.black54,
@@ -443,21 +444,21 @@ class PrayerScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(24)),
                   child: Icon(step.$4, size: 38, color: step.$5)),
               const SizedBox(height: 13),
-              Text('ধাপ ${activeIndex + 1} · ${step.$2}',
+              LocalizedText('ধাপ ${activeIndex + 1} · ${step.$2}',
                   textAlign: TextAlign.center,
                   style: const TextStyle(
                       color: AppTheme.darkText,
                       fontSize: 20,
                       fontWeight: FontWeight.w800)),
               const SizedBox(height: 7),
-              Text(detail.$1,
+              LocalizedText(detail.$1,
                   textAlign: TextAlign.center,
                   style: const TextStyle(
                       color: AppTheme.primaryGreen,
                       fontSize: 14,
                       fontWeight: FontWeight.w800)),
               const SizedBox(height: 9),
-              Text(detail.$2,
+              LocalizedText(detail.$2,
                   textAlign: TextAlign.center,
                   style: const TextStyle(color: Colors.black54, height: 1.55)),
               const SizedBox(height: 15),
@@ -466,7 +467,7 @@ class PrayerScreen extends StatelessWidget {
                   decoration: BoxDecoration(
                       color: const Color(0xFFFFF2CE),
                       borderRadius: BorderRadius.circular(15)),
-                  child: const Text(
+                  child: const LocalizedText(
                       'মাযহাবভেদে কিছু নিয়মে পার্থক্য থাকতে পারে—পরিবারের অভিভাবক বা শিক্ষকের কাছ থেকে নিজের পদ্ধতিটি শিখে নাও।',
                       textAlign: TextAlign.center,
                       style: TextStyle(
@@ -480,7 +481,7 @@ class PrayerScreen extends StatelessWidget {
                       child: OutlinedButton.icon(
                           onPressed: () => setSheetState(() => activeIndex--),
                           icon: const Icon(Icons.arrow_back_rounded),
-                          label: const Text('আগের ধাপ')))
+                          label: const LocalizedText('আগের ধাপ')))
                 else
                   const Spacer(),
                 const SizedBox(width: 10),
@@ -492,7 +493,7 @@ class PrayerScreen extends StatelessWidget {
                         icon: Icon(activeIndex < _steps.length - 1
                             ? Icons.arrow_forward_rounded
                             : Icons.check_rounded),
-                        label: Text(activeIndex < _steps.length - 1
+                        label: LocalizedText(activeIndex < _steps.length - 1
                             ? 'পরের ধাপ'
                             : 'শেষ করি'),
                         style: FilledButton.styleFrom(
@@ -528,18 +529,18 @@ class _PrayerTimesCard extends StatelessWidget {
                 child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                  Text('নামাজের সময়',
+                  LocalizedText('নামাজের সময়',
                       style: TextStyle(
                           color: AppTheme.darkText,
                           fontWeight: FontWeight.w800,
                           fontSize: 16)),
                   SizedBox(height: 3),
-                  Text('শহর ও গণনা-পদ্ধতি সেটআপ বাকি',
+                  LocalizedText('শহর ও গণনা-পদ্ধতি সেটআপ বাকি',
                       style: TextStyle(color: Colors.black54, fontSize: 11))
                 ])),
             TextButton(
                 onPressed: () => _showSetupNotice(context),
-                child: const Text('সেটআপ'))
+                child: const LocalizedText('সেটআপ'))
           ]),
           const SizedBox(height: 10),
           const Divider(height: 1, color: Color(0xFFECEDE7)),
@@ -550,7 +551,7 @@ class _PrayerTimesCard extends StatelessWidget {
                   name: prayer.$1, arabic: prayer.$2, icon: prayer.$3)
           ]),
           const SizedBox(height: 11),
-          const Text(
+          const LocalizedText(
               'সময় দেখানোর আগে সঠিক শহর ও হিসাব-পদ্ধতি নির্বাচন করতে হবে।',
               style:
                   TextStyle(color: Colors.black45, fontSize: 10, height: 1.5)),
@@ -562,7 +563,7 @@ class _PrayerTimesCard extends StatelessWidget {
       ..hideCurrentSnackBar()
       ..showSnackBar(const SnackBar(
           content:
-              Text('লোকেশন ও নামাজের হিসাব-পদ্ধতি সেটআপ পরের ধাপে যোগ হবে।'),
+              LocalizedText('লোকেশন ও নামাজের হিসাব-পদ্ধতি সেটআপ পরের ধাপে যোগ হবে।'),
           behavior: SnackBarBehavior.floating));
   }
 }
@@ -582,17 +583,17 @@ class _PrayerTimeChip extends StatelessWidget {
         child: Column(children: [
           Icon(icon, size: 18, color: AppTheme.secondaryGold),
           const SizedBox(height: 5),
-          Text(name,
+          LocalizedText(name,
               style: const TextStyle(
                   color: AppTheme.darkText,
                   fontWeight: FontWeight.w800,
                   fontSize: 12)),
-          Text(arabic,
+          LocalizedText(arabic,
               textDirection: TextDirection.rtl,
               style:
                   const TextStyle(color: AppTheme.primaryGreen, fontSize: 11)),
           const SizedBox(height: 4),
-          const Text('--:--',
+          const LocalizedText('--:--',
               style: TextStyle(
                   color: Colors.black38,
                   fontWeight: FontWeight.w700,
@@ -640,7 +641,7 @@ class _StepCard extends StatelessWidget {
                           color: const Color(0xFFFFF2CE),
                           borderRadius: BorderRadius.circular(8)),
                       alignment: Alignment.center,
-                      child: Text(number,
+                      child: LocalizedText(number,
                           style: const TextStyle(
                               color: Color(0xFFA57910),
                               fontSize: 10,
@@ -650,13 +651,13 @@ class _StepCard extends StatelessWidget {
                       child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                        Text(title,
+                        LocalizedText(title,
                             style: const TextStyle(
                                 color: AppTheme.darkText,
                                 fontWeight: FontWeight.w800,
                                 fontSize: 13)),
                         const SizedBox(height: 3),
-                        Text(detail,
+                        LocalizedText(detail,
                             style: const TextStyle(
                                 color: Colors.black54, fontSize: 10))
                       ])),
@@ -701,12 +702,12 @@ class _PrayerChapterGroup extends StatelessWidget {
               backgroundColor: color,
               child: Icon(icon, color: AppTheme.primaryGreen),
             ),
-            title: Text(title,
+            title: LocalizedText(title,
                 style: const TextStyle(
                     color: AppTheme.darkText,
                     fontWeight: FontWeight.w900,
                     fontSize: 15)),
-            subtitle: Text('$number · $subtitle',
+            subtitle: LocalizedText('$number · $subtitle',
                 style: const TextStyle(color: Colors.black54, fontSize: 11)),
             children: children,
           ),
@@ -738,14 +739,14 @@ class _PrayerChapterTile extends StatelessWidget {
                   borderRadius: BorderRadius.circular(14)),
               child: Icon(chapter.icon, color: chapter.color, size: 23),
             ),
-            title: Text(chapter.title,
+            title: LocalizedText(chapter.title,
                 style: const TextStyle(
                     color: AppTheme.darkText,
                     fontWeight: FontWeight.w900,
                     fontSize: 15)),
             subtitle: Padding(
               padding: const EdgeInsets.only(top: 3),
-              child: Text(chapter.rakat,
+              child: LocalizedText(chapter.rakat,
                   style: const TextStyle(
                       color: AppTheme.primaryGreen,
                       fontSize: 11,
@@ -762,57 +763,57 @@ class _PrayerChapterTile extends StatelessWidget {
                 child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('ওয়াক্ত',
+                      const LocalizedText('ওয়াক্ত',
                           style: TextStyle(
                               color: AppTheme.darkText,
                               fontSize: 12,
                               fontWeight: FontWeight.w900)),
                       const SizedBox(height: 4),
-                      Text(chapter.time,
+                      LocalizedText(chapter.time,
                           style: const TextStyle(
                               color: AppTheme.primaryGreen,
                               fontSize: 13,
                               height: 1.5,
                               fontWeight: FontWeight.w800)),
                       const SizedBox(height: 9),
-                      const Text('কীভাবে পড়ি',
+                      const LocalizedText('কীভাবে পড়ি',
                           style: TextStyle(
                               color: AppTheme.darkText,
                               fontSize: 12,
                               fontWeight: FontWeight.w900)),
                       const SizedBox(height: 4),
-                      Text(chapter.rule,
+                      LocalizedText(chapter.rule,
                           style: const TextStyle(
                               color: AppTheme.darkText,
                               fontSize: 12,
                               height: 1.6)),
                       const SizedBox(height: 9),
-                      const Text('সময় ও নিয়মের কথা',
+                      const LocalizedText('সময় ও নিয়মের কথা',
                           style: TextStyle(
                               color: AppTheme.darkText,
                               fontSize: 12,
                               fontWeight: FontWeight.w900)),
                       const SizedBox(height: 4),
-                      Text(chapter.note,
+                      LocalizedText(chapter.note,
                           style: const TextStyle(
                               color: AppTheme.darkText,
                               fontSize: 12,
                               height: 1.6)),
                       const SizedBox(height: 10),
-                      const Text('ফজিলত',
+                      const LocalizedText('ফজিলত',
                           style: TextStyle(
                               color: AppTheme.darkText,
                               fontSize: 12,
                               fontWeight: FontWeight.w900)),
                       const SizedBox(height: 4),
-                      Text(chapter.virtue,
+                      LocalizedText(chapter.virtue,
                           style: const TextStyle(
                               color: AppTheme.darkText,
                               fontSize: 12,
                               height: 1.6)),
                       if (chapter.reference.isNotEmpty) ...[
                         const SizedBox(height: 5),
-                        Text('সূত্র: ${chapter.reference}',
+                        LocalizedText('সূত্র: ${chapter.reference}',
                             style: const TextStyle(
                                 color: Colors.black54,
                                 fontSize: 10,

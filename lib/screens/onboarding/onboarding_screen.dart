@@ -1,3 +1,4 @@
+import '../../l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
@@ -29,7 +30,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       if (appState.draftName.trim().isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: const Text('তোমার নাম লিখো প্লিজ'),
+            content: const LocalizedText('তোমার নাম লিখো প্লিজ'),
             backgroundColor: AppTheme.accentCoral,
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -89,7 +90,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         curve: Curves.easeInOut,
                       );
                     },
-                    child: Text(
+                    child: LocalizedText(
                       'Skip',
                       style: TextStyle(
                         color: AppTheme.primaryGreen.withOpacity(0.7),
@@ -175,7 +176,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                 borderRadius: BorderRadius.circular(16),
                               ),
                             ),
-                            child: const Text('পেছনে'),
+                            child: const LocalizedText('পেছনে'),
                           ),
                         ),
                         const SizedBox(width: 16),
@@ -189,7 +190,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                 vertical: isTablet ? 18 : 14,
                               ),
                             ),
-                            child: const Text('পরবর্তী'),
+                            child: const LocalizedText('পরবর্তী'),
                           ),
                         ),
                       ],

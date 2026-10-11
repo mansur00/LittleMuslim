@@ -27,6 +27,9 @@ class AppState extends ChangeNotifier {
   final Set<String> _lessonActivity = {};
   final Set<String> _openedChests = {};
   final Map<String, int> _qaidaLessonSteps = {};
+  final Set<String> _duaFavorites = {};
+  final Map<String, int> _quizResults = {};
+  final Map<String, int> _basicsProgress = {};
   final Set<String> _quranBookmarks = {};
   QuranReadingPosition? _quranReadingPosition;
   Future<void> _progressSaveQueue = Future<void>.value();
@@ -81,6 +84,35 @@ class AppState extends ChangeNotifier {
   bool isQuranAyahBookmarked(int surahNumber, int ayahNumber) =>
       _quranBookmarks.contains(_quranBookmarkKey(surahNumber, ayahNumber));
   Set<String> get quranBookmarks => Set.unmodifiable(_quranBookmarks);
+  Set<String> get duaFavorites => Set.unmodifiable(_duaFavorites);
+  bool isDuaFavorite(String duaId) => _duaFavorites.contains(duaId);
+  int? quizResult(String id) => _quizResults[id];
+  int basicsProgress(String chapterId) => _basicsProgress[chapterId] ?? 0;
+
+  Future<void> toggleDuaFavorite(String duaId) async {
+    if (duaId.isEmpty) return;
+    if (!_duaFavorites.add(duaId)) _duaFavorites.remove(duaId);
+    notifyListeners();
+    await _saveProgress();
+  }
+
+  Future<void> recordQuizResult(String quizId, int score) async {
+    if (quizId.isEmpty || score < 0) return;
+    _quizResults[quizId] = score;
+    notifyListeners();
+    await _saveProgress();
+  }
+
+  Future<void> saveBasicsProgress(String chapterId, int step) async {
+    if (chapterId.isEmpty || step < 0) return;
+    _basicsProgress[chapterId] = step;
+    await _saveProgress();
+  }
+
+  Future<void> clearBasicsProgress(String chapterId) async {
+    _basicsProgress.remove(chapterId);
+    await _saveProgress();
+  }
 
   Future<void> loadFromPrefs() async {
     final prefs = await SharedPreferences.getInstance();
@@ -89,7 +121,7 @@ class AppState extends ChangeNotifier {
     _hasCompletedOnboarding = prefs.getBool('onboarding_done') ?? false;
     _userName = prefs.getString('user_name') ?? '';
     _age = prefs.getInt('user_age') ?? 8;
-    _selectedLanguage = prefs.getString('language') ?? 'bn';
+    _selectedLanguage = prefs.getString('language') == 'en' ? 'en' : 'bn';
     final savedXp = savedProgress?['xp'];
     _xp = savedXp is int && savedXp >= 0 ? savedXp : prefs.getInt('xp') ?? 0;
     _streakAlertsEnabled = prefs.getBool('streak_alerts') ?? true;
@@ -113,6 +145,16 @@ class AppState extends ChangeNotifier {
           prefs.getString('qaida_lesson_steps')));
     _qaidaLessonSteps
         .removeWhere((lessonId, _) => _completedLessons.contains(lessonId));
+    _duaFavorites
+      ..clear()
+      ..addAll(_savedStringList(savedProgress?['duaFavorites'],
+          prefs.getStringList('dua_favorites')));
+    _quizResults
+      ..clear()
+      ..addAll(_readIntMap(savedProgress?['quizResults']));
+    _basicsProgress
+      ..clear()
+      ..addAll(_readIntMap(savedProgress?['basicsProgress']));
     _quranBookmarks
       ..clear()
       ..addAll(prefs.getStringList('quran_bookmarks') ?? const []);
@@ -154,6 +196,9 @@ class AppState extends ChangeNotifier {
       'lessonActivity': lessonActivity,
       'openedChests': openedChests,
       'qaidaLessonSteps': _qaidaLessonSteps,
+      'duaFavorites': _duaFavorites.toList(),
+      'quizResults': _quizResults,
+      'basicsProgress': _basicsProgress,
     });
     final save = _progressSaveQueue.catchError((_) {}).then((_) async {
       final prefs = await SharedPreferences.getInstance();
@@ -298,6 +343,18 @@ class AppState extends ChangeNotifier {
     }
   }
 
+  Map<String, int> _readIntMap(Object? raw) {
+    if (raw is! Map) return {};
+    return {
+      for (final entry in raw.entries)
+        if (entry.key is String &&
+            (entry.key as String).isNotEmpty &&
+            entry.value is int &&
+            (entry.value as int) >= 0)
+          entry.key as String: entry.value as int,
+    };
+  }
+
   QuranReadingPosition? _readQuranPosition(String? raw) {
     if (raw == null) return null;
     try {
@@ -358,14 +415,23 @@ class AppState extends ChangeNotifier {
   }
 
   void updateDraftLanguage(String lang) {
-    draftLanguage = lang;
+    draftLanguage = lang == 'en' ? 'en' : 'bn';
     notifyListeners();
+  }
+
+  Future<void> updateLanguage(String language) async {
+    final nextLanguage = language == 'en' ? 'en' : 'bn';
+    if (_selectedLanguage == nextLanguage) return;
+    _selectedLanguage = nextLanguage;
+    notifyListeners();
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('language', nextLanguage);
   }
 
   Future<void> completeOnboarding() async {
     final name = draftName.isNotEmpty ? draftName : 'Young Muslim';
     final age = draftAge;
-    final language = draftLanguage;
+    final language = draftLanguage == 'en' ? 'en' : 'bn';
 
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('onboarding_done', true);

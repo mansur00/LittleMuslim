@@ -1,3 +1,4 @@
+import '../../l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:provider/provider.dart';
@@ -119,7 +120,7 @@ class _QaidaNextCourseScreenState extends State<QaidaNextCourseScreen> {
     } catch (_) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text('এই ডিভাইসে আরবি অডিও পাওয়া যায়নি।'),
+        content: LocalizedText('এই ডিভাইসে আরবি অডিও পাওয়া যায়নি।'),
       ));
     }
   }
@@ -192,7 +193,7 @@ class _QaidaNextCourseScreenState extends State<QaidaNextCourseScreen> {
                             Color(0xFF14919B)
                           ],
                           onBack: () => Navigator.pop(context),
-                          trailing: Text('${_step + 1}/৫',
+                          trailing: LocalizedText('${_step + 1}/৫',
                               style: const TextStyle(
                                   color: Colors.white,
                                   fontWeight: FontWeight.w900)),
@@ -233,13 +234,13 @@ class _QaidaNextCourseScreenState extends State<QaidaNextCourseScreen> {
                                           color: AppTheme.primaryGreen,
                                           size: 30)),
                                   const SizedBox(height: 12),
-                                  Text(course.title,
+                                  LocalizedText(course.title,
                                       style: const TextStyle(
                                           fontSize: 23,
                                           fontWeight: FontWeight.w900,
                                           color: AppTheme.darkText)),
                                   const SizedBox(height: 5),
-                                  Text(course.description,
+                                  LocalizedText(course.description,
                                       textAlign: TextAlign.center,
                                       style: const TextStyle(
                                           color: Colors.black54,
@@ -247,7 +248,7 @@ class _QaidaNextCourseScreenState extends State<QaidaNextCourseScreen> {
                                   const SizedBox(height: 15),
                                   Directionality(
                                       textDirection: TextDirection.rtl,
-                                      child: Text(course.example,
+                                      child: LocalizedText(course.example,
                                           textAlign: TextAlign.center,
                                           style: TextStyle(
                                               fontSize: _index == 3 ? 27 : 38,
@@ -264,13 +265,13 @@ class _QaidaNextCourseScreenState extends State<QaidaNextCourseScreen> {
                                           borderRadius:
                                               BorderRadius.circular(15)),
                                       child: Column(children: [
-                                        Text(
+                                        LocalizedText(
                                             'ধাপ ${_step + 1}: ${exercise.stage}',
                                             style: const TextStyle(
                                                 fontWeight: FontWeight.w900,
                                                 color: AppTheme.primaryGreen)),
                                         const SizedBox(height: 5),
-                                        Text(exercise.prompt,
+                                        LocalizedText(exercise.prompt,
                                             textAlign: TextAlign.center,
                                             style: const TextStyle(
                                                 fontSize: 15,
@@ -285,7 +286,7 @@ class _QaidaNextCourseScreenState extends State<QaidaNextCourseScreen> {
                                 icon: const Icon(Icons.volume_up_rounded),
                                 onPressed: _playExample),
                             const SizedBox(height: 12),
-                            const Text('অনুশীলনটি করো',
+                            const LocalizedText('অনুশীলনটি করো',
                                 style: TextStyle(
                                     fontSize: 19,
                                     fontWeight: FontWeight.w900,
@@ -306,7 +307,7 @@ class _QaidaNextCourseScreenState extends State<QaidaNextCourseScreen> {
                             if (_checked)
                               Padding(
                                   padding: const EdgeInsets.only(bottom: 12),
-                                  child: Text(
+                                  child: LocalizedText(
                                       _selected == exercise.answer
                                           ? 'ঠিক হয়েছে! ধীরে পড়ে আবার মিলিয়ে নাও।'
                                           : 'আবার চেষ্টা করো—উদাহরণটি দেখে উত্তর বেছে নাও।',
@@ -381,7 +382,7 @@ class _AnswerTile extends StatelessWidget {
                     color: AppTheme.primaryGreen),
                 const SizedBox(width: 11),
                 Expanded(
-                    child: Text(text,
+                    child: LocalizedText(text,
                         style: const TextStyle(
                             fontWeight: FontWeight.w700,
                             color: AppTheme.darkText)))

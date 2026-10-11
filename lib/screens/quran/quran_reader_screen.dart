@@ -1,3 +1,4 @@
+import '../../l10n/app_localizations.dart';
 import 'dart:async';
 
 import 'package:audioplayers/audioplayers.dart';
@@ -74,19 +75,25 @@ class _QuranReaderScreenState extends State<QuranReaderScreen>
     try {
       final result = await _repository.getSurah(_surah);
       if (!mounted) return;
-      final initialAyah = result.ayahs.isEmpty ? 1 : widget.initialAyah.clamp(1, result.ayahs.length).toInt();
+      final initialAyah = result.ayahs.isEmpty
+          ? 1
+          : widget.initialAyah.clamp(1, result.ayahs.length).toInt();
       setState(() {
         _ayahs = result.ayahs;
         _loading = false;
         _currentAyah = initialAyah;
         _verseKeys
           ..clear()
-          ..addEntries(result.ayahs.map((ayah) => MapEntry(ayah.number, GlobalKey())));
+          ..addEntries(
+              result.ayahs.map((ayah) => MapEntry(ayah.number, GlobalKey())));
       });
       if (result.ayahs.isNotEmpty) {
-        await context.read<AppState>().saveQuranReadingPosition(_surah.number, initialAyah);
+        await context
+            .read<AppState>()
+            .saveQuranReadingPosition(_surah.number, initialAyah);
         if (!mounted) return;
-        WidgetsBinding.instance.addPostFrameCallback((_) => _restorePosition(initialAyah));
+        WidgetsBinding.instance
+            .addPostFrameCallback((_) => _restorePosition(initialAyah));
       }
     } catch (_) {
       if (!mounted) return;
@@ -100,14 +107,17 @@ class _QuranReaderScreenState extends State<QuranReaderScreen>
   Future<void> _restorePosition(int ayahNumber) async {
     final targetContext = _verseKeys[ayahNumber]?.currentContext;
     if (targetContext != null && mounted) {
-      await Scrollable.ensureVisible(targetContext, alignment: 0.05, duration: Duration.zero);
+      await Scrollable.ensureVisible(targetContext,
+          alignment: 0.05, duration: Duration.zero);
     }
     if (mounted) setState(() => _positionRestored = true);
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.inactive || state == AppLifecycleState.paused || state == AppLifecycleState.detached) {
+    if (state == AppLifecycleState.inactive ||
+        state == AppLifecycleState.paused ||
+        state == AppLifecycleState.detached) {
       _positionSaveTimer?.cancel();
       _saveVisiblePosition();
     }
@@ -115,19 +125,25 @@ class _QuranReaderScreenState extends State<QuranReaderScreen>
 
   void _queuePositionSave(ScrollNotification notification) {
     if (_loading || !_positionRestored) return;
-    final userMoved = notification is ScrollUpdateNotification && notification.dragDetails != null;
-    final scrollingEnded = notification is UserScrollNotification && notification.direction == ScrollDirection.idle;
+    final userMoved = notification is ScrollUpdateNotification &&
+        notification.dragDetails != null;
+    final scrollingEnded = notification is UserScrollNotification &&
+        notification.direction == ScrollDirection.idle;
     if (!userMoved && !scrollingEnded) return;
     _positionSaveTimer?.cancel();
-    _positionSaveTimer = Timer(const Duration(milliseconds: 250), _saveVisiblePosition);
+    _positionSaveTimer =
+        Timer(const Duration(milliseconds: 250), _saveVisiblePosition);
   }
 
   int? _findVisibleAyah() {
     final topLimit = MediaQuery.paddingOf(context).top + 80;
-    final bottomLimit = MediaQuery.sizeOf(context).height - MediaQuery.paddingOf(context).bottom - 12;
+    final bottomLimit = MediaQuery.sizeOf(context).height -
+        MediaQuery.paddingOf(context).bottom -
+        12;
     int? visibleAyah;
     for (final ayah in _ayahs) {
-      final renderObject = _verseKeys[ayah.number]?.currentContext?.findRenderObject();
+      final renderObject =
+          _verseKeys[ayah.number]?.currentContext?.findRenderObject();
       if (renderObject is! RenderBox || !renderObject.hasSize) continue;
       final top = renderObject.localToGlobal(Offset.zero).dy;
       final bottom = top + renderObject.size.height;
@@ -141,7 +157,9 @@ class _QuranReaderScreenState extends State<QuranReaderScreen>
     final visibleAyah = _findVisibleAyah();
     if (visibleAyah == null || visibleAyah == _currentAyah) return;
     setState(() => _currentAyah = visibleAyah);
-    await context.read<AppState>().saveQuranReadingPosition(_surah.number, visibleAyah);
+    await context
+        .read<AppState>()
+        .saveQuranReadingPosition(_surah.number, visibleAyah);
   }
 
   Future<void> _leaveReader() async {
@@ -151,7 +169,9 @@ class _QuranReaderScreenState extends State<QuranReaderScreen>
     final visibleAyah = _findVisibleAyah();
     if (visibleAyah != null) {
       try {
-        await context.read<AppState>().saveQuranReadingPosition(_surah.number, visibleAyah);
+        await context
+            .read<AppState>()
+            .saveQuranReadingPosition(_surah.number, visibleAyah);
       } catch (_) {
         // Keep the reader usable if local storage is temporarily unavailable.
       }
@@ -186,8 +206,8 @@ class _QuranReaderScreenState extends State<QuranReaderScreen>
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
         ..showSnackBar(const SnackBar(
-            content:
-                Text('অডিও চালু হয়নি। ইন্টারনেট সংযোগ দেখে আবার চেষ্টা করো।')));
+            content: LocalizedText(
+                'অডিও চালু হয়নি। ইন্টারনেট সংযোগ দেখে আবার চেষ্টা করো।')));
     }
   }
 
@@ -208,44 +228,70 @@ class _QuranReaderScreenState extends State<QuranReaderScreen>
               constraints: const BoxConstraints(maxWidth: 820),
               child: Column(children: [
                 Padding(
-                  padding: EdgeInsets.fromLTRB(tablet ? 36 : 18, 10, tablet ? 36 : 18, 8),
+                  padding: EdgeInsets.fromLTRB(
+                      tablet ? 36 : 18, 10, tablet ? 36 : 18, 8),
                   child: _ReaderToolbar(
-                    bookmarked: appState.isQuranAyahBookmarked(_surah.number, _currentAyah),
+                    bookmarked: appState.isQuranAyahBookmarked(
+                        _surah.number, _currentAyah),
                     onBack: _leaveReader,
-                    onBookmark: () => unawaited(appState.toggleQuranBookmark(_surah.number, _currentAyah)),
+                    onBookmark: () => unawaited(appState.toggleQuranBookmark(
+                        _surah.number, _currentAyah)),
                     fontSize: _fontSize,
-                    onSmaller: () => setState(() => _fontSize = (_fontSize - 2).clamp(23, 37)),
-                    onLarger: () => setState(() => _fontSize = (_fontSize + 2).clamp(23, 37)),
+                    onSmaller: () => setState(
+                        () => _fontSize = (_fontSize - 2).clamp(23, 37)),
+                    onLarger: () => setState(
+                        () => _fontSize = (_fontSize + 2).clamp(23, 37)),
                   ),
                 ),
                 Expanded(
                   child: NotificationListener<ScrollNotification>(
-                    onNotification: (notification) { _queuePositionSave(notification); return false; },
+                    onNotification: (notification) {
+                      _queuePositionSave(notification);
+                      return false;
+                    },
                     child: CustomScrollView(
                       controller: _scrollController,
                       slivers: [
                         SliverPadding(
-                          padding: EdgeInsets.fromLTRB(tablet ? 36 : 18, 10, tablet ? 36 : 18, 28),
+                          padding: EdgeInsets.fromLTRB(
+                              tablet ? 36 : 18, 10, tablet ? 36 : 18, 28),
                           sliver: SliverList(
                             delegate: SliverChildListDelegate([
                               const SizedBox(height: 7),
-                              _SurahHeading(surah: _surah, isPlaying: _isPlaying, onAudio: _toggleRecitation),
+                              _SurahHeading(
+                                  surah: _surah,
+                                  isPlaying: _isPlaying,
+                                  onAudio: _toggleRecitation),
                               const SizedBox(height: 17),
                               if (_loading)
-                                const Padding(padding: EdgeInsets.all(30), child: Center(child: CircularProgressIndicator()))
+                                const Padding(
+                                    padding: EdgeInsets.all(30),
+                                    child: Center(
+                                        child: CircularProgressIndicator()))
                               else if (_loadError != null)
-                                _ReaderLoadError(message: _loadError!, onRetry: _loadSurah)
+                                _ReaderLoadError(
+                                    message: _loadError!, onRetry: _loadSurah)
                               else if (_ayahs.isEmpty)
                                 const _ReaderEmpty()
                               else
                                 Column(children: [
                                   for (final ayah in _ayahs) ...[
-                                    _VerseCard(key: _verseKeys[ayah.number], ayah: ayah, number: ayah.number, fontSize: _fontSize),
+                                    _VerseCard(
+                                        key: _verseKeys[ayah.number],
+                                        ayah: ayah,
+                                        number: ayah.number,
+                                        fontSize: _fontSize),
                                     const SizedBox(height: 9),
                                   ],
                                 ]),
                               const SizedBox(height: 11),
-                              const Text('রঙিন তাজবিদ: Quran.com · বাংলা অর্থ: মুহিউদ্দীন খান, Al Quran Cloud', textAlign: TextAlign.center, style: TextStyle(color: Colors.black45, fontSize: 11, height: 1.5)),
+                              const LocalizedText(
+                                  'রঙিন তাজবিদ: Quran.com · বাংলা অর্থ: মুহিউদ্দীন খান, Al Quran Cloud',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      color: Colors.black45,
+                                      fontSize: 11,
+                                      height: 1.5)),
                             ]),
                           ),
                         ),
@@ -267,7 +313,8 @@ class _ReaderEmpty extends StatelessWidget {
   @override
   Widget build(BuildContext context) => const Padding(
         padding: EdgeInsets.all(24),
-        child: Center(child: Text('এই সূরায় এখন কোনো আয়াত পাওয়া যায়নি।')),
+        child:
+            Center(child: LocalizedText('এই সূরায় এখন কোনো আয়াত পাওয়া যায়নি।')),
       );
 }
 
@@ -290,26 +337,26 @@ class _ReaderToolbar extends StatelessWidget {
             style: IconButton.styleFrom(backgroundColor: Colors.white)),
         const SizedBox(width: 7),
         const Expanded(
-            child: Text('পাঠ মোড',
+            child: LocalizedText('পাঠ মোড',
                 style: TextStyle(
                     color: AppTheme.darkText,
                     fontWeight: FontWeight.w800,
                     fontSize: 16))),
         IconButton(
             onPressed: onSmaller,
-            tooltip: 'ছোট লেখা',
+            tooltip: context.uiText('ছোট লেখা'),
             icon: const Icon(Icons.text_decrease_rounded,
                 color: AppTheme.primaryGreen)),
-        Text('${fontSize.round()}',
+        LocalizedText('${fontSize.round()}',
             style: const TextStyle(color: Colors.black54, fontSize: 11)),
         IconButton(
             onPressed: onLarger,
-            tooltip: 'বড় লেখা',
+            tooltip: context.uiText('বড় লেখা'),
             icon: const Icon(Icons.text_increase_rounded,
                 color: AppTheme.primaryGreen)),
         IconButton.filledTonal(
             onPressed: onBookmark,
-            tooltip: bookmarked ? 'বুকমার্ক সরাও' : 'বুকমার্ক',
+            tooltip: context.uiText(bookmarked ? 'বুকমার্ক সরাও' : 'বুকমার্ক'),
             icon: Icon(
                 bookmarked
                     ? Icons.bookmark_rounded
@@ -334,7 +381,7 @@ class _SurahHeading extends StatelessWidget {
         margin: EdgeInsets.zero,
         padding: const EdgeInsets.symmetric(vertical: 22, horizontal: 18),
         child: Column(children: [
-          Text(surah.arabicName,
+          LocalizedText(surah.arabicName,
               textDirection: TextDirection.rtl,
               style: TextStyle(
                   color: AppTheme.primaryGreen,
@@ -342,13 +389,13 @@ class _SurahHeading extends StatelessWidget {
                   height: 1.7,
                   fontWeight: FontWeight.w700)),
           const SizedBox(height: 4),
-          Text('সূরা ${surah.englishName}',
+          LocalizedText('সূরা ${surah.englishName}',
               style: TextStyle(
                   color: AppTheme.darkText,
                   fontSize: 18,
                   fontWeight: FontWeight.w800)),
           const SizedBox(height: 5),
-          Text(
+          LocalizedText(
               '${surah.revelationType == 'Meccan' ? 'মক্কী' : 'মাদানী'}  ·  ${surah.ayahCount} আয়াত · ${surah.nameMeaning}',
               style: TextStyle(color: Colors.black54, fontSize: 12)),
           const SizedBox(height: 14),
@@ -357,7 +404,8 @@ class _SurahHeading extends StatelessWidget {
               icon: Icon(
                   isPlaying ? Icons.pause_rounded : Icons.play_arrow_rounded,
                   size: 19),
-              label: Text(isPlaying ? 'তিলাওয়াত থামাই' : 'তিলাওয়াত শুনি'),
+              label:
+                  LocalizedText(isPlaying ? 'তিলাওয়াত থামাই' : 'তিলাওয়াত শুনি'),
               style: OutlinedButton.styleFrom(
                   foregroundColor: AppTheme.primaryGreen,
                   side: const BorderSide(color: Color(0xFFB8D8C3), width: 1.3),
@@ -368,7 +416,10 @@ class _SurahHeading extends StatelessWidget {
 
 class _VerseCard extends StatelessWidget {
   const _VerseCard(
-      {super.key, required this.ayah, required this.number, required this.fontSize});
+      {super.key,
+      required this.ayah,
+      required this.number,
+      required this.fontSize});
   final QuranAyah ayah;
   final int number;
   final double fontSize;
@@ -390,7 +441,7 @@ class _VerseCard extends StatelessWidget {
                 fontWeight: FontWeight.w500),
           ),
           const SizedBox(height: 8),
-          Text(ayah.translation,
+          LocalizedText(ayah.translation,
               textAlign: TextAlign.right,
               style: const TextStyle(
                   color: Colors.black54, fontSize: 13, height: 1.6)),
@@ -404,7 +455,7 @@ class _VerseCard extends StatelessWidget {
                       color: const Color(0xFFFFF2CE),
                       borderRadius: BorderRadius.circular(9)),
                   alignment: Alignment.center,
-                  child: Text('$number',
+                  child: LocalizedText('$number',
                       style: const TextStyle(
                           color: Color(0xFFA57910),
                           fontSize: 11,
@@ -425,12 +476,12 @@ class _ReaderLoadError extends StatelessWidget {
         decoration: BoxDecoration(
             color: Colors.white, borderRadius: BorderRadius.circular(18)),
         child: Column(children: [
-          Text(message, textAlign: TextAlign.center),
+          LocalizedText(message, textAlign: TextAlign.center),
           const SizedBox(height: 10),
           OutlinedButton.icon(
               onPressed: onRetry,
               icon: const Icon(Icons.refresh_rounded),
-              label: const Text('আবার চেষ্টা করি')),
+              label: const LocalizedText('আবার চেষ্টা করি')),
         ]),
       );
 }

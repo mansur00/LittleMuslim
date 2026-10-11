@@ -9,6 +9,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
   cupertino_icons: ^1.0.8
   google_fonts: ^6.2.1
   flutter_svg: ^2.0.10+1
@@ -22,6 +24,7 @@ dependencies:
   page_transition: ^2.1.0
   smooth_page_indicator: ^1.2.0+3
   flutter_animate: ^4.5.0
+  url_launcher: ^6.3.3
 
 dev_dependencies:
   flutter_test:
@@ -34,6 +37,7 @@ flutter:
     - assets/images/
     - assets/fonts/
     - assets/audio/
+    - assets/l10n/
   # fonts:
   #   - family: Amiri
   #     fonts:

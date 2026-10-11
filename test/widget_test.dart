@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:little_muslim/screens/home/home_screen.dart';
 import 'package:little_muslim/screens/duas/duas_screen.dart';
@@ -8,9 +9,12 @@ import 'package:little_muslim/screens/qaida/qaida_letters.dart';
 import 'package:little_muslim/screens/quran/quran_screen.dart';
 import 'package:little_muslim/screens/quran/quran_data.dart';
 import 'package:little_muslim/screens/seerah/seerah_screen.dart';
+import 'package:little_muslim/screens/live_learning/class_schedule.dart';
+import 'package:little_muslim/screens/live_learning/live_learning_screen.dart';
 import 'package:little_muslim/screens/achievements/achievements_screen.dart';
 import 'package:little_muslim/screens/missions/daily_missions_screen.dart';
 import 'package:little_muslim/utils/app_state.dart';
+import 'package:little_muslim/l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -72,7 +76,334 @@ class _RetryQuranRepository extends _FakeQuranRepository {
   }
 }
 
+class _FakeClassScheduleRepository implements ClassScheduleRepository {
+  _FakeClassScheduleRepository(this.classes);
+  final List<LiveClass> classes;
+
+  @override
+  Future<List<LiveClass>> loadClasses() async => classes;
+}
+
+class _RetryClassScheduleRepository implements ClassScheduleRepository {
+  bool fail = true;
+
+  @override
+  Future<List<LiveClass>> loadClasses() async {
+    if (fail) {
+      fail = false;
+      throw Exception('schedule unavailable');
+    }
+    return [
+      LiveClass(
+        id: 'retry-class',
+        title: 'আবার চেষ্টা করা ক্লাস',
+        startAt: DateTime(2026, 3, 8, 9),
+        endAt: DateTime(2026, 3, 8, 10),
+      ),
+    ];
+  }
+}
+
+class _FakeMeetingLauncher implements MeetingLinkLauncher {
+  Uri? openedUri;
+  bool result = true;
+
+  @override
+  Future<bool> open(Uri uri) async {
+    openedUri = uri;
+    return result;
+  }
+}
+
+class _LocalizedTestApp extends StatelessWidget {
+  const _LocalizedTestApp({required this.state, required this.home});
+  final AppState state;
+  final Widget home;
+
+  @override
+  Widget build(BuildContext context) => ChangeNotifierProvider.value(
+        value: state,
+        child: Consumer<AppState>(
+          builder: (context, appState, _) => MaterialApp(
+            locale: Locale(appState.selectedLanguage),
+            supportedLocales: const [Locale('bn'), Locale('en')],
+            localizationsDelegates: const [
+              AppLocalizationsDelegate(),
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            home: home,
+          ),
+        ),
+      );
+}
+
+class _LanguageSwitcher extends StatelessWidget {
+  const _LanguageSwitcher({required this.state});
+  final AppState state;
+
+  @override
+  Widget build(BuildContext context) => Scaffold(
+        body: Column(
+          children: [
+            const LocalizedText('সেটিংস'),
+            DropdownButton<String>(
+              value: state.selectedLanguage,
+              items: const [
+                DropdownMenuItem(value: 'bn', child: Text('বাংলা')),
+                DropdownMenuItem(value: 'en', child: Text('English')),
+              ],
+              onChanged: (value) {
+                if (value != null) state.updateLanguage(value);
+              },
+            ),
+          ],
+        ),
+      );
+}
+
 void main() {
+  testWidgets('language switch updates screens and persists after restart',
+      (tester) async {
+    SharedPreferences.setMockInitialValues({'language': 'bn'});
+    final state = AppState();
+    await state.loadFromPrefs();
+    await tester.pumpWidget(
+        _LocalizedTestApp(state: state, home: _LanguageSwitcher(state: state)));
+    await tester.pumpAndSettle();
+    expect(find.text('সেটিংস'), findsOneWidget);
+
+    await state.updateLanguage('en');
+    final restoredState = AppState();
+    await restoredState.loadFromPrefs();
+    expect(restoredState.selectedLanguage, 'en');
+    expect(
+      AppLocalizations(const Locale('en'), const {'তোমার শেখার পথ': 'Your learning path'})
+          .translate('তোমার শেখার পথ'),
+      'Your learning path',
+    );
+  });
+
+  test('class schedule derives states and accepts only safe HTTPS links', () {
+    final start = DateTime(2026, 3, 8, 10);
+    final live = LiveClass(
+      id: 'live',
+      title: 'Live class',
+      startAt: start,
+      endAt: start.add(const Duration(hours: 1)),
+      meetingUrl: 'https://meet.google.com/example',
+    );
+    expect(live.statusAt(start.subtract(const Duration(minutes: 1))),
+        LiveClassStatus.upcoming);
+    expect(live.statusAt(start), LiveClassStatus.live);
+    expect(live.statusAt(start.add(const Duration(hours: 1))),
+        LiveClassStatus.completed);
+    expect(live.safeMeetingUri?.scheme, 'https');
+    expect(
+        const LiveClass(
+          id: 'http',
+          title: 'HTTP',
+          meetingUrl: 'http://meet.google.com/example',
+        ).safeMeetingUri,
+        isNull);
+    expect(
+        const LiveClass(
+          id: 'credentials',
+          title: 'Credentials',
+          meetingUrl: 'https://user:pass@meet.google.com/example',
+        ).safeMeetingUri,
+        isNull);
+    expect(
+        const LiveClass(
+          id: 'javascript',
+          title: 'Unsafe',
+          meetingUrl: 'javascript:alert(1)',
+        ).safeMeetingUri,
+        isNull);
+    expect(
+      LiveClass(
+        id: 'cancelled',
+        title: 'Cancelled',
+        startAt: start,
+        endAt: start.add(const Duration(hours: 1)),
+        recordState: ClassRecordState.cancelled,
+      ).statusAt(start),
+      LiveClassStatus.cancelled,
+    );
+    expect(
+      const LiveClass(id: 'missing', title: 'Missing').statusAt(start),
+      LiveClassStatus.unavailable,
+    );
+  });
+
+  testWidgets('live class schedule shows an honest empty state',
+      (tester) async {
+    await tester.pumpWidget(const MaterialApp(home: LiveLearningScreen()));
+    await tester.pumpAndSettle();
+    expect(find.text('এখনো কোনো ক্লাসের সময়সূচি নেই।'), findsOneWidget);
+    expect(find.text('শিক্ষক বা প্রতিষ্ঠান সময়সূচি দিলে এখানে দেখাবে।'),
+        findsOneWidget);
+  });
+
+  testWidgets(
+      'class list labels upcoming, completed, cancelled and unavailable',
+      (tester) async {
+    final now = DateTime(2026, 3, 8, 10);
+    await tester.pumpWidget(MaterialApp(
+      home: LiveLearningScreen(
+        repository: _FakeClassScheduleRepository([
+          LiveClass(
+            id: 'upcoming',
+            title: 'আসন্ন ক্লাস',
+            startAt: now.add(const Duration(hours: 1)),
+            endAt: now.add(const Duration(hours: 2)),
+          ),
+          LiveClass(
+            id: 'completed',
+            title: 'শেষ ক্লাস',
+            startAt: now.subtract(const Duration(hours: 2)),
+            endAt: now.subtract(const Duration(hours: 1)),
+          ),
+          const LiveClass(
+            id: 'cancelled',
+            title: 'বাতিল ক্লাস',
+            recordState: ClassRecordState.cancelled,
+          ),
+          const LiveClass(id: 'unavailable', title: 'তথ্যহীন ক্লাস'),
+        ]),
+        now: () => now,
+      ),
+    ));
+    await tester.pumpAndSettle();
+    expect(find.text('আসছে'), findsOneWidget);
+    expect(find.text('শেষ'), findsOneWidget);
+    expect(find.text('বাতিল'), findsOneWidget);
+    expect(find.text('তথ্য নেই'), findsOneWidget);
+  });
+
+  testWidgets('live class schedule error can be retried', (tester) async {
+    final repository = _RetryClassScheduleRepository();
+    await tester.pumpWidget(MaterialApp(
+      home: LiveLearningScreen(
+        repository: repository,
+        now: () => DateTime(2026, 3, 8),
+      ),
+    ));
+    await tester.pumpAndSettle();
+    expect(find.text('ক্লাসের তথ্য আনা যায়নি।'), findsOneWidget);
+    await tester.tap(find.text('আবার চেষ্টা'));
+    await tester.pumpAndSettle();
+    expect(find.text('আবার চেষ্টা করা ক্লাস'), findsOneWidget);
+  });
+
+  testWidgets('live class detail opens valid meeting URL externally',
+      (tester) async {
+    final launcher = _FakeMeetingLauncher();
+    final start = DateTime(2026, 3, 8, 10);
+    final liveClass = LiveClass(
+      id: 'qaida-live',
+      title: 'কুরআন পড়ার ক্লাস',
+      teacher: 'শিক্ষক',
+      startAt: start,
+      endAt: start.add(const Duration(hours: 1)),
+      description: 'আজ আমরা পড়া অনুশীলন করব।',
+      meetingUrl: 'https://meet.google.com/abc-defg-hij',
+    );
+    await tester.pumpWidget(MaterialApp(
+      home: LiveLearningScreen(
+        repository: _FakeClassScheduleRepository([liveClass]),
+        launcher: launcher,
+        now: () => start.add(const Duration(minutes: 5)),
+      ),
+    ));
+    await tester.pumpAndSettle();
+    expect(find.text('এখন চলছে'), findsOneWidget);
+    await tester.tap(find.text('কুরআন পড়ার ক্লাস'));
+    await tester.pumpAndSettle();
+    expect(find.text('শিক্ষক: '), findsOneWidget);
+    expect(find.text('শিক্ষক'), findsOneWidget);
+    expect(find.text('আজ আমরা পড়া অনুশীলন করব।'), findsOneWidget);
+    await tester.tap(find.text('ক্লাসে যোগ দাও'));
+    await tester.pumpAndSettle();
+    expect(launcher.openedUri.toString(), liveClass.meetingUrl);
+  });
+
+  testWidgets(
+      'missing or unsafe links cannot be joined; launcher failure is clear',
+      (tester) async {
+    final now = DateTime(2026, 3, 8, 10, 5);
+    final badClass = LiveClass(
+      id: 'unsafe',
+      title: 'লিংক নেই',
+      startAt: DateTime(2026, 3, 8, 10),
+      endAt: DateTime(2026, 3, 8, 11),
+      meetingUrl: 'http://example.com/room',
+    );
+    await tester.pumpWidget(MaterialApp(
+      home: LiveClassDetailScreen(
+        liveClass: badClass,
+        launcher: _FakeMeetingLauncher(),
+        now: () => now,
+      ),
+    ));
+    await tester.pumpAndSettle();
+    expect(
+        tester
+            .widget<FilledButton>(find.widgetWithText(
+              FilledButton,
+              'ক্লাসে যোগ দাও',
+            ))
+            .onPressed,
+        isNull);
+    expect(find.text('নিরাপদ HTTPS মিটিং লিংক না থাকায় যোগ দেওয়া যাবে না।'),
+        findsOneWidget);
+
+    await tester.pumpWidget(MaterialApp(
+      home: LiveClassDetailScreen(
+        liveClass: LiveClass(
+          id: 'missing',
+          title: 'লিংক আসেনি',
+          startAt: DateTime(2026, 3, 8, 10),
+          endAt: DateTime(2026, 3, 8, 11),
+        ),
+        launcher: _FakeMeetingLauncher(),
+        now: () => now,
+      ),
+    ));
+    await tester.pumpAndSettle();
+    expect(
+        tester
+            .widget<FilledButton>(find.widgetWithText(
+              FilledButton,
+              'ক্লাসে যোগ দাও',
+            ))
+            .onPressed,
+        isNull);
+    expect(find.text('শিক্ষক এখনো মিটিং লিংক দেননি।'), findsOneWidget);
+
+    final launcher = _FakeMeetingLauncher()..result = false;
+    await tester.pumpWidget(MaterialApp(
+      home: LiveClassDetailScreen(
+        liveClass: LiveClass(
+          id: 'available',
+          title: 'আজকের ক্লাস',
+          startAt: DateTime(2026, 3, 8, 10),
+          endAt: DateTime(2026, 3, 8, 11),
+          meetingUrl: 'https://meet.google.com/abc',
+        ),
+        launcher: launcher,
+        now: () => now,
+      ),
+    ));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('ক্লাসে যোগ দাও'));
+    await tester.pumpAndSettle();
+    expect(find.text('মিটিং লিংক খুলতে পারিনি। অভিভাবকের সাহায্য নাও।'),
+        findsOneWidget);
+    expect(find.text('লিংক কপি'), findsOneWidget);
+  });
+
   test('Qaida path includes every letter from Alif through Ya', () {
     expect(qaidaLetters, hasLength(28));
     expect(qaidaLetters.first.letter, 'ا');
@@ -186,6 +517,7 @@ void main() {
 
     expect(appState.xp, 0);
     await finishAlifLesson(tester);
+    expect(appState.xp, 10);
     expect(find.text('সব ধাপ শেষ করেছ, মাশাআল্লাহ!'), findsOneWidget);
     await tester.tap(find.text('পাঠ শেষ করি'));
     await tester.pumpAndSettle();
@@ -413,7 +745,13 @@ void main() {
 
   testWidgets('dua screen filters by category and bookmarks a dua',
       (tester) async {
-    await tester.pumpWidget(const MaterialApp(home: DuasScreen()));
+    SharedPreferences.setMockInitialValues({});
+    final appState = AppState();
+    await appState.loadFromPrefs();
+    await tester.pumpWidget(ChangeNotifierProvider.value(
+      value: appState,
+      child: const MaterialApp(home: DuasScreen()),
+    ));
     await tester.pumpAndSettle();
 
     expect(find.text('ঘুম থেকে উঠলে'), findsOneWidget);
@@ -429,11 +767,23 @@ void main() {
     await tester.tap(find.byTooltip('পছন্দে রাখো'));
     await tester.pumpAndSettle();
     expect(find.byTooltip('পছন্দ থেকে সরাও'), findsOneWidget);
+    expect(appState.isDuaFavorite('sleep'), isTrue);
+    expect(find.text('পছন্দে রাখা হয়েছে।'), findsOneWidget);
+    await tester.tap(find.text('পছন্দের'));
+    await tester.pumpAndSettle();
+    expect(find.text('ঘুমাতে যাওয়ার সময়'), findsOneWidget);
+    expect(find.text('খাবার শুরু করার আগে'), findsNothing);
   });
 
   testWidgets('Seerah screen opens a sourced child-friendly story',
       (tester) async {
-    await tester.pumpWidget(const MaterialApp(home: SeerahScreen()));
+    SharedPreferences.setMockInitialValues({});
+    final appState = AppState();
+    await appState.loadFromPrefs();
+    await tester.pumpWidget(ChangeNotifierProvider.value(
+      value: appState,
+      child: const MaterialApp(home: SeerahScreen()),
+    ));
     await tester.pumpAndSettle();
 
     expect(find.text('নবীজির জীবন থেকে শিখি'), findsOneWidget);
@@ -447,6 +797,43 @@ void main() {
     );
     await tester.pumpAndSettle();
     expect(find.text('সূত্র: সহিহ বুখারি ৬২০৩'), findsOneWidget);
+    await tester.scrollUntilVisible(
+      find.text('গল্প শেষ করেছি · +১০ XP'),
+      250,
+      scrollable: find.byType(Scrollable).last,
+    );
+    await tester.tap(find.text('গল্প শেষ করেছি · +১০ XP'));
+    await tester.pumpAndSettle();
+    expect(appState.hasCompletedLesson('seerah_abu_umair'), isTrue);
+    expect(appState.xp, 10);
+    await tester.pumpWidget(const SizedBox());
+    await appState.completeLesson('seerah_abu_umair', xp: 10);
+    expect(appState.xp, 10);
+  });
+
+  test('Dua favorites, chapter progress, quiz results and completion restore',
+      () async {
+    SharedPreferences.setMockInitialValues({});
+    final appState = AppState();
+    await appState.loadFromPrefs();
+    await appState.toggleDuaFavorite('wake');
+    await appState.saveBasicsProgress('basics_chapter_1', 205);
+    await appState.recordQuizResult('basics_chapter_0', 10);
+    expect(await appState.completeLesson('basics_chapter_0', xp: 25), isTrue);
+    expect(await appState.completeLesson('basics_chapter_0', xp: 25), isFalse);
+    expect(await appState.completeLesson('seerah_abu_umair', xp: 10), isTrue);
+
+    final restored = AppState();
+    await restored.loadFromPrefs();
+    expect(restored.isDuaFavorite('wake'), isTrue);
+    expect(restored.basicsProgress('basics_chapter_1'), 205);
+    expect(restored.quizResult('basics_chapter_0'), 10);
+    expect(restored.hasCompletedLesson('basics_chapter_0'), isTrue);
+    expect(restored.hasCompletedLesson('seerah_abu_umair'), isTrue);
+    expect(restored.xp, 35);
+    expect(await restored.completeLesson('basics_chapter_0', xp: 25), isFalse);
+    expect(await restored.completeLesson('seerah_abu_umair', xp: 10), isFalse);
+    expect(restored.xp, 35);
   });
 
   testWidgets('achievement screen reflects earned XP and lessons',

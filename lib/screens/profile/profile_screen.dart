@@ -1,3 +1,4 @@
+import '../../l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -71,7 +72,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                          Text(
+                          LocalizedText(
                               state.userName.isEmpty
                                   ? 'শিক্ষার্থী'
                                   : state.userName,
@@ -79,7 +80,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   color: Colors.white,
                                   fontSize: 20,
                                   fontWeight: FontWeight.w900)),
-                          Text(
+                          LocalizedText(
                               'শেখার স্ট্রিক ${state.streakDays} দিন · ${state.xp} XP',
                               style: const TextStyle(
                                   color: Colors.white70, fontSize: 12)),
@@ -94,7 +95,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text('শিক্ষার্থীর তথ্য',
+                        const LocalizedText('শিক্ষার্থীর তথ্য',
                             style: TextStyle(
                                 color: AppTheme.darkText,
                                 fontSize: 16,
@@ -116,7 +117,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           items: [
                             for (var age = 6; age <= 14; age++)
                               DropdownMenuItem(
-                                  value: age, child: Text('$age বছর'))
+                                  value: age, child: LocalizedText('$age বছর'))
                           ],
                           onChanged: (value) {
                             if (value != null) setState(() => _age = value);
@@ -133,10 +134,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               if (!context.mounted) return;
                               ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
-                                      content: Text('প্রোফাইল সংরক্ষণ হয়েছে')));
+                                      content: LocalizedText(
+                                          'প্রোফাইল সংরক্ষণ হয়েছে')));
                             },
                             icon: const Icon(Icons.check_rounded),
-                            label: const Text('প্রোফাইল সংরক্ষণ'),
+                            label: const LocalizedText('প্রোফাইল সংরক্ষণ'),
                             style: FilledButton.styleFrom(
                                 backgroundColor: AppTheme.primaryGreen),
                           ),
@@ -155,12 +157,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           Icon(Icons.verified_user_rounded,
                               color: AppTheme.primaryGreen),
                           SizedBox(width: 9),
-                          Text('Account login ও sync',
+                          LocalizedText('Account login ও sync',
                               style: TextStyle(
                                   fontWeight: FontWeight.w900, fontSize: 15))
                         ]),
                         SizedBox(height: 8),
-                        Text(
+                        LocalizedText(
                             'এই profile ও শেখার অগ্রগতি এখন এই ডিভাইসে সেভ হয়। Email/phone login, একাধিক device-এ sync ও password recovery চালু করতে authentication backend সংযোগ প্রয়োজন।',
                             style: TextStyle(
                                 color: Colors.black54,
@@ -177,7 +179,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       builder: (_) => const LoginScreen(),
                     )),
                     icon: const Icon(Icons.login_rounded),
-                    label: const Text('Login / account তৈরি'),
+                    label: const LocalizedText('Login / account তৈরি'),
                     style: OutlinedButton.styleFrom(
                       foregroundColor: AppTheme.primaryGreen,
                       side: const BorderSide(color: AppTheme.primaryGreen),

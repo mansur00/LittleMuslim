@@ -1,3 +1,4 @@
+import '../../l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:provider/provider.dart';
@@ -54,30 +55,23 @@ class _NameAgePageState extends State<NameAgePage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SizedBox(height: 20),
-
-          Text(
+          LocalizedText(
             'তোমার নাম কী?',
             style: TextStyle(
               fontSize: widget.isTablet ? 28 : 24,
               fontWeight: FontWeight.bold,
               color: AppTheme.darkText,
             ),
-          )
-              .animate()
-              .fadeIn(duration: 400.ms)
-              .slideX(begin: -0.1, end: 0),
-
+          ).animate().fadeIn(duration: 400.ms).slideX(begin: -0.1, end: 0),
           const SizedBox(height: 8),
-          Text(
+          LocalizedText(
             'আমরা তোমাকে সঠিকভাবে স্বাগত জানাব',
             style: TextStyle(
               fontSize: widget.isTablet ? 16 : 14,
               color: AppTheme.darkText.withOpacity(0.65),
             ),
           ),
-
           SizedBox(height: widget.isTablet ? 36 : 28),
-
           TextField(
             controller: _nameController,
             textCapitalization: TextCapitalization.words,
@@ -89,7 +83,7 @@ class _NameAgePageState extends State<NameAgePage> {
               context.read<AppState>().updateDraftName(value);
             },
             decoration: InputDecoration(
-              hintText: 'যেমন: আয়েশা, ইউসুফ, ফাতিমা...',
+              hintText: context.uiText('যেমন: আয়েশা, ইউসুফ, ফাতিমা...'),
               hintStyle: TextStyle(
                 color: AppTheme.darkText.withOpacity(0.4),
               ),
@@ -121,25 +115,17 @@ class _NameAgePageState extends State<NameAgePage> {
                 color: AppTheme.primaryGreen,
               ),
             ),
-          )
-              .animate()
-              .fadeIn(delay: 150.ms, duration: 400.ms),
-
+          ).animate().fadeIn(delay: 150.ms, duration: 400.ms),
           SizedBox(height: widget.isTablet ? 40 : 32),
-
-          Text(
+          LocalizedText(
             'তোমার বয়স কত?',
             style: TextStyle(
               fontSize: widget.isTablet ? 22 : 18,
               fontWeight: FontWeight.w600,
               color: AppTheme.darkText,
             ),
-          )
-              .animate()
-              .fadeIn(delay: 250.ms, duration: 400.ms),
-
+          ).animate().fadeIn(delay: 250.ms, duration: 400.ms),
           const SizedBox(height: 16),
-
           Wrap(
             spacing: 10,
             runSpacing: 10,
@@ -174,7 +160,7 @@ class _NameAgePageState extends State<NameAgePage> {
                         : null,
                   ),
                   child: Center(
-                    child: Text(
+                    child: LocalizedText(
                       '$age',
                       style: TextStyle(
                         fontSize: widget.isTablet ? 20 : 17,
@@ -186,42 +172,35 @@ class _NameAgePageState extends State<NameAgePage> {
                 ),
               );
             }).toList(),
-          )
-              .animate()
-              .fadeIn(delay: 350.ms, duration: 400.ms),
-
+          ).animate().fadeIn(delay: 350.ms, duration: 400.ms),
           const Spacer(),
-
-            Container(
-              padding: const EdgeInsets.all(14),
-              decoration: BoxDecoration(
-                color: AppTheme.lightGold.withValues(alpha: 0.5),
-                borderRadius: BorderRadius.circular(14),
-              ),
-              child: Row(
-                children: [
-                  const VectorIcon(
-                    type: VectorIconType.lightbulb,
-                    size: 24,
-                    color: Color(0xFFD4A017),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: Text(
-                      '৬-১৪ বছরের বাচ্চাদের জন্য তৈরি। তোমার বয়স অনুযায়ী কন্টেন্ট দেখানো হবে।',
-                      style: TextStyle(
-                        fontSize: widget.isTablet ? 14 : 12.5,
-                        color: AppTheme.darkText.withValues(alpha: 0.8),
-                        height: 1.35,
-                      ),
+          Container(
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: AppTheme.lightGold.withValues(alpha: 0.5),
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: Row(
+              children: [
+                const VectorIcon(
+                  type: VectorIconType.lightbulb,
+                  size: 24,
+                  color: Color(0xFFD4A017),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: LocalizedText(
+                    '৬-১৪ বছরের বাচ্চাদের জন্য তৈরি। তোমার বয়স অনুযায়ী কন্টেন্ট দেখানো হবে।',
+                    style: TextStyle(
+                      fontSize: widget.isTablet ? 14 : 12.5,
+                      color: AppTheme.darkText.withValues(alpha: 0.8),
+                      height: 1.35,
                     ),
                   ),
-                ],
-              ),
-            )
-              .animate()
-              .fadeIn(delay: 450.ms, duration: 400.ms),
-
+                ),
+              ],
+            ),
+          ).animate().fadeIn(delay: 450.ms, duration: 400.ms),
           SizedBox(height: widget.isTablet ? 24 : 16),
         ],
       ),

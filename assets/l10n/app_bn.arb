@@ -1,0 +1,211 @@
+{
+  "@@locale": "bn",
+  "appLanguage": "অ্যাপের ভাষা",
+  "@appLanguage": {
+    "description": "App language"
+  },
+  "classSchedule": "ক্লাসের সময়সূচি",
+  "@classSchedule": {
+    "description": "Class schedule"
+  },
+  "classReminder": "ক্লাসের রিমাইন্ডার",
+  "@classReminder": {
+    "description": "ক্লাস schedule ও reminder"
+  },
+  "monthlyPlan": "মাসিক পরিকল্পনা ও পেমেন্ট",
+  "@monthlyPlan": {
+    "description": "Subscription ও পেমেন্ট"
+  },
+  "loginSync": "লগইন ও অনলাইন সমন্বয়",
+  "@loginSync": {
+    "description": "Account login ও sync"
+  },
+  "loginPreview": "লগইন পেজের নমুনা",
+  "@loginPreview": {
+    "description": "login page-এর preview"
+  },
+  "loginCreate": "লগইন / অ্যাকাউন্ট তৈরি",
+  "@loginCreate": {
+    "description": "Login / account তৈরি"
+  },
+  "accountCreate": "অ্যাকাউন্ট তৈরি করো",
+  "@accountCreate": {
+    "description": "Account তৈরি করো"
+  },
+  "login": "লগইন",
+  "@login": {
+    "description": "Login"
+  },
+  "cloudSync": "অনলাইন সমন্বয়",
+  "@cloudSync": {
+    "description": "cloud sync"
+  },
+  "payment": "পেমেন্ট",
+  "@payment": {
+    "description": "Payment"
+  },
+  "paymentGateway": "পেমেন্ট সেবা সংযোগ বাকি",
+  "@paymentGateway": {
+    "description": "Payment gateway সংযোগ বাকি"
+  },
+  "walletSetup": "বিকাশ / নগদ সংযোগ বাকি",
+  "@walletSetup": {
+    "description": "bKash / Nagad সংযোগ বাকি"
+  },
+  "wallet": "মোবাইল ওয়ালেট",
+  "@wallet": {
+    "description": "মোবাইল ওয়ালেট"
+  },
+  "classPlan": "শিক্ষকের সঙ্গে ক্লাসের মাসিক পরিকল্পনা",
+  "@classPlan": {
+    "description": "শিক্ষকের সঙ্গে live class-এর মাসিক পরিকল্পনা"
+  },
+  "inAppClass": "শিক্ষকের সঙ্গে অ্যাপের ভেতর সরাসরি ক্লাস",
+  "@inAppClass": {
+    "description": "শিক্ষকের সঙ্গে app-এর ভেতর live class"
+  },
+  "scheduleEnglish": "ক্লাসের সময়সূচি",
+  "@scheduleEnglish": {
+    "description": "class schedule"
+  },
+  "reminderEnglish": "রিমাইন্ডার",
+  "@reminderEnglish": {
+    "description": "reminder"
+  },
+  "preview": "নমুনা",
+  "@preview": {
+    "description": "preview"
+  },
+  "emailPhone": "ইমেইল/ফোন",
+  "@emailPhone": {
+    "description": "email/phone"
+  },
+  "profile": "প্রোফাইল",
+  "@profile": {
+    "description": "profile"
+  },
+  "password": "পাসওয়ার্ড",
+  "@password": {
+    "description": "password"
+  },
+  "backend": "সার্ভার ব্যবস্থা",
+  "@backend": {
+    "description": "backend"
+  },
+  "notification": "নোটিফিকেশন",
+  "@notification": {
+    "description": "notification"
+  },
+  "classSubscriptions": "মাসিক ক্লাসের পরিকল্পনা",
+  "@classSubscriptions": {
+    "description": "subscription ও class schedule"
+  },
+  "englishName": "English",
+  "@englishName": {
+    "description": "ইংরেজি"
+  },
+  "banglaName": "বাংলা",
+  "@banglaName": {
+    "description": "বাংলা"
+  },
+  "enrolledStudent": "শিক্ষার্থী",
+  "@enrolledStudent": {
+    "description": "Student"
+  },
+  "englishOption": "ইংরেজি",
+  "@englishOption": {
+    "description": "English"
+  },
+  "bengaliOption": "বাংলা",
+  "@bengaliOption": {
+    "description": "Bengali"
+  },
+  "liveClass": "সরাসরি ক্লাস",
+  "@liveClass": {
+    "description": "live class"
+  },
+  "liveClasses": "সরাসরি ক্লাস",
+  "@liveClasses": {
+    "description": "Live classes"
+  },
+  "sunnahSource": "সুন্নাহ ডটকম",
+  "@sunnahSource": {
+    "description": "Sunnah.com"
+  },
+  "googleMeet": "গুগল মিট",
+  "@googleMeet": {
+    "description": "Google Meet"
+  },
+  "phase4Bn1": "মাসিক মূল্য ও সাবস্ক্রিপশনের নিয়ম ঠিক করে পেমেন্ট সেবা যুক্ত হলে এখান থেকেই নিরাপদে পেমেন্ট করা যাবে।",
+  "@phase4Bn1": {
+    "description": "মাসিক মূল্য ও subscription নিয়ম ঠিক করে payment merchant account/API key যুক্ত হলে এখান থেকেই নিরাপদ payment flow চালু করা যাবে।"
+  },
+  "phase4Bn2": "এই নমুনায় পছন্দগুলো সংরক্ষিত হয়। নির্দিষ্ট সময়ে ফোনে মনে করিয়ে দিতে নোটিফিকেশন সেবা যুক্ত করা বাকি।",
+  "@phase4Bn2": {
+    "description": "এই preview-তে পছন্দগুলো সংরক্ষিত হয়। ফোনে নির্দিষ্ট সময়ে push/local alert পাঠাতে notification service এখনো যুক্ত করতে হবে।"
+  },
+  "phase4Bn3": "ইমেইল বা ফোনে প্রবেশ এবং অনলাইন সমন্বয়ের ব্যবস্থা এখনো যুক্ত হয়নি।",
+  "@phase4Bn3": {
+    "description": "ইমেইল/ফোন login ও cloud sync এখনো backend-এ যুক্ত হয়নি।"
+  },
+  "phase4Bn4": "নিরাপত্তার জন্য এই নমুনায় কার্ড নম্বর, মোবাইল ওয়ালেটের গোপন নম্বর বা একবারের কোড চাওয়া হয় না। অনলাইন পেমেন্ট চালুর আগে পেমেন্ট সেবা যুক্ত করতে হবে।",
+  "@phase4Bn4": {
+    "description": "নিরাপত্তার জন্য এই preview-তে card number, mobile wallet PIN বা OTP চাওয়া হয় না। Live payment চালুর আগে merchant account, payment gateway ও subscription backend যুক্ত করতে হবে।"
+  },
+  "phase4Bn5": "শিক্ষক বা প্রতিষ্ঠান মাসিক মূল্য, ক্লাসের সংখ্যা ও সময় ঠিক করলে এখানে দেখানো হবে। এখনো কোনো টাকা নেওয়া হয় না।",
+  "@phase4Bn5": {
+    "description": "মাসিক মূল্য, class সংখ্যা ও সময়সূচি শিক্ষক/প্রতিষ্ঠান নির্ধারণ করলে এখানে দেখানো হবে। এখনো কোনো টাকা কাটা হবে না।"
+  },
+  "phase4Bn6": "মাসিক পরিকল্পনায় সরাসরি ক্লাস",
+  "@phase4Bn6": {
+    "description": "মাসিক পরিকল্পনায় সরাসরি live class"
+  },
+  "phase4Bn7": "আরবি পাঠ ও হাদিস নম্বর Sunnah.com-এ দেওয়া সূত্র অনুযায়ী রাখা হয়েছে।",
+  "@phase4Bn7": {
+    "description": "আরবি পাঠ ও হাদিস নম্বর Sunnah.com-এ উল্লেখিত রেফারেন্সের সঙ্গে মিলিয়ে দেওয়া হয়েছে।"
+  },
+  "phase4Bn8": "নামাজের সময় শহর, তারিখ ও হিসাব-পদ্ধতি অনুযায়ী বদলায়। এখানে সময়ের সীমা শেখানো হয়; আজকের সঠিক সময় জানতে স্থানীয় মসজিদ বা নির্ভরযোগ্য ক্যালেন্ডার দেখো।",
+  "@phase4Bn8": {
+    "description": "ঘড়ির সঠিক ওয়াক্ত শহর, তারিখ ও হিসাব-পদ্ধতি অনুযায়ী বদলায়। এই screen-এ এখন ওয়াক্তের সীমা শেখানো হচ্ছে; নির্দিষ্ট আজকের সময় জানতে স্থানীয় মসজিদ/বিশ্বস্ত ক্যালেন্ডার দেখো।"
+  },
+  "phase4Bn9": "শেষ করলে +১০ অভিজ্ঞতা",
+  "@phase4Bn9": {
+    "description": "শেষ করলে +১০ XP"
+  },
+  "phase4Bn10": "রঙিন তাজবিদ: Quran.com · বাংলা অর্থ: মুহিউদ্দীন খান, Al Quran Cloud",
+  "@phase4Bn10": {
+    "description": "রঙিন তাজবিদ: Quran.com · বাংলা অর্থ: মুহিউদ্দীন খান, Al Quran Cloud"
+  },
+  "phase4Bn11": "রঙিন তাজবিদ: Quran.com · বাংলা অনুবাদ: মুহিউদ্দীন খান, Al Quran Cloud",
+  "@phase4Bn11": {
+    "description": "রঙিন তাজবিদ পাঠ: Quran.com · বাংলা অনুবাদ: মুহিউদ্দীন খান, Al Quran Cloud"
+  },
+  "phase4Bn12": "এই প্রোফাইল ও শেখার অগ্রগতি এই ডিভাইসে সংরক্ষিত হয়। ইমেইল/ফোনে প্রবেশ, একাধিক ডিভাইসে সমন্বয় ও পাসওয়ার্ড উদ্ধারের ব্যবস্থা এখনো যুক্ত হয়নি।",
+  "@phase4Bn12": {
+    "description": "এই profile ও শেখার অগ্রগতি এখন এই ডিভাইসে সেভ হয়। Email/phone login, একাধিক device-এ sync ও password recovery চালু করতে authentication backend সংযোগ প্রয়োজন।"
+  },
+  "phase4Bn13": "প্রবেশের সেবা এখনো যুক্ত হয়নি; কোনো পাসওয়ার্ড সংরক্ষণ করা হয়নি।",
+  "@phase4Bn13": {
+    "description": "Login service এখনো যুক্ত হয়নি; কোনো password সংরক্ষণ করা হয়নি।"
+  },
+  "phase4Bn14": "এটি প্রবেশ পাতার নমুনা। নিরাপদ অ্যাকাউন্ট চালু করতে পরিচয় যাচাই ও পাসওয়ার্ড উদ্ধারের ব্যবস্থা যুক্ত করতে হবে।",
+  "@phase4Bn14": {
+    "description": "এটি login page-এর preview। নিরাপদ account চালুর জন্য authentication backend, email verification ও password recovery যুক্ত করতে হবে।"
+  },
+  "phase4Bn15": "অভিভাবকের ইমেইল দিয়ে শিক্ষার্থীর প্রোফাইল যুক্ত করো",
+  "@phase4Bn15": {
+    "description": "অভিভাবকের email দিয়ে শিক্ষার্থীর profile সংযুক্ত করো"
+  },
+  "phase4Bn16": "LittleMuslim",
+  "@phase4Bn16": {
+    "description": "LittleMuslim"
+  },
+  "phase4Bn17": "এড়িয়ে যাও",
+  "@phase4Bn17": {
+    "description": "Skip"
+  },
+  "phase4Bn18": "আজ থেকে প্রতিদিন আনন্দের সঙ্গে একটু একটু করে\nকুরআন ও ইসলাম শিখবে",
+  "@phase4Bn18": {
+    "description": "এখন থেকে প্রতিদিন একটু একটু করে\nকুরআন ও ইসলাম শিখবে মজার সাথে"
+  }
+}

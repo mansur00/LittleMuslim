@@ -1,3 +1,4 @@
+import '../../l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -67,7 +68,7 @@ class AchievementsScreen extends StatelessWidget {
                         trailing: Container(
                           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                           decoration: BoxDecoration(color: const Color(0xFFFFD66B), borderRadius: BorderRadius.circular(14)),
-                          child: Text('${state.xp} XP', style: const TextStyle(color: Color(0xFF8A6A00), fontSize: 13, fontWeight: FontWeight.w900)),
+                          child: LocalizedText('${state.xp} XP', style: const TextStyle(color: Color(0xFF8A6A00), fontSize: 13, fontWeight: FontWeight.w900)),
                         ),
                       ),
 
@@ -92,8 +93,8 @@ class AchievementsScreen extends StatelessWidget {
                             const SizedBox(width: 12),
                             Expanded(
                               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                                const Text('তোমার বর্তমান লেভেল', style: TextStyle(color: Color(0xFF6B7280), fontSize: 11, fontWeight: FontWeight.w600)),
-                                Text(level.name, style: const TextStyle(color: AppTheme.darkText, fontSize: 17, fontWeight: FontWeight.w900)),
+                                const LocalizedText('তোমার বর্তমান লেভেল', style: TextStyle(color: Color(0xFF6B7280), fontSize: 11, fontWeight: FontWeight.w600)),
+                                LocalizedText(level.name, style: const TextStyle(color: AppTheme.darkText, fontSize: 17, fontWeight: FontWeight.w900)),
                               ]),
                             ),
                           ]),
@@ -110,7 +111,7 @@ class AchievementsScreen extends StatelessWidget {
                             ),
                           ]),
                           const SizedBox(height: 8),
-                          Text(
+                          LocalizedText(
                             nextLevel == null
                                 ? 'সব লেভেল শেষ! শেখা চালিয়ে যাও।'
                                 : 'পরের লেভেল: ${nextLevel.name} · আর ${nextLevel.threshold - state.xp} XP',
@@ -148,8 +149,8 @@ class AchievementsScreen extends StatelessWidget {
                           const SizedBox(width: 12),
                           Expanded(
                             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                              Text('সম্পন্ন ক্বায়দা পাঠ', style: TextStyle(color: AppTheme.darkText.withValues(alpha: 0.6), fontSize: 11, fontWeight: FontWeight.w600)),
-                              Text('$lessonCount টি পাঠ', style: const TextStyle(color: AppTheme.darkText, fontWeight: FontWeight.w900, fontSize: 18)),
+                              LocalizedText('সম্পন্ন ক্বায়দা পাঠ', style: TextStyle(color: AppTheme.darkText.withValues(alpha: 0.6), fontSize: 11, fontWeight: FontWeight.w600)),
+                              LocalizedText('$lessonCount টি পাঠ', style: const TextStyle(color: AppTheme.darkText, fontWeight: FontWeight.w900, fontSize: 18)),
                             ]),
                           ),
                         ]),
@@ -210,13 +211,13 @@ class _BadgeCardState extends State<_BadgeCard> {
             ),
           ),
           const SizedBox(height: 10),
-          Text(
+          LocalizedText(
             badge.title,
             textAlign: TextAlign.center,
             style: TextStyle(color: badge.unlocked ? AppTheme.darkText : Colors.black38, fontSize: 13, fontWeight: FontWeight.w800),
           ),
           const SizedBox(height: 4),
-          Text(
+          LocalizedText(
             badge.unlocked ? 'আনলক!' : badge.description,
             textAlign: TextAlign.center,
             style: TextStyle(color: badge.unlocked ? badge.accent : AppTheme.darkText.withValues(alpha: 0.4), fontSize: 10, height: 1.35, fontWeight: FontWeight.w600),

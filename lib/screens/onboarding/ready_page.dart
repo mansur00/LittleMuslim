@@ -1,3 +1,4 @@
+import '../../l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:provider/provider.dart';
@@ -73,7 +74,7 @@ class ReadyPage extends StatelessWidget {
                         color: Colors.white.withValues(alpha: 0.25),
                       ),
                   SizedBox(height: isTablet ? 32 : 24),
-                  Text(
+                  LocalizedText(
                     'তুমি প্রস্তুত, $name!',
                     textAlign: TextAlign.center,
                     style: TextStyle(
@@ -83,7 +84,7 @@ class ReadyPage extends StatelessWidget {
                     ),
                   ).animate().fadeIn(delay: 180.ms, duration: 450.ms),
                   SizedBox(height: isTablet ? 12 : 8),
-                  Text(
+                  LocalizedText(
                     'এখন থেকে প্রতিদিন একটু একটু করে\nকুরআন ও ইসলাম শিখবে মজার সাথে',
                     textAlign: TextAlign.center,
                     style: TextStyle(
@@ -169,7 +170,7 @@ class ReadyPage extends StatelessWidget {
                           borderRadius: BorderRadius.circular(18),
                         ),
                       ),
-                      child: Text(
+                      child: LocalizedText(
                         'যাত্রা শুরু করি',
                         style: TextStyle(
                           fontSize: isTablet ? 18 : 16,
@@ -223,7 +224,7 @@ class _LearnItem extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
+              LocalizedText(
                 title,
                 style: TextStyle(
                   fontSize: isTablet ? 15 : 13.5,
@@ -232,7 +233,7 @@ class _LearnItem extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 2),
-              Text(
+              LocalizedText(
                 subtitle,
                 style: TextStyle(
                   fontSize: isTablet ? 12 : 11,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:provider/provider.dart';
+import '../../l10n/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../utils/app_state.dart';
 import '../../widgets/vector_icons.dart';
@@ -49,11 +50,6 @@ class _LanguagePageState extends State<LanguagePage> {
       'name': 'English',
       'native': 'ইংরেজি',
     },
-    {
-      'code': 'ar',
-      'name': 'العربية',
-      'native': 'Arabic',
-    },
   ];
 
   @override
@@ -79,30 +75,23 @@ class _LanguagePageState extends State<LanguagePage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SizedBox(height: 20),
-
-          Text(
+          LocalizedText(
             'ভাষা বেছে নাও',
             style: TextStyle(
               fontSize: widget.isTablet ? 28 : 24,
               fontWeight: FontWeight.bold,
               color: AppTheme.darkText,
             ),
-          )
-              .animate()
-              .fadeIn(duration: 400.ms)
-              .slideX(begin: -0.1, end: 0),
-
+          ).animate().fadeIn(duration: 400.ms).slideX(begin: -0.1, end: 0),
           const SizedBox(height: 8),
-          Text(
+          LocalizedText(
             'অ্যাপের ভাষা নির্বাচন করো। পরে পরিবর্তন করা যাবে।',
             style: TextStyle(
               fontSize: widget.isTablet ? 16 : 14,
               color: AppTheme.darkText.withOpacity(0.65),
             ),
           ),
-
           SizedBox(height: widget.isTablet ? 40 : 32),
-
           ..._languages.asMap().entries.map((entry) {
             final index = entry.key;
             final lang = entry.value;
@@ -154,7 +143,7 @@ class _LanguagePageState extends State<LanguagePage> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
+                            LocalizedText(
                               lang['name']!,
                               style: TextStyle(
                                 fontSize: widget.isTablet ? 18 : 16,
@@ -165,7 +154,7 @@ class _LanguagePageState extends State<LanguagePage> {
                               ),
                             ),
                             const SizedBox(height: 2),
-                            Text(
+                            LocalizedText(
                               lang['native']!,
                               style: TextStyle(
                                 fontSize: widget.isTablet ? 14 : 13,
@@ -192,9 +181,7 @@ class _LanguagePageState extends State<LanguagePage> {
                   .slideX(begin: 0.1, end: 0),
             );
           }),
-
           const Spacer(),
-
           Container(
             padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(
@@ -210,7 +197,7 @@ class _LanguagePageState extends State<LanguagePage> {
                 ),
                 const SizedBox(width: 10),
                 Expanded(
-                  child: Text(
+                  child: LocalizedText(
                     'কুরআনের আরবি টেক্সট সবসময় আরবিতেই থাকবে। শুধু অ্যাপের বাটন ও নির্দেশনা পরিবর্তন হবে।',
                     style: TextStyle(
                       fontSize: widget.isTablet ? 14 : 12.5,
@@ -222,7 +209,6 @@ class _LanguagePageState extends State<LanguagePage> {
               ],
             ),
           ),
-
           SizedBox(height: widget.isTablet ? 24 : 16),
         ],
       ),

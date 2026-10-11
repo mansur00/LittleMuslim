@@ -1,3 +1,4 @@
+import '../../l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -41,7 +42,7 @@ class DailyMissionsScreen extends StatelessWidget {
                       color: Colors.white.withValues(alpha: 0.25),
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: Text(
+                    child: LocalizedText(
                       done ? 'সম্পন্ন' : 'চলমান',
                       style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 12),
                     ),
@@ -62,7 +63,7 @@ class DailyMissionsScreen extends StatelessWidget {
                     Row(children: [
                       const Icon(Icons.bolt_rounded, color: Color(0xFFFF9600), size: 22),
                       const SizedBox(width: 6),
-                      Text(
+                      LocalizedText(
                         done ? 'মাশাআল্লাহ! আজকের শেখার লক্ষ্য পূরণ হয়েছে।' : 'একটি নতুন ক্বায়দা পাঠ শেষ করো।',
                         style: TextStyle(color: done ? const Color(0xFF58A700) : AppTheme.darkText, fontSize: 13, fontWeight: FontWeight.w700),
                       ),
@@ -78,7 +79,7 @@ class DailyMissionsScreen extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 8),
-                    Text(
+                    LocalizedText(
                       done ? '১ / ১ পাঠ সম্পন্ন' : '০ / ১ পাঠ সম্পন্ন',
                       style: const TextStyle(color: Color(0xFF6B7280), fontSize: 12, fontWeight: FontWeight.w700),
                     ),
@@ -97,9 +98,9 @@ class DailyMissionsScreen extends StatelessWidget {
                     const SizedBox(width: 13),
                     const Expanded(
                       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                        Text('একটি ক্বায়দা পাঠ', style: TextStyle(color: AppTheme.darkText, fontSize: 15, fontWeight: FontWeight.w800)),
+                        LocalizedText('একটি ক্বায়দা পাঠ', style: TextStyle(color: AppTheme.darkText, fontSize: 15, fontWeight: FontWeight.w800)),
                         SizedBox(height: 4),
-                        Text('শেষ করলে +১০ XP', style: TextStyle(color: Color(0xFF58A700), fontSize: 12, fontWeight: FontWeight.w700)),
+                        LocalizedText('শেষ করলে +১০ XP', style: TextStyle(color: Color(0xFF58A700), fontSize: 12, fontWeight: FontWeight.w700)),
                       ]),
                     ),
                     if (done)
@@ -144,7 +145,7 @@ class DailyMissionsScreen extends StatelessWidget {
                       VectorIcon(type: VectorIconType.star, size: 28, color: Color(0xFFFFC800)),
                       SizedBox(width: 10),
                       Expanded(
-                        child: Text(
+                        child: LocalizedText(
                           'দারুণ! আজকের লক্ষ্য পূরণ হয়েছে। কাল আবার শিখবো!',
                           style: TextStyle(color: Color(0xFF2D7A00), fontSize: 13, fontWeight: FontWeight.w700, height: 1.4),
                         ),
@@ -154,7 +155,7 @@ class DailyMissionsScreen extends StatelessWidget {
                 ],
 
                 const SizedBox(height: 20),
-                Text(
+                LocalizedText(
                   'আজকের মিশন এই ডিভাইসে সংরক্ষিত পাঠের তারিখ থেকে হিসাব করা হয়।',
                   textAlign: TextAlign.center,
                   style: TextStyle(color: AppTheme.darkText.withValues(alpha: 0.45), fontSize: 11, height: 1.5),

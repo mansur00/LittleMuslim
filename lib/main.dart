@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -6,6 +7,7 @@ import 'theme/app_theme.dart';
 import 'screens/onboarding/onboarding_screen.dart';
 import 'screens/home/home_screen.dart';
 import 'utils/app_state.dart';
+import 'l10n/app_localizations.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -41,10 +43,22 @@ class LittleMuslimApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final appState = context.watch<AppState>();
+    final language = appState.hasCompletedOnboarding
+        ? appState.selectedLanguage
+        : appState.draftLanguage;
     return MaterialApp(
       title: 'LittleMuslim',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
+      locale: Locale(language == 'en' ? 'en' : 'bn'),
+      supportedLocales: const [Locale('bn'), Locale('en')],
+      localizationsDelegates: const [
+        AppLocalizationsDelegate(),
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
       home: const _AppEntryPoint(),
     );
   }

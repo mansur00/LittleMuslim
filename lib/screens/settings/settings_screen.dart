@@ -1,3 +1,4 @@
+import '../../l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -40,25 +41,45 @@ class SettingsScreen extends StatelessWidget {
                         child: state.userName.isEmpty
                             ? const Icon(Icons.person_rounded,
                                 color: AppTheme.primaryGreen)
-                            : Text(
+                            : LocalizedText(
                                 state.userName.substring(0, 1),
                                 style: const TextStyle(
                                     color: AppTheme.primaryGreen,
                                     fontWeight: FontWeight.w800),
                               ),
                       ),
-                      title: Text(
+                      title: LocalizedText(
                           state.userName.isEmpty
                               ? 'শিক্ষার্থীর প্রোফাইল'
                               : state.userName,
                           style: const TextStyle(fontWeight: FontWeight.w900)),
-                      subtitle: Text('বয়স ${state.age} · এই ডিভাইসে সংরক্ষিত'),
+                      subtitle: LocalizedText(
+                          'বয়স ${state.age} · এই ডিভাইসে সংরক্ষিত'),
                       trailing: const Icon(Icons.chevron_right_rounded),
                       onTap: () => Navigator.of(context).push(
                           MaterialPageRoute<void>(
                               builder: (_) => const ProfileScreen())),
                     ),
-                    const Text(
+                    ListTile(
+                      contentPadding: EdgeInsets.zero,
+                      leading: const Icon(Icons.language_rounded,
+                          color: AppTheme.primaryGreen),
+                      title: const LocalizedText('অ্যাপের ভাষা',
+                          style: TextStyle(fontWeight: FontWeight.w800)),
+                      trailing: DropdownButton<String>(
+                        value: state.selectedLanguage == 'en' ? 'en' : 'bn',
+                        items: const [
+                          DropdownMenuItem(value: 'bn', child: Text('বাংলা')),
+                          DropdownMenuItem(value: 'en', child: Text('English')),
+                        ],
+                        onChanged: (language) {
+                          if (language != null) {
+                            context.read<AppState>().updateLanguage(language);
+                          }
+                        },
+                      ),
+                    ),
+                    const LocalizedText(
                       'ইমেইল/ফোন login ও cloud sync এখনো backend-এ যুক্ত হয়নি।',
                       style: TextStyle(color: Colors.black45, fontSize: 11),
                     ),
@@ -72,10 +93,11 @@ class SettingsScreen extends StatelessWidget {
                       contentPadding: EdgeInsets.zero,
                       value: state.streakAlertsEnabled,
                       activeColor: AppTheme.primaryGreen,
-                      title: const Text('দৈনিক শেখার রিমাইন্ডার',
+                      title: const LocalizedText('দৈনিক শেখার রিমাইন্ডার',
                           style: TextStyle(
                               fontWeight: FontWeight.w800, fontSize: 14)),
-                      subtitle: const Text('স্ট্রিক ধরে রাখতে মনে করিয়ে দেবে',
+                      subtitle: const LocalizedText(
+                          'স্ট্রিক ধরে রাখতে মনে করিয়ে দেবে',
                           style: TextStyle(fontSize: 11)),
                       onChanged: (value) => context
                           .read<AppState>()
@@ -86,10 +108,10 @@ class SettingsScreen extends StatelessWidget {
                       contentPadding: EdgeInsets.zero,
                       value: state.classAlertsEnabled,
                       activeColor: AppTheme.primaryGreen,
-                      title: const Text('শিক্ষকের ক্লাসের আপডেট',
+                      title: const LocalizedText('শিক্ষকের ক্লাসের আপডেট',
                           style: TextStyle(
                               fontWeight: FontWeight.w800, fontSize: 14)),
-                      subtitle: const Text('ক্লাস schedule ও reminder',
+                      subtitle: const LocalizedText('ক্লাস schedule ও reminder',
                           style: TextStyle(fontSize: 11)),
                       onChanged: (value) => context
                           .read<AppState>()
@@ -100,10 +122,10 @@ class SettingsScreen extends StatelessWidget {
                       contentPadding: EdgeInsets.zero,
                       leading: const Icon(Icons.alarm_rounded,
                           color: AppTheme.primaryGreen),
-                      title: const Text('রিমাইন্ডারের সময়',
+                      title: const LocalizedText('রিমাইন্ডারের সময়',
                           style: TextStyle(
                               fontWeight: FontWeight.w800, fontSize: 14)),
-                      subtitle: Text(_formatTime(state.reminderTime)),
+                      subtitle: LocalizedText(_formatTime(state.reminderTime)),
                       trailing: const Icon(Icons.edit_rounded, size: 19),
                       onTap: () async {
                         final parts = state.reminderTime.split(':');
@@ -123,7 +145,7 @@ class SettingsScreen extends StatelessWidget {
                         }
                       },
                     ),
-                    const Text(
+                    const LocalizedText(
                       'এই preview-তে পছন্দগুলো সংরক্ষিত হয়। ফোনে নির্দিষ্ট সময়ে push/local alert পাঠাতে notification service এখনো যুক্ত করতে হবে।',
                       style: TextStyle(
                           color: Colors.black45, fontSize: 11, height: 1.5),
@@ -149,13 +171,14 @@ class SettingsScreen extends StatelessWidget {
                         child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                          Text('Subscription ও পেমেন্ট',
+                          LocalizedText('Subscription ও পেমেন্ট',
                               style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 18,
                                   fontWeight: FontWeight.w900)),
                           SizedBox(height: 4),
-                          Text('শিক্ষকের সঙ্গে live class-এর মাসিক পরিকল্পনা',
+                          LocalizedText(
+                              'শিক্ষকের সঙ্গে live class-এর মাসিক পরিকল্পনা',
                               style:
                                   TextStyle(color: Colors.white, fontSize: 12)),
                         ])),
@@ -172,7 +195,7 @@ class SettingsScreen extends StatelessWidget {
                       children: [
                         Row(children: [
                           const Expanded(
-                              child: Text('শিক্ষক-সহ মাসিক পরিকল্পনা',
+                              child: LocalizedText('শিক্ষক-সহ মাসিক পরিকল্পনা',
                                   style: TextStyle(
                                       color: AppTheme.darkText,
                                       fontSize: 16,
@@ -183,7 +206,7 @@ class SettingsScreen extends StatelessWidget {
                               decoration: BoxDecoration(
                                   color: const Color(0xFFFFEBCF),
                                   borderRadius: BorderRadius.circular(20)),
-                              child: const Text('শিগগিরই',
+                              child: const LocalizedText('শিগগিরই',
                                   style: TextStyle(
                                       color: Color(0xFF9A6500),
                                       fontSize: 10,
@@ -206,7 +229,7 @@ class SettingsScreen extends StatelessWidget {
                           decoration: BoxDecoration(
                               color: const Color(0xFFF7F3E9),
                               borderRadius: BorderRadius.circular(15)),
-                          child: const Text(
+                          child: const LocalizedText(
                               'মাসিক মূল্য, class সংখ্যা ও সময়সূচি শিক্ষক/প্রতিষ্ঠান নির্ধারণ করলে এখানে দেখানো হবে। এখনো কোনো টাকা কাটা হবে না।',
                               style: TextStyle(
                                   color: Colors.black54,
@@ -224,7 +247,7 @@ class SettingsScreen extends StatelessWidget {
                   child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text('পেমেন্ট পদ্ধতি',
+                        const LocalizedText('পেমেন্ট পদ্ধতি',
                             style: TextStyle(
                                 color: AppTheme.darkText,
                                 fontSize: 16,
@@ -246,7 +269,8 @@ class SettingsScreen extends StatelessWidget {
                           child: FilledButton.icon(
                             onPressed: () => _showSetupInfo(context),
                             icon: const Icon(Icons.settings_suggest_rounded),
-                            label: const Text('পেমেন্ট সেটআপের অবস্থা'),
+                            label:
+                                const LocalizedText('পেমেন্ট সেটআপের অবস্থা'),
                             style: FilledButton.styleFrom(
                                 backgroundColor: AppTheme.primaryGreen,
                                 shape: RoundedRectangleBorder(
@@ -256,7 +280,7 @@ class SettingsScreen extends StatelessWidget {
                       ]),
                 ),
                 const SizedBox(height: 14),
-                const Text(
+                const LocalizedText(
                     'নিরাপত্তার জন্য এই preview-তে card number, mobile wallet PIN বা OTP চাওয়া হয় না। Live payment চালুর আগে merchant account, payment gateway ও subscription backend যুক্ত করতে হবে।',
                     style: TextStyle(
                         color: Colors.black45, fontSize: 11, height: 1.6)),
@@ -272,13 +296,13 @@ class SettingsScreen extends StatelessWidget {
     showDialog<void>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('পেমেন্ট এখনো যুক্ত হয়নি'),
-        content: const Text(
+        title: const LocalizedText('পেমেন্ট এখনো যুক্ত হয়নি'),
+        content: const LocalizedText(
             'মাসিক মূল্য ও subscription নিয়ম ঠিক করে payment merchant account/API key যুক্ত হলে এখান থেকেই নিরাপদ payment flow চালু করা যাবে।'),
         actions: [
           FilledButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('ঠিক আছে'))
+              child: const LocalizedText('ঠিক আছে'))
         ],
       ),
     );
@@ -305,7 +329,7 @@ class _SettingsSection extends StatelessWidget {
         margin: EdgeInsets.zero,
         padding: const EdgeInsets.all(17),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(title,
+          LocalizedText(title,
               style: const TextStyle(
                   color: AppTheme.darkText,
                   fontWeight: FontWeight.w900,
@@ -327,7 +351,7 @@ class _PlanLine extends StatelessWidget {
           Icon(icon, color: AppTheme.primaryGreen, size: 19),
           const SizedBox(width: 9),
           Expanded(
-              child: Text(text,
+              child: LocalizedText(text,
                   style: const TextStyle(
                       color: AppTheme.darkText, fontSize: 12, height: 1.4))),
         ]),
@@ -349,13 +373,13 @@ class _PaymentMethod extends StatelessWidget {
         Expanded(
             child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(title,
+          LocalizedText(title,
               style: const TextStyle(
                   color: AppTheme.darkText,
                   fontSize: 13,
                   fontWeight: FontWeight.w800)),
           const SizedBox(height: 2),
-          Text(detail,
+          LocalizedText(detail,
               style: const TextStyle(color: Colors.black54, fontSize: 11)),
         ])),
         const Icon(Icons.hourglass_empty_rounded,

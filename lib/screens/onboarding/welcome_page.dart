@@ -1,3 +1,4 @@
+import '../../l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../theme/app_theme.dart';
@@ -53,7 +54,7 @@ class WelcomePage extends StatelessWidget {
 
           SizedBox(height: isTablet ? 40 : 30),
 
-          Text(
+          LocalizedText(
             'LittleMuslim',
             style: TextStyle(
               fontSize: isTablet ? 40 : 30,
@@ -68,7 +69,7 @@ class WelcomePage extends StatelessWidget {
 
           SizedBox(height: isTablet ? 12 : 8),
 
-          Text(
+          LocalizedText(
             'কুরআন শেখো · মজার সাথে · ইসলাম জানো',
             textAlign: TextAlign.center,
             style: TextStyle(
@@ -148,7 +149,7 @@ class WelcomePage extends StatelessWidget {
                 ),
                 shadowColor: AppTheme.primaryGreen.withValues(alpha: 0.4),
               ),
-              child: Text(
+              child: LocalizedText(
                 'শুরু করি',
                 style: TextStyle(
                   fontSize: isTablet ? 18 : 16,
@@ -211,7 +212,7 @@ class _FeatureChip extends StatelessWidget {
         children: [
           VectorIcon(type: type, size: isTablet ? 20 : 17, color: color),
           const SizedBox(width: 6),
-          Text(
+          LocalizedText(
             label,
             style: TextStyle(
               fontSize: isTablet ? 13 : 12,

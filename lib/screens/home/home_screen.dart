@@ -1,3 +1,4 @@
+import '../../l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../theme/app_theme.dart';
@@ -130,7 +131,7 @@ class _HomePathTab extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
+                          LocalizedText(
                             'তোমার শেখার পথ',
                             style: TextStyle(
                               fontSize: isTablet ? 22 : 18,
@@ -139,7 +140,7 @@ class _HomePathTab extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(height: 2),
-                          Text(
+                          LocalizedText(
                             'প্রতিটি নোডে ট্যাপ করে শেখো',
                             style: TextStyle(
                               fontSize: 12,
@@ -171,7 +172,7 @@ class _HomePathTab extends StatelessWidget {
                             color: Color(0xFF58A700),
                           ),
                           const SizedBox(width: 5),
-                          Text(
+                          LocalizedText(
                             '$letterProgress / ${lessons.length}',
                             style: const TextStyle(
                               fontWeight: FontWeight.w900,
@@ -343,7 +344,7 @@ class _TopBar extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
+              LocalizedText(
                 'আসসালামু আলাইকুম',
                 style: TextStyle(
                   fontSize: isTablet ? 12 : 11,
@@ -351,7 +352,7 @@ class _TopBar extends StatelessWidget {
                   fontWeight: FontWeight.w600,
                 ),
               ),
-              Text(
+              LocalizedText(
                 name,
                 style: TextStyle(
                   fontSize: isTablet ? 19 : 16,
@@ -379,7 +380,7 @@ class _TopBar extends StatelessWidget {
                 color: Color(0xFFFF6B00),
               ),
               const SizedBox(width: 4),
-              Text(
+              LocalizedText(
                 '$streakDays',
                 style: const TextStyle(
                   fontWeight: FontWeight.w900,
@@ -396,7 +397,7 @@ class _TopBar extends StatelessWidget {
         const SizedBox(width: 6),
         IconButton.filledTonal(
           onPressed: onSettings,
-          tooltip: 'সেটিংস',
+          tooltip: context.uiText('সেটিংস'),
           icon: const Icon(Icons.settings_rounded, size: 20),
           style: IconButton.styleFrom(
             backgroundColor: Colors.white,
@@ -432,7 +433,7 @@ class _XpChip extends StatelessWidget {
             color: Color(0xFFE6A800),
           ),
           const SizedBox(width: 4),
-          Text(
+          LocalizedText(
             '$xp XP',
             style: const TextStyle(
               fontWeight: FontWeight.w900,
@@ -461,7 +462,7 @@ class _SectionTitle extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
+        LocalizedText(
           title,
           style: TextStyle(
             fontSize: isTablet ? 20 : 17,
@@ -470,7 +471,7 @@ class _SectionTitle extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 2),
-        Text(
+        LocalizedText(
           subtitle,
           style: TextStyle(
             fontSize: 12,
@@ -662,7 +663,7 @@ class _ModuleCardState extends State<_ModuleCard> {
                     iconColor: d.accent,
                   ),
                   SizedBox(height: widget.isTablet ? 9 : 7),
-                  Text(
+                  LocalizedText(
                     d.title,
                     style: TextStyle(
                       fontSize: widget.isTablet ? 16 : 14,
@@ -671,7 +672,7 @@ class _ModuleCardState extends State<_ModuleCard> {
                     ),
                   ),
                   const SizedBox(height: 2),
-                  Text(
+                  LocalizedText(
                     d.subtitle,
                     style: TextStyle(
                       fontSize: widget.isTablet ? 12 : 10.5,
@@ -739,7 +740,7 @@ class _TeacherLearningBanner extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                    LocalizedText(
                       'শিক্ষকের সাথে কুরআন ও ইসলাম শিখি',
                       style: TextStyle(
                         color: Colors.white,
@@ -748,13 +749,13 @@ class _TeacherLearningBanner extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 3),
-                    const Text(
+                    const LocalizedText(
                       'মাসিক পরিকল্পনায় সরাসরি live class',
                       style: TextStyle(
                           color: Colors.white70, fontSize: 11, height: 1.3),
                     ),
                     const SizedBox(height: 6),
-                    const Text(
+                    const LocalizedText(
                       'ক্লাস ও পরিকল্পনা দেখো  ›',
                       style: TextStyle(
                         color: Color(0xFFFFE39A),
@@ -883,7 +884,7 @@ class _NavBarItem extends StatelessWidget {
               color: isSelected ? activeColor : inactiveColor,
             ),
             const SizedBox(height: 3),
-            Text(
+            LocalizedText(
               label,
               style: TextStyle(
                 fontSize: 11,
@@ -944,7 +945,7 @@ class _QuickPill extends StatelessWidget {
               color: isSelected ? Colors.white : AppTheme.primaryGreen,
             ),
             const SizedBox(width: 6),
-            Text(
+            LocalizedText(
               label,
               style: TextStyle(
                 fontSize: 12,

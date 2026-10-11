@@ -1,7 +1,10 @@
+import '../../l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 
 import '../../theme/app_theme.dart';
+import '../../utils/app_state.dart';
 import '../../widgets/vector_icons.dart';
 import '../../widgets/duolingo_appbar.dart';
 
@@ -28,14 +31,22 @@ class DuasScreen extends StatefulWidget {
 }
 
 class _DuasScreenState extends State<DuasScreen> {
-  static const _categories = ['সব', 'সকাল ও সন্ধ্যা', 'দৈনন্দিন', 'ঘুম'];
+  static const _categories = [
+    'সব',
+    'পছন্দের',
+    'সকাল ও সন্ধ্যা',
+    'দৈনন্দিন',
+    'ঘুম'
+  ];
   static const _duas = [
     _DuaEntry(
       id: 'wake',
       title: 'ঘুম থেকে উঠলে',
       category: 'সকাল ও সন্ধ্যা',
-      arabic: 'الْحَمْدُ لِلَّهِ الَّذِي أَحْيَانَا بَعْدَ مَا أَمَاتَنَا، وَإِلَيْهِ النُّشُورُ',
-      meaning: 'সব প্রশংসা আল্লাহর, যিনি ঘুমের পর আমাদের জীবিত করেছেন; আর তাঁর কাছেই পুনরুত্থান।',
+      arabic:
+          'الْحَمْدُ لِلَّهِ الَّذِي أَحْيَانَا بَعْدَ مَا أَمَاتَنَا، وَإِلَيْهِ النُّشُورُ',
+      meaning:
+          'সব প্রশংসা আল্লাহর, যিনি ঘুমের পর আমাদের জীবিত করেছেন; আর তাঁর কাছেই পুনরুত্থান।',
       reference: 'সহিহ বুখারি ৬৩২৪',
       color: Color(0xFFFFF6D0),
       accent: Color(0xFFD4A017),
@@ -65,7 +76,8 @@ class _DuasScreenState extends State<DuasScreen> {
       title: 'শৌচাগারে প্রবেশের আগে',
       category: 'দৈনন্দিন',
       arabic: 'اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنَ الْخُبُثِ وَالْخَبَائِثِ',
-      meaning: 'হে আল্লাহ, আমি আপনার কাছে আল-খুবুথ ও আল-খাবাইথ থেকে আশ্রয় চাই।',
+      meaning:
+          'হে আল্লাহ, আমি আপনার কাছে আল-খুবুথ ও আল-খাবাইথ থেকে আশ্রয় চাই।',
       reference: 'সহিহ বুখারি ৬৩২২',
       color: Color(0xFFDCEBFF),
       accent: Color(0xFF3B82C4),
@@ -73,14 +85,17 @@ class _DuasScreenState extends State<DuasScreen> {
   ];
 
   int _selectedCategory = 0;
-  final Set<String> _favorites = {};
-
   @override
   Widget build(BuildContext context) {
+    final appState = context.watch<AppState>();
     final tablet = MediaQuery.sizeOf(context).shortestSide >= 600;
     final selectedCategory = _categories[_selectedCategory];
     final filtered = _duas
-        .where((dua) => selectedCategory == 'সব' || dua.category == selectedCategory)
+        .where((dua) =>
+            selectedCategory == 'সব' ||
+            (selectedCategory == 'পছন্দের'
+                ? appState.isDuaFavorite(dua.id)
+                : dua.category == selectedCategory))
         .toList();
 
     return Scaffold(
@@ -93,7 +108,8 @@ class _DuasScreenState extends State<DuasScreen> {
               physics: const BouncingScrollPhysics(),
               slivers: [
                 SliverPadding(
-                  padding: EdgeInsets.fromLTRB(tablet ? 36 : 18, 12, tablet ? 36 : 18, 32),
+                  padding: EdgeInsets.fromLTRB(
+                      tablet ? 36 : 18, 12, tablet ? 36 : 18, 32),
                   sliver: SliverList(
                     delegate: SliverChildListDelegate([
                       // ── Duolingo Header ──
@@ -101,7 +117,10 @@ class _DuasScreenState extends State<DuasScreen> {
                         title: 'মাসনুন দোয়া',
                         subtitle: 'ছোট ছোট দোয়া, প্রতিদিন',
                         iconType: VectorIconType.dua,
-                        gradientColors: const [Color(0xFF9B6BC9), Color(0xFF7B4FA8)],
+                        gradientColors: const [
+                          Color(0xFF9B6BC9),
+                          Color(0xFF7B4FA8)
+                        ],
                         onBack: () => Navigator.pop(context),
                       ),
 
@@ -119,16 +138,30 @@ class _DuasScreenState extends State<DuasScreen> {
                               borderRadius: BorderRadius.circular(14),
                             ),
                             child: const Center(
-                              child: VectorIcon(type: VectorIconType.lightbulb, size: 24, color: Color(0xFF9B6BC9)),
+                              child: VectorIcon(
+                                  type: VectorIconType.lightbulb,
+                                  size: 24,
+                                  color: Color(0xFF9B6BC9)),
                             ),
                           ),
                           const SizedBox(width: 12),
                           const Expanded(
-                            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                              Text('আজকের ছোট্ট অভ্যাস', style: TextStyle(color: AppTheme.darkText, fontWeight: FontWeight.w800, fontSize: 13)),
-                              SizedBox(height: 2),
-                              Text('একটি দোয়া শেখো, অর্থটাও জেনে নাও।', style: TextStyle(color: Color(0xFF6B5B7A), fontSize: 12, fontWeight: FontWeight.w500)),
-                            ]),
+                            child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  LocalizedText('আজকের ছোট্ট অভ্যাস',
+                                      style: TextStyle(
+                                          color: AppTheme.darkText,
+                                          fontWeight: FontWeight.w800,
+                                          fontSize: 13)),
+                                  SizedBox(height: 2),
+                                  LocalizedText(
+                                      'একটি দোয়া শেখো, অর্থটাও জেনে নাও।',
+                                      style: TextStyle(
+                                          color: Color(0xFF6B5B7A),
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w500)),
+                                ]),
                           ),
                         ]),
                       ),
@@ -143,21 +176,41 @@ class _DuasScreenState extends State<DuasScreen> {
                       const SizedBox(height: 16),
 
                       // ── Dua cards ──
+                      if (filtered.isEmpty)
+                        const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 36),
+                          child: Center(
+                              child: LocalizedText(
+                                  'এখনো কোনো পছন্দের দোয়া নেই।')),
+                        ),
                       for (final dua in filtered)
                         _DuaCard(
                           dua: dua,
-                          isFavorite: _favorites.contains(dua.id),
-                          onFavorite: () => setState(() =>
-                              _favorites.contains(dua.id) ? _favorites.remove(dua.id) : _favorites.add(dua.id)),
+                          isFavorite: appState.isDuaFavorite(dua.id),
+                          onFavorite: () async {
+                            final wasFavorite = appState.isDuaFavorite(dua.id);
+                            await appState.toggleDuaFavorite(dua.id);
+                            if (!context.mounted) return;
+                            ScaffoldMessenger.of(context)
+                              ..hideCurrentSnackBar()
+                              ..showSnackBar(SnackBar(
+                                content: LocalizedText(wasFavorite
+                                    ? 'পছন্দ থেকে সরানো হয়েছে।'
+                                    : 'পছন্দে রাখা হয়েছে।'),
+                                behavior: SnackBarBehavior.floating,
+                              ));
+                          },
                           onCopy: () => _copyDua(context, dua.arabic),
-                          onListen: () => _showAudioNotice(context),
                         ),
 
                       const SizedBox(height: 12),
-                      Text(
+                      LocalizedText(
                         'আরবি পাঠ ও হাদিস নম্বর Sunnah.com-এ উল্লেখিত রেফারেন্সের সঙ্গে মিলিয়ে দেওয়া হয়েছে।',
                         textAlign: TextAlign.center,
-                        style: TextStyle(color: AppTheme.darkText.withValues(alpha: 0.4), fontSize: 10, height: 1.5),
+                        style: TextStyle(
+                            color: AppTheme.darkText.withValues(alpha: 0.4),
+                            fontSize: 10,
+                            height: 1.5),
                       ),
                     ]),
                   ),
@@ -174,13 +227,9 @@ class _DuasScreenState extends State<DuasScreen> {
     Clipboard.setData(ClipboardData(text: arabic));
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
-      ..showSnackBar(const SnackBar(content: Text('দোয়াটি কপি হয়েছে।'), behavior: SnackBarBehavior.floating));
-  }
-
-  void _showAudioNotice(BuildContext context) {
-    ScaffoldMessenger.of(context)
-      ..hideCurrentSnackBar()
-      ..showSnackBar(const SnackBar(content: Text('দোয়ার অডিও পরের ধাপে যোগ হবে।'), behavior: SnackBarBehavior.floating));
+      ..showSnackBar(const SnackBar(
+          content: LocalizedText('দোয়াটি কপি হয়েছে।'),
+          behavior: SnackBarBehavior.floating));
   }
 }
 
@@ -190,11 +239,10 @@ class _DuaCard extends StatefulWidget {
     required this.isFavorite,
     required this.onFavorite,
     required this.onCopy,
-    required this.onListen,
   });
   final _DuaEntry dua;
   final bool isFavorite;
-  final VoidCallback onFavorite, onCopy, onListen;
+  final VoidCallback onFavorite, onCopy;
 
   @override
   State<_DuaCard> createState() => _DuaCardState();
@@ -213,7 +261,10 @@ class _DuaCardState extends State<_DuaCard> {
         borderRadius: BorderRadius.circular(24),
         border: Border.all(color: dua.accent.withValues(alpha: 0.25), width: 2),
         boxShadow: [
-          BoxShadow(color: dua.accent.withValues(alpha: 0.12), blurRadius: 0, offset: const Offset(0, 4)),
+          BoxShadow(
+              color: dua.accent.withValues(alpha: 0.12),
+              blurRadius: 0,
+              offset: const Offset(0, 4)),
         ],
       ),
       child: Column(
@@ -226,21 +277,37 @@ class _DuaCardState extends State<_DuaCard> {
               Container(
                 width: 44,
                 height: 44,
-                decoration: BoxDecoration(color: dua.color, borderRadius: BorderRadius.circular(14)),
-                child: Center(child: VectorIcon(type: VectorIconType.dua, size: 24, color: dua.accent)),
+                decoration: BoxDecoration(
+                    color: dua.color, borderRadius: BorderRadius.circular(14)),
+                child: Center(
+                    child: VectorIcon(
+                        type: VectorIconType.dua, size: 24, color: dua.accent)),
               ),
               const SizedBox(width: 10),
               Expanded(
-                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Text(dua.title, style: const TextStyle(color: AppTheme.darkText, fontWeight: FontWeight.w800, fontSize: 14)),
-                  Text(dua.category, style: TextStyle(color: AppTheme.darkText.withValues(alpha: 0.45), fontSize: 11, fontWeight: FontWeight.w600)),
-                ]),
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      LocalizedText(dua.title,
+                          style: const TextStyle(
+                              color: AppTheme.darkText,
+                              fontWeight: FontWeight.w800,
+                              fontSize: 14)),
+                      LocalizedText(dua.category,
+                          style: TextStyle(
+                              color: AppTheme.darkText.withValues(alpha: 0.45),
+                              fontSize: 11,
+                              fontWeight: FontWeight.w600)),
+                    ]),
               ),
               IconButton(
                 onPressed: widget.onFavorite,
-                tooltip: widget.isFavorite ? 'পছন্দ থেকে সরাও' : 'পছন্দে রাখো',
+                tooltip: context.uiText(
+                    widget.isFavorite ? 'পছন্দ থেকে সরাও' : 'পছন্দে রাখো'),
                 icon: Icon(
-                  widget.isFavorite ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
+                  widget.isFavorite
+                      ? Icons.bookmark_rounded
+                      : Icons.bookmark_border_rounded,
                   color: widget.isFavorite ? dua.accent : Colors.black38,
                 ),
               ),
@@ -261,11 +328,15 @@ class _DuaCardState extends State<_DuaCard> {
                 ),
                 borderRadius: BorderRadius.circular(18),
               ),
-              child: Text(
+              child: LocalizedText(
                 dua.arabic,
                 textDirection: TextDirection.rtl,
                 textAlign: TextAlign.center,
-                style: TextStyle(color: dua.accent, fontSize: 22, height: 1.75, fontWeight: FontWeight.w700),
+                style: TextStyle(
+                    color: dua.accent,
+                    fontSize: 22,
+                    height: 1.75,
+                    fontWeight: FontWeight.w700),
               ),
             ),
           ),
@@ -278,21 +349,35 @@ class _DuaCardState extends State<_DuaCard> {
               child: Row(children: [
                 Expanded(
                   child: AnimatedCrossFade(
-                    firstChild: Text(
+                    firstChild: LocalizedText(
                       dua.meaning,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(color: AppTheme.darkText, fontSize: 13, fontWeight: FontWeight.w500),
+                      style: const TextStyle(
+                          color: AppTheme.darkText,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500),
                     ),
-                    secondChild: Text(
+                    secondChild: LocalizedText(
                       dua.meaning,
-                      style: const TextStyle(color: AppTheme.darkText, fontSize: 13, height: 1.55, fontWeight: FontWeight.w500),
+                      style: const TextStyle(
+                          color: AppTheme.darkText,
+                          fontSize: 13,
+                          height: 1.55,
+                          fontWeight: FontWeight.w500),
                     ),
-                    crossFadeState: _expanded ? CrossFadeState.showSecond : CrossFadeState.showFirst,
+                    crossFadeState: _expanded
+                        ? CrossFadeState.showSecond
+                        : CrossFadeState.showFirst,
                     duration: const Duration(milliseconds: 200),
                   ),
                 ),
-                Icon(_expanded ? Icons.keyboard_arrow_up_rounded : Icons.keyboard_arrow_down_rounded, color: dua.accent, size: 20),
+                Icon(
+                    _expanded
+                        ? Icons.keyboard_arrow_up_rounded
+                        : Icons.keyboard_arrow_down_rounded,
+                    color: dua.accent,
+                    size: 20),
               ]),
             ),
           ),
@@ -303,13 +388,27 @@ class _DuaCardState extends State<_DuaCard> {
             child: Row(children: [
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                decoration: BoxDecoration(color: dua.color, borderRadius: BorderRadius.circular(8)),
-                child: Text(dua.reference, style: TextStyle(color: dua.accent, fontSize: 10, fontWeight: FontWeight.w700)),
+                decoration: BoxDecoration(
+                    color: dua.color, borderRadius: BorderRadius.circular(8)),
+                child: LocalizedText(dua.reference,
+                    style: TextStyle(
+                        color: dua.accent,
+                        fontSize: 10,
+                        fontWeight: FontWeight.w700)),
               ),
               const Spacer(),
-              IconButton(onPressed: widget.onListen, icon: Icon(Icons.volume_up_rounded, color: dua.accent, size: 20), padding: EdgeInsets.zero, constraints: const BoxConstraints()),
-              const SizedBox(width: 8),
-              IconButton(onPressed: widget.onCopy, icon: const Icon(Icons.copy_rounded, color: Colors.black45, size: 18), padding: EdgeInsets.zero, constraints: const BoxConstraints()),
+              LocalizedText('অডিও নেই',
+                  style: TextStyle(
+                      color: dua.accent,
+                      fontSize: 10,
+                      fontWeight: FontWeight.w700)),
+              const SizedBox(width: 10),
+              IconButton(
+                  onPressed: widget.onCopy,
+                  icon: const Icon(Icons.copy_rounded,
+                      color: Colors.black45, size: 18),
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints()),
               const SizedBox(width: 8),
             ]),
           ),

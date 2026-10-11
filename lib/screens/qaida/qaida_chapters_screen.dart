@@ -1,3 +1,4 @@
+import '../../l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -175,12 +176,12 @@ class QaidaChapterPath extends StatelessWidget {
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Row(children: [
             const Expanded(
-                child: Text('ক্বায়দা · অধ্যায়ভিত্তিক পথ',
+                child: LocalizedText('ক্বায়দা · অধ্যায়ভিত্তিক পথ',
                     style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w900,
                         color: AppTheme.darkText))),
-            Text('$completed/${_chapters.length}',
+            LocalizedText('$completed/${_chapters.length}',
                 style: const TextStyle(
                     fontWeight: FontWeight.w800, color: AppTheme.primaryGreen))
           ]),
@@ -209,7 +210,7 @@ class QaidaChapterPath extends StatelessWidget {
                           compact: true,
                           onTap: () => _openChapter(context, state, i))))),
           const SizedBox(height: 7),
-          const Text('হরফ → যুক্ত বর্ণ → হরকত → মাদ/গুন্নাহ → আয়াত',
+          const LocalizedText('হরফ → যুক্ত বর্ণ → হরকত → মাদ/গুন্নাহ → আয়াত',
               style: TextStyle(fontSize: 11, color: Colors.black54)),
         ]));
   }
@@ -226,7 +227,7 @@ class _ChapterHeader extends StatelessWidget {
         iconType: VectorIconType.qaida,
         gradientColors: const [Color(0xFF0D7377), Color(0xFF14919B)],
         onBack: onBack,
-        trailing: Text('$progress/${_chapters.length}',
+        trailing: LocalizedText('$progress/${_chapters.length}',
             style: const TextStyle(
                 color: Colors.white, fontWeight: FontWeight.w900)),
       );
@@ -247,13 +248,13 @@ class _PathBanner extends StatelessWidget {
                 color: Color(0xFF096266), blurRadius: 0, offset: Offset(0, 6))
           ]),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        const Text('ধাপে ধাপে কুরআন পড়া শিখি',
+        const LocalizedText('ধাপে ধাপে কুরআন পড়া শিখি',
             style: TextStyle(
                 color: Colors.white,
                 fontSize: 19,
                 fontWeight: FontWeight.w900)),
         const SizedBox(height: 5),
-        const Text('প্রতিটি অধ্যায় শেষ হলে পরের অধ্যায় খুলবে।',
+        const LocalizedText('প্রতিটি অধ্যায় শেষ হলে পরের অধ্যায় খুলবে।',
             style: TextStyle(color: Colors.white, fontSize: 13)),
         const SizedBox(height: 13),
         ClipRRect(
@@ -305,14 +306,14 @@ class _QaidaChapterCard extends StatelessWidget {
                         color: AppTheme.primaryGreen,
                         size: 20)),
                 const Spacer(),
-                Text(chapter.title,
+                LocalizedText(chapter.title,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.w900,
                         color: AppTheme.darkText)),
-                Text(locked ? 'লক' : '$done/$total পাঠ',
+                LocalizedText(locked ? 'লক' : '$done/$total পাঠ',
                     style: const TextStyle(fontSize: 10, color: Colors.black54))
               ])
             : Row(children: [
@@ -331,18 +332,18 @@ class _QaidaChapterCard extends StatelessWidget {
                     child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                      Text('অধ্যায় ${index + 1}',
+                      LocalizedText('অধ্যায় ${index + 1}',
                           style: const TextStyle(
                               fontSize: 10,
                               fontWeight: FontWeight.w800,
                               color: AppTheme.primaryGreen)),
-                      Text(chapter.title,
+                      LocalizedText(chapter.title,
                           style: const TextStyle(
                               fontSize: 15,
                               fontWeight: FontWeight.w900,
                               color: AppTheme.darkText)),
                       const SizedBox(height: 2),
-                      Text(
+                      LocalizedText(
                           locked
                               ? 'আগের অধ্যায় শেষ হলে খুলবে'
                               : '${chapter.subtitle} · $done/$total পাঠ',

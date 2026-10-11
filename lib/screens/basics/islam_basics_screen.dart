@@ -1,3 +1,4 @@
+import '../../l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -364,13 +365,28 @@ class _IslamBasicsScreenState extends State<IslamBasicsScreen> {
   int? _selected;
   bool _checked = false;
 
-  void _startChapter(int index) => setState(() {
-        _chapterIndex = index;
-        _stage = _Stage.intro;
-        _itemIndex = 0;
-        _selected = null;
-        _checked = false;
-      });
+  void _startChapter(int index) {
+    final chapterId = 'basics_chapter_$index';
+    final saved = context.read<AppState>().basicsProgress(chapterId);
+    final stageIndex = saved == 0 ? 0 : ((saved - 1) ~/ 100).clamp(0, 3);
+    final itemIndex = saved == 0 ? 0 : ((saved - 1) % 100).clamp(0, 9);
+    setState(() {
+      _chapterIndex = index;
+      _stage = _Stage.values[stageIndex];
+      _itemIndex = itemIndex;
+      _selected = null;
+      _checked = false;
+    });
+  }
+
+  Future<void> _saveCurrentProgress() async {
+    final index = _chapterIndex;
+    if (index == null) return;
+    await context.read<AppState>().saveBasicsProgress(
+          'basics_chapter_$index',
+          _stage.index * 100 + _itemIndex + 1,
+        );
+  }
 
   void _nextStage() {
     setState(() {
@@ -384,13 +400,18 @@ class _IslamBasicsScreenState extends State<IslamBasicsScreen> {
         _Stage.quiz => _Stage.quiz,
       };
     });
+    _saveCurrentProgress();
   }
 
   Future<void> _finishChapter() async {
     final index = _chapterIndex!;
     await context
         .read<AppState>()
+        .recordQuizResult('basics_chapter_$index', 10);
+    final earned = await context
+        .read<AppState>()
         .completeLesson('basics_chapter_$index', xp: 25);
+    await context.read<AppState>().clearBasicsProgress('basics_chapter_$index');
     if (!mounted) return;
     setState(() {
       _chapterIndex = null;
@@ -399,6 +420,20 @@ class _IslamBasicsScreenState extends State<IslamBasicsScreen> {
       _selected = null;
       _checked = false;
     });
+    await showDialog<void>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const LocalizedText('অধ্যায় সম্পন্ন!'),
+        content: LocalizedText(earned
+            ? '১০টির ১০টি কুইজ ঠিক হয়েছে। +২৫ XP পেয়েছ।'
+            : 'অধ্যায়টি আবার শেষ করেছ। +২৫ XP আগেই পেয়েছ।'),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const LocalizedText('চালিয়ে যাই')),
+        ],
+      ),
+    );
   }
 
   @override
@@ -457,14 +492,14 @@ class _IslamBasicsScreenState extends State<IslamBasicsScreen> {
               style: IconButton.styleFrom(backgroundColor: Colors.white)),
           const SizedBox(width: 8),
           Expanded(
-              child: Text(chapter.title,
+              child: LocalizedText(chapter.title,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
                       fontSize: 17,
                       fontWeight: FontWeight.w900,
                       color: AppTheme.darkText))),
-          Text(
+          LocalizedText(
               switch (_stage) {
                 _Stage.intro => 'পাঠ ১',
                 _Stage.story => 'গল্প',
@@ -503,7 +538,7 @@ class _IslamBasicsScreenState extends State<IslamBasicsScreen> {
                               Color(0xFF14919B)
                             ],
                             onBack: () => Navigator.pop(context),
-                            trailing: Text(
+                            trailing: LocalizedText(
                                 '$completedCount/${_chapters.length}',
                                 style: const TextStyle(
                                     color: Colors.white,
@@ -516,6 +551,11 @@ class _IslamBasicsScreenState extends State<IslamBasicsScreen> {
                                 index: i,
                                 completed: state
                                     .hasCompletedLesson('basics_chapter_$i'),
+                                quizScore:
+                                    state.quizResult('basics_chapter_$i'),
+                                inProgress:
+                                    state.basicsProgress('basics_chapter_$i') >
+                                        0,
                                 locked: i > firstIncomplete &&
                                     !state.hasCompletedLesson(
                                         'basics_chapter_$i'),
@@ -531,7 +571,7 @@ class _IslamBasicsScreenState extends State<IslamBasicsScreen> {
       return ListView(padding: pad, children: [
         _IllustrationCard(chapter: chapter),
         const SizedBox(height: 18),
-        const Text('সহজ করে জানি',
+        const LocalizedText('সহজ করে জানি',
             style: TextStyle(
                 fontSize: 19,
                 fontWeight: FontWeight.w900,
@@ -541,7 +581,7 @@ class _IslamBasicsScreenState extends State<IslamBasicsScreen> {
             padding: const EdgeInsets.all(17),
             decoration: BoxDecoration(
                 color: Colors.white, borderRadius: BorderRadius.circular(20)),
-            child: Text(chapter.definition,
+            child: LocalizedText(chapter.definition,
                 style: const TextStyle(
                     fontSize: 16, height: 1.7, color: AppTheme.darkText))),
         const SizedBox(height: 17),
@@ -558,13 +598,13 @@ class _IslamBasicsScreenState extends State<IslamBasicsScreen> {
                 color: Colors.white, borderRadius: BorderRadius.circular(22)),
             child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              const Text('একটি ছোট্ট গল্প',
+              const LocalizedText('একটি ছোট্ট গল্প',
                   style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.w900,
                       color: AppTheme.darkText)),
               const SizedBox(height: 12),
-              Text(chapter.story,
+              LocalizedText(chapter.story,
                   style: const TextStyle(
                       fontSize: 16, height: 1.85, color: AppTheme.darkText))
             ])),
@@ -585,13 +625,13 @@ class _IslamBasicsScreenState extends State<IslamBasicsScreen> {
             decoration: BoxDecoration(
                 color: Colors.white, borderRadius: BorderRadius.circular(22)),
             child: Column(children: [
-              Text('${_itemIndex + 1}',
+              LocalizedText('${_itemIndex + 1}',
                   style: TextStyle(
                       fontSize: 42,
                       fontWeight: FontWeight.w900,
                       color: AppTheme.primaryGreen)),
               const SizedBox(height: 8),
-              Text(_reflectionQuestion(chapter, _itemIndex),
+              LocalizedText(_reflectionQuestion(chapter, _itemIndex),
                   textAlign: TextAlign.center,
                   style: const TextStyle(
                       fontSize: 19,
@@ -599,7 +639,7 @@ class _IslamBasicsScreenState extends State<IslamBasicsScreen> {
                       fontWeight: FontWeight.w800,
                       color: AppTheme.darkText)),
               const SizedBox(height: 16),
-              Text('নিজের ভাষায় উত্তর ভাবো। প্রস্তুত হলে পরের প্রশ্নে যাও।',
+              LocalizedText('নিজের ভাষায় উত্তর ভাবো। প্রস্তুত হলে পরের প্রশ্নে যাও।',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                       color: AppTheme.darkText.withValues(alpha: .65),
@@ -614,6 +654,7 @@ class _IslamBasicsScreenState extends State<IslamBasicsScreen> {
             setState(() => _itemIndex++);
           else
             _nextStage();
+          _saveCurrentProgress();
         }),
       ]);
     return _quizContent(chapter, tablet);
@@ -634,11 +675,11 @@ class _IslamBasicsScreenState extends State<IslamBasicsScreen> {
           decoration: BoxDecoration(
               color: Colors.white, borderRadius: BorderRadius.circular(22)),
           child: Column(children: [
-            Text('প্রশ্ন ${_itemIndex + 1} / ১০',
+            LocalizedText('প্রশ্ন ${_itemIndex + 1} / ১০',
                 style: const TextStyle(
                     fontWeight: FontWeight.w800, color: AppTheme.primaryGreen)),
             const SizedBox(height: 10),
-            Text(item.question,
+            LocalizedText(item.question,
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                     fontSize: 20,
@@ -659,7 +700,7 @@ class _IslamBasicsScreenState extends State<IslamBasicsScreen> {
       if (_checked)
         Padding(
             padding: const EdgeInsets.only(bottom: 12),
-            child: Text(
+            child: LocalizedText(
                 options[_selected!] == item.answer
                     ? 'ঠিক উত্তর! মাশাআল্লাহ।'
                     : 'আবার চেষ্টা করো—শেখাটা মনে করে উত্তর বেছে নাও।',
@@ -695,6 +736,7 @@ class _IslamBasicsScreenState extends State<IslamBasicsScreen> {
             _selected = null;
             _checked = false;
           });
+          _saveCurrentProgress();
           return;
         }
         _finishChapter();
@@ -751,11 +793,14 @@ class _ChapterCard extends StatelessWidget {
       {required this.chapter,
       required this.index,
       required this.completed,
+      required this.inProgress,
+      required this.quizScore,
       required this.locked,
       required this.onTap});
   final _Chapter chapter;
   final int index;
-  final bool completed, locked;
+  final bool completed, inProgress, locked;
+  final int? quizScore;
   final VoidCallback onTap;
   @override
   Widget build(BuildContext context) => DuolingoCard(
@@ -774,24 +819,26 @@ class _ChapterCard extends StatelessWidget {
         Expanded(
             child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text('অধ্যায় ${index + 1}',
+          LocalizedText('অধ্যায় ${index + 1}',
               style: const TextStyle(
                   fontSize: 10,
                   fontWeight: FontWeight.w800,
                   color: AppTheme.primaryGreen)),
           const SizedBox(height: 2),
-          Text(chapter.title,
+          LocalizedText(chapter.title,
               style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w900,
                   color: AppTheme.darkText)),
           const SizedBox(height: 3),
-          Text(
+          LocalizedText(
               completed
-                  ? 'সম্পন্ন · চাইলে আবার পড়ো'
+                  ? 'সম্পন্ন · কুইজ ${quizScore ?? 10}/১০ · চাইলে আবার পড়ো'
                   : locked
                       ? 'আগের অধ্যায় শেষ হলে খুলবে'
-                      : 'ছবি · গল্প · ১০ ভাবনা · ১০ কুইজ',
+                      : inProgress
+                          ? 'এখান থেকে আবার শুরু করো'
+                          : 'ছবি · গল্প · ১০ ভাবনা · ১০ কুইজ',
               style: const TextStyle(fontSize: 11, color: Colors.black54))
         ])),
         Icon(
@@ -838,13 +885,13 @@ class _IllustrationCard extends StatelessWidget {
         Expanded(
             child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(chapter.title,
+          LocalizedText(chapter.title,
               style: TextStyle(
                   fontSize: compact ? 18 : 22,
                   fontWeight: FontWeight.w900,
                   color: AppTheme.darkText)),
           const SizedBox(height: 5),
-          Text(compact ? 'গল্পের কথা মনে রাখি' : 'দেখি · বুঝি · শিখি',
+          LocalizedText(compact ? 'গল্পের কথা মনে রাখি' : 'দেখি · বুঝি · শিখি',
               style: const TextStyle(
                   fontSize: 13,
                   fontWeight: FontWeight.w700,
@@ -875,12 +922,12 @@ class _StageLabel extends StatelessWidget {
         Expanded(
             child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(title,
+          LocalizedText(title,
               style: const TextStyle(
                   fontSize: 17,
                   fontWeight: FontWeight.w900,
                   color: AppTheme.darkText)),
-          Text(subtitle,
+          LocalizedText(subtitle,
               style: const TextStyle(fontSize: 12, color: Colors.black54))
         ]))
       ]));
@@ -928,7 +975,7 @@ class _QuizOption extends StatelessWidget {
                     color: AppTheme.primaryGreen),
                 const SizedBox(width: 11),
                 Expanded(
-                    child: Text(text,
+                    child: LocalizedText(text,
                         style: const TextStyle(
                             fontWeight: FontWeight.w700,
                             color: AppTheme.darkText)))
