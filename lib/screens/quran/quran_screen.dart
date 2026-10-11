@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../theme/app_theme.dart';
+import '../../utils/app_state.dart';
 import '../../widgets/vector_icons.dart';
 import '../../widgets/duolingo_appbar.dart';
 import 'quran_data.dart';
@@ -35,6 +37,10 @@ class _QuranScreenState extends State<QuranScreen> {
     try {
       final surahs = await _repository.getSurahs();
       if (!mounted) return;
+      await context.read<AppState>().validateQuranProgress({
+        for (final surah in surahs) surah.number: surah.ayahCount,
+      });
+      if (!mounted) return;
       setState(() { _surahs = surahs; _loading = false; });
     } catch (_) {
       if (!mounted) return;
@@ -44,7 +50,11 @@ class _QuranScreenState extends State<QuranScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final state = context.watch<AppState>();
     final isTablet = MediaQuery.sizeOf(context).shortestSide >= 600;
+    final position = state.quranReadingPosition;
+    final savedSurah = _findSurah(position?.surahNumber);
+    final continueSurah = savedSurah ?? (_surahs.isEmpty ? null : _surahs.first);
     return Scaffold(
       backgroundColor: const Color(0xFFEDF7F0),
       body: SafeArea(
@@ -68,7 +78,16 @@ class _QuranScreenState extends State<QuranScreen> {
 
                       // ── Continue reading banner ──
                       _ContinueReadingCard(
-                        onTap: () => _openReader(context, _surahs.isEmpty ? null : _surahs.first),
+                        surahLabel: continueSurah == null
+                            ? 'সূরা লোড হলে আবার চেষ্টা করো'
+                            : 'সূরা ${continueSurah.englishName}',
+                        ayahNumber: position?.ayahNumber,
+                        canResume: continueSurah != null,
+                        onTap: () => _openReader(
+                          context,
+                          continueSurah,
+                          initialAyah: position?.ayahNumber ?? 1,
+                        ),
                       ),
                       const SizedBox(height: 20),
 
@@ -106,6 +125,8 @@ class _QuranScreenState extends State<QuranScreen> {
                           )
                         else if (_loadError != null)
                           _LoadError(message: _loadError!, onRetry: _loadSurahs)
+                        else if (_surahs.isEmpty)
+                          _EmptySurahs(onRetry: _loadSurahs)
                         else
                           for (final surah in _surahs.where((item) =>
                               _search.isEmpty ||
@@ -144,12 +165,22 @@ class _QuranScreenState extends State<QuranScreen> {
     );
   }
 
-  void _openReader(BuildContext context, QuranSurah? surah) {
+  QuranSurah? _findSurah(int? number) {
+    if (number == null) return null;
+    for (final surah in _surahs) {
+      if (surah.number == number) return surah;
+    }
+    return null;
+  }
+
+  void _openReader(BuildContext context, QuranSurah? surah,
+      {int initialAyah = 1}) {
     if (surah == null) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('সূরার তালিকা লোড হলে পড়া শুরু হবে।')));
       return;
     }
-    Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => QuranReaderScreen(surah: surah, repository: _repository)));
+    Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) =>
+        QuranReaderScreen(surah: surah, repository: _repository, initialAyah: initialAyah)));
   }
 
   void _showComingSoon(BuildContext context) {
@@ -177,8 +208,26 @@ class _LoadError extends StatelessWidget {
       );
 }
 
+class _EmptySurahs extends StatelessWidget {
+  const _EmptySurahs({required this.onRetry});
+  final VoidCallback onRetry;
+  @override
+  Widget build(BuildContext context) => Container(
+        padding: const EdgeInsets.all(18),
+        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(20)),
+        child: Column(children: [
+          const Text('এখন কোনো সূরা পাওয়া যায়নি।'),
+          const SizedBox(height: 10),
+          OutlinedButton.icon(onPressed: onRetry, icon: const Icon(Icons.refresh_rounded), label: const Text('আবার চেষ্টা করি')),
+        ]),
+      );
+}
+
 class _ContinueReadingCard extends StatefulWidget {
-  const _ContinueReadingCard({required this.onTap});
+  const _ContinueReadingCard({required this.surahLabel, required this.ayahNumber, required this.canResume, required this.onTap});
+  final String surahLabel;
+  final int? ayahNumber;
+  final bool canResume;
   final VoidCallback onTap;
   @override
   State<_ContinueReadingCard> createState() => _ContinueReadingCardState();
@@ -208,13 +257,13 @@ class _ContinueReadingCardState extends State<_ContinueReadingCard> {
               child: const Text('۩', style: TextStyle(color: Color(0xFFFFD776), fontSize: 32)),
             ),
             const SizedBox(width: 14),
-            const Expanded(
+            Expanded(
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Text('পড়া চালিয়ে যাও', style: TextStyle(color: Colors.white70, fontSize: 12)),
-                SizedBox(height: 3),
-                Text('সূরা আল-ফাতিহা', style: TextStyle(color: Colors.white, fontSize: 17, fontWeight: FontWeight.w800)),
-                SizedBox(height: 3),
-                Text('তিলাওয়াতের জন্য প্রস্তুত', style: TextStyle(color: Colors.white70, fontSize: 11)),
+                const Text('পড়া চালিয়ে যাও', style: TextStyle(color: Colors.white70, fontSize: 12)),
+                const SizedBox(height: 3),
+                Text(widget.surahLabel, style: const TextStyle(color: Colors.white, fontSize: 17, fontWeight: FontWeight.w800)),
+                const SizedBox(height: 3),
+                Text(!widget.canResume ? 'ইন্টারনেট সংযোগ দেখে আবার চেষ্টা করো' : widget.ayahNumber == null ? 'শুরু থেকে পড়ি' : 'আয়াত ${widget.ayahNumber} থেকে পড়ি', style: const TextStyle(color: Colors.white70, fontSize: 11)),
               ]),
             ),
             Container(

@@ -123,6 +123,7 @@ class _QaidaLessonScreenState extends State<QaidaLessonScreen> {
     if (!_initialized) {
       _lessonAlreadyCompleted =
           context.read<AppState>().hasCompletedLesson(widget.lessonId);
+      _step = context.read<AppState>().qaidaLessonStep(widget.lessonId);
       _initialized = true;
     }
   }
@@ -573,10 +574,15 @@ class _QaidaLessonScreenState extends State<QaidaLessonScreen> {
     });
   }
 
-  void _advanceStep() {
+  Future<void> _advanceStep() async {
     if (!_stagePassed || _step >= 5) return;
+    final nextStep = _step + 1;
+    await context
+        .read<AppState>()
+        .saveQaidaLessonStep(widget.lessonId, nextStep);
+    if (!mounted) return;
     setState(() {
-      _step++;
+      _step = nextStep;
       _feedback = null;
       _stagePassed = false;
       _recognizedWords = '';
@@ -696,11 +702,13 @@ class _QaidaLessonScreenState extends State<QaidaLessonScreen> {
     });
   }
 
-  void _completeAndContinue() {
+  Future<void> _completeAndContinue() async {
     if (!_lessonAlreadyCompleted) {
-      _earnedXp = context.read<AppState>().completeLesson(widget.lessonId);
+      _earnedXp =
+          await context.read<AppState>().completeLesson(widget.lessonId);
       _lessonAlreadyCompleted = true;
     }
+    if (!mounted) return;
     if (widget.chapterEndLessonId == widget.lessonId) {
       Navigator.pop(context);
       return;

@@ -386,9 +386,12 @@ class _IslamBasicsScreenState extends State<IslamBasicsScreen> {
     });
   }
 
-  void _finishChapter() {
+  Future<void> _finishChapter() async {
     final index = _chapterIndex!;
-    context.read<AppState>().completeLesson('basics_chapter_$index', xp: 25);
+    await context
+        .read<AppState>()
+        .completeLesson('basics_chapter_$index', xp: 25);
+    if (!mounted) return;
     setState(() {
       _chapterIndex = null;
       _stage = _Stage.intro;

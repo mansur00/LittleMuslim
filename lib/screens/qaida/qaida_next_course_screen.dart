@@ -124,7 +124,7 @@ class _QaidaNextCourseScreenState extends State<QaidaNextCourseScreen> {
     }
   }
 
-  void _advance() {
+  Future<void> _advance() async {
     final course = _courses[_index];
     if (!_checked) {
       setState(() => _checked = true);
@@ -147,8 +147,9 @@ class _QaidaNextCourseScreenState extends State<QaidaNextCourseScreen> {
     }
     final id = 'qaida_course_$_index';
     if (!context.read<AppState>().hasCompletedLesson(id)) {
-      context.read<AppState>().completeLesson(id, xp: 10);
+      await context.read<AppState>().completeLesson(id, xp: 10);
     }
+    if (!mounted) return;
     if (widget.stopAfterIndex == _index) {
       Navigator.pop(context);
       return;

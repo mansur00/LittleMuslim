@@ -1,26 +1,28 @@
 # LittleMuslim 🌙
 
-A fun, Duolingo-inspired Islamic learning app for kids aged **6–14**.
+LittleMuslim is a Flutter learning app for children, with a Bengali-first interface and a Duolingo-inspired learning path.
 
-Learn Quran, Qaida, Salah, Masnun Duas, and the Seerah of Prophet Muhammad ﷰ through games, stories, and beautiful design.
+## Implemented features
 
----
+- Four-step onboarding for a learner's name, age, and preferred language.
+- A home screen linking to Qaida, Quran, prayer learning, duas, Seerah, basic Islamic learning, achievements, and daily missions.
+- Interactive Qaida lessons for the 28 Arabic letters, plus lessons on joined letters and reading rules. Completed lessons award XP once and contribute to local progress, streaks, badges, and daily mission status.
+- A Quran surah list and reading screen with Arabic text, Bengali translation, tajweed coloring, adjustable text size, local ayah bookmarks, last-read position, and recitation audio controls.
+- Guided prayer steps and a small categorized collection of duas.
+- Child-friendly Seerah stories with references, plus basic Islamic learning activities.
+- Responsive layouts intended for phones and tablets.
+- Local storage of onboarding details, settings, XP, completed lessons, in-progress Qaida steps, lesson activity, opened reward chests, Quran bookmarks, and last-read position using `shared_preferences`.
 
-## Features (Planned)
+## Known limitations
 
-- **Onboarding** – Welcome, Name, Age, Language selection
-- **Qaida Learning** – Duolingo-style lessons with XP, streaks, badges (games only for letters & rules)
-- **Colorful Quran Reader** – Page-by-page eBook style (swipe to change pages), no games during tilawah
-- **Daily Prayer Times** + step-by-step Salah learning
-- **Masnun Duas** categorized
-- **Seerah Stories** for children
-- **Islamic fun stories** from Hadith & history (shown during Quran reading mode)
-- Fully responsive for **Phone + Tablet / iPad**
-- Islamic Middle-East inspired UI (teal-green + gold + cream)
+- Quran surah text, translations, tajweed, and recitation audio require an internet connection and external Quran services; Quran text is not cached for offline reading.
+- Prayer times are placeholders; location and calculation-method setup is not implemented.
+- Dua favorites are kept only while the screen is open, and dua audio is not implemented.
+- The Quran story tab, live learning, account/login screens, and some device-dependent Arabic speech features are placeholders. There is no authentication or cloud sync.
+- The selected onboarding language is saved, but the interface is currently Bengali-first rather than fully localized.
+- The current static analysis run reports informational lint and deprecation notices; there are no analyzer errors.
 
----
-
-## Getting Started
+## Getting started
 
 ### Prerequisites
 - Flutter SDK 3.2+
@@ -41,42 +43,30 @@ flutter pub get
 flutter run
 ```
 
-### Project Structure
+### Project structure
 
 ```
 lib/
 ├── main.dart
 ├── theme/
-│   └── app_theme.dart          # Colors, typography, Material 3 theme
+│   └── app_theme.dart          # Colors, typography, Material theme
 ├── utils/
-│   └── app_state.dart          # Global state (Provider)
+│   └── app_state.dart          # App state and local persistence
 ├── screens/
-│   └── onboarding/
-│       ├── onboarding_screen.dart
-│       ├── welcome_page.dart
-│       ├── name_age_page.dart
-│       ├── language_page.dart
-│       └── ready_page.dart
-├── widgets/                    # Shared widgets (coming)
-└── models/                     # Data models (coming)
+│   ├── onboarding/              # Welcome, learner details, language, ready
+│   ├── home/                    # Home and module navigation
+│   ├── qaida/                   # Letter path and lesson flows
+│   ├── quran/                   # Surah list, reader, and Quran data source
+│   └── ...                      # Prayer, duas, Seerah, profile, settings
+└── widgets/                     # Shared UI components
 ```
 
----
+## Checks
 
-## Current Status
-
-✅ Onboarding flow (4 screens) – Welcome → Name & Age → Language → Ready
-🔄 Next: Home Screen + Bottom Navigation + Qaida module
-
----
-
-## Design Notes
-
-- Primary: `#0D7377` (Deep Teal Green)
-- Accent: `#D4A017` (Gold)
-- Background: `#F8F1E3` (Cream)
-- Fully responsive using `MediaQuery` + `shortestSide >= 600` for tablet detection
-
----
+```bash
+flutter pub get
+flutter analyze
+flutter test
+```
 
 Made with ❤️ for the next generation of young Muslims.
