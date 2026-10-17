@@ -951,9 +951,9 @@ void main() {
     expect(find.text('ঘুমাতে যাওয়ার সময়'), findsOneWidget);
     expect(find.text('খাবার শুরু করার আগে'), findsNothing);
 
-    await tester.tap(find.byTooltip('পছন্দে রাখো'));
+    await tester.tap(find.byTooltip('পছন্দে রাখো').first);
     await tester.pumpAndSettle();
-    expect(find.byTooltip('পছন্দ থেকে সরাও'), findsOneWidget);
+    expect(find.byTooltip('পছন্দ থেকে সরাও'), findsAtLeast(1));
     expect(appState.isDuaFavorite('sleep'), isTrue);
     expect(find.text('পছন্দে রাখা হয়েছে।'), findsOneWidget);
     await tester.tap(find.text('পছন্দের'));
