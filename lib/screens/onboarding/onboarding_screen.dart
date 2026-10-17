@@ -93,7 +93,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     child: LocalizedText(
                       'Skip',
                       style: TextStyle(
-                        color: AppTheme.primaryGreen.withOpacity(0.7),
+                        color: AppTheme.primaryGreen.withValues(alpha: 0.7),
                         fontSize: isTablet ? 16 : 14,
                         fontWeight: FontWeight.w500,
                       ),
@@ -148,7 +148,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     count: _totalPages,
                     effect: ExpandingDotsEffect(
                       activeDotColor: AppTheme.primaryGreen,
-                      dotColor: AppTheme.primaryGreen.withOpacity(0.25),
+                      dotColor: AppTheme.primaryGreen.withValues(alpha: 0.25),
                       dotHeight: 8,
                       dotWidth: 8,
                       expansionFactor: 3.5,

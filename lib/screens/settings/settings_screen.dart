@@ -6,6 +6,7 @@ import '../../theme/app_theme.dart';
 import '../../utils/app_state.dart';
 import '../../widgets/duolingo_appbar.dart';
 import '../../widgets/vector_icons.dart';
+import '../../services/notification_service.dart';
 import '../profile/profile_screen.dart';
 
 class SettingsScreen extends StatelessWidget {
@@ -92,31 +93,45 @@ class SettingsScreen extends StatelessWidget {
                     SwitchListTile.adaptive(
                       contentPadding: EdgeInsets.zero,
                       value: state.streakAlertsEnabled,
-                      activeColor: AppTheme.primaryGreen,
+                      activeThumbColor: AppTheme.primaryGreen,
                       title: const LocalizedText('দৈনিক শেখার রিমাইন্ডার',
                           style: TextStyle(
                               fontWeight: FontWeight.w800, fontSize: 14)),
                       subtitle: const LocalizedText(
                           'স্ট্রিক ধরে রাখতে মনে করিয়ে দেবে',
                           style: TextStyle(fontSize: 11)),
-                      onChanged: (value) => context
-                          .read<AppState>()
-                          .updateNotificationSettings(
-                              streakAlertsEnabled: value),
+                      onChanged: (value) async {
+                        final appState = context.read<AppState>();
+                        if (value) {
+                          await NotificationService.instance
+                              .requestPermissions();
+                        }
+                        await appState.updateNotificationSettings(
+                            streakAlertsEnabled: value);
+                        await NotificationService.instance
+                            .syncWithAppState(appState);
+                      },
                     ),
                     SwitchListTile.adaptive(
                       contentPadding: EdgeInsets.zero,
                       value: state.classAlertsEnabled,
-                      activeColor: AppTheme.primaryGreen,
+                      activeThumbColor: AppTheme.primaryGreen,
                       title: const LocalizedText('শিক্ষকের ক্লাসের আপডেট',
                           style: TextStyle(
                               fontWeight: FontWeight.w800, fontSize: 14)),
                       subtitle: const LocalizedText('ক্লাস schedule ও reminder',
                           style: TextStyle(fontSize: 11)),
-                      onChanged: (value) => context
-                          .read<AppState>()
-                          .updateNotificationSettings(
-                              classAlertsEnabled: value),
+                      onChanged: (value) async {
+                        final appState = context.read<AppState>();
+                        if (value) {
+                          await NotificationService.instance
+                              .requestPermissions();
+                        }
+                        await appState.updateNotificationSettings(
+                            classAlertsEnabled: value);
+                        await NotificationService.instance
+                            .syncWithAppState(appState);
+                      },
                     ),
                     ListTile(
                       contentPadding: EdgeInsets.zero,
@@ -128,6 +143,7 @@ class SettingsScreen extends StatelessWidget {
                       subtitle: LocalizedText(_formatTime(state.reminderTime)),
                       trailing: const Icon(Icons.edit_rounded, size: 19),
                       onTap: () async {
+                        final appState = context.read<AppState>();
                         final parts = state.reminderTime.split(':');
                         final initial = TimeOfDay(
                           hour: int.tryParse(parts.first) ?? 19,
@@ -135,18 +151,19 @@ class SettingsScreen extends StatelessWidget {
                         );
                         final chosen = await showTimePicker(
                             context: context, initialTime: initial);
-                        if (chosen != null && context.mounted) {
-                          await context
-                              .read<AppState>()
-                              .updateNotificationSettings(
-                                reminderTime:
-                                    '${chosen.hour.toString().padLeft(2, '0')}:${chosen.minute.toString().padLeft(2, '0')}',
-                              );
+                        if (chosen != null) {
+                          final newTime =
+                              '${chosen.hour.toString().padLeft(2, '0')}:${chosen.minute.toString().padLeft(2, '0')}';
+                          await appState.updateNotificationSettings(
+                            reminderTime: newTime,
+                          );
+                          await NotificationService.instance
+                              .syncWithAppState(appState);
                         }
                       },
                     ),
                     const LocalizedText(
-                      'এই preview-তে পছন্দগুলো সংরক্ষিত হয়। ফোনে নির্দিষ্ট সময়ে push/local alert পাঠাতে notification service এখনো যুক্ত করতে হবে।',
+                      'নির্ধারিত সময়ে আপনার ডিভাইসে দৈনিক পড়ার রিমাইন্ডার পৌঁছে যাবে।',
                       style: TextStyle(
                           color: Colors.black45, fontSize: 11, height: 1.5),
                     ),
@@ -280,6 +297,45 @@ class SettingsScreen extends StatelessWidget {
                       ]),
                 ),
                 const SizedBox(height: 14),
+                _SettingsSection(
+                  title: 'প্রাইভেসি ও ডেটা নিয়ন্ত্রণ',
+                  child: Column(
+                    children: [
+                      ListTile(
+                        contentPadding: EdgeInsets.zero,
+                        leading: const Icon(Icons.privacy_tip_rounded,
+                            color: AppTheme.primaryGreen),
+                        title: const LocalizedText('শিশু প্রাইভেসি নীতি',
+                            style: TextStyle(
+                                fontWeight: FontWeight.w800, fontSize: 14)),
+                        subtitle: const LocalizedText(
+                            'LittleMuslim কোনো ব্যক্তিগত তথ্য সংগ্রহ বা ট্র্যাক করে না',
+                            style: TextStyle(fontSize: 11)),
+                        trailing: const Icon(Icons.arrow_forward_ios_rounded,
+                            size: 14),
+                        onTap: () => _showPrivacyPolicy(context),
+                      ),
+                      const Divider(height: 12),
+                      ListTile(
+                        contentPadding: EdgeInsets.zero,
+                        leading: const Icon(Icons.delete_forever_rounded,
+                            color: AppTheme.accentCoral),
+                        title: const LocalizedText('সব অগ্রগতি ও ডেটা মুছুন',
+                            style: TextStyle(
+                                fontWeight: FontWeight.w800,
+                                fontSize: 14,
+                                color: AppTheme.accentCoral)),
+                        subtitle: const LocalizedText(
+                            'ডিভাইসে সংরক্ষিত সব শিক্ষা ও স্কোর মুছে ফেলা হবে',
+                            style: TextStyle(fontSize: 11)),
+                        trailing: const Icon(Icons.arrow_forward_ios_rounded,
+                            size: 14),
+                        onTap: () => _confirmResetData(context),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 14),
                 const LocalizedText(
                     'নিরাপত্তার জন্য এই preview-তে card number, mobile wallet PIN বা OTP চাওয়া হয় না। Live payment চালুর আগে merchant account, payment gateway ও subscription backend যুক্ত করতে হবে।',
                     style: TextStyle(
@@ -288,6 +344,70 @@ class SettingsScreen extends StatelessWidget {
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  void _showPrivacyPolicy(BuildContext context) {
+    showDialog<void>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const LocalizedText('শিশু প্রাইভেসি নীতি'),
+        content: const SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              LocalizedText(
+                '• LittleMuslim শিশুদের কোনো ব্যক্তিগত সংবেদনশীল তথ্য সার্ভারে সংগ্রহ করে না।\n'
+                '• শেখার যাবতীয় অগ্রগতি (XP, কায়দা ও দুআ পড়া) স্থানীয়ভাবে ডিভাইসে সংরক্ষিত থাকে।\n'
+                '• নামাজের সময় নির্ধারণের জন্য শুধুমাত্র আল-আধান এপিআই-তে জিপিএস স্থানাঙ্ক পাঠানো হয়।\n'
+                '• কোনো তৃতীয় পক্ষের ট্র্যাকার বা অনাকাঙ্ক্ষিত বিজ্ঞাপন অ্যাপে নেই।',
+                style: TextStyle(fontSize: 13, height: 1.6),
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          FilledButton(
+            onPressed: () => Navigator.pop(context),
+            child: const LocalizedText('ঠিক আছে'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _confirmResetData(BuildContext context) {
+    showDialog<void>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const LocalizedText('সব ডেটা মুছে ফেলবেন?'),
+        content: const LocalizedText(
+          'আপনার অর্জিত XP, স্ট্রিক, পড়া পাঠের অগ্রগতি এবং সংরক্ষণ করা বুকমার্ক সব মুছে যাবে।',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: const LocalizedText('বাতিল'),
+          ),
+          FilledButton(
+            style: FilledButton.styleFrom(
+              backgroundColor: AppTheme.accentCoral,
+            ),
+            onPressed: () async {
+              Navigator.pop(dialogContext);
+              await context.read<AppState>().resetOnboarding();
+              if (!context.mounted) return;
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: LocalizedText('সব ডেটা সফলভাবে মুছে ফেলা হয়েছে।'),
+                ),
+              );
+            },
+            child: const LocalizedText('মুছে ফেলুন'),
+          ),
+        ],
       ),
     );
   }

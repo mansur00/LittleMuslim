@@ -1025,7 +1025,7 @@ class _PrayerTimesCardState extends State<_PrayerTimesCard>
                   title: Text(context.uiText('Calculation settings')),
                   content: Column(mainAxisSize: MainAxisSize.min, children: [
                     DropdownButtonFormField<int>(
-                        value: method,
+                        initialValue: method,
                         isExpanded: true,
                         decoration: InputDecoration(
                             labelText: context.uiText('Calculation method')),
@@ -1040,7 +1040,7 @@ class _PrayerTimesCardState extends State<_PrayerTimesCard>
                           if (v != null) update(() => method = v);
                         }),
                     DropdownButtonFormField<int>(
-                        value: school,
+                        initialValue: school,
                         decoration: InputDecoration(
                             labelText: context.uiText('Asr method')),
                         items: [
@@ -1199,6 +1199,21 @@ class _PrayerTimesCardState extends State<_PrayerTimesCard>
             Text(
                 '${context.uiText('Sunrise (reference only, not a prayer)')}: ${_formatPrayerTime(_result!.times['Sunrise'])}')
           ]),
+          if (_result!.isCached) ...[
+            const SizedBox(height: 8),
+            Row(children: [
+              const Icon(Icons.offline_pin_rounded,
+                  size: 16, color: Color(0xFFE39C4D)),
+              const SizedBox(width: 6),
+              Text(
+                context.uiText('সংরক্ষিত অফলাইন তথ্য'),
+                style: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFFE39C4D)),
+              ),
+            ]),
+          ],
         ],
       ]));
 }

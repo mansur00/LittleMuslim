@@ -8,9 +8,11 @@ import 'screens/onboarding/onboarding_screen.dart';
 import 'screens/home/home_screen.dart';
 import 'utils/app_state.dart';
 import 'l10n/app_localizations.dart';
+import 'services/notification_service.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await NotificationService.instance.initialize();
 
   // Portrait + Landscape support (phone & tablet friendly)
   if (!kIsWeb) {

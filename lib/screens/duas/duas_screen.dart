@@ -355,6 +355,7 @@ class _DuaCardState extends State<_DuaCard> {
                 textDirection: TextDirection.rtl,
                 textAlign: TextAlign.center,
                 style: TextStyle(
+                    fontFamily: AppTheme.arabicFontFamily,
                     color: dua.accent,
                     fontSize: 22,
                     height: 1.75,
@@ -620,6 +621,7 @@ class _DuaDetailSheetState extends State<_DuaDetailSheet> {
                   textDirection: TextDirection.rtl,
                   textAlign: TextAlign.center,
                   style: TextStyle(
+                    fontFamily: AppTheme.arabicFontFamily,
                     color: dua.accent,
                     fontSize: 26,
                     height: 1.7,

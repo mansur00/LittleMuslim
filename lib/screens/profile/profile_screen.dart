@@ -106,14 +106,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           textCapitalization: TextCapitalization.words,
                           decoration: InputDecoration(
                               labelText: context.uiText('নাম'),
-                              prefixIcon: Icon(Icons.person_outline_rounded)),
+                              prefixIcon: const Icon(Icons.person_outline_rounded)),
                         ),
                         const SizedBox(height: 13),
                         DropdownButtonFormField<int>(
-                          value: _age,
+                          initialValue: _age,
                           decoration: InputDecoration(
                               labelText: context.uiText('বয়স'),
-                              prefixIcon: Icon(Icons.cake_outlined)),
+                              prefixIcon: const Icon(Icons.cake_outlined)),
                           items: [
                             for (var age = 6; age <= 14; age++)
                               DropdownMenuItem(
@@ -146,11 +146,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ]),
                 ),
                 const SizedBox(height: 14),
-                DuolingoCard(
-                  accentColor: const Color(0xFF58CC02),
+                const DuolingoCard(
+                  accentColor: Color(0xFF58CC02),
                   margin: EdgeInsets.zero,
-                  padding: const EdgeInsets.all(17),
-                  child: const Column(
+                  padding: EdgeInsets.all(17),
+                  child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Row(children: [

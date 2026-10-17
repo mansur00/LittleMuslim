@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class QuranSurah {
   const QuranSurah({
@@ -109,79 +110,146 @@ class AlQuranCloudRepository implements QuranRepository {
 
   final http.Client _client;
 
+  Future<List<QuranSurah>?> _loadCachedSurahs() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final raw = prefs.getString('quran_surahs_cache');
+      if (raw == null) return null;
+      final list = jsonDecode(raw) as List<dynamic>;
+      return list
+          .map((e) => QuranSurah.fromJson(e as Map<String, dynamic>))
+          .toList(growable: false);
+    } catch (_) {
+      return null;
+    }
+  }
+
+  Future<void> _saveCachedSurahs(List<dynamic> data) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('quran_surahs_cache', jsonEncode(data));
+    } catch (_) {}
+  }
+
+  Future<QuranSurahContent?> _loadCachedSurahContent(QuranSurah surah) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final raw = prefs.getString('quran_surah_${surah.number}_cache');
+      if (raw == null) return null;
+      final list = jsonDecode(raw) as List<dynamic>;
+      final ayahs = list.map((item) {
+        final m = item as Map<String, dynamic>;
+        return QuranAyah(
+          number: m['number'] as int,
+          arabic: m['arabic'] as String,
+          tajweedText: m['tajweedText'] as String,
+          translation: m['translation'] as String,
+        );
+      }).toList(growable: false);
+      if (ayahs.isEmpty) return null;
+      return QuranSurahContent(surah: surah, ayahs: ayahs);
+    } catch (_) {
+      return null;
+    }
+  }
+
+  Future<void> _saveCachedSurahContent(
+      int surahNumber, List<QuranAyah> ayahs) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final list = ayahs
+          .map((a) => {
+                'number': a.number,
+                'arabic': a.arabic,
+                'tajweedText': a.tajweedText,
+                'translation': a.translation,
+              })
+          .toList(growable: false);
+      await prefs.setString(
+          'quran_surah_${surahNumber}_cache', jsonEncode(list));
+    } catch (_) {}
+  }
+
   @override
   Future<List<QuranSurah>> getSurahs() async {
-    final response = await _client
-        .get(Uri.parse('https://api.alquran.cloud/v1/surah'))
-        .timeout(const Duration(seconds: 15));
-    final body = _decodeResponse(response);
-    final data = body['data'] as List<dynamic>;
-    final surahs = data
-        .map((entry) => QuranSurah.fromJson(entry as Map<String, dynamic>))
-        .toList(growable: false);
-    if (surahs.length != 114) {
-      throw const FormatException('The surah list was incomplete.');
+    try {
+      final response = await _client
+          .get(Uri.parse('https://api.alquran.cloud/v1/surah'))
+          .timeout(const Duration(seconds: 15));
+      final body = _decodeResponse(response);
+      final data = body['data'] as List<dynamic>;
+      final surahs = data
+          .map((entry) => QuranSurah.fromJson(entry as Map<String, dynamic>))
+          .toList(growable: false);
+      if (surahs.length != 114) {
+        throw const FormatException('The surah list was incomplete.');
+      }
+      await _saveCachedSurahs(data);
+      return surahs;
+    } catch (e) {
+      final cached = await _loadCachedSurahs();
+      if (cached != null && cached.length == 114) return cached;
+      rethrow;
     }
-    return surahs;
   }
 
   @override
   Future<QuranSurahContent> getSurah(QuranSurah surah) async {
-    final responses = await Future.wait([
-      _client
-          .get(Uri.parse(
-            'https://api.alquran.cloud/v1/surah/${surah.number}/editions/'
-            'quran-uthmani,bn.bengali',
-          ))
-          .timeout(const Duration(seconds: 20)),
-      _client
-          .get(Uri.parse(
-            'https://api.quran.com/api/v4/quran/verses/uthmani_tajweed'
-            '?chapter_number=${surah.number}',
-          ))
-          .timeout(const Duration(seconds: 20)),
-    ]);
-    final body = _decodeResponse(responses[0]);
-    if (responses[1].statusCode != 200) {
-      throw http.ClientException(
-          'Tajweed service returned ${responses[1].statusCode}.');
-    }
-    final tajweedBody =
-        jsonDecode(utf8.decode(responses[1].bodyBytes)) as Map<String, dynamic>;
-    final tajweedRows = (tajweedBody['verses'] as List<dynamic>?) ?? const [];
-    final tajweedByVerse = {
-      for (final row in tajweedRows.cast<Map<String, dynamic>>())
-        row['verse_key'] as String: row['text_uthmani_tajweed'] as String,
-    };
-    if (tajweedByVerse.length != surah.ayahCount) {
-      throw const FormatException('The tajweed text was incomplete.');
-    }
-    final editions =
-        (body['data'] as List<dynamic>).cast<Map<String, dynamic>>();
-    Map<String, dynamic>? edition(String id) {
-      for (final item in editions) {
-        if ((item['edition'] as Map<String, dynamic>?)?['identifier'] == id) {
-          return item;
-        }
+    try {
+      final responses = await Future.wait([
+        _client
+            .get(Uri.parse(
+              'https://api.alquran.cloud/v1/surah/${surah.number}/editions/'
+              'quran-uthmani,bn.bengali',
+            ))
+            .timeout(const Duration(seconds: 20)),
+        _client
+            .get(Uri.parse(
+              'https://api.quran.com/api/v4/quran/verses/uthmani_tajweed'
+              '?chapter_number=${surah.number}',
+            ))
+            .timeout(const Duration(seconds: 20)),
+      ]);
+      final body = _decodeResponse(responses[0]);
+      if (responses[1].statusCode != 200) {
+        throw http.ClientException(
+            'Tajweed service returned ${responses[1].statusCode}.');
       }
-      return null;
-    }
+      final tajweedBody = jsonDecode(utf8.decode(responses[1].bodyBytes))
+          as Map<String, dynamic>;
+      final tajweedRows =
+          (tajweedBody['verses'] as List<dynamic>?) ?? const [];
+      final tajweedByVerse = {
+        for (final row in tajweedRows.cast<Map<String, dynamic>>())
+          row['verse_key'] as String: row['text_uthmani_tajweed'] as String,
+      };
+      if (tajweedByVerse.length != surah.ayahCount) {
+        throw const FormatException('The tajweed text was incomplete.');
+      }
+      final editions =
+          (body['data'] as List<dynamic>).cast<Map<String, dynamic>>();
+      Map<String, dynamic>? edition(String id) {
+        for (final item in editions) {
+          if ((item['edition'] as Map<String, dynamic>?)?['identifier'] == id) {
+            return item;
+          }
+        }
+        return null;
+      }
 
-    final arabic = edition('quran-uthmani');
-    final bengali = edition('bn.bengali');
-    if (arabic == null || bengali == null) {
-      throw const FormatException('The surah text was incomplete.');
-    }
-    final arabicAyahs = arabic['ayahs'] as List<dynamic>;
-    final bengaliAyahs = bengali['ayahs'] as List<dynamic>;
-    if (arabicAyahs.length != bengaliAyahs.length) {
-      throw const FormatException(
-          'Arabic and translation ayahs did not match.');
-    }
+      final arabic = edition('quran-uthmani');
+      final bengali = edition('bn.bengali');
+      if (arabic == null || bengali == null) {
+        throw const FormatException('The surah text was incomplete.');
+      }
+      final arabicAyahs = arabic['ayahs'] as List<dynamic>;
+      final bengaliAyahs = bengali['ayahs'] as List<dynamic>;
+      if (arabicAyahs.length != bengaliAyahs.length) {
+        throw const FormatException(
+            'Arabic and translation ayahs did not match.');
+      }
 
-    return QuranSurahContent(
-      surah: surah,
-      ayahs: [
+      final ayahs = [
         for (var i = 0; i < arabicAyahs.length; i++)
           () {
             final arabicAyah = arabicAyahs[i] as Map<String, dynamic>;
@@ -195,8 +263,16 @@ class AlQuranCloudRepository implements QuranRepository {
                   (bengaliAyahs[i] as Map<String, dynamic>)['text'] as String,
             );
           }(),
-      ],
-    );
+      ];
+
+      final content = QuranSurahContent(surah: surah, ayahs: ayahs);
+      await _saveCachedSurahContent(surah.number, ayahs);
+      return content;
+    } catch (e) {
+      final cached = await _loadCachedSurahContent(surah);
+      if (cached != null) return cached;
+      rethrow;
+    }
   }
 
   Map<String, dynamic> _decodeResponse(http.Response response) {

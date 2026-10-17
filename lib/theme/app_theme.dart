@@ -13,6 +13,23 @@ class AppTheme {
   static const Color white = Color(0xFFFFFFFF);
   static const Color lightGold = Color(0xFFF5E6C8);
 
+  static const String arabicFontFamily = 'Amiri';
+
+  static TextStyle arabicTextStyle({
+    double fontSize = 24,
+    FontWeight fontWeight = FontWeight.normal,
+    Color? color,
+    double? height,
+  }) {
+    return TextStyle(
+      fontFamily: arabicFontFamily,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      color: color ?? darkText,
+      height: height ?? 1.8,
+    );
+  }
+
   static ThemeData get lightTheme {
     return ThemeData(
       useMaterial3: true,

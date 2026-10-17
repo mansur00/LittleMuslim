@@ -68,7 +68,7 @@ class _NameAgePageState extends State<NameAgePage> {
             'আমরা তোমাকে সঠিকভাবে স্বাগত জানাব',
             style: TextStyle(
               fontSize: widget.isTablet ? 16 : 14,
-              color: AppTheme.darkText.withOpacity(0.65),
+              color: AppTheme.darkText.withValues(alpha: 0.65),
             ),
           ),
           SizedBox(height: widget.isTablet ? 36 : 28),
@@ -85,7 +85,7 @@ class _NameAgePageState extends State<NameAgePage> {
             decoration: InputDecoration(
               hintText: context.uiText('যেমন: আয়েশা, ইউসুফ, ফাতিমা...'),
               hintStyle: TextStyle(
-                color: AppTheme.darkText.withOpacity(0.4),
+                color: AppTheme.darkText.withValues(alpha: 0.4),
               ),
               filled: true,
               fillColor: AppTheme.white,
@@ -100,7 +100,7 @@ class _NameAgePageState extends State<NameAgePage> {
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(16),
                 borderSide: BorderSide(
-                  color: AppTheme.primaryGreen.withOpacity(0.15),
+                  color: AppTheme.primaryGreen.withValues(alpha: 0.15),
                 ),
               ),
               focusedBorder: OutlineInputBorder(
@@ -146,13 +146,13 @@ class _NameAgePageState extends State<NameAgePage> {
                     border: Border.all(
                       color: isSelected
                           ? AppTheme.primaryGreen
-                          : AppTheme.primaryGreen.withOpacity(0.2),
+                          : AppTheme.primaryGreen.withValues(alpha: 0.2),
                       width: isSelected ? 2 : 1,
                     ),
                     boxShadow: isSelected
                         ? [
                             BoxShadow(
-                              color: AppTheme.primaryGreen.withOpacity(0.25),
+                              color: AppTheme.primaryGreen.withValues(alpha: 0.25),
                               blurRadius: 12,
                               offset: const Offset(0, 4),
                             )

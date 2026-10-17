@@ -88,7 +88,7 @@ class _LanguagePageState extends State<LanguagePage> {
             'অ্যাপের ভাষা নির্বাচন করো। পরে পরিবর্তন করা যাবে।',
             style: TextStyle(
               fontSize: widget.isTablet ? 16 : 14,
-              color: AppTheme.darkText.withOpacity(0.65),
+              color: AppTheme.darkText.withValues(alpha: 0.65),
             ),
           ),
           SizedBox(height: widget.isTablet ? 40 : 32),
@@ -113,20 +113,20 @@ class _LanguagePageState extends State<LanguagePage> {
                     border: Border.all(
                       color: isSelected
                           ? AppTheme.primaryGreen
-                          : AppTheme.primaryGreen.withOpacity(0.15),
+                          : AppTheme.primaryGreen.withValues(alpha: 0.15),
                       width: isSelected ? 2 : 1,
                     ),
                     boxShadow: isSelected
                         ? [
                             BoxShadow(
-                              color: AppTheme.primaryGreen.withOpacity(0.2),
+                              color: AppTheme.primaryGreen.withValues(alpha: 0.2),
                               blurRadius: 16,
                               offset: const Offset(0, 6),
                             )
                           ]
                         : [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.03),
+                              color: Colors.black.withValues(alpha: 0.03),
                               blurRadius: 8,
                               offset: const Offset(0, 2),
                             )
@@ -201,7 +201,7 @@ class _LanguagePageState extends State<LanguagePage> {
                     'কুরআনের আরবি টেক্সট সবসময় আরবিতেই থাকবে। শুধু অ্যাপের বাটন ও নির্দেশনা পরিবর্তন হবে।',
                     style: TextStyle(
                       fontSize: widget.isTablet ? 14 : 12.5,
-                      color: AppTheme.darkText.withOpacity(0.85),
+                      color: AppTheme.darkText.withValues(alpha: 0.85),
                       height: 1.35,
                     ),
                   ),

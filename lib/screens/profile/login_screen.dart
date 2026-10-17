@@ -60,7 +60,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       keyboardType: TextInputType.emailAddress,
                       decoration: InputDecoration(
                           labelText: context.uiText('অভিভাবকের email'),
-                          prefixIcon: Icon(Icons.email_outlined)),
+                          prefixIcon: const Icon(Icons.email_outlined)),
                     ),
                     const SizedBox(height: 13),
                     TextField(

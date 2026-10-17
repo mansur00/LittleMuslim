@@ -83,17 +83,21 @@ class DuolingoPageHeader extends StatelessWidget {
                     Row(
                       children: [
                         if (onBack != null)
-                          GestureDetector(
-                            onTap: onBack,
-                            child: Container(
-                              width: 38,
-                              height: 38,
-                              decoration: BoxDecoration(
-                                color: Colors.white.withValues(alpha: 0.25),
-                                shape: BoxShape.circle,
+                          Semantics(
+                            button: true,
+                            label: context.uiText('ফিরে যান'),
+                            child: GestureDetector(
+                              onTap: onBack,
+                              child: Container(
+                                width: 38,
+                                height: 38,
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withValues(alpha: 0.25),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: const Icon(Icons.arrow_back_rounded,
+                                    color: Colors.white, size: 20),
                               ),
-                              child: const Icon(Icons.arrow_back_rounded,
-                                  color: Colors.white, size: 20),
                             ),
                           ),
                         const Spacer(),

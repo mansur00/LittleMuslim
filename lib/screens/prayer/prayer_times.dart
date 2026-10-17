@@ -166,11 +166,13 @@ class PrayerTimesResult {
     required this.date,
     required this.timeZoneId,
     required this.times,
+    this.isCached = false,
   });
 
   final DateTime date;
   final String timeZoneId;
   final Map<String, DateTime> times;
+  final bool isCached;
 }
 
 abstract interface class PrayerTimesRepository {
@@ -201,6 +203,54 @@ class AlAdhanPrayerTimesRepository implements PrayerTimesRepository {
     if (_ownsClient) _client.close();
   }
 
+  String _cacheKey({
+    required PrayerLocationSelection location,
+    required DateTime date,
+    required int methodId,
+    required int asrSchool,
+  }) {
+    final loc = location.kind == PrayerLocationKind.device
+        ? 'dev_${location.latitude}_${location.longitude}'
+        : 'city_${location.city}_${location.country}';
+    return 'prayer_cache_${loc}_${_apiDate(date)}_m${methodId}_s$asrSchool';
+  }
+
+  Future<PrayerTimesResult?> _loadCache(String key) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final raw = prefs.getString(key);
+      if (raw == null) return null;
+      final map = jsonDecode(raw) as Map<String, dynamic>;
+      final date = DateTime.parse(map['date'] as String);
+      final timeZoneId = map['timeZoneId'] as String;
+      final timesRaw = map['times'] as Map<String, dynamic>;
+      final times = <String, DateTime>{};
+      for (final e in timesRaw.entries) {
+        times[e.key] = DateTime.parse(e.value as String);
+      }
+      return PrayerTimesResult(
+        date: date,
+        timeZoneId: timeZoneId,
+        times: Map.unmodifiable(times),
+        isCached: true,
+      );
+    } catch (_) {
+      return null;
+    }
+  }
+
+  Future<void> _saveCache(String key, PrayerTimesResult result) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final map = {
+        'date': result.date.toIso8601String(),
+        'timeZoneId': result.timeZoneId,
+        'times': result.times.map((k, v) => MapEntry(k, v.toIso8601String())),
+      };
+      await prefs.setString(key, jsonEncode(map));
+    } catch (_) {}
+  }
+
   @override
   Future<PrayerTimesResult> calculate({
     required PrayerLocationSelection location,
@@ -214,6 +264,12 @@ class AlAdhanPrayerTimesRepository implements PrayerTimesRepository {
     if (asrSchool != 0 && asrSchool != 1) {
       throw const PrayerTimesException('Unsupported Asr school.');
     }
+    final key = _cacheKey(
+      location: location,
+      date: date,
+      methodId: methodId,
+      asrSchool: asrSchool,
+    );
     final path = location.kind == PrayerLocationKind.device
         ? '/v1/timings/${_apiDate(date)}'
         : '/v1/timingsByCity/${_apiDate(date)}';
@@ -249,9 +305,13 @@ class AlAdhanPrayerTimesRepository implements PrayerTimesRepository {
         'Accept': 'application/json'
       }).timeout(const Duration(seconds: 15));
     } catch (error) {
+      final cached = await _loadCache(key);
+      if (cached != null) return cached;
       throw PrayerTimesException('Prayer times could not be reached: $error');
     }
     if (response.statusCode != 200) {
+      final cached = await _loadCache(key);
+      if (cached != null) return cached;
       throw PrayerTimesException(
           'Prayer times service returned ${response.statusCode}.');
     }
@@ -293,11 +353,13 @@ class AlAdhanPrayerTimesRepository implements PrayerTimesRepository {
         }
         times[prayer] = DateTime(date.year, date.month, date.day, hour, minute);
       }
-      return PrayerTimesResult(
+      final result = PrayerTimesResult(
         date: DateTime(date.year, date.month, date.day),
         timeZoneId: timeZoneId,
         times: Map.unmodifiable(times),
       );
+      await _saveCache(key, result);
+      return result;
     } on PrayerTimesException {
       rethrow;
     } catch (error) {

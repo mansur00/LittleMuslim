@@ -385,21 +385,22 @@ class _SurahHeading extends StatelessWidget {
         child: Column(children: [
           LocalizedText(surah.arabicName,
               textDirection: TextDirection.rtl,
-              style: TextStyle(
+              style: const TextStyle(
+                  fontFamily: AppTheme.arabicFontFamily,
                   color: AppTheme.primaryGreen,
                   fontSize: 30,
                   height: 1.7,
                   fontWeight: FontWeight.w700)),
           const SizedBox(height: 4),
           LocalizedText('সূরা ${surah.englishName}',
-              style: TextStyle(
+              style: const TextStyle(
                   color: AppTheme.darkText,
                   fontSize: 18,
                   fontWeight: FontWeight.w800)),
           const SizedBox(height: 5),
           LocalizedText(
               '${surah.revelationType == 'Meccan' ? 'মক্কী' : 'মাদানী'}  ·  ${surah.ayahCount} আয়াত · ${surah.nameMeaning}',
-              style: TextStyle(color: Colors.black54, fontSize: 12)),
+              style: const TextStyle(color: Colors.black54, fontSize: 12)),
           const SizedBox(height: 14),
           OutlinedButton.icon(
               onPressed: onAudio,
@@ -437,6 +438,7 @@ class _VerseCard extends StatelessWidget {
             textDirection: TextDirection.rtl,
             textAlign: TextAlign.right,
             style: TextStyle(
+                fontFamily: AppTheme.arabicFontFamily,
                 color: AppTheme.darkText,
                 fontSize: fontSize,
                 height: 2,
