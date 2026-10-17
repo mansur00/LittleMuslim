@@ -326,9 +326,14 @@ class _DuasScreenState extends State<DuasScreen> {
   String? _playingDuaId;
   final FlutterTts _tts = FlutterTts();
 
-  // Duas that have a local MP3 bundled with the app
+  // All duas now have local MP3 audio files bundled with the app
   static const _mp3Duas = {
-    'wake', 'food', 'sleep', 'restroom', 'food_after', 'leave_home',
+    'wake', 'morning_protection', 'evening_adhkar', 'morning_sabah',
+    'food', 'food_after', 'restroom', 'restroom_exit', 'leave_home',
+    'enter_home', 'mosque_enter', 'mosque_exit', 'sleep',
+    'sleep_ayatul_kursi', 'nightmare', 'mirror', 'travel',
+    'travel_return', 'rain', 'sneeze', 'sneeze_response',
+    'anxiety', 'forgiveness', 'parents',
   };
 
   AudioPlayer _getAudioPlayer() {
