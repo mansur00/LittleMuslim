@@ -41,6 +41,7 @@ flutter:
     - assets/fonts/
     - assets/audio/
     - assets/audio/letters/
+    - assets/audio/duas/
     - assets/l10n/
   fonts:
     - family: Amiri

@@ -1,7 +1,11 @@
-import '../../l10n/app_localizations.dart';
+import 'dart:async';
+
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+
+import '../../l10n/app_localizations.dart';
 
 import '../../theme/app_theme.dart';
 import '../../utils/app_state.dart';
@@ -107,6 +111,56 @@ class _DuasScreenState extends State<DuasScreen> {
   ];
 
   int _selectedCategory = 0;
+  AudioPlayer? _audioPlayer;
+  StreamSubscription<void>? _playerCompleteSub;
+  String? _playingDuaId;
+
+  AudioPlayer _getAudioPlayer() {
+    if (_audioPlayer == null) {
+      final player = AudioPlayer();
+      _audioPlayer = player;
+      _playerCompleteSub = player.onPlayerComplete.listen((_) {
+        if (mounted) {
+          setState(() => _playingDuaId = null);
+        }
+      });
+    }
+    return _audioPlayer!;
+  }
+
+  Future<void> _playDuaAudio(String id) async {
+    if (_playingDuaId == id) {
+      try {
+        await _audioPlayer?.stop();
+      } catch (_) {}
+      if (mounted) setState(() => _playingDuaId = null);
+      return;
+    }
+    try {
+      final player = _getAudioPlayer();
+      await player.stop();
+      await player.play(AssetSource('audio/duas/$id.mp3'));
+      if (mounted) setState(() => _playingDuaId = id);
+    } catch (_) {
+      if (mounted) {
+        setState(() => _playingDuaId = null);
+        ScaffoldMessenger.of(context)
+          ..hideCurrentSnackBar()
+          ..showSnackBar(const SnackBar(
+            content: LocalizedText('দোয়ার অডিও চালু করা যায়নি।'),
+            behavior: SnackBarBehavior.floating,
+          ));
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _playerCompleteSub?.cancel();
+    _audioPlayer?.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final appState = context.watch<AppState>();
@@ -209,6 +263,8 @@ class _DuasScreenState extends State<DuasScreen> {
                         _DuaCard(
                           dua: dua,
                           isFavorite: appState.isDuaFavorite(dua.id),
+                          isPlaying: _playingDuaId == dua.id,
+                          onPlayAudio: () => _playDuaAudio(dua.id),
                           onFavorite: () async {
                             final wasFavorite = appState.isDuaFavorite(dua.id);
                             await appState.toggleDuaFavorite(dua.id);
@@ -259,11 +315,15 @@ class _DuaCard extends StatefulWidget {
   const _DuaCard({
     required this.dua,
     required this.isFavorite,
+    required this.isPlaying,
+    required this.onPlayAudio,
     required this.onFavorite,
     required this.onCopy,
   });
   final _DuaEntry dua;
   final bool isFavorite;
+  final bool isPlaying;
+  final VoidCallback onPlayAudio;
   final VoidCallback onFavorite, onCopy;
 
   @override
@@ -421,22 +481,40 @@ class _DuaCardState extends State<_DuaCard> {
               ),
               const Spacer(),
               InkWell(
-                onTap: () => _showAudioInfo(context),
-                borderRadius: BorderRadius.circular(8),
-                child: Padding(
+                onTap: widget.onPlayAudio,
+                borderRadius: BorderRadius.circular(10),
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 180),
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  decoration: BoxDecoration(
+                    color: widget.isPlaying
+                        ? widget.dua.accent
+                        : widget.dua.color,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(Icons.volume_off_rounded,
-                          size: 14, color: dua.accent),
+                      Icon(
+                        widget.isPlaying
+                            ? Icons.pause_rounded
+                            : Icons.volume_up_rounded,
+                        size: 16,
+                        color: widget.isPlaying
+                            ? Colors.white
+                            : widget.dua.accent,
+                      ),
                       const SizedBox(width: 4),
-                      LocalizedText('অডিও নেই',
-                          style: TextStyle(
-                              color: dua.accent,
-                              fontSize: 10,
-                              fontWeight: FontWeight.w700)),
+                      LocalizedText(
+                        widget.isPlaying ? 'থামাই' : 'উচ্চারণ শুনি',
+                        style: TextStyle(
+                            color: widget.isPlaying
+                                ? Colors.white
+                                : widget.dua.accent,
+                            fontSize: 11,
+                            fontWeight: FontWeight.w800),
+                      ),
                     ],
                   ),
                 ),
@@ -471,34 +549,10 @@ class _DuaCardState extends State<_DuaCard> {
       builder: (_) => _DuaDetailSheet(
         dua: widget.dua,
         isFavorite: widget.isFavorite,
+        isPlaying: widget.isPlaying,
+        onPlayAudio: widget.onPlayAudio,
         onFavorite: widget.onFavorite,
         onCopy: widget.onCopy,
-        onShowAudioInfo: () => _showAudioInfo(context),
-      ),
-    );
-  }
-
-  void _showAudioInfo(BuildContext context) {
-    showDialog<void>(
-      context: context,
-      builder: (dialogCtx) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        title: const Row(children: [
-          Icon(Icons.volume_off_rounded,
-              color: AppTheme.primaryGreen, size: 26),
-          SizedBox(width: 10),
-          Expanded(child: LocalizedText('অডিও রেকর্ডিং তথ্য')),
-        ]),
-        content: const LocalizedText(
-          'এই দোয়ার জন্য যাচাইকৃত শিশুতোষ বিশুদ্ধ অডিও বর্তমানে সংযুক্ত নেই। অশুদ্ধ উচ্চারণ এড়াতে ইন্টারনেটের অননুমোদিত উৎসের অডিও ব্যবহার না করে প্রামাণ্য ক্বারীর রেকর্ডিং পরবর্তীতে যুক্ত করা হবে।',
-          style: TextStyle(height: 1.6),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(dialogCtx),
-            child: const LocalizedText('বুঝেছি'),
-          ),
-        ],
       ),
     );
   }
@@ -508,16 +562,18 @@ class _DuaDetailSheet extends StatefulWidget {
   const _DuaDetailSheet({
     required this.dua,
     required this.isFavorite,
+    required this.isPlaying,
+    required this.onPlayAudio,
     required this.onFavorite,
     required this.onCopy,
-    required this.onShowAudioInfo,
   });
 
   final _DuaEntry dua;
   final bool isFavorite;
+  final bool isPlaying;
+  final VoidCallback onPlayAudio;
   final VoidCallback onFavorite;
   final VoidCallback onCopy;
-  final VoidCallback onShowAudioInfo;
 
   @override
   State<_DuaDetailSheet> createState() => _DuaDetailSheetState();
@@ -627,6 +683,29 @@ class _DuaDetailSheetState extends State<_DuaDetailSheet> {
                     height: 1.7,
                     fontWeight: FontWeight.w800,
                   ),
+                ),
+              ),
+              const SizedBox(height: 14),
+              FilledButton.icon(
+                onPressed: widget.onPlayAudio,
+                icon: Icon(
+                  widget.isPlaying
+                      ? Icons.pause_circle_filled_rounded
+                      : Icons.volume_up_rounded,
+                  size: 22,
+                ),
+                label: LocalizedText(
+                  widget.isPlaying ? 'উচ্চারণ থামাই' : 'বিশুদ্ধ উচ্চারণ শুনি',
+                  style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 14),
+                ),
+                style: FilledButton.styleFrom(
+                  backgroundColor:
+                      widget.isPlaying ? AppTheme.accentCoral : dua.accent,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16)),
+                  elevation: 2,
                 ),
               ),
               const SizedBox(height: 14),
@@ -803,18 +882,7 @@ class _DuaDetailSheetState extends State<_DuaDetailSheet> {
                   ],
                 ),
               ),
-              const SizedBox(height: 14),
-              OutlinedButton.icon(
-                onPressed: widget.onShowAudioInfo,
-                icon: const Icon(Icons.volume_off_rounded, size: 18),
-                label: const LocalizedText('অডিও রেকর্ডিং তথ্য'),
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: Colors.black54,
-                  side: const BorderSide(color: Color(0xFFD1D5DB)),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14)),
-                ),
-              ),
+
             ],
           ),
         ),

@@ -31,8 +31,10 @@ class _QuranReaderScreenState extends State<QuranReaderScreen>
     with WidgetsBindingObserver {
   double _fontSize = 29;
   bool _isPlaying = false;
-  late final AudioPlayer _audioPlayer;
-  late final StreamSubscription<void> _audioCompleteSubscription;
+  bool _isContinuousRecitation = false;
+  int _currentPlayingIndex = 0;
+  AudioPlayer? _audioPlayer;
+  StreamSubscription<void>? _audioCompleteSubscription;
   late final QuranRepository _repository =
       widget.repository ?? AlQuranCloudRepository();
   late final QuranSurah _surah = widget.surah ??
@@ -56,20 +58,34 @@ class _QuranReaderScreenState extends State<QuranReaderScreen>
   bool _allowPop = false;
   bool _isLeaving = false;
 
+  AudioPlayer _getAudioPlayer() {
+    if (_audioPlayer == null) {
+      final player = AudioPlayer();
+      _audioPlayer = player;
+      _audioCompleteSubscription = player.onPlayerComplete.listen((_) {
+        if (!mounted) return;
+        if (_isContinuousRecitation) {
+          final nextIndex = _currentPlayingIndex + 1;
+          if (nextIndex < _ayahs.length) {
+            unawaited(_playAyahAt(nextIndex, isContinuous: true));
+            return;
+          }
+        }
+        setState(() {
+          _isPlaying = false;
+          _isContinuousRecitation = false;
+          _playingAyahNumber = null;
+        });
+      });
+    }
+    return _audioPlayer!;
+  }
+
   @override
   void initState() {
     super.initState();
     _currentAyah = widget.initialAyah;
     WidgetsBinding.instance.addObserver(this);
-    _audioPlayer = AudioPlayer();
-    _audioCompleteSubscription = _audioPlayer.onPlayerComplete.listen((_) {
-      if (mounted) {
-        setState(() {
-          _isPlaying = false;
-          _playingAyahNumber = null;
-        });
-      }
-    });
     _loadSurah();
   }
 
@@ -192,60 +208,104 @@ class _QuranReaderScreenState extends State<QuranReaderScreen>
     WidgetsBinding.instance.removeObserver(this);
     _positionSaveTimer?.cancel();
     _scrollController.dispose();
-    _audioCompleteSubscription.cancel();
-    _audioPlayer.dispose();
+    _audioCompleteSubscription?.cancel();
+    _audioPlayer?.dispose();
     super.dispose();
   }
 
-  Future<void> _toggleRecitation() async {
-    try {
-      if (_isPlaying) {
-        await _audioPlayer.pause();
-        if (mounted) setState(() => _isPlaying = false);
-      } else {
-        if (_playingAyahNumber != null) {
-          await _audioPlayer.stop();
-          if (mounted) setState(() => _playingAyahNumber = null);
-        }
-        await _audioPlayer.play(UrlSource(
-            'https://cdn.islamic.network/quran/audio-surah/128/ar.alafasy/${_surah.number}.mp3'));
-        if (mounted) setState(() => _isPlaying = true);
+  Future<void> _playAyahAt(int index, {required bool isContinuous}) async {
+    if (index < 0 || index >= _ayahs.length) {
+      if (mounted) {
+        setState(() {
+          _isPlaying = false;
+          _isContinuousRecitation = false;
+          _playingAyahNumber = null;
+        });
       }
-    } catch (_) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context)
-        ..hideCurrentSnackBar()
-        ..showSnackBar(const SnackBar(
-            content: LocalizedText(
-                'অডিও চালু হয়নি। ইন্টারনেট সংযোগ দেখে আবার চেষ্টা করো।')));
+      return;
     }
-  }
+    final ayah = _ayahs[index];
+    _currentPlayingIndex = index;
+    _isContinuousRecitation = isContinuous;
+    if (mounted) {
+      setState(() {
+        _playingAyahNumber = ayah.number;
+        _isPlaying = true;
+        _currentAyah = ayah.number;
+      });
+    }
 
-  Future<void> _toggleAyahAudio(QuranAyah ayah) async {
+    final targetContext = _verseKeys[ayah.number]?.currentContext;
+    if (targetContext != null && mounted) {
+      unawaited(Scrollable.ensureVisible(
+        targetContext,
+        alignment: 0.1,
+        duration: const Duration(milliseconds: 320),
+        curve: Curves.easeInOut,
+      ));
+    }
+
+    final surahStr = _surah.number.toString().padLeft(3, '0');
+    final ayahStr = ayah.number.toString().padLeft(3, '0');
+    final ayahUrl =
+        'https://everyayah.com/data/Alafasy_128kbps/$surahStr$ayahStr.mp3';
+
     try {
-      if (_playingAyahNumber == ayah.number) {
-        await _audioPlayer.pause();
-        if (mounted) setState(() => _playingAyahNumber = null);
-      } else {
-        if (_isPlaying) {
-          await _audioPlayer.stop();
-          if (mounted) setState(() => _isPlaying = false);
-        }
-        final surahStr = _surah.number.toString().padLeft(3, '0');
-        final ayahStr = ayah.number.toString().padLeft(3, '0');
-        final ayahUrl =
-            'https://everyayah.com/data/Alafasy_128kbps/$surahStr$ayahStr.mp3';
-        await _audioPlayer.stop();
-        await _audioPlayer.play(UrlSource(ayahUrl));
-        if (mounted) setState(() => _playingAyahNumber = ayah.number);
-      }
+      final player = _getAudioPlayer();
+      await player.stop();
+      await player.play(UrlSource(ayahUrl));
     } catch (_) {
       if (!mounted) return;
+      setState(() {
+        _isPlaying = false;
+        _isContinuousRecitation = false;
+        _playingAyahNumber = null;
+      });
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
         ..showSnackBar(const SnackBar(
             content: LocalizedText(
                 'আয়াতের অডিও চালু হয়নি। ইন্টারনেট সংযোগ দেখে আবার চেষ্টা করো।')));
+    }
+  }
+
+  Future<void> _toggleRecitation() async {
+    if (_ayahs.isEmpty) return;
+    if (_isPlaying && _isContinuousRecitation) {
+      try {
+        await _audioPlayer?.pause();
+      } catch (_) {}
+      if (mounted) {
+        setState(() {
+          _isPlaying = false;
+          _isContinuousRecitation = false;
+          _playingAyahNumber = null;
+        });
+      }
+    } else {
+      var startIndex = _ayahs.indexWhere((a) => a.number == _currentAyah);
+      if (startIndex < 0) startIndex = 0;
+      await _playAyahAt(startIndex, isContinuous: true);
+    }
+  }
+
+  Future<void> _toggleAyahAudio(QuranAyah ayah) async {
+    if (_playingAyahNumber == ayah.number && _isPlaying) {
+      try {
+        await _audioPlayer?.pause();
+      } catch (_) {}
+      if (mounted) {
+        setState(() {
+          _isPlaying = false;
+          _isContinuousRecitation = false;
+          _playingAyahNumber = null;
+        });
+      }
+    } else {
+      final index = _ayahs.indexWhere((a) => a.number == ayah.number);
+      if (index >= 0) {
+        await _playAyahAt(index, isContinuous: false);
+      }
     }
   }
 
@@ -442,17 +502,24 @@ class _SurahHeading extends StatelessWidget {
               '${surah.revelationType == 'Meccan' ? 'মক্কী' : 'মাদানী'}  ·  ${surah.ayahCount} আয়াত · ${surah.nameMeaning}',
               style: const TextStyle(color: Colors.black54, fontSize: 12)),
           const SizedBox(height: 14),
-          OutlinedButton.icon(
+          FilledButton.icon(
               onPressed: onAudio,
               icon: Icon(
-                  isPlaying ? Icons.pause_rounded : Icons.play_arrow_rounded,
-                  size: 19),
-              label:
-                  LocalizedText(isPlaying ? 'তিলাওয়াত থামাই' : 'তিলাওয়াত শুনি'),
-              style: OutlinedButton.styleFrom(
-                  foregroundColor: AppTheme.primaryGreen,
-                  side: const BorderSide(color: Color(0xFFB8D8C3), width: 1.3),
-                  shape: const StadiumBorder())),
+                  isPlaying
+                      ? Icons.pause_circle_filled_rounded
+                      : Icons.play_circle_filled_rounded,
+                  size: 20),
+              label: LocalizedText(
+                  isPlaying ? 'তিলাওয়াত থামাই' : 'পুরো সূরা তিলাওয়াত শুনি'),
+              style: FilledButton.styleFrom(
+                  backgroundColor: isPlaying
+                      ? AppTheme.accentCoral
+                      : AppTheme.primaryGreen,
+                  foregroundColor: Colors.white,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 22, vertical: 12),
+                  shape: const StadiumBorder(),
+                  elevation: 2)),
         ]),
       );
 }
@@ -474,6 +541,7 @@ class _VerseCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => DuolingoCard(
+        onTap: onPlay,
         accentColor: isPlaying ? AppTheme.accentCoral : const Color(0xFF0D7377),
         margin: EdgeInsets.zero,
         padding: const EdgeInsets.fromLTRB(16, 14, 16, 12),
@@ -510,6 +578,30 @@ class _VerseCard extends StatelessWidget {
                           color: isPlaying ? const Color(0xFFD32F2F) : const Color(0xFFA57910),
                           fontSize: 11,
                           fontWeight: FontWeight.w800))),
+              if (isPlaying) ...[
+                const SizedBox(width: 8),
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFFFE0E0),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: const Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.graphic_eq_rounded,
+                          size: 14, color: AppTheme.accentCoral),
+                      SizedBox(width: 4),
+                      LocalizedText('তিলাওয়াত চলছে...',
+                          style: TextStyle(
+                              color: AppTheme.accentCoral,
+                              fontSize: 10,
+                              fontWeight: FontWeight.w700)),
+                    ],
+                  ),
+                ),
+              ],
               const Spacer(),
               IconButton(
                 onPressed: onPlay,
@@ -517,7 +609,7 @@ class _VerseCard extends StatelessWidget {
                 icon: Icon(
                   isPlaying ? Icons.pause_circle_rounded : Icons.play_circle_outline_rounded,
                   color: isPlaying ? AppTheme.accentCoral : AppTheme.primaryGreen,
-                  size: 26,
+                  size: 28,
                 ),
               ),
             ],
