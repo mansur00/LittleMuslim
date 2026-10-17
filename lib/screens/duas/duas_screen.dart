@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 import 'package:provider/provider.dart';
 
 import '../../l10n/app_localizations.dart';
@@ -40,7 +41,9 @@ class _DuasScreenState extends State<DuasScreen> {
     'পছন্দের',
     'সকাল ও সন্ধ্যা',
     'দৈনন্দিন',
-    'ঘুম'
+    'ঘুম',
+    'সফর',
+    'বিশেষ'
   ];
   static const _duas = [
     _DuaEntry(
@@ -48,10 +51,46 @@ class _DuasScreenState extends State<DuasScreen> {
       title: 'ঘুম থেকে উঠলে',
       category: 'সকাল ও সন্ধ্যা',
       arabic:
-          'الْحَمْدُ لِلَّهِ الَّذِي أَحْيَانَا بَعْدَ مَا أَمَاتَنَا، وَإِلَيْهِ النُّشُورُ',
+          'الْحَمْدُ لِلَّهِ الَّذِي أَحْيَانَا بَعْدَ مَا أَمَاتَنَا، وَإِلَيْهِ النُّشُورُ',
       meaning:
           'সব প্রশংসা আল্লাহর, যিনি ঘুমের পর আমাদের জীবিত করেছেন; আর তাঁর কাছেই পুনরুত্থান।',
-      reference: 'সহিহ বুখারি ৬৩২৪',
+      reference: 'সহিহ বুখারি ۶۳۲۴',
+      color: Color(0xFFFFF6D0),
+      accent: Color(0xFFD4A017),
+    ),
+    _DuaEntry(
+      id: 'morning_protection',
+      title: 'সকালের দোয়া (সুরক্ষা)',
+      category: 'সকাল ও সন্ধ্যা',
+      arabic:
+          'بِسْمِ اللَّهِ الَّذِي لَا يَضُرُّ مَعَ اسْمِهِ شَيْءٌ فِي الْأَرْضِ وَلَا فِي السَّمَاءِ وَهُوَ السَّمِيعُ الْعَلِيمُ',
+      meaning:
+          'আল্লাহর নামে, যার নামের সাথে আসমান ও জমিনে কোনো কিছু ক্ষতি করতে পারে না; তিনি সর্বশ্রোতা, সর্বজ্ঞানী।',
+      reference: 'আবু দাউদ ۵۰۸۸',
+      color: Color(0xFFFFF6D0),
+      accent: Color(0xFFD4A017),
+    ),
+    _DuaEntry(
+      id: 'evening_adhkar',
+      title: 'সন্ধ্যার দোয়া',
+      category: 'সকাল ও সন্ধ্যা',
+      arabic:
+          'أَمْسَيْنَا وَأَمْسَى الْمُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ',
+      meaning:
+          'আমরা সন্ধ্যায় পৌঁছলাম এবং সকল রাজত্ব আল্লাহরই; সকল প্রশংসা আল্লাহর।',
+      reference: 'মুসলিম ۲۷۲۳',
+      color: Color(0xFFFFF0DB),
+      accent: Color(0xFFE8913A),
+    ),
+    _DuaEntry(
+      id: 'morning_sabah',
+      title: 'সকালের শুকরিয়া',
+      category: 'সকাল ও সন্ধ্যা',
+      arabic:
+          'أَصْبَحْنَا وَأَصْبَحَ الْمُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ',
+      meaning:
+          'আমরা সকালে পৌঁছলাম এবং সকল রাজত্ব আল্লাহরই; সকল প্রশংসা আল্লাহর।',
+      reference: 'মুসলিম ۲۷۲۳',
       color: Color(0xFFFFF6D0),
       accent: Color(0xFFD4A017),
     ),
@@ -59,54 +98,225 @@ class _DuasScreenState extends State<DuasScreen> {
       id: 'food',
       title: 'খাবার শুরু করার আগে',
       category: 'দৈনন্দিন',
-      arabic: 'بِسْمِ اللَّهِ',
+      arabic: 'بِسْمِ اللَّهِ',
       meaning: 'আল্লাহর নামে।',
-      reference: 'সহিহ বুখারি ৫৩৭৬',
+      reference: 'সহিহ বুখারি ۵۳۷۶',
       color: Color(0xFFE8F8D8),
       accent: Color(0xFF58A700),
-    ),
-    _DuaEntry(
-      id: 'sleep',
-      title: 'ঘুমাতে যাওয়ার সময়',
-      category: 'ঘুম',
-      arabic: 'بِاسْمِكَ اللَّهُمَّ أَمُوتُ وَأَحْيَا',
-      meaning: 'হে আল্লাহ, আপনার নামেই আমি মরি এবং বাঁচি।',
-      reference: 'সহিহ বুখারি ৬৩২৪',
-      color: Color(0xFFF3E8FF),
-      accent: Color(0xFF9B6BC9),
-    ),
-    _DuaEntry(
-      id: 'restroom',
-      title: 'শৌচাগারে প্রবেশের আগে',
-      category: 'দৈনন্দিন',
-      arabic: 'اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنَ الْخُبُثِ وَالْخَبَائِثِ',
-      meaning:
-          'হে আল্লাহ, আমি আপনার কাছে আল-খুবুথ ও আল-খাবাইথ থেকে আশ্রয় চাই।',
-      reference: 'সহিহ বুখারি ৬৩২২',
-      color: Color(0xFFDCEBFF),
-      accent: Color(0xFF3B82C4),
     ),
     _DuaEntry(
       id: 'food_after',
       title: 'খাবার শেষ করার পর',
       category: 'দৈনন্দিন',
-      arabic: 'الْحَمْدُ لِلَّهِ الَّذِي أَطْعَمَنَا وَسَقَانَا وَجَعَلَنَا مُسْلِمِينَ',
+      arabic: 'الْحَمْدُ لِلَّهِ الَّذِي أَطْعَمَنَا وَسَقَانَا وَجَعَلَنَا مُسْلِمِينَ',
       meaning:
-          'সব প্রশংসা আল্লাহর, যিনি আমাদের আহার করিয়েছেন, পান করিয়েছেন এবং মুসলিম বানিয়েছেন।',
-      reference: 'আবু দাউদ ৩৮৫০',
+          'সব প্রশংসা আল্লাহর, যিনি আমাদের আহার করিয়েছেন, পান করিয়েছেন এবং মুসলিম বানিয়েছেন।',
+      reference: 'আবু দাউদ ۳۸۵۰',
       color: Color(0xFFE8F8D8),
       accent: Color(0xFF58A700),
     ),
     _DuaEntry(
-      id: 'leave_home',
-      title: 'ঘর থেকে বের হওয়ার সময়',
+      id: 'restroom',
+      title: 'শৌচাগারে প্রবেশের আগে',
       category: 'দৈনন্দিন',
-      arabic: 'بِسْمِ اللَّهِ تَوَكَّلْتُ عَلَى اللَّهِ، لَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللَّهِ',
+      arabic: 'اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنَ الْخُبُثِ وَالْخَبَائِثِ',
+      meaning:
+          'হে আল্লাহ, আমি আপনার কাছে আল-খুবুথ ও আল-খাবাইথ থেকে আশ্রয় চাই।',
+      reference: 'সহিহ বুখারি ۶۳۲۲',
+      color: Color(0xFFDCEBFF),
+      accent: Color(0xFF3B82C4),
+    ),
+    _DuaEntry(
+      id: 'restroom_exit',
+      title: 'শৌচাগার থেকে বের হয়ে',
+      category: 'দৈনন্দিন',
+      arabic: 'غُفْرَانَكَ',
+      meaning: 'হে আল্লাহ, আমি آপনার ক্ষমা চাই।',
+      reference: 'আবু দাউদ ۳۰',
+      color: Color(0xFFDCEBFF),
+      accent: Color(0xFF3B82C4),
+    ),
+    _DuaEntry(
+      id: 'leave_home',
+      title: 'ঘর থেকে বের হওয়ার সময়',
+      category: 'দৈনন্দিন',
+      arabic:
+          'بِسْمِ اللَّهِ تَوَكَّلْتُ عَلَى اللَّهِ، لَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللَّهِ',
       meaning:
           'আল্লাহর নামে, আল্লাহর ওপর ভরসা করলাম; আল্লাহর সাহায্য ছাড়া অনিষ্ট দূর বা মঙ্গল লাভের শক্তি নেই।',
-      reference: 'আবু দাউদ ৫০৯৫',
+      reference: 'আবু দাউদ ۵۰۹۵',
       color: Color(0xFFFFF0DB),
       accent: Color(0xFFE8913A),
+    ),
+    _DuaEntry(
+      id: 'enter_home',
+      title: 'ঘরে প্রবেশের সময়',
+      category: 'দৈনন্দিন',
+      arabic:
+          'بِسْمِ اللَّهِ وَلَجْنَا وَبِسْمِ اللَّهِ خَرَجْنَا',
+      meaning:
+          'আল্লাহর নামে প্রবেশ করলাম এবং আল্লাহর নামেই বের হই।',
+      reference: 'আবু দাউদ ۵۰۹۶',
+      color: Color(0xFFFFF0DB),
+      accent: Color(0xFFE8913A),
+    ),
+    _DuaEntry(
+      id: 'mosque_enter',
+      title: 'মসজিদে প্রবেশের সময়',
+      category: 'দৈনন্দিন',
+      arabic:
+          'اللَّهُمَّ افْتَحْ لِي أَبْوَابَ رَحْمَتِكَ',
+      meaning: 'হে আল্লাহ, آমার জন্য آপনার রহমতের দরজাগুলো খুলে দিন।',
+      reference: 'মুসলিম ۷۱۳',
+      color: Color(0xFFD4F0EC),
+      accent: Color(0xFF0D7377),
+    ),
+    _DuaEntry(
+      id: 'mosque_exit',
+      title: 'মসজিদ থেকে বের হওয়ার সময়',
+      category: 'দৈনন্দিন',
+      arabic:
+          'اللَّهُمَّ إِنِّي أَسْأَلُكَ مِنْ فَضْلِكَ',
+      meaning: 'হে আল্লাহ, آমি آপনার অনুগ্রহ চাই।',
+      reference: 'মুসলিম ۷۱۳',
+      color: Color(0xFFD4F0EC),
+      accent: Color(0xFF0D7377),
+    ),
+    _DuaEntry(
+      id: 'sleep',
+      title: 'ঘুমাতে যাওয়ার সময়',
+      category: 'ঘুম',
+      arabic: 'بِاسْمِكَ اللَّهُمَّ أَمُوتُ وَأَحْيَا',
+      meaning: 'হে আল্লাহ, آপনার নামেই آমি মরি এবং বাঁচি।',
+      reference: 'সহিহ বুখারি ۶۳۲۴',
+      color: Color(0xFFF3E8FF),
+      accent: Color(0xFF9B6BC9),
+    ),
+    _DuaEntry(
+      id: 'sleep_ayatul_kursi',
+      title: 'ঘুমের আগে (আয়াতুল কুরসি)',
+      category: 'ঘুম',
+      arabic:
+          'اللَّهُ لَا إِلَٰهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ',
+      meaning:
+          'আল্লাহ—তিনি ছাড়া কোনো ইলাহ নেই; তিনি চিরজীবন্ত, সর্বসত্তার ধারক।',
+      reference: 'সহিহ বুখারি ۲۳۱۱',
+      color: Color(0xFFF3E8FF),
+      accent: Color(0xFF9B6BC9),
+    ),
+    _DuaEntry(
+      id: 'nightmare',
+      title: 'দুঃস্বপ্ন দেখলে',
+      category: 'ঘুম',
+      arabic:
+          'أَعُوذُ بِاللَّهِ مِنَ الشَّيْطَانِ الرَّجِيمِ',
+      meaning:
+          'آমি বিতাড়িত শয়তান থেকে আল্লাহর আশ্রয় নিচ্ছি।',
+      reference: 'মুসলিম ۲۲۶۱',
+      color: Color(0xFFF3E8FF),
+      accent: Color(0xFF9B6BC9),
+    ),
+    _DuaEntry(
+      id: 'mirror',
+      title: 'আয়নায় নিজেকে দেখলে',
+      category: 'দৈনন্দিন',
+      arabic:
+          'اللَّهُمَّ أَنْتَ حَسَّنْتَ خَلْقِي فَحَسِّنْ خُلُقِي',
+      meaning:
+          'হে আল্লাহ, آপনি آমার آকৃতি সুন্দর করেছেন, তাই آমার চরিত্রও সুন্দর করে দিন।',
+      reference: 'মুসনাদে আহমাদ ۳۷۳۶',
+      color: Color(0xFFE8F8D8),
+      accent: Color(0xFF58A700),
+    ),
+    _DuaEntry(
+      id: 'travel',
+      title: 'সফরে বের হওয়ার সময়',
+      category: 'সফর',
+      arabic:
+          'سُبْحَانَ الَّذِي سَخَّرَ لَنَا هَذَا وَمَا كُنَّا لَهُ مُقْرِنِينَ',
+      meaning:
+          'পবিত্র তিনি যিনি এটি আমাদের বশীভূত করে দিয়েছেন; আমরা এটি নিয়ন্ত্রণ করতে সক্ষম ছিলাম না।',
+      reference: 'আবু দাউদ ۲۶۰۲',
+      color: Color(0xFFDCEBFF),
+      accent: Color(0xFF3B82C4),
+    ),
+    _DuaEntry(
+      id: 'travel_return',
+      title: 'সফর থেকে ফেরার পর',
+      category: 'সফর',
+      arabic:
+          'آيِبُونَ تَائِبُونَ عَابِدُونَ لِرَبِّنَا حَامِدُونَ',
+      meaning:
+          'آমরা ফিরে এসেছি, তাওবা করছি, ইবাদত করছি এবং আমাদের রবের প্রশংসা করছি।',
+      reference: 'সহিহ বুখারি ۳۰۸۵',
+      color: Color(0xFFDCEBFF),
+      accent: Color(0xFF3B82C4),
+    ),
+    _DuaEntry(
+      id: 'rain',
+      title: 'বৃষ্টি দেখলে',
+      category: 'দৈনন্দিন',
+      arabic: 'اللَّهُمَّ صَيِّبًا نَافِعًا',
+      meaning: 'হে আল্লাহ, এটিকে উপকারী বৃষ্টিপাত করুন।',
+      reference: 'সহিহ বুখারি ۱۰۳۲',
+      color: Color(0xFFDCEBFF),
+      accent: Color(0xFF3B82C4),
+    ),
+    _DuaEntry(
+      id: 'sneeze',
+      title: 'হাঁচি দিলে',
+      category: 'দৈনন্দিন',
+      arabic: 'الْحَمْدُ لِلَّهِ',
+      meaning: 'আলহামদুল্লাহ—সব প্রশংসা আল্লাহর।',
+      reference: 'সহিহ বুখারি ۶۲۲۴',
+      color: Color(0xFFE8F8D8),
+      accent: Color(0xFF58A700),
+    ),
+    _DuaEntry(
+      id: 'sneeze_response',
+      title: 'হাঁচির জবাব দেওয়া',
+      category: 'দৈনন্দিন',
+      arabic: 'يَرْحَمُكَ اللَّهُ',
+      meaning: 'আল্লাহ তোমার প্রতি রহম করুন।',
+      reference: 'সহিহ বুখারি ۶۲۲۴',
+      color: Color(0xFFE8F8D8),
+      accent: Color(0xFF58A700),
+    ),
+    _DuaEntry(
+      id: 'anxiety',
+      title: 'দুশ্চিন্তায় পড়লে',
+      category: 'বিশেষ',
+      arabic:
+          'حَسْبِيَ اللَّهُ لَا إِلَهَ إِلَّا هُوَ عَلَيْهِ تَوَكَّلْتُ',
+      meaning:
+          'আল্লাহই آমার জন্য যথেষ্ট; তিনি ছাড়া কোনো ইলাহ নেই; آমি তাঁর ওপর ভরসা করলাম।',
+      reference: 'আবু দাউদ ۵۰۸۱',
+      color: Color(0xFFFFEBCF),
+      accent: Color(0xFFE8913A),
+    ),
+    _DuaEntry(
+      id: 'forgiveness',
+      title: 'ক্ষমা চাওয়ার দোয়া (সায়্যিদুল ইসতিগফার)',
+      category: 'বিশেষ',
+      arabic:
+          'اللَّهُمَّ أَنْتَ رَبِّي لَا إِلَهَ إِلَّا أَنْتَ، خَلَقْتَنِي وَأَنَا عَبْدُكَ',
+      meaning:
+          'হে আল্লাহ, آপনিই آমার রব; آপনি ছাড়া কোনো ইলাহ নেই; آপনি آমাকে সৃষ্টি করেছেন এবং آমি آপনার বান্দা।',
+      reference: 'সহিহ বুখারি ۶۳۰۶',
+      color: Color(0xFFD4F0EC),
+      accent: Color(0xFF0D7377),
+    ),
+    _DuaEntry(
+      id: 'parents',
+      title: 'মাতা-পিতার জন্য দোয়া',
+      category: 'বিশেষ',
+      arabic:
+          'رَبِّ ارْحَمْهُمَا كَمَا رَبَّيَانِي صَغِيرًا',
+      meaning:
+          'হে آমার রব, তাদের প্রতি রহম করুন, যেমন তারা آমাকে শিশুকালে লালন-পালন করেছে।',
+      reference: 'সুরা আল-ইসরা ۱۷:۲۴',
+      color: Color(0xFFFFF6D0),
+      accent: Color(0xFFD4A017),
     ),
   ];
 
@@ -114,40 +324,69 @@ class _DuasScreenState extends State<DuasScreen> {
   AudioPlayer? _audioPlayer;
   StreamSubscription<void>? _playerCompleteSub;
   String? _playingDuaId;
+  final FlutterTts _tts = FlutterTts();
+
+  // Duas that have a local MP3 bundled with the app
+  static const _mp3Duas = {
+    'wake', 'food', 'sleep', 'restroom', 'food_after', 'leave_home',
+  };
 
   AudioPlayer _getAudioPlayer() {
     if (_audioPlayer == null) {
       final player = AudioPlayer();
       _audioPlayer = player;
       _playerCompleteSub = player.onPlayerComplete.listen((_) {
-        if (mounted) {
-          setState(() => _playingDuaId = null);
-        }
+        if (mounted) setState(() => _playingDuaId = null);
       });
     }
     return _audioPlayer!;
   }
 
-  Future<void> _playDuaAudio(String id) async {
+  Future<void> _playDuaAudio(String id, String arabicText) async {
+    // Toggle off if same dua already playing
     if (_playingDuaId == id) {
       try {
         await _audioPlayer?.stop();
+        await _tts.stop();
       } catch (_) {}
       if (mounted) setState(() => _playingDuaId = null);
       return;
     }
+
+    // Stop previous playback
     try {
-      final player = _getAudioPlayer();
-      await player.stop();
-      await player.play(AssetSource('audio/duas/$id.mp3'));
-      if (mounted) setState(() => _playingDuaId = id);
+      await _audioPlayer?.stop();
+      await _tts.stop();
+    } catch (_) {}
+    if (mounted) setState(() => _playingDuaId = id);
+
+    // Try local MP3 first, then fall back to Arabic TTS
+    if (_mp3Duas.contains(id)) {
+      try {
+        final player = _getAudioPlayer();
+        await player.play(AssetSource('audio/duas/$id.mp3'));
+        return;
+      } catch (_) {
+        // fall through to TTS
+      }
+    }
+
+    // Arabic TTS fallback
+    try {
+      await _tts.setLanguage('ar-SA');
+      await _tts.setSpeechRate(0.40);
+      await _tts.setPitch(1.0);
+      _tts.setCompletionHandler(() {
+        if (mounted) setState(() => _playingDuaId = null);
+      });
+      await _tts.speak(arabicText);
     } catch (_) {
       if (mounted) {
         setState(() => _playingDuaId = null);
         ScaffoldMessenger.of(context)
           ..hideCurrentSnackBar()
           ..showSnackBar(const SnackBar(
-            content: LocalizedText('দোয়ার অডিও চালু করা যায়নি।'),
+            content: LocalizedText('এই ডিভাইসে আরবি অডিও পাওয়া যায়নি।'),
             behavior: SnackBarBehavior.floating,
           ));
       }
@@ -158,6 +397,7 @@ class _DuasScreenState extends State<DuasScreen> {
   void dispose() {
     _playerCompleteSub?.cancel();
     _audioPlayer?.dispose();
+    _tts.stop();
     super.dispose();
   }
 
@@ -264,7 +504,7 @@ class _DuasScreenState extends State<DuasScreen> {
                           dua: dua,
                           isFavorite: appState.isDuaFavorite(dua.id),
                           isPlaying: _playingDuaId == dua.id,
-                          onPlayAudio: () => _playDuaAudio(dua.id),
+                          onPlayAudio: () => _playDuaAudio(dua.id, dua.arabic),
                           onFavorite: () async {
                             final wasFavorite = appState.isDuaFavorite(dua.id);
                             await appState.toggleDuaFavorite(dua.id);
