@@ -1,4 +1,5 @@
 import '../../l10n/app_localizations.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:provider/provider.dart';
@@ -56,6 +57,7 @@ class _QaidaLessonScreenState extends State<QaidaLessonScreen> {
   static final SpeechToText _speech = SpeechToText();
   static Future<bool>? _speechInitialization;
 
+  AudioPlayer? _audioPlayer;
   final FlutterTts _tts = FlutterTts();
   int _step = 0;
   String? _feedback;
@@ -67,7 +69,6 @@ class _QaidaLessonScreenState extends State<QaidaLessonScreen> {
   bool _heardLetter = false;
   bool _speechAvailable = false;
   bool _isListening = false;
-  bool _ttsAvailable = false;
   bool _initialized = false;
 
   static const _stepNames = [
@@ -131,20 +132,35 @@ class _QaidaLessonScreenState extends State<QaidaLessonScreen> {
 
   Future<void> _initializeSpeech() async {
     try {
-      _speechInitialization ??= _speech.initialize();
+      _speechInitialization ??= _speech.initialize(
+        onError: (err) {
+          debugPrint('STT error: $err');
+          if (mounted) setState(() => _isListening = false);
+        },
+        onStatus: (status) {
+          debugPrint('STT status: $status');
+          if (mounted && (status == 'notListening' || status == 'done')) {
+            setState(() => _isListening = false);
+          }
+        },
+      );
       final available = await _speechInitialization!;
       final locales = available ? await _speech.locales() : <LocaleName>[];
-      LocaleName? arabicLocale;
+      LocaleName? preferredLocale;
       for (final locale in locales) {
         if (locale.localeId.toLowerCase().startsWith('ar')) {
-          arabicLocale = locale;
+          preferredLocale = locale;
           break;
         }
       }
+      if (preferredLocale == null && locales.isNotEmpty) {
+        final systemLocale = await _speech.systemLocale();
+        preferredLocale = systemLocale ?? locales.first;
+      }
       if (!mounted) return;
       setState(() {
-        _speechAvailable = available && arabicLocale != null;
-        _speechLocale = arabicLocale?.localeId;
+        _speechAvailable = available;
+        _speechLocale = preferredLocale?.localeId ?? 'ar-SA';
       });
     } catch (_) {
       if (mounted) setState(() => _speechAvailable = false);
@@ -156,15 +172,13 @@ class _QaidaLessonScreenState extends State<QaidaLessonScreen> {
       await _tts.setLanguage('ar-SA');
       await _tts.setSpeechRate(.38);
       await _tts.setVolume(1);
-      if (mounted) setState(() => _ttsAvailable = true);
-    } catch (_) {
-      if (mounted) setState(() => _ttsAvailable = false);
-    }
+    } catch (_) {}
   }
 
   @override
   void dispose() {
     if (_speech.isListening) _speech.cancel();
+    _audioPlayer?.dispose();
     _tts.stop();
     super.dispose();
   }
@@ -234,7 +248,7 @@ class _QaidaLessonScreenState extends State<QaidaLessonScreen> {
                       arabicName: _arabicName,
                       title: widget.lessonTitle,
                       onSpeak: _speakTarget,
-                      canSpeak: _ttsAvailable,
+                      canSpeak: true,
                     ),
                     const SizedBox(height: 15),
                     _buildStepCard(),
@@ -339,7 +353,7 @@ class _QaidaLessonScreenState extends State<QaidaLessonScreen> {
 
   Widget _buildListeningChoice() => Column(children: [
         OutlinedButton.icon(
-          onPressed: _ttsAvailable ? _speakTarget : null,
+          onPressed: _speakTarget,
           icon: const Icon(Icons.volume_up_rounded),
           label: const LocalizedText('শব্দটি শুনি'),
           style: OutlinedButton.styleFrom(
@@ -583,6 +597,7 @@ class _QaidaLessonScreenState extends State<QaidaLessonScreen> {
             label: option,
             isArabic: true,
             onTap: () {
+              _playLetterAudio(option);
               if (onChoice != null) {
                 onChoice(option);
               } else {
@@ -624,13 +639,47 @@ class _QaidaLessonScreenState extends State<QaidaLessonScreen> {
     });
   }
 
+  Future<void> _playLetterAudio(String letter) async {
+    try {
+      final assetPath = arabicCharToAudioAsset[letter] ??
+          qaidaLetterAudioAssets[widget.lessonId];
+      if (assetPath != null) {
+        final relativePath = assetPath.startsWith('assets/')
+            ? assetPath.substring('assets/'.length)
+            : assetPath;
+        _audioPlayer ??= AudioPlayer();
+        await _audioPlayer?.stop();
+        await _audioPlayer?.play(AssetSource(relativePath));
+        return;
+      }
+    } catch (_) {}
+
+    try {
+      await _tts.speak(letter);
+    } catch (_) {}
+  }
+
   Future<void> _speakTarget() async {
+    try {
+      final assetPath = qaidaLetterAudioAssets[widget.lessonId] ??
+          arabicCharToAudioAsset[widget.letter];
+      if (assetPath != null) {
+        final relativePath = assetPath.startsWith('assets/')
+            ? assetPath.substring('assets/'.length)
+            : assetPath;
+        _audioPlayer ??= AudioPlayer();
+        await _audioPlayer?.stop();
+        await _audioPlayer?.play(AssetSource(relativePath));
+        if (mounted && _step == 0) setState(() => _heardLetter = true);
+        return;
+      }
+    } catch (_) {}
+
     try {
       await _tts.speak(_arabicName);
       if (mounted && _step == 0) setState(() => _heardLetter = true);
     } catch (_) {
       if (!mounted) return;
-      setState(() => _ttsAvailable = false);
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           content: LocalizedText('এই ডিভাইসে শব্দ শোনানো যাচ্ছে না।')));
     }
@@ -658,7 +707,7 @@ class _QaidaLessonScreenState extends State<QaidaLessonScreen> {
             if (result.finalResult) _isListening = false;
             if (correct) {
               _stagePassed = true;
-              _feedback = 'শব্দটি চিনতে পেরেছি। ভালো চেষ্টা!';
+              _feedback = 'দারুণ! চমৎকার উচ্চারণ করেছ, মাশাআল্লাহ!';
             } else if (result.finalResult && words.isNotEmpty) {
               _feedback = 'কাছাকাছি—আরেকবার ধীরে বলো, তারপর চেষ্টা করো।';
             }
@@ -686,11 +735,34 @@ class _QaidaLessonScreenState extends State<QaidaLessonScreen> {
     final normalized = _normalizeSpeech(words);
     if (normalized.isEmpty) return false;
     final aliases = switch (widget.letter) {
-      'ا' => ['الف', 'الف', 'alif', 'elif', 'ا'],
-      'ب' => ['باء', 'با', 'baa', 'ba', 'ب'],
-      'ت' => ['تاء', 'تا', 'taa', 'ta', 'ت'],
-      'ث' => ['ثاء', 'ثا', 'thaa', 'tha', 'ث'],
-      'ج' => ['جيم', 'جيم', 'jeem', 'jim', 'ج'],
+      'ا' => ['الف', 'alif', 'alef', 'elif', 'a', 'আলিফ', 'ا'],
+      'ب' => ['باء', 'با', 'baa', 'ba', 'বা', 'ব', 'ب'],
+      'ت' => ['تاء', 'تا', 'taa', 'ta', 'তা', 'ত', 'ت'],
+      'ث' => ['ثاء', 'ثا', 'thaa', 'tha', 'tsa', 'ছা', 'সা', 'ث'],
+      'ج' => ['جيم', 'jeem', 'jim', 'জীম', 'জিম', 'ج'],
+      'ح' => ['حاء', 'حا', 'haa', 'ha', 'হা', 'ح'],
+      'خ' => ['خاء', 'خا', 'khaa', 'kha', 'kho', 'খা', 'খ', 'خ'],
+      'د' => ['دال', 'daal', 'dal', 'দাল', 'দ', 'د'],
+      'ذ' => ['ذال', 'dhaal', 'dhal', 'zal', 'যাল', 'জাল', 'ذ'],
+      'ر' => ['راء', 'را', 'raa', 'ra', 'রা', 'র', 'ر'],
+      'ز' => ['زاي', 'زا', 'zaay', 'zay', 'zai', 'যাই', 'জাই', 'ز'],
+      'س' => ['سين', 'siin', 'seen', 'sin', 'সীন', 'সিন', 'س'],
+      'ش' => ['شين', 'shiin', 'sheen', 'shin', 'শীন', 'শিন', 'ش'],
+      'ص' => ['صاد', 'saad', 'sad', 'shad', 'সোয়াদ', 'সাদ', 'ص'],
+      'ض' => ['ضاد', 'daad', 'dad', 'dhad', 'দোয়াদ', 'দাদ', 'ض'],
+      'ط' => ['طاء', 'طا', 'toa', 'to', 'taa', 'তোয়া', 'তা', 'ط'],
+      'ظ' => ['ظاء', 'ظا', 'zoa', 'zo', 'dhaa', 'জোয়া', 'যা', 'ظ'],
+      'ع' => ['عين', 'ayn', 'ain', 'আইন', 'ع'],
+      'غ' => ['غين', 'ghayn', 'ghain', 'গাইন', 'غ'],
+      'ف' => ['فاء', 'فا', 'faa', 'fa', 'ফা', 'ফ', 'ف'],
+      'ق' => ['قاف', 'qaaf', 'qaf', 'ক্বাফ', 'কাফ', 'ق'],
+      'ك' => ['كاف', 'kaaf', 'kaf', 'কাফ', 'ক', 'ك'],
+      'ل' => ['لام', 'laam', 'lam', 'লাম', 'ল', 'ل'],
+      'م' => ['ميم', 'meem', 'mim', 'মীম', 'মিম', 'ম', 'م'],
+      'ن' => ['نون', 'noon', 'nuun', 'nun', 'নূন', 'নুন', 'ন', 'ن'],
+      'ه' => ['هاء', 'ها', 'haa', 'ha', 'হা', 'হ', 'ه'],
+      'و' => ['واو', 'waw', 'waaw', 'ওয়াও', 'ও', 'و'],
+      'ي' => ['ياء', 'يا', 'yaa', 'ya', 'ইয়া', 'ই', 'ي'],
       _ => [_normalizeSpeech(_arabicName), _normalizeSpeech(widget.letterName)],
     };
     return aliases.any((alias) =>

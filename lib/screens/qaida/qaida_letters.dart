@@ -12,7 +12,70 @@ class QaidaLetter {
   final String makhraj;
 
   String get title => '$name চিনি';
+  String? get audioAsset => qaidaLetterAudioAssets[id];
 }
+
+const Map<String, String> qaidaLetterAudioAssets = {
+  'qaida_alif': 'assets/audio/letters/alif.mp3',
+  'qaida_ba': 'assets/audio/letters/ba.mp3',
+  'qaida_ta': 'assets/audio/letters/ta.mp3',
+  'qaida_tha': 'assets/audio/letters/tha.mp3',
+  'qaida_jeem': 'assets/audio/letters/jeem.mp3',
+  'qaida_ha': 'assets/audio/letters/haa.mp3',
+  'qaida_kha': 'assets/audio/letters/khaa.mp3',
+  'qaida_dal': 'assets/audio/letters/dal.mp3',
+  'qaida_dhal': 'assets/audio/letters/dhal.mp3',
+  'qaida_ra': 'assets/audio/letters/raa.mp3',
+  'qaida_zay': 'assets/audio/letters/zay.mp3',
+  'qaida_seen': 'assets/audio/letters/seen.mp3',
+  'qaida_sheen': 'assets/audio/letters/sheen.mp3',
+  'qaida_sad': 'assets/audio/letters/saad.mp3',
+  'qaida_dad': 'assets/audio/letters/daad.mp3',
+  'qaida_ta_emphatic': 'assets/audio/letters/toa.mp3',
+  'qaida_za_emphatic': 'assets/audio/letters/zoa.mp3',
+  'qaida_ayn': 'assets/audio/letters/ayn.mp3',
+  'qaida_ghayn': 'assets/audio/letters/ghayn.mp3',
+  'qaida_fa': 'assets/audio/letters/faa.mp3',
+  'qaida_qaf': 'assets/audio/letters/qaaf.mp3',
+  'qaida_kaf': 'assets/audio/letters/kaaf.mp3',
+  'qaida_lam': 'assets/audio/letters/laam.mp3',
+  'qaida_meem': 'assets/audio/letters/meem.mp3',
+  'qaida_noon': 'assets/audio/letters/noon.mp3',
+  'qaida_ha_soft': 'assets/audio/letters/ha.mp3',
+  'qaida_waw': 'assets/audio/letters/waw.mp3',
+  'qaida_ya': 'assets/audio/letters/yaa.mp3',
+};
+
+const Map<String, String> arabicCharToAudioAsset = {
+  'ا': 'assets/audio/letters/alif.mp3',
+  'ب': 'assets/audio/letters/ba.mp3',
+  'ت': 'assets/audio/letters/ta.mp3',
+  'ث': 'assets/audio/letters/tha.mp3',
+  'ج': 'assets/audio/letters/jeem.mp3',
+  'ح': 'assets/audio/letters/haa.mp3',
+  'خ': 'assets/audio/letters/khaa.mp3',
+  'د': 'assets/audio/letters/dal.mp3',
+  'ذ': 'assets/audio/letters/dhal.mp3',
+  'ر': 'assets/audio/letters/raa.mp3',
+  'ز': 'assets/audio/letters/zay.mp3',
+  'س': 'assets/audio/letters/seen.mp3',
+  'ش': 'assets/audio/letters/sheen.mp3',
+  'ص': 'assets/audio/letters/saad.mp3',
+  'ض': 'assets/audio/letters/daad.mp3',
+  'ط': 'assets/audio/letters/toa.mp3',
+  'ظ': 'assets/audio/letters/zoa.mp3',
+  'ع': 'assets/audio/letters/ayn.mp3',
+  'غ': 'assets/audio/letters/ghayn.mp3',
+  'ف': 'assets/audio/letters/faa.mp3',
+  'ق': 'assets/audio/letters/qaaf.mp3',
+  'ك': 'assets/audio/letters/kaaf.mp3',
+  'ل': 'assets/audio/letters/laam.mp3',
+  'م': 'assets/audio/letters/meem.mp3',
+  'ن': 'assets/audio/letters/noon.mp3',
+  'ه': 'assets/audio/letters/ha.mp3',
+  'و': 'assets/audio/letters/waw.mp3',
+  'ي': 'assets/audio/letters/yaa.mp3',
+};
 
 /// The 28 Arabic letters taught in the Qaida path, in learning order.
 const qaidaLetters = <QaidaLetter>[

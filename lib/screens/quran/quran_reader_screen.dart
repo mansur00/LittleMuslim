@@ -51,6 +51,7 @@ class _QuranReaderScreenState extends State<QuranReaderScreen>
   final Map<int, GlobalKey> _verseKeys = {};
   Timer? _positionSaveTimer;
   int _currentAyah = 1;
+  int? _playingAyahNumber;
   bool _positionRestored = false;
   bool _allowPop = false;
   bool _isLeaving = false;
@@ -62,7 +63,12 @@ class _QuranReaderScreenState extends State<QuranReaderScreen>
     WidgetsBinding.instance.addObserver(this);
     _audioPlayer = AudioPlayer();
     _audioCompleteSubscription = _audioPlayer.onPlayerComplete.listen((_) {
-      if (mounted) setState(() => _isPlaying = false);
+      if (mounted) {
+        setState(() {
+          _isPlaying = false;
+          _playingAyahNumber = null;
+        });
+      }
     });
     _loadSurah();
   }
@@ -197,6 +203,10 @@ class _QuranReaderScreenState extends State<QuranReaderScreen>
         await _audioPlayer.pause();
         if (mounted) setState(() => _isPlaying = false);
       } else {
+        if (_playingAyahNumber != null) {
+          await _audioPlayer.stop();
+          if (mounted) setState(() => _playingAyahNumber = null);
+        }
         await _audioPlayer.play(UrlSource(
             'https://cdn.islamic.network/quran/audio-surah/128/ar.alafasy/${_surah.number}.mp3'));
         if (mounted) setState(() => _isPlaying = true);
@@ -208,6 +218,34 @@ class _QuranReaderScreenState extends State<QuranReaderScreen>
         ..showSnackBar(const SnackBar(
             content: LocalizedText(
                 'অডিও চালু হয়নি। ইন্টারনেট সংযোগ দেখে আবার চেষ্টা করো।')));
+    }
+  }
+
+  Future<void> _toggleAyahAudio(QuranAyah ayah) async {
+    try {
+      if (_playingAyahNumber == ayah.number) {
+        await _audioPlayer.pause();
+        if (mounted) setState(() => _playingAyahNumber = null);
+      } else {
+        if (_isPlaying) {
+          await _audioPlayer.stop();
+          if (mounted) setState(() => _isPlaying = false);
+        }
+        final surahStr = _surah.number.toString().padLeft(3, '0');
+        final ayahStr = ayah.number.toString().padLeft(3, '0');
+        final ayahUrl =
+            'https://everyayah.com/data/Alafasy_128kbps/$surahStr$ayahStr.mp3';
+        await _audioPlayer.stop();
+        await _audioPlayer.play(UrlSource(ayahUrl));
+        if (mounted) setState(() => _playingAyahNumber = ayah.number);
+      }
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(const SnackBar(
+            content: LocalizedText(
+                'আয়াতের অডিও চালু হয়নি। ইন্টারনেট সংযোগ দেখে আবার চেষ্টা করো।')));
     }
   }
 
@@ -282,7 +320,9 @@ class _QuranReaderScreenState extends State<QuranReaderScreen>
                                         key: _verseKeys[ayah.number],
                                         ayah: ayah,
                                         number: ayah.number,
-                                        fontSize: _fontSize),
+                                        fontSize: _fontSize,
+                                        isPlaying: _playingAyahNumber == ayah.number,
+                                        onPlay: () => _toggleAyahAudio(ayah)),
                                     const SizedBox(height: 9),
                                   ],
                                 ]),
@@ -418,17 +458,23 @@ class _SurahHeading extends StatelessWidget {
 }
 
 class _VerseCard extends StatelessWidget {
-  const _VerseCard(
-      {super.key,
-      required this.ayah,
-      required this.number,
-      required this.fontSize});
+  const _VerseCard({
+    super.key,
+    required this.ayah,
+    required this.number,
+    required this.fontSize,
+    required this.isPlaying,
+    required this.onPlay,
+  });
   final QuranAyah ayah;
   final int number;
   final double fontSize;
+  final bool isPlaying;
+  final VoidCallback onPlay;
+
   @override
   Widget build(BuildContext context) => DuolingoCard(
-        accentColor: const Color(0xFF0D7377),
+        accentColor: isPlaying ? AppTheme.accentCoral : const Color(0xFF0D7377),
         margin: EdgeInsets.zero,
         padding: const EdgeInsets.fromLTRB(16, 14, 16, 12),
         child:
@@ -450,20 +496,32 @@ class _VerseCard extends StatelessWidget {
               style: const TextStyle(
                   color: Colors.black54, fontSize: 13, height: 1.6)),
           const SizedBox(height: 8),
-          Align(
-              alignment: Alignment.centerLeft,
-              child: Container(
-                  width: 27,
-                  height: 27,
+          Row(
+            children: [
+              Container(
+                  width: 28,
+                  height: 28,
                   decoration: BoxDecoration(
-                      color: const Color(0xFFFFF2CE),
+                      color: isPlaying ? const Color(0xFFFFE0E0) : const Color(0xFFFFF2CE),
                       borderRadius: BorderRadius.circular(9)),
                   alignment: Alignment.center,
                   child: LocalizedText('$number',
-                      style: const TextStyle(
-                          color: Color(0xFFA57910),
+                      style: TextStyle(
+                          color: isPlaying ? const Color(0xFFD32F2F) : const Color(0xFFA57910),
                           fontSize: 11,
-                          fontWeight: FontWeight.w800)))),
+                          fontWeight: FontWeight.w800))),
+              const Spacer(),
+              IconButton(
+                onPressed: onPlay,
+                tooltip: context.uiText(isPlaying ? 'আয়াত থামাই' : 'আয়াত শুনি'),
+                icon: Icon(
+                  isPlaying ? Icons.pause_circle_rounded : Icons.play_circle_outline_rounded,
+                  color: isPlaying ? AppTheme.accentCoral : AppTheme.primaryGreen,
+                  size: 26,
+                ),
+              ),
+            ],
+          ),
         ]),
       );
 }
