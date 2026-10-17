@@ -88,6 +88,98 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ]),
                 ),
                 const SizedBox(height: 14),
+                // User Mode Switcher (Admin / Regular Child)
+                DuolingoCard(
+                  accentColor: state.isAdmin ? const Color(0xFFF59E0B) : AppTheme.primaryGreen,
+                  margin: EdgeInsets.zero,
+                  padding: const EdgeInsets.all(18),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(
+                            state.isAdmin
+                                ? Icons.admin_panel_settings_rounded
+                                : Icons.child_care_rounded,
+                            color: state.isAdmin ? const Color(0xFFD97706) : AppTheme.primaryGreen,
+                            size: 24,
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                LocalizedText(
+                                  state.isAdmin
+                                      ? '🛠️ অ্যাডমিন মোড (সব আনলক)'
+                                      : '👶 মূল শিক্ষার্থী মোড',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w900,
+                                    fontSize: 15,
+                                    color: state.isAdmin ? const Color(0xFFB45309) : AppTheme.darkText,
+                                  ),
+                                ),
+                                LocalizedText(
+                                  state.isAdmin
+                                      ? 'সব লেসন, ক্বায়দা, কুইজ ও ধাপ ১০০% আনলক আছে'
+                                      : 'স্বাভাবিক নিয়মে ক্রমান্বয়ে লেসন আনলক হবে',
+                                  style: const TextStyle(color: Colors.black54, fontSize: 11),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 14),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: OutlinedButton.icon(
+                              onPressed: () async {
+                                await state.toggleAdminMode();
+                                if (!context.mounted) return;
+                                ScaffoldMessenger.of(context)
+                                  ..hideCurrentSnackBar()
+                                  ..showSnackBar(
+                                    SnackBar(
+                                      content: LocalizedText(
+                                        state.isAdmin
+                                            ? '🛠️ অ্যাডমিন মোড চালু: সব ধাপ আনলক!'
+                                            : '👶 শিক্ষার্থী মোড চালু: স্বাভাবিক লক নিয়ম সক্রিয়!',
+                                      ),
+                                      behavior: SnackBarBehavior.floating,
+                                      backgroundColor: state.isAdmin
+                                          ? const Color(0xFFD97706)
+                                          : AppTheme.primaryGreen,
+                                    ),
+                                  );
+                              },
+                              icon: Icon(
+                                state.isAdmin ? Icons.swap_horiz_rounded : Icons.lock_open_rounded,
+                                size: 18,
+                              ),
+                              label: LocalizedText(
+                                state.isAdmin
+                                    ? 'মূল শিক্ষার্থী মোডে যান'
+                                    : 'অ্যাডমিন মোডে যান (সব আনলক)',
+                              ),
+                              style: OutlinedButton.styleFrom(
+                                foregroundColor: state.isAdmin ? const Color(0xFFD97706) : AppTheme.primaryGreen,
+                                side: BorderSide(
+                                  color: state.isAdmin ? const Color(0xFFF59E0B) : AppTheme.primaryGreen,
+                                  width: 1.5,
+                                ),
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 14),
                 DuolingoCard(
                   accentColor: AppTheme.primaryGreen,
                   margin: EdgeInsets.zero,
@@ -186,6 +278,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                   ),
                 ),
+                const SizedBox(height: 16),
+                Center(
+                  child: TextButton.icon(
+                    onPressed: () async {
+                      await context.read<AppState>().resetOnboarding();
+                      if (!context.mounted) return;
+                      Navigator.of(context).popUntil((route) => route.isFirst);
+                    },
+                    icon: const Icon(Icons.refresh_rounded, size: 16, color: Colors.black45),
+                    label: const LocalizedText(
+                      'অনবোর্ডিং আবার দেখুন / রিসেট করুন',
+                      style: TextStyle(fontSize: 12, color: Colors.black54),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
               ],
             ),
           ),

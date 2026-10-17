@@ -1,8 +1,10 @@
 import '../../l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:provider/provider.dart';
 import '../../theme/app_theme.dart';
 import '../../theme/design_system.dart';
+import '../../utils/app_state.dart';
 import '../../widgets/vector_icons.dart';
 
 class WelcomePage extends StatelessWidget {
@@ -192,6 +194,34 @@ class WelcomePage extends StatelessWidget {
               .animate()
               .fadeIn(delay: 550.ms, duration: 500.ms)
               .slideY(begin: 0.25, end: 0),
+
+          const SizedBox(height: 12),
+
+          // Admin quick entry for test & review
+          TextButton.icon(
+            onPressed: () async {
+              await context.read<AppState>().quickAdminEnter();
+            },
+            icon: const Icon(Icons.admin_panel_settings_rounded, size: 18, color: DS.orange600),
+            label: const LocalizedText(
+              '🛠️ অ্যাডমিন মোড (সব আনলক দিয়ে শুরু)',
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w800,
+                color: DS.orange600,
+              ),
+            ),
+            style: TextButton.styleFrom(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              backgroundColor: DS.orange100,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+                side: const BorderSide(color: Color(0xFFFFCC80), width: 1.5),
+              ),
+            ),
+          )
+              .animate()
+              .fadeIn(delay: 650.ms, duration: 400.ms),
         ],
       ),
     );

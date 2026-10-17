@@ -207,6 +207,7 @@ class _DuolingoPathViewState extends State<DuolingoPathView>
   }
 
   bool _isItemUnlocked(AppState state, PathItemData item, int itemIndex) {
+    if (state.isAdmin) return true; // All lessons, quizzes and chests unlocked for admin
     if (item.type == PathItemType.unitHeader) return true;
 
     if (item.type == PathItemType.chest) {

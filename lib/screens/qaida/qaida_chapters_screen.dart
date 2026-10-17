@@ -60,6 +60,7 @@ int _completedCount(AppState state, _QaidaChapter chapter) {
 }
 
 bool _chapterUnlocked(AppState state, int index) {
+  if (state.isAdmin) return true;
   if (index == 0) return true;
   final previous = _chapters[index - 1];
   final previousTotal =

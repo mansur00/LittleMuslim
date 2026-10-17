@@ -83,6 +83,33 @@ class ReadyPage extends StatelessWidget {
                       color: AppTheme.primaryGreen,
                     ),
                   ).animate().fadeIn(delay: 180.ms, duration: 450.ms),
+                  if (appState.draftRole == 'admin') ...[
+                    const SizedBox(height: 8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFFEF3C7),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: const Color(0xFFF59E0B)),
+                      ),
+                      child: const Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.admin_panel_settings_rounded,
+                              color: Color(0xFFD97706), size: 16),
+                          SizedBox(width: 6),
+                          LocalizedText(
+                            '🛠️ অ্যাডমিন মোড: সব ধাপ ও লেভেল আনলক থাকবে',
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w700,
+                              color: Color(0xFF92400E),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ).animate().fadeIn(delay: 240.ms, duration: 400.ms),
+                  ],
                   SizedBox(height: isTablet ? 12 : 8),
                   LocalizedText(
                     'এখন থেকে প্রতিদিন একটু একটু করে\nকুরআন ও ইসলাম শিখবে মজার সাথে',

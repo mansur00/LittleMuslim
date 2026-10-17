@@ -608,7 +608,8 @@ class _IslamBasicsScreenState extends State<IslamBasicsScreen> {
                                 inProgress:
                                     state.basicsProgress('basics_chapter_$i') >
                                         0,
-                                locked: i > firstIncomplete &&
+                                locked: !state.isAdmin &&
+                                    i > firstIncomplete &&
                                     !state.hasCompletedLesson(
                                         'basics_chapter_$i'),
                                 onTap: () => _startChapter(i)),

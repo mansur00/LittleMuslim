@@ -5,7 +5,6 @@ import 'package:provider/provider.dart';
 import '../../theme/app_theme.dart';
 import '../../theme/design_system.dart';
 import '../../utils/app_state.dart';
-import '../../widgets/vector_icons.dart';
 
 class NameAgePage extends StatefulWidget {
   final bool isTablet;
@@ -26,6 +25,7 @@ class NameAgePage extends StatefulWidget {
 class _NameAgePageState extends State<NameAgePage> {
   final TextEditingController _nameController = TextEditingController();
   int _selectedAge = 8;
+  String _selectedRole = 'child';
   final List<int> _ages = List.generate(9, (i) => i + 6); // 6 to 14
   bool _initialized = false;
 
@@ -38,6 +38,7 @@ class _NameAgePageState extends State<NameAgePage> {
         _nameController.text = appState.draftName;
       }
       _selectedAge = appState.draftAge;
+      _selectedRole = appState.draftRole;
       _initialized = true;
     }
   }
@@ -50,18 +51,19 @@ class _NameAgePageState extends State<NameAgePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
+    return SingleChildScrollView(
+      physics: const BouncingScrollPhysics(),
       padding: EdgeInsets.symmetric(horizontal: widget.isTablet ? 64 : 24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SizedBox(height: 16),
+          const SizedBox(height: 12),
           // Mascot speech row
           Row(
             children: [
               Container(
-                width: widget.isTablet ? 68 : 54,
-                height: widget.isTablet ? 68 : 54,
+                width: widget.isTablet ? 64 : 50,
+                height: widget.isTablet ? 64 : 50,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: Colors.white,
@@ -78,14 +80,15 @@ class _NameAgePageState extends State<NameAgePage> {
                   child: Image.asset(
                     'assets/images/mascot_reading.jpg',
                     fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) => const Icon(Icons.face_rounded, color: DS.green500),
+                    errorBuilder: (_, __, ___) =>
+                        const Icon(Icons.face_rounded, color: DS.green500),
                   ),
                 ),
               ),
-              const SizedBox(width: 14),
+              const SizedBox(width: 12),
               Expanded(
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(DS.rLg),
@@ -99,9 +102,9 @@ class _NameAgePageState extends State<NameAgePage> {
                     ],
                   ),
                   child: LocalizedText(
-                    'তোমার নাম কী, ছোট্ট বন্ধু?',
+                    'কে ব্যবহার করবে? প্রোফাইল বেছে নাও',
                     style: TextStyle(
-                      fontSize: widget.isTablet ? 18 : 15,
+                      fontSize: widget.isTablet ? 17 : 14,
                       fontWeight: DS.black,
                       color: DS.textPrimary,
                     ),
@@ -109,15 +112,90 @@ class _NameAgePageState extends State<NameAgePage> {
                 ),
               ),
             ],
-          ).animate().fadeIn(duration: 400.ms).slideY(begin: -0.2, end: 0),
+          ).animate().fadeIn(duration: 350.ms).slideY(begin: -0.2, end: 0),
 
-          SizedBox(height: widget.isTablet ? 28 : 20),
+          const SizedBox(height: 16),
+
+          // User Role Selector (Original Child vs Admin Tester)
+          LocalizedText(
+            'ব্যবহারকারীর ধরন',
+            style: TextStyle(
+              fontSize: widget.isTablet ? 18 : 15,
+              fontWeight: DS.black,
+              color: DS.textPrimary,
+            ),
+          ).animate().fadeIn(delay: 100.ms, duration: 350.ms),
+
+          const SizedBox(height: 10),
+
+          Row(
+            children: [
+              // 1. Regular Student
+              Expanded(
+                child: _RoleCard(
+                  title: 'মূল শিক্ষার্থী',
+                  subtitle: 'স্বাভাবিক নিয়মে শেখা',
+                  badge: 'ডিফল্ট',
+                  icon: Icons.child_care_rounded,
+                  color: DS.green500,
+                  shadowColor: DS.green600,
+                  isSelected: _selectedRole == 'child',
+                  onTap: () {
+                    setState(() {
+                      _selectedRole = 'child';
+                      if (_nameController.text == 'অ্যাডমিন (Admin)') {
+                        _nameController.clear();
+                        context.read<AppState>().updateDraftName('');
+                      }
+                    });
+                    context.read<AppState>().updateDraftRole('child');
+                  },
+                ),
+              ),
+              const SizedBox(width: 12),
+              // 2. Admin Tester
+              Expanded(
+                child: _RoleCard(
+                  title: 'অ্যাডমিন',
+                  subtitle: 'সব ধাপ ও লেভেল আনলক',
+                  badge: 'সব আনলক 🔓',
+                  icon: Icons.admin_panel_settings_rounded,
+                  color: DS.orange500,
+                  shadowColor: DS.orange600,
+                  isSelected: _selectedRole == 'admin',
+                  onTap: () {
+                    setState(() {
+                      _selectedRole = 'admin';
+                      if (_nameController.text.trim().isEmpty) {
+                        _nameController.text = 'অ্যাডমিন (Admin)';
+                        context.read<AppState>().updateDraftName('অ্যাডমিন (Admin)');
+                      }
+                    });
+                    context.read<AppState>().updateDraftRole('admin');
+                  },
+                ),
+              ),
+            ],
+          ).animate().fadeIn(delay: 150.ms, duration: 400.ms),
+
+          const SizedBox(height: 20),
+
+          LocalizedText(
+            'তোমার নাম কী?',
+            style: TextStyle(
+              fontSize: widget.isTablet ? 18 : 15,
+              fontWeight: DS.black,
+              color: DS.textPrimary,
+            ),
+          ).animate().fadeIn(delay: 200.ms, duration: 350.ms),
+
+          const SizedBox(height: 8),
 
           TextField(
             controller: _nameController,
             textCapitalization: TextCapitalization.words,
             style: TextStyle(
-              fontSize: widget.isTablet ? 18 : 16,
+              fontSize: widget.isTablet ? 17 : 15,
               fontWeight: DS.bold,
               color: DS.textPrimary,
             ),
@@ -126,14 +204,12 @@ class _NameAgePageState extends State<NameAgePage> {
             },
             decoration: InputDecoration(
               hintText: context.uiText('যেমন: আয়েশা, ইউসুফ, ফাতিমা...'),
-              hintStyle: const TextStyle(
-                color: Color(0xFF9CA3AF),
-              ),
+              hintStyle: const TextStyle(color: Color(0xFF9CA3AF), fontSize: 14),
               filled: true,
               fillColor: Colors.white,
               contentPadding: EdgeInsets.symmetric(
-                horizontal: 20,
-                vertical: widget.isTablet ? 20 : 16,
+                horizontal: 18,
+                vertical: widget.isTablet ? 18 : 14,
               ),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(DS.rLg),
@@ -145,34 +221,28 @@ class _NameAgePageState extends State<NameAgePage> {
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(DS.rLg),
-                borderSide: const BorderSide(
-                  color: DS.green500,
-                  width: 2.5,
-                ),
+                borderSide: const BorderSide(color: DS.green500, width: 2.5),
               ),
-              prefixIcon: const Icon(
-                Icons.person_rounded,
-                color: DS.green500,
-              ),
+              prefixIcon: const Icon(Icons.person_rounded, color: DS.green500),
             ),
-          ).animate().fadeIn(delay: 150.ms, duration: 400.ms),
+          ).animate().fadeIn(delay: 250.ms, duration: 350.ms),
 
-          SizedBox(height: widget.isTablet ? 32 : 24),
+          const SizedBox(height: 20),
 
           LocalizedText(
-            'তোমার বয়স কত?',
+            'বয়স নির্বাচন করো',
             style: TextStyle(
-              fontSize: widget.isTablet ? 22 : 18,
+              fontSize: widget.isTablet ? 18 : 15,
               fontWeight: DS.black,
               color: DS.textPrimary,
             ),
-          ).animate().fadeIn(delay: 250.ms, duration: 400.ms),
+          ).animate().fadeIn(delay: 300.ms, duration: 350.ms),
 
-          const SizedBox(height: 14),
+          const SizedBox(height: 10),
 
           Wrap(
-            spacing: 10,
-            runSpacing: 10,
+            spacing: 8,
+            runSpacing: 8,
             children: _ages.map((age) {
               final isSelected = _selectedAge == age;
               return GestureDetector(
@@ -181,13 +251,13 @@ class _NameAgePageState extends State<NameAgePage> {
                   context.read<AppState>().updateDraftAge(age);
                 },
                 child: SizedBox(
-                  width: widget.isTablet ? 64 : 52,
-                  height: widget.isTablet ? 64 : 52,
+                  width: widget.isTablet ? 56 : 46,
+                  height: widget.isTablet ? 56 : 46,
                   child: Stack(
                     children: [
                       // Bevel
                       Positioned.fill(
-                        top: 4,
+                        top: 3,
                         child: Container(
                           decoration: BoxDecoration(
                             color: isSelected ? DS.green600 : const Color(0xFFD1D5DB),
@@ -198,7 +268,7 @@ class _NameAgePageState extends State<NameAgePage> {
                       // Face
                       Positioned(
                         top: 0,
-                        bottom: 4,
+                        bottom: 3,
                         left: 0,
                         right: 0,
                         child: Container(
@@ -214,7 +284,7 @@ class _NameAgePageState extends State<NameAgePage> {
                           child: LocalizedText(
                             '$age',
                             style: TextStyle(
-                              fontSize: widget.isTablet ? 20 : 17,
+                              fontSize: widget.isTablet ? 18 : 16,
                               fontWeight: DS.black,
                               color: isSelected ? Colors.white : DS.textPrimary,
                             ),
@@ -227,27 +297,46 @@ class _NameAgePageState extends State<NameAgePage> {
               );
             }).toList(),
           ).animate().fadeIn(delay: 350.ms, duration: 400.ms),
-          const Spacer(),
+
+          const SizedBox(height: 20),
+
           Container(
-            padding: const EdgeInsets.all(14),
+            padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: AppTheme.lightGold.withValues(alpha: 0.5),
+              color: _selectedRole == 'admin'
+                  ? const Color(0xFFFEF3C7)
+                  : AppTheme.lightGold.withValues(alpha: 0.5),
               borderRadius: BorderRadius.circular(14),
+              border: Border.all(
+                color: _selectedRole == 'admin'
+                    ? const Color(0xFFF59E0B)
+                    : Colors.transparent,
+                width: 1,
+              ),
             ),
             child: Row(
               children: [
-                const VectorIcon(
-                  type: VectorIconType.lightbulb,
-                  size: 24,
-                  color: Color(0xFFD4A017),
+                Icon(
+                  _selectedRole == 'admin'
+                      ? Icons.admin_panel_settings_rounded
+                      : Icons.lightbulb_rounded,
+                  size: 22,
+                  color: _selectedRole == 'admin'
+                      ? const Color(0xFFD97706)
+                      : const Color(0xFFD4A017),
                 ),
                 const SizedBox(width: 10),
                 Expanded(
                   child: LocalizedText(
-                    '৬-১৪ বছরের বাচ্চাদের জন্য তৈরি। তোমার বয়স অনুযায়ী কন্টেন্ট দেখানো হবে।',
+                    _selectedRole == 'admin'
+                        ? 'অ্যাডমিন মোড নির্বাচন করা হয়েছে। ক্বায়দা, কুরআন, কুইজ ও সব ধাপ সম্পূর্ণ আনলক থাকবে।'
+                        : 'মূল শিক্ষার্থী মোড। ধাপে ধাপে সম্পন্ন করার মাধ্যমে নতুন ধাপ আনলক হবে।',
                     style: TextStyle(
-                      fontSize: widget.isTablet ? 14 : 12.5,
-                      color: AppTheme.darkText.withValues(alpha: 0.8),
+                      fontSize: widget.isTablet ? 13.5 : 12,
+                      color: _selectedRole == 'admin'
+                          ? const Color(0xFF92400E)
+                          : AppTheme.darkText.withValues(alpha: 0.8),
+                      fontWeight: FontWeight.w600,
                       height: 1.35,
                     ),
                   ),
@@ -255,8 +344,114 @@ class _NameAgePageState extends State<NameAgePage> {
               ],
             ),
           ).animate().fadeIn(delay: 450.ms, duration: 400.ms),
-          SizedBox(height: widget.isTablet ? 24 : 16),
+
+          const SizedBox(height: 24),
         ],
+      ),
+    );
+  }
+}
+
+class _RoleCard extends StatelessWidget {
+  final String title;
+  final String subtitle;
+  final String badge;
+  final IconData icon;
+  final Color color;
+  final Color shadowColor;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  const _RoleCard({
+    required this.title,
+    required this.subtitle,
+    required this.badge,
+    required this.icon,
+    required this.color,
+    required this.shadowColor,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: isSelected ? color.withValues(alpha: 0.08) : Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: isSelected ? color : const Color(0xFFE5E7EB),
+            width: isSelected ? 2.5 : 2,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: isSelected
+                  ? shadowColor.withValues(alpha: 0.25)
+                  : const Color(0x0C000000),
+              offset: const Offset(0, 3),
+              blurRadius: 0,
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: isSelected ? color : const Color(0xFFF3F4F6),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Icon(
+                    icon,
+                    size: 20,
+                    color: isSelected ? Colors.white : const Color(0xFF6B7280),
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+                  decoration: BoxDecoration(
+                    color: isSelected ? color : const Color(0xFFF3F4F6),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: LocalizedText(
+                    badge,
+                    style: TextStyle(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w800,
+                      color: isSelected ? Colors.white : const Color(0xFF6B7280),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            LocalizedText(
+              title,
+              style: TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.w900,
+                color: isSelected ? color : DS.textPrimary,
+              ),
+            ),
+            const SizedBox(height: 3),
+            LocalizedText(
+              subtitle,
+              style: const TextStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.w600,
+                color: Color(0xFF6B7280),
+                height: 1.25,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

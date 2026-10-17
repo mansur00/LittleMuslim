@@ -41,12 +41,16 @@ class AppState extends ChangeNotifier {
   String draftName = '';
   int draftAge = 8;
   String draftLanguage = 'bn';
+  String draftRole = 'child'; // 'child' (regular) or 'admin'
+  String _userRole = 'child';
 
   bool get isLoaded => _isLoaded;
   bool get hasCompletedOnboarding => _hasCompletedOnboarding;
   String get userName => _userName;
   int get age => _age;
   String get selectedLanguage => _selectedLanguage;
+  String get userRole => _userRole;
+  bool get isAdmin => _userRole == 'admin';
   int get xp => _xp;
   bool get streakAlertsEnabled => _streakAlertsEnabled;
   bool get classAlertsEnabled => _classAlertsEnabled;
@@ -152,6 +156,8 @@ class AppState extends ChangeNotifier {
     _userName = prefs.getString('user_name') ?? '';
     _age = prefs.getInt('user_age') ?? 8;
     _selectedLanguage = prefs.getString('language') == 'en' ? 'en' : 'bn';
+    _userRole = prefs.getString('user_role') ?? 'child';
+    draftRole = _userRole;
     final savedXp = savedProgress?['xp'];
     _xp = savedXp is int && savedXp >= 0 ? savedXp : prefs.getInt('xp') ?? 0;
     _streakAlertsEnabled = prefs.getBool('streak_alerts') ?? true;
@@ -458,6 +464,32 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
+  void updateDraftRole(String role) {
+    draftRole = role == 'admin' ? 'admin' : 'child';
+    notifyListeners();
+  }
+
+  Future<void> setUserRole(String role) async {
+    final next = role == 'admin' ? 'admin' : 'child';
+    if (_userRole == next) return;
+    _userRole = next;
+    draftRole = next;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('user_role', next);
+    notifyListeners();
+  }
+
+  Future<void> toggleAdminMode() async {
+    await setUserRole(isAdmin ? 'child' : 'admin');
+  }
+
+  Future<void> quickAdminEnter() async {
+    draftName = 'অ্যাডমিন (Admin)';
+    draftAge = 10;
+    draftRole = 'admin';
+    await completeOnboarding(role: 'admin');
+  }
+
   Future<void> updateLanguage(String language) async {
     final nextLanguage = language == 'en' ? 'en' : 'bn';
     if (_selectedLanguage == nextLanguage) return;
@@ -467,16 +499,20 @@ class AppState extends ChangeNotifier {
     await prefs.setString('language', nextLanguage);
   }
 
-  Future<void> completeOnboarding() async {
-    final name = draftName.isNotEmpty ? draftName : 'Young Muslim';
+  Future<void> completeOnboarding({String? role}) async {
+    final name = draftName.isNotEmpty
+        ? draftName
+        : (role == 'admin' || draftRole == 'admin' ? 'অ্যাডমিন (Admin)' : 'Young Muslim');
     final age = draftAge;
     final language = draftLanguage == 'en' ? 'en' : 'bn';
+    final roleToSave = role ?? (draftRole == 'admin' ? 'admin' : 'child');
 
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('onboarding_done', true);
     await prefs.setString('user_name', name);
     await prefs.setInt('user_age', age);
     await prefs.setString('language', language);
+    await prefs.setString('user_role', roleToSave);
     await prefs.setInt('xp', 0);
     await prefs.setStringList('completed_lessons', const []);
     await prefs.setStringList('lesson_activity', const []);
@@ -497,6 +533,7 @@ class AppState extends ChangeNotifier {
     _userName = name;
     _age = age;
     _selectedLanguage = language;
+    _userRole = roleToSave;
     _xp = 0;
     _streakAlertsEnabled = true;
     _classAlertsEnabled = true;
@@ -515,6 +552,8 @@ class AppState extends ChangeNotifier {
     _userName = '';
     _age = 8;
     _selectedLanguage = 'bn';
+    _userRole = 'child';
+    draftRole = 'child';
     _xp = 0;
     _streakAlertsEnabled = true;
     _classAlertsEnabled = true;
