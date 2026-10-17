@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import '../../theme/app_theme.dart';
 import '../../utils/app_state.dart';
 import '../../widgets/vector_icons.dart';
-import '../../widgets/vector_mascot.dart';
+
 import '../../widgets/duolingo_path_view.dart';
 import '../qaida/qaida_letters.dart';
 import '../qaida/qaida_chapters_screen.dart';
@@ -34,7 +34,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final isTablet = size.shortestSide >= 600;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFFBF8F2),
+      backgroundColor: Colors.white,
       body: SafeArea(
         child: Column(
           children: [
@@ -135,15 +135,11 @@ class _HomePathTab extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Cheerful mascot speech banner (Noor encouraging the child)
-                MascotSpeechBanner(
-                  title: 'নুর বলছে',
+                _QuranSpeechCard(
                   message: todayQaidaLessons > 0
                       ? 'মাশাআল্লাহ! আজকের মিশন সম্পূর্ণ করেছ।'
                       : 'আসসালামু আলাইকুম! চলো আজ নতুন পাঠ শিখি!',
-                  mood: todayQaidaLessons > 0
-                      ? MascotMood.celebrating
-                      : MascotMood.waving,
-                  mascotSize: isTablet ? 72 : 60,
+                  isTablet: isTablet,
                 ),
                 SizedBox(height: isTablet ? 14 : 10),
 
@@ -471,7 +467,89 @@ class _XpChip extends StatelessWidget {
   }
 }
 
+/// Duolingo-style speech card using the respectful 3D Quran book image mascot.
+/// Strictly no face, no limbs — just the holy book radiating light.
+class _QuranSpeechCard extends StatelessWidget {
+  const _QuranSpeechCard({
+    required this.message,
+    required this.isTablet,
+  });
+
+  final String message;
+  final bool isTablet;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: const Color(0xFFE5E7EB), width: 1.5),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF58CC02).withValues(alpha: 0.08),
+            blurRadius: 16,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          // 3D Quran book image — no face, no limbs
+          ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: Image.asset(
+              'assets/images/quran_3d.jpg',
+              width: isTablet ? 68 : 58,
+              height: isTablet ? 68 : 58,
+              fit: BoxFit.cover,
+            ),
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 8, vertical: 3),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF58CC02),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: const LocalizedText(
+                    'কুরআন বলছে',
+                    style: TextStyle(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w800,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 6),
+                LocalizedText(
+                  message,
+                  style: const TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w700,
+                    color: Color(0xFF1F2937),
+                    height: 1.35,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class _SectionTitle extends StatelessWidget {
+
   const _SectionTitle({
     required this.title,
     required this.subtitle,

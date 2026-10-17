@@ -451,7 +451,7 @@ class _DuolingoPathViewState extends State<DuolingoPathView>
 
     return Container(
       decoration: const BoxDecoration(
-        color: Color(0xFFF1F8E9), // Gentle meadow green background
+        color: Colors.white,
       ),
       child: Stack(
         children: [
@@ -551,58 +551,55 @@ class _UnitSignboard extends StatelessWidget {
         horizontal: isTablet ? 48 : 24,
         vertical: 24,
       ),
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
       decoration: BoxDecoration(
-        color: const Color(0xFFFFA000), // Rich amber wooden sign
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: const Color(0xFFFFD54F), width: 3),
+        color: const Color(0xFF58CC02),
+        borderRadius: BorderRadius.circular(16),
         boxShadow: const [
           BoxShadow(
-            color: Color(0xFFC67100),
-            offset: Offset(0, 5),
+            color: Color(0xFF46A302),
+            offset: Offset(0, 6),
             blurRadius: 0,
           ),
         ],
       ),
       child: Row(
         children: [
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: LocalizedText(
-              'ইউনিট $unitNumber',
-              style: const TextStyle(
-                fontWeight: FontWeight.w900,
-                fontSize: 12,
-                color: Color(0xFFC67100),
-              ),
-            ),
-          ),
-          const SizedBox(width: 14),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 LocalizedText(
+                  'সেকশন $unitNumber · ইউনিট $unitNumber',
+                  style: TextStyle(
+                    color: Colors.white.withValues(alpha: 0.85),
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 1.2,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                LocalizedText(
                   title,
                   style: const TextStyle(
                     color: Colors.white,
-                    fontSize: 15,
+                    fontSize: 17,
                     fontWeight: FontWeight.w900,
                   ),
                 ),
-                LocalizedText(
-                  subtitle,
-                  style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.9),
-                    fontSize: 11,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
               ],
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.2),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: const VectorIcon(
+              type: VectorIconType.book,
+              size: 22,
+              color: Colors.white,
             ),
           ),
         ],
@@ -638,14 +635,14 @@ class _DuolingoNodeWidget extends StatelessWidget {
     Color shadowColor;
 
     if (!isUnlocked) {
-      faceColor = const Color(0xFFE5E7EB);
-      shadowColor = const Color(0xFFD1D5DB);
+      faceColor = const Color(0xFFE5E5E5);
+      shadowColor = const Color(0xFFAFAFAF);
     } else if (isCompleted) {
+      faceColor = const Color(0xFFFFC800);
+      shadowColor = const Color(0xFFE5A100);
+    } else {
       faceColor = const Color(0xFF58CC02);
       shadowColor = const Color(0xFF46A302);
-    } else {
-      faceColor = const Color(0xFFFFC800);
-      shadowColor = const Color(0xFFE6A800);
     }
 
     String letterDisplay = '';
@@ -672,41 +669,41 @@ class _DuolingoNodeWidget extends StatelessWidget {
                   child: child,
                 );
               },
-              child: Container(
-                margin: const EdgeInsets.only(bottom: 6),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: const Color(0xFFFFC800), width: 2),
-                  boxShadow: [
-                    BoxShadow(
-                      color: const Color(0xFFFFC800).withValues(alpha: 0.3),
-                      blurRadius: 8,
-                      offset: const Offset(0, 3),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 18, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(14),
+                      border: Border.all(
+                          color: const Color(0xFFE5E7EB), width: 1.5),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.1),
+                          blurRadius: 6,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-                child: const Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    VectorIcon(
-                      type: VectorIconType.flag,
-                      size: 16,
-                      color: Color(0xFFFF6B4A),
-                    ),
-                    SizedBox(width: 6),
-                    LocalizedText(
-                      'এখানে শুরু করো!',
+                    child: const LocalizedText(
+                      'START',
                       style: TextStyle(
-                        fontSize: 12,
+                        fontSize: 14,
                         fontWeight: FontWeight.w900,
-                        color: Color(0xFFE6A800),
+                        color: Color(0xFF58CC02),
+                        letterSpacing: 0.8,
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                  CustomPaint(
+                    size: const Size(14, 8),
+                    painter: _TrianglePointerPainter(),
+                  ),
+                  const SizedBox(height: 2),
+                ],
               ),
             ),
 
@@ -744,7 +741,7 @@ class _DuolingoNodeWidget extends StatelessWidget {
                         if (isCurrent)
                           BoxShadow(
                             color:
-                                const Color(0xFFFFC800).withValues(alpha: 0.6),
+                                const Color(0xFF58CC02).withValues(alpha: 0.5),
                             blurRadius: 16,
                             spreadRadius: 2,
                           ),
@@ -915,8 +912,7 @@ class _MilestoneChestNode extends StatelessWidget {
   }
 }
 
-/// Custom painter for the serpentine cobblestone stepping-stone road
-/// curving down through the landscape with scenery trees and stones.
+/// Clean, minimal connector painter — subtle thin curved line on white.
 class _PathCobblestonePainter extends CustomPainter {
   _PathCobblestonePainter({
     required this.itemCount,
@@ -934,81 +930,60 @@ class _PathCobblestonePainter extends CustomPainter {
     final double maxSpread = isTablet ? 110 : 80;
     final rowHeight = size.height / itemCount;
 
-    // Road trail paint
-    final roadPaint = Paint()
-      ..color = const Color(0xFFE8E5D8) // Cobblestone path beige
+    // Subtle thin connector line between nodes
+    final linePaint = Paint()
+      ..color = const Color(0xFFE5E7EB)
       ..style = PaintingStyle.stroke
-      ..strokeWidth = isTablet ? 72 : 54
+      ..strokeWidth = 3
       ..strokeCap = StrokeCap.round
       ..strokeJoin = StrokeJoin.round;
 
-    final roadBorderPaint = Paint()
-      ..color = const Color(0xFFD6CEBA) // Subtle stone border
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = isTablet ? 82 : 64
-      ..strokeCap = StrokeCap.round
-      ..strokeJoin = StrokeJoin.round;
-
-    // Stepping stones dots along the path
     final path = Path();
-    final points = <Offset>[];
 
     for (var i = 0; i < itemCount; i++) {
       final y = (i * rowHeight) + (rowHeight / 2);
       final wave = math.sin(i * 0.95);
       final x = centerX + (wave * maxSpread);
-      points.add(Offset(x, y));
 
       if (i == 0) {
         path.moveTo(x, y);
       } else {
-        final prev = points[i - 1];
-        final midY = (prev.dy + y) / 2;
-        path.cubicTo(prev.dx, midY, x, midY, x, y);
+        final prevY = ((i - 1) * rowHeight) + (rowHeight / 2);
+        final prevWave = math.sin((i - 1) * 0.95);
+        final prevX = centerX + (prevWave * maxSpread);
+        final midY = (prevY + y) / 2;
+        path.cubicTo(prevX, midY, x, midY, x, y);
       }
     }
 
-    // Draw stone road outline and surface
-    canvas.drawPath(path, roadBorderPaint);
-    canvas.drawPath(path, roadPaint);
-
-    // Decorative vector trees and landscape scenery beside the road
-    for (var i = 0; i < itemCount; i += 2) {
-      final p = points[i];
-      final wave = math.sin(i * 0.95);
-      // Place tree on the opposite side of the curve!
-      final treeX = wave >= 0
-          ? centerX - (maxSpread + (isTablet ? 70 : 45))
-          : centerX + (maxSpread + (isTablet ? 70 : 45));
-      _drawVectorTree(canvas, Offset(treeX, p.dy), isTablet ? 26 : 20);
-    }
-  }
-
-  void _drawVectorTree(Canvas canvas, Offset pos, double radius) {
-    // Tree trunk
-    final trunk = Paint()..color = const Color(0xFF8D6E63);
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(
-        Rect.fromCenter(
-          center: Offset(pos.dx, pos.dy + radius * 0.8),
-          width: radius * 0.35,
-          height: radius * 0.8,
-        ),
-        Radius.circular(radius * 0.1),
-      ),
-      trunk,
-    );
-    // Tree crown (fluffy round greens)
-    final foliage = Paint()..color = const Color(0xFF81C784);
-    final darkFoliage = Paint()..color = const Color(0xFF66BB6A);
-    canvas.drawCircle(
-        Offset(pos.dx, pos.dy + radius * 0.2), radius * 0.9, darkFoliage);
-    canvas.drawCircle(Offset(pos.dx, pos.dy), radius * 0.8, foliage);
-    canvas.drawCircle(Offset(pos.dx - radius * 0.2, pos.dy - radius * 0.2),
-        radius * 0.35, Paint()..color = const Color(0xFFA5D6A7));
+    canvas.drawPath(path, linePaint);
   }
 
   @override
   bool shouldRepaint(covariant _PathCobblestonePainter oldDelegate) =>
       oldDelegate.itemCount != itemCount || oldDelegate.isTablet != isTablet;
+}
+
+/// Downward triangle pointer for the START tooltip bubble.
+class _TrianglePointerPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = Colors.white
+      ..style = PaintingStyle.fill;
+    final borderPaint = Paint()
+      ..color = const Color(0xFFE5E7EB)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.5;
+    final path = Path()
+      ..moveTo(0, 0)
+      ..lineTo(size.width / 2, size.height)
+      ..lineTo(size.width, 0)
+      ..close();
+    canvas.drawPath(path, paint);
+    canvas.drawPath(path, borderPaint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }

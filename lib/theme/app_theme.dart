@@ -5,13 +5,26 @@ class AppTheme {
   // Islamic Middle-East inspired palette
   static const Color primaryGreen = Color(0xFF0D7377); // Deep teal-green
   static const Color secondaryGold = Color(0xFFD4A017); // Warm gold
-  static const Color cream = Color(0xFFF8F1E3); // Soft cream background
-  static const Color softGreen = Color(0xFFE8F5E9); // Light green cards
-  static const Color darkText = Color(0xFF1A3C34); // Deep forest text
+  static const Color cream = Color(0xFFFFFFFF); // Clean white background like Duolingo
+  static const Color softGreen = Color(0xFFE8F8D8); // Light green cards
+  static const Color darkText = Color(0xFF3C3C3C); // Clean dark charcoal text
   static const Color accentCoral =
-      Color(0xFFE07A5F); // Soft coral for buttons/fun
+      Color(0xFFFF4B4B); // Duolingo heart/accent red
   static const Color white = Color(0xFFFFFFFF);
-  static const Color lightGold = Color(0xFFF5E6C8);
+  static const Color lightGold = Color(0xFFFFF3C4);
+
+  // Signature Duolingo Gamification 3D Palette
+  static const Color duoGreen = Color(0xFF58CC02);
+  static const Color duoGreenDark = Color(0xFF46A302);
+  static const Color duoGold = Color(0xFFFFC800);
+  static const Color duoGoldDark = Color(0xFFE5A100);
+  static const Color duoBlue = Color(0xFF1CB0F6);
+  static const Color duoBlueDark = Color(0xFF1899D6);
+  static const Color duoRed = Color(0xFFFF4B4B);
+  static const Color duoRedDark = Color(0xFFEA2B2B);
+  static const Color duoGray = Color(0xFFE5E5E5);
+  static const Color duoGrayDark = Color(0xFFAFAFAF);
+  static const Color duoBorder = Color(0xFFE5E7EB);
 
   static const String arabicFontFamily = 'Amiri';
 
@@ -34,13 +47,13 @@ class AppTheme {
     return ThemeData(
       useMaterial3: true,
       brightness: Brightness.light,
-      primaryColor: primaryGreen,
-      scaffoldBackgroundColor: cream,
+      primaryColor: duoGreen,
+      scaffoldBackgroundColor: white,
       colorScheme: ColorScheme.fromSeed(
-        seedColor: primaryGreen,
-        primary: primaryGreen,
-        secondary: secondaryGold,
-        surface: cream,
+        seedColor: duoGreen,
+        primary: duoGreen,
+        secondary: duoGold,
+        surface: white,
         onPrimary: white,
         onSecondary: darkText,
       ),
