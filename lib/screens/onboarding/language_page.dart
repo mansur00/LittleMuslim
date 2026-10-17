@@ -3,6 +3,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:provider/provider.dart';
 import '../../l10n/app_localizations.dart';
 import '../../theme/app_theme.dart';
+import '../../theme/design_system.dart';
 import '../../utils/app_state.dart';
 import '../../widgets/vector_icons.dart';
 
@@ -98,80 +99,94 @@ class _LanguagePageState extends State<LanguagePage> {
             final isSelected = _selectedLang == lang['code'];
 
             return Padding(
-              padding: const EdgeInsets.only(bottom: 14),
+              padding: const EdgeInsets.only(bottom: 16),
               child: GestureDetector(
                 onTap: () => _selectLanguage(lang['code']!),
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 250),
-                  padding: EdgeInsets.symmetric(
-                    horizontal: widget.isTablet ? 24 : 18,
-                    vertical: widget.isTablet ? 20 : 16,
-                  ),
-                  decoration: BoxDecoration(
-                    color: isSelected ? AppTheme.primaryGreen : AppTheme.white,
-                    borderRadius: BorderRadius.circular(18),
-                    border: Border.all(
-                      color: isSelected
-                          ? AppTheme.primaryGreen
-                          : AppTheme.primaryGreen.withValues(alpha: 0.15),
-                      width: isSelected ? 2 : 1,
-                    ),
-                    boxShadow: isSelected
-                        ? [
-                            BoxShadow(
-                              color: AppTheme.primaryGreen.withValues(alpha: 0.2),
-                              blurRadius: 16,
-                              offset: const Offset(0, 6),
-                            )
-                          ]
-                        : [
-                            BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.03),
-                              blurRadius: 8,
-                              offset: const Offset(0, 2),
-                            )
-                          ],
-                  ),
-                  child: Row(
+                child: SizedBox(
+                  height: widget.isTablet ? 82 : 72,
+                  child: Stack(
                     children: [
-                      VectorIcon(
-                        type: _getFlagType(lang['code']!),
-                        size: widget.isTablet ? 36 : 30,
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            LocalizedText(
-                              lang['name']!,
-                              style: TextStyle(
-                                fontSize: widget.isTablet ? 18 : 16,
-                                fontWeight: FontWeight.w600,
-                                color: isSelected
-                                    ? Colors.white
-                                    : AppTheme.darkText,
-                              ),
-                            ),
-                            const SizedBox(height: 2),
-                            LocalizedText(
-                              lang['native']!,
-                              style: TextStyle(
-                                fontSize: widget.isTablet ? 14 : 13,
-                                color: isSelected
-                                    ? Colors.white.withValues(alpha: 0.85)
-                                    : AppTheme.darkText.withValues(alpha: 0.6),
-                              ),
-                            ),
-                          ],
+                      // Bevel
+                      Positioned.fill(
+                        top: 4,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: isSelected ? DS.green600 : const Color(0xFFD1D5DB),
+                            borderRadius: BorderRadius.circular(DS.rXl),
+                          ),
                         ),
                       ),
-                      if (isSelected)
-                        const Icon(
-                          Icons.check_circle_rounded,
-                          color: Colors.white,
-                          size: 28,
+                      // Face
+                      Positioned(
+                        top: 0,
+                        bottom: 4,
+                        left: 0,
+                        right: 0,
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: widget.isTablet ? 22 : 16,
+                          ),
+                          decoration: BoxDecoration(
+                            color: isSelected ? DS.green100 : Colors.white,
+                            borderRadius: BorderRadius.circular(DS.rXl),
+                            border: Border.all(
+                              color: isSelected ? DS.green500 : const Color(0xFFE5E7EB),
+                              width: 2,
+                            ),
+                          ),
+                          child: Row(
+                            children: [
+                              VectorIcon(
+                                type: _getFlagType(lang['code']!),
+                                size: widget.isTablet ? 36 : 30,
+                              ),
+                              const SizedBox(width: 16),
+                              Expanded(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    LocalizedText(
+                                      lang['name']!,
+                                      style: TextStyle(
+                                        fontSize: widget.isTablet ? 18 : 16,
+                                        fontWeight: DS.black,
+                                        color: isSelected ? DS.green600 : DS.textPrimary,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 2),
+                                    LocalizedText(
+                                      lang['native']!,
+                                      style: TextStyle(
+                                        fontSize: widget.isTablet ? 14 : 13,
+                                        fontWeight: DS.bold,
+                                        color: isSelected
+                                            ? DS.green600.withValues(alpha: 0.8)
+                                            : DS.textSecondary,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              if (isSelected)
+                                const Icon(
+                                  Icons.check_circle_rounded,
+                                  color: DS.green500,
+                                  size: 28,
+                                )
+                              else
+                                Container(
+                                  width: 22,
+                                  height: 22,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    border: Border.all(color: const Color(0xFFD1D5DB), width: 2),
+                                  ),
+                                ),
+                            ],
+                          ),
                         ),
+                      ),
                     ],
                   ),
                 ),

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:provider/provider.dart';
 import '../../theme/app_theme.dart';
+import '../../theme/design_system.dart';
 import '../../utils/app_state.dart';
 import '../../widgets/vector_icons.dart';
 
@@ -39,40 +40,39 @@ class ReadyPage extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  // 3D Celebrate Mascot
                   Container(
-                    width: isTablet ? 160 : 120,
-                    height: isTablet ? 160 : 120,
+                    width: isTablet ? 150 : 120,
+                    height: isTablet ? 150 : 120,
                     decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [Color(0xFF58CC02), Color(0xFF58A700)],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
                       shape: BoxShape.circle,
+                      color: Colors.white,
+                      border: Border.all(color: DS.gold500, width: 4),
                       boxShadow: [
                         BoxShadow(
-                          color:
-                              const Color(0xFF58CC02).withValues(alpha: 0.35),
+                          color: DS.gold500.withValues(alpha: 0.35),
                           blurRadius: 28,
-                          offset: const Offset(0, 12),
+                          offset: const Offset(0, 10),
+                        ),
+                        const BoxShadow(
+                          color: Color(0xFFE5A100),
+                          offset: Offset(0, 4),
+                          blurRadius: 0,
                         ),
                       ],
                     ),
-                    child: Center(
-                      child: VectorIcon(
-                        type: VectorIconType.check,
-                        size: isTablet ? 72 : 56,
-                        color: Colors.white,
+                    child: ClipOval(
+                      child: Image.asset(
+                        'assets/images/mascot_celebrate.jpg',
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, __, ___) => const Center(
+                          child: Icon(Icons.celebration_rounded, size: 60, color: Color(0xFFE5A100)),
+                        ),
                       ),
                     ),
                   )
                       .animate()
-                      .scale(duration: 550.ms, curve: Curves.easeOutBack)
-                      .then()
-                      .shimmer(
-                        duration: 1000.ms,
-                        color: Colors.white.withValues(alpha: 0.25),
-                      ),
+                      .scale(duration: 550.ms, curve: Curves.easeOutBack),
                   SizedBox(height: isTablet ? 32 : 24),
                   LocalizedText(
                     'তুমি প্রস্তুত, $name!',
@@ -155,29 +155,13 @@ class ReadyPage extends StatelessWidget {
                       .fadeIn(delay: 420.ms, duration: 500.ms)
                       .slideY(begin: 0.12, end: 0),
                   SizedBox(height: isTablet ? 36 : 28),
-                  SizedBox(
+                  DSButton(
+                    label: 'যাত্রা শুরু করি',
                     width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () => _finishOnboarding(context),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF58CC02),
-                        foregroundColor: Colors.white,
-                        elevation: 0,
-                        padding: EdgeInsets.symmetric(
-                          vertical: isTablet ? 20 : 16,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(18),
-                        ),
-                      ),
-                      child: LocalizedText(
-                        'যাত্রা শুরু করি',
-                        style: TextStyle(
-                          fontSize: isTablet ? 18 : 16,
-                          fontWeight: FontWeight.w800,
-                        ),
-                      ),
-                    ),
+                    height: isTablet ? DS.btnLg : DS.btnMd,
+                    color: DS.green500,
+                    shadowColor: DS.green600,
+                    onPressed: () => _finishOnboarding(context),
                   )
                       .animate()
                       .fadeIn(delay: 580.ms, duration: 450.ms)

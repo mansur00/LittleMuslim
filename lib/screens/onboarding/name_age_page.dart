@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:provider/provider.dart';
 import '../../theme/app_theme.dart';
+import '../../theme/design_system.dart';
 import '../../utils/app_state.dart';
 import '../../widgets/vector_icons.dart';
 
@@ -50,82 +51,125 @@ class _NameAgePageState extends State<NameAgePage> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: widget.isTablet ? 64 : 28),
+      padding: EdgeInsets.symmetric(horizontal: widget.isTablet ? 64 : 24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SizedBox(height: 20),
-          LocalizedText(
-            'তোমার নাম কী?',
-            style: TextStyle(
-              fontSize: widget.isTablet ? 28 : 24,
-              fontWeight: FontWeight.bold,
-              color: AppTheme.darkText,
-            ),
-          ).animate().fadeIn(duration: 400.ms).slideX(begin: -0.1, end: 0),
-          const SizedBox(height: 8),
-          LocalizedText(
-            'আমরা তোমাকে সঠিকভাবে স্বাগত জানাব',
-            style: TextStyle(
-              fontSize: widget.isTablet ? 16 : 14,
-              color: AppTheme.darkText.withValues(alpha: 0.65),
-            ),
-          ),
-          SizedBox(height: widget.isTablet ? 36 : 28),
+          const SizedBox(height: 16),
+          // Mascot speech row
+          Row(
+            children: [
+              Container(
+                width: widget.isTablet ? 68 : 54,
+                height: widget.isTablet ? 68 : 54,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.white,
+                  border: Border.all(color: DS.green500, width: 3),
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Color(0x18000000),
+                      offset: Offset(0, 3),
+                      blurRadius: 6,
+                    ),
+                  ],
+                ),
+                child: ClipOval(
+                  child: Image.asset(
+                    'assets/images/mascot_reading.jpg',
+                    fit: BoxFit.cover,
+                    errorBuilder: (_, __, ___) => const Icon(Icons.face_rounded, color: DS.green500),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(DS.rLg),
+                    border: Border.all(color: const Color(0xFFE5E7EB), width: 2),
+                    boxShadow: const [
+                      BoxShadow(
+                        color: Color(0x0C000000),
+                        offset: Offset(0, 3),
+                        blurRadius: 4,
+                      ),
+                    ],
+                  ),
+                  child: LocalizedText(
+                    'তোমার নাম কী, ছোট্ট বন্ধু?',
+                    style: TextStyle(
+                      fontSize: widget.isTablet ? 18 : 15,
+                      fontWeight: DS.black,
+                      color: DS.textPrimary,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ).animate().fadeIn(duration: 400.ms).slideY(begin: -0.2, end: 0),
+
+          SizedBox(height: widget.isTablet ? 28 : 20),
+
           TextField(
             controller: _nameController,
             textCapitalization: TextCapitalization.words,
             style: TextStyle(
               fontSize: widget.isTablet ? 18 : 16,
-              fontWeight: FontWeight.w500,
+              fontWeight: DS.bold,
+              color: DS.textPrimary,
             ),
             onChanged: (value) {
               context.read<AppState>().updateDraftName(value);
             },
             decoration: InputDecoration(
               hintText: context.uiText('যেমন: আয়েশা, ইউসুফ, ফাতিমা...'),
-              hintStyle: TextStyle(
-                color: AppTheme.darkText.withValues(alpha: 0.4),
+              hintStyle: const TextStyle(
+                color: Color(0xFF9CA3AF),
               ),
               filled: true,
-              fillColor: AppTheme.white,
+              fillColor: Colors.white,
               contentPadding: EdgeInsets.symmetric(
                 horizontal: 20,
                 vertical: widget.isTablet ? 20 : 16,
               ),
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(16),
-                borderSide: BorderSide.none,
+                borderRadius: BorderRadius.circular(DS.rLg),
+                borderSide: const BorderSide(color: Color(0xFFE5E7EB), width: 2),
               ),
               enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(16),
-                borderSide: BorderSide(
-                  color: AppTheme.primaryGreen.withValues(alpha: 0.15),
-                ),
+                borderRadius: BorderRadius.circular(DS.rLg),
+                borderSide: const BorderSide(color: Color(0xFFE5E7EB), width: 2),
               ),
               focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(DS.rLg),
                 borderSide: const BorderSide(
-                  color: AppTheme.primaryGreen,
-                  width: 2,
+                  color: DS.green500,
+                  width: 2.5,
                 ),
               ),
               prefixIcon: const Icon(
-                Icons.person_outline_rounded,
-                color: AppTheme.primaryGreen,
+                Icons.person_rounded,
+                color: DS.green500,
               ),
             ),
           ).animate().fadeIn(delay: 150.ms, duration: 400.ms),
-          SizedBox(height: widget.isTablet ? 40 : 32),
+
+          SizedBox(height: widget.isTablet ? 32 : 24),
+
           LocalizedText(
             'তোমার বয়স কত?',
             style: TextStyle(
               fontSize: widget.isTablet ? 22 : 18,
-              fontWeight: FontWeight.w600,
-              color: AppTheme.darkText,
+              fontWeight: DS.black,
+              color: DS.textPrimary,
             ),
           ).animate().fadeIn(delay: 250.ms, duration: 400.ms),
-          const SizedBox(height: 16),
+
+          const SizedBox(height: 14),
+
           Wrap(
             spacing: 10,
             runSpacing: 10,
@@ -136,38 +180,48 @@ class _NameAgePageState extends State<NameAgePage> {
                   setState(() => _selectedAge = age);
                   context.read<AppState>().updateDraftAge(age);
                 },
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 200),
+                child: SizedBox(
                   width: widget.isTablet ? 64 : 52,
                   height: widget.isTablet ? 64 : 52,
-                  decoration: BoxDecoration(
-                    color: isSelected ? AppTheme.primaryGreen : AppTheme.white,
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(
-                      color: isSelected
-                          ? AppTheme.primaryGreen
-                          : AppTheme.primaryGreen.withValues(alpha: 0.2),
-                      width: isSelected ? 2 : 1,
-                    ),
-                    boxShadow: isSelected
-                        ? [
-                            BoxShadow(
-                              color: AppTheme.primaryGreen.withValues(alpha: 0.25),
-                              blurRadius: 12,
-                              offset: const Offset(0, 4),
-                            )
-                          ]
-                        : null,
-                  ),
-                  child: Center(
-                    child: LocalizedText(
-                      '$age',
-                      style: TextStyle(
-                        fontSize: widget.isTablet ? 20 : 17,
-                        fontWeight: FontWeight.w600,
-                        color: isSelected ? Colors.white : AppTheme.darkText,
+                  child: Stack(
+                    children: [
+                      // Bevel
+                      Positioned.fill(
+                        top: 4,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: isSelected ? DS.green600 : const Color(0xFFD1D5DB),
+                            borderRadius: BorderRadius.circular(DS.rMd),
+                          ),
+                        ),
                       ),
-                    ),
+                      // Face
+                      Positioned(
+                        top: 0,
+                        bottom: 4,
+                        left: 0,
+                        right: 0,
+                        child: Container(
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            color: isSelected ? DS.green500 : Colors.white,
+                            borderRadius: BorderRadius.circular(DS.rMd),
+                            border: Border.all(
+                              color: isSelected ? DS.green600 : const Color(0xFFE5E7EB),
+                              width: 1.5,
+                            ),
+                          ),
+                          child: LocalizedText(
+                            '$age',
+                            style: TextStyle(
+                              fontSize: widget.isTablet ? 20 : 17,
+                              fontWeight: DS.black,
+                              color: isSelected ? Colors.white : DS.textPrimary,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               );

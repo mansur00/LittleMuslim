@@ -3,22 +3,26 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../theme/app_theme.dart';
+import '../../theme/design_system.dart';
 import '../../utils/app_state.dart';
 import '../../widgets/vector_icons.dart';
 import '../../widgets/duolingo_appbar.dart';
 
 class _BadgeInfo {
-  const _BadgeInfo(
-      {required this.title,
-      required this.description,
-      required this.iconType,
-      required this.color,
-      required this.accent,
-      required this.unlocked});
+  const _BadgeInfo({
+    required this.title,
+    required this.description,
+    required this.emblem,
+    required this.primaryColor,
+    required this.bevelColor,
+    required this.unlocked,
+    this.ribbonText,
+  });
   final String title, description;
-  final VectorIconType iconType;
-  final Color color, accent;
+  final BadgeEmblem emblem;
+  final Color primaryColor, bevelColor;
   final bool unlocked;
+  final String? ribbonText;
 }
 
 class AchievementsScreen extends StatelessWidget {
@@ -49,30 +53,34 @@ class AchievementsScreen extends StatelessWidget {
       _BadgeInfo(
           title: 'প্রথম পাঠ',
           description: '১টি ক্বায়দা পাঠ শেষ করো',
-          iconType: VectorIconType.qaida,
-          color: const Color(0xFFE8F8D8),
-          accent: const Color(0xFF58A700),
+          emblem: BadgeEmblem.star,
+          primaryColor: const Color(0xFF10B981),
+          bevelColor: const Color(0xFF047857),
+          ribbonText: '১ম ধাপ',
           unlocked: lessonCount >= 1),
       _BadgeInfo(
           title: 'তিন ধাপ এগিয়ে',
           description: '৩টি ক্বায়দা পাঠ শেষ করো',
-          iconType: VectorIconType.star,
-          color: const Color(0xFFFFF6D0),
-          accent: const Color(0xFFD4A017),
+          emblem: BadgeEmblem.lightning,
+          primaryColor: const Color(0xFFF59E0B),
+          bevelColor: const Color(0xFFB45309),
+          ribbonText: 'গতিশীল',
           unlocked: lessonCount >= 3),
       _BadgeInfo(
           title: 'পাঁচ পাঠের বন্ধু',
           description: '৫টি ক্বায়দা পাঠ শেষ করো',
-          iconType: VectorIconType.book,
-          color: const Color(0xFFDCEBFF),
-          accent: const Color(0xFF3B82C4),
+          emblem: BadgeEmblem.diamond,
+          primaryColor: const Color(0xFF3B82F6),
+          bevelColor: const Color(0xFF1D4ED8),
+          ribbonText: 'হিরক',
           unlocked: lessonCount >= 5),
       _BadgeInfo(
           title: 'XP সংগ্রাহক',
           description: '১০০ XP অর্জন করো',
-          iconType: VectorIconType.trophy,
-          color: const Color(0xFFF3E8FF),
-          accent: const Color(0xFF9B6BC9),
+          emblem: BadgeEmblem.trophy,
+          primaryColor: const Color(0xFF8B5CF6),
+          bevelColor: const Color(0xFF6D28D9),
+          ribbonText: 'মাস্টার',
           unlocked: xp >= 100),
     ];
     final unlocked = badges.where((b) => b.unlocked).length;
@@ -208,7 +216,7 @@ class AchievementsScreen extends StatelessWidget {
                           crossAxisCount: tablet ? 4 : 2,
                           crossAxisSpacing: 12,
                           mainAxisSpacing: 12,
-                          childAspectRatio: tablet ? 0.88 : 0.9,
+                          childAspectRatio: tablet ? 0.82 : 0.76,
                         ),
                         itemBuilder: (context, index) =>
                             _BadgeCard(badge: badges[index]),
@@ -279,59 +287,63 @@ class _BadgeCardState extends State<_BadgeCard> {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 90),
         transform: Matrix4.translationValues(0, _pressed ? 3 : 0, 0),
-        padding: const EdgeInsets.all(14),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(22),
           border: Border.all(
             color: badge.unlocked
-                ? badge.accent.withValues(alpha: 0.4)
-                : const Color(0xFFE5E5E5),
+                ? badge.bevelColor.withValues(alpha: 0.35)
+                : const Color(0xFFE2E8F0),
             width: 2.5,
           ),
-          boxShadow: badge.unlocked
-              ? [
-                  BoxShadow(
-                      color: badge.accent
-                          .withValues(alpha: _pressed ? 0.05 : 0.15),
-                      blurRadius: 0,
-                      offset: Offset(0, _pressed ? 0 : 4))
-                ]
-              : null,
-        ),
-        child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-          Opacity(
-            opacity: badge.unlocked ? 1 : 0.4,
-            child: IconBadge(
-              type: badge.unlocked ? badge.iconType : VectorIconType.lock,
-              bgColor: badge.unlocked ? badge.color : const Color(0xFFF0F0F0),
-              size: 56,
-              iconColor:
-                  badge.unlocked ? badge.accent : const Color(0xFFAFAFAF),
+          boxShadow: [
+            BoxShadow(
+              color: badge.unlocked
+                  ? badge.bevelColor.withValues(alpha: _pressed ? 0.05 : 0.20)
+                  : const Color(0xFFE2E8F0),
+              blurRadius: 0,
+              offset: Offset(0, _pressed ? 0 : 4),
             ),
-          ),
-          const SizedBox(height: 10),
-          LocalizedText(
-            badge.title,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-                color: badge.unlocked ? AppTheme.darkText : Colors.black38,
+          ],
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            DSGamifyBadge(
+              emblem: badge.emblem,
+              primaryColor: badge.primaryColor,
+              bevelColor: badge.bevelColor,
+              ribbonColor: const Color(0xFFFFD700),
+              ribbonText: badge.ribbonText,
+              size: 82,
+              isLocked: !badge.unlocked,
+            ),
+            const SizedBox(height: 8),
+            LocalizedText(
+              badge.title,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: badge.unlocked ? AppTheme.darkText : const Color(0xFF94A3B8),
                 fontSize: 13,
-                fontWeight: FontWeight.w800),
-          ),
-          const SizedBox(height: 4),
-          LocalizedText(
-            badge.unlocked ? 'আনলক!' : badge.description,
-            textAlign: TextAlign.center,
-            style: TextStyle(
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+            const SizedBox(height: 4),
+            LocalizedText(
+              badge.unlocked ? 'আনলক!' : badge.description,
+              textAlign: TextAlign.center,
+              style: TextStyle(
                 color: badge.unlocked
-                    ? badge.accent
-                    : AppTheme.darkText.withValues(alpha: 0.4),
+                    ? badge.bevelColor
+                    : const Color(0xFF94A3B8),
                 fontSize: 10,
-                height: 1.35,
-                fontWeight: FontWeight.w600),
-          ),
-        ]),
+                height: 1.3,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

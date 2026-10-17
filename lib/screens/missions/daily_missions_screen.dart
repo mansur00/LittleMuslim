@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../theme/app_theme.dart';
+import '../../theme/design_system.dart';
 import '../../utils/app_state.dart';
 import '../../widgets/vector_icons.dart';
 import '../../widgets/duolingo_appbar.dart';
@@ -76,9 +77,11 @@ class DailyMissionsScreen extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Row(children: [
-                          const Icon(Icons.bolt_rounded,
-                              color: Color(0xFFFF9600), size: 22),
-                          const SizedBox(width: 6),
+                          const Real3DTopBarIcon(
+                            type: Real3DTopType.flame,
+                            size: 24,
+                          ),
+                          const SizedBox(width: 8),
                           LocalizedText(
                             done
                                 ? 'মাশাআল্লাহ! আজকের শেখার লক্ষ্য পূরণ হয়েছে।'
@@ -128,11 +131,17 @@ class DailyMissionsScreen extends StatelessWidget {
                   accentColor: const Color(0xFF58CC02),
                   showAccentStripe: true,
                   child: Row(children: [
-                    const IconBadge(
-                        type: VectorIconType.qaida,
-                        bgColor: Color(0xFFE8F8D8),
-                        size: 52,
-                        iconColor: Color(0xFF58A700)),
+                    DSGamifyBadge(
+                      emblem: done ? BadgeEmblem.check : BadgeEmblem.star,
+                      primaryColor: done
+                          ? const Color(0xFF10B981)
+                          : const Color(0xFF3B82F6),
+                      bevelColor: done
+                          ? const Color(0xFF047857)
+                          : const Color(0xFF1D4ED8),
+                      ribbonText: done ? 'সম্পন্ন' : 'দৈনিক',
+                      size: 58,
+                    ),
                     const SizedBox(width: 13),
                     const Expanded(
                       child: Column(

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import '../../theme/app_theme.dart';
+import '../../theme/design_system.dart';
 import '../../utils/app_state.dart';
 import 'welcome_page.dart';
 import 'name_age_page.dart';
@@ -69,7 +70,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     final isTablet = size.shortestSide >= 600;
 
     return Scaffold(
-      backgroundColor: AppTheme.cream,
+      backgroundColor: Colors.white,
       body: SafeArea(
         child: Column(
           children: [
@@ -146,9 +147,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   SmoothPageIndicator(
                     controller: _pageController,
                     count: _totalPages,
-                    effect: ExpandingDotsEffect(
-                      activeDotColor: AppTheme.primaryGreen,
-                      dotColor: AppTheme.primaryGreen.withValues(alpha: 0.25),
+                    effect: const ExpandingDotsEffect(
+                      activeDotColor: DS.green500,
+                      dotColor: Color(0xFFE5E7EB),
                       dotHeight: 8,
                       dotWidth: 8,
                       expansionFactor: 3.5,
@@ -161,36 +162,25 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     Row(
                       children: [
                         Expanded(
-                          child: OutlinedButton(
+                          child: DSButton(
+                            label: 'পেছনে',
+                            color: Colors.white,
+                            shadowColor: const Color(0xFFD1D5DB),
+                            textColor: DS.textSecondary,
+                            height: isTablet ? DS.btnLg : DS.btnMd,
                             onPressed: _previousPage,
-                            style: OutlinedButton.styleFrom(
-                              foregroundColor: AppTheme.primaryGreen,
-                              side: const BorderSide(
-                                color: AppTheme.primaryGreen,
-                                width: 1.5,
-                              ),
-                              padding: EdgeInsets.symmetric(
-                                vertical: isTablet ? 18 : 14,
-                              ),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(16),
-                              ),
-                            ),
-                            child: const LocalizedText('পেছনে'),
                           ),
                         ),
-                        const SizedBox(width: 16),
+                        const SizedBox(width: 14),
                         Expanded(
                           flex: 2,
-                          child: ElevatedButton(
+                          child: DSButton(
+                            label: 'পরবর্তী',
+                            color: DS.green500,
+                            shadowColor: DS.green600,
+                            textColor: Colors.white,
+                            height: isTablet ? DS.btnLg : DS.btnMd,
                             onPressed: _nextPage,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: AppTheme.primaryGreen,
-                              padding: EdgeInsets.symmetric(
-                                vertical: isTablet ? 18 : 14,
-                              ),
-                            ),
-                            child: const LocalizedText('পরবর্তী'),
                           ),
                         ),
                       ],

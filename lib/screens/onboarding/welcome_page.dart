@@ -2,6 +2,7 @@ import '../../l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../theme/app_theme.dart';
+import '../../theme/design_system.dart';
 import '../../widgets/vector_icons.dart';
 
 class WelcomePage extends StatelessWidget {
@@ -16,75 +17,121 @@ class WelcomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final mascotSize = isTablet ? 170.0 : 130.0;
+
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: isTablet ? 64 : 28),
+      padding: EdgeInsets.symmetric(horizontal: isTablet ? 64 : 24),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // Vector mascot circle
+          // Speech bubble in Duolingo style
           Container(
-            width: isTablet ? 200 : 150,
-            height: isTablet ? 200 : 150,
+            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
             decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [Color(0xFF0D7377), Color(0xFF14919B)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              shape: BoxShape.circle,
-              boxShadow: [
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(DS.rXl),
+              border: Border.all(color: DS.border, width: 2),
+              boxShadow: const [
                 BoxShadow(
-                  color: AppTheme.primaryGreen.withValues(alpha: 0.35),
-                  blurRadius: 28,
-                  offset: const Offset(0, 12),
+                  color: Color(0x12000000),
+                  offset: Offset(0, 3),
+                  blurRadius: 6,
                 ),
               ],
             ),
-            child: Center(
-              child: VectorIcon(
-                type: VectorIconType.crescent,
-                size: isTablet ? 100 : 76,
-                color: Colors.white,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text('✨', style: TextStyle(fontSize: 18)),
+                const SizedBox(width: 8),
+                LocalizedText(
+                  'আসসালামু আলাইকুম! চলো শুরু করি',
+                  style: TextStyle(
+                    fontSize: isTablet ? 16 : 14,
+                    fontWeight: DS.black,
+                    color: DS.textPrimary,
+                  ),
+                ),
+              ],
+            ),
+          )
+              .animate()
+              .fadeIn(duration: 400.ms)
+              .slideY(begin: -0.3, end: 0, curve: Curves.easeOutBack),
+
+          const SizedBox(height: 12),
+
+          // 3D Mascot in circular badge
+          Container(
+            width: mascotSize,
+            height: mascotSize,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Colors.white,
+              border: Border.all(color: DS.green500, width: 4),
+              boxShadow: [
+                BoxShadow(
+                  color: DS.green500.withValues(alpha: 0.30),
+                  blurRadius: 24,
+                  offset: const Offset(0, 8),
+                ),
+                const BoxShadow(
+                  color: Color(0xFF46A302),
+                  offset: Offset(0, 4),
+                  blurRadius: 0,
+                ),
+              ],
+            ),
+            child: ClipOval(
+              child: Image.asset(
+                'assets/images/mascot_happy.jpg',
+                fit: BoxFit.cover,
+                errorBuilder: (_, __, ___) => const Center(
+                  child: CustomPaint(
+                    size: Size(80, 80),
+                    painter: QuranIllustrationPainter(),
+                  ),
+                ),
               ),
             ),
           )
               .animate()
               .fadeIn(duration: 600.ms)
-              .scale(begin: const Offset(0.75, 0.75), curve: Curves.easeOutBack),
+              .scale(begin: const Offset(0.8, 0.8), curve: Curves.easeOutBack),
 
-          SizedBox(height: isTablet ? 40 : 30),
+          SizedBox(height: isTablet ? 28 : 20),
 
           LocalizedText(
             'LittleMuslim',
             style: TextStyle(
-              fontSize: isTablet ? 40 : 30,
-              fontWeight: FontWeight.w900,
-              color: AppTheme.primaryGreen,
-              letterSpacing: -0.8,
+              fontSize: isTablet ? 38 : 30,
+              fontWeight: DS.black,
+              color: DS.green600,
+              letterSpacing: -0.5,
             ),
           )
               .animate()
               .fadeIn(delay: 150.ms, duration: 500.ms)
               .slideY(begin: 0.2, end: 0),
 
-          SizedBox(height: isTablet ? 12 : 8),
+          const SizedBox(height: 6),
 
           LocalizedText(
             'কুরআন শেখো · মজার সাথে · ইসলাম জানো',
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: isTablet ? 16 : 14,
-              color: AppTheme.darkText.withValues(alpha: 0.65),
+              color: DS.textSecondary,
               height: 1.4,
-              fontWeight: FontWeight.w500,
+              fontWeight: DS.bold,
             ),
           )
               .animate()
               .fadeIn(delay: 280.ms, duration: 500.ms),
 
-          SizedBox(height: isTablet ? 40 : 28),
+          SizedBox(height: isTablet ? 32 : 24),
 
-          // Feature chips with vector icons
+          // Feature chips with 3D Duolingo style
           Wrap(
             spacing: 10,
             runSpacing: 10,
@@ -93,36 +140,36 @@ class WelcomePage extends StatelessWidget {
               _FeatureChip(
                 type: VectorIconType.book,
                 label: 'কুরআন',
-                color: const Color(0xFFE8913A),
-                bg: const Color(0xFFFFF0DB),
+                color: DS.orange500,
+                bg: DS.orange100,
                 isTablet: isTablet,
               ),
               _FeatureChip(
                 type: VectorIconType.qaida,
                 label: 'ক্বায়দা',
-                color: const Color(0xFF58A700),
-                bg: const Color(0xFFE8F8D8),
+                color: DS.green500,
+                bg: DS.green100,
                 isTablet: isTablet,
               ),
               _FeatureChip(
                 type: VectorIconType.mosque,
                 label: 'নামাজ',
-                color: const Color(0xFF3B82C4),
-                bg: const Color(0xFFDCEBFF),
+                color: DS.blue500,
+                bg: DS.blue100,
                 isTablet: isTablet,
               ),
               _FeatureChip(
                 type: VectorIconType.dua,
                 label: 'দোয়া',
-                color: const Color(0xFF9B6BC9),
-                bg: const Color(0xFFF3E8FF),
+                color: DS.purple500,
+                bg: DS.purple100,
                 isTablet: isTablet,
               ),
               _FeatureChip(
                 type: VectorIconType.scroll,
                 label: 'সীরাত',
-                color: const Color(0xFFE05A7A),
-                bg: const Color(0xFFFFE8EE),
+                color: DS.pink500,
+                bg: DS.pink100,
                 isTablet: isTablet,
               ),
             ],
@@ -131,32 +178,16 @@ class WelcomePage extends StatelessWidget {
               .fadeIn(delay: 400.ms, duration: 550.ms)
               .slideY(begin: 0.12, end: 0),
 
-          SizedBox(height: isTablet ? 48 : 36),
+          SizedBox(height: isTablet ? 40 : 30),
 
-          SizedBox(
+          // 3D Duolingo button
+          DSButton(
+            label: 'শুরু করি',
             width: double.infinity,
-            child: ElevatedButton(
-              onPressed: onNext,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppTheme.primaryGreen,
-                foregroundColor: Colors.white,
-                elevation: 0,
-                padding: EdgeInsets.symmetric(
-                  vertical: isTablet ? 20 : 16,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(18),
-                ),
-                shadowColor: AppTheme.primaryGreen.withValues(alpha: 0.4),
-              ),
-              child: LocalizedText(
-                'শুরু করি',
-                style: TextStyle(
-                  fontSize: isTablet ? 18 : 16,
-                  fontWeight: FontWeight.w800,
-                ),
-              ),
-            ),
+            height: isTablet ? DS.btnLg : DS.btnMd,
+            color: DS.green500,
+            shadowColor: DS.green600,
+            onPressed: onNext,
           )
               .animate()
               .fadeIn(delay: 550.ms, duration: 500.ms)

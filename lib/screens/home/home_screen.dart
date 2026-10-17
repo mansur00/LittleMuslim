@@ -2,6 +2,7 @@ import '../../l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../theme/app_theme.dart';
+import '../../theme/design_system.dart';
 import '../../utils/app_state.dart';
 import '../../widgets/vector_icons.dart';
 
@@ -353,11 +354,34 @@ class _TopBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        IconBadge(
-          type: VectorIconType.crescent,
-          bgColor: const Color(0xFFD4F0EC),
-          size: isTablet ? 50 : 42,
-          iconColor: AppTheme.primaryGreen,
+        // 3D Mascot Avatar
+        Container(
+          width: isTablet ? 48 : 42,
+          height: isTablet ? 48 : 42,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: Colors.white,
+            border: Border.all(color: const Color(0xFFFFD700), width: 2.5),
+            boxShadow: [
+              BoxShadow(
+                color: const Color(0xFF58CC02).withValues(alpha: 0.35),
+                blurRadius: 8,
+                offset: const Offset(0, 3),
+              ),
+            ],
+          ),
+          child: ClipOval(
+            child: Image.asset(
+              'assets/images/mascot_happy.jpg',
+              fit: BoxFit.cover,
+              errorBuilder: (_, __, ___) => const IconBadge(
+                type: VectorIconType.crescent,
+                bgColor: Color(0xFFD4F0EC),
+                size: 42,
+                iconColor: AppTheme.primaryGreen,
+              ),
+            ),
+          ),
         ),
         const SizedBox(width: 10),
         Expanded(
@@ -383,28 +407,34 @@ class _TopBar extends StatelessWidget {
             ],
           ),
         ),
-        // Streak counter chip
+        // 3D Streak counter chip
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
           decoration: BoxDecoration(
             color: const Color(0xFFFFEAD6),
             borderRadius: BorderRadius.circular(20),
             border: Border.all(color: const Color(0xFFFF9600), width: 1.5),
+            boxShadow: const [
+              BoxShadow(
+                color: Color(0x15EA580C),
+                offset: Offset(0, 2),
+                blurRadius: 4,
+              ),
+            ],
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const VectorIcon(
-                type: VectorIconType.flame,
-                size: 16,
-                color: Color(0xFFFF6B00),
+              const Real3DTopBarIcon(
+                type: Real3DTopType.flame,
+                size: 18,
               ),
-              const SizedBox(width: 4),
+              const SizedBox(width: 5),
               LocalizedText(
                 '$streakDays',
                 style: const TextStyle(
                   fontWeight: FontWeight.w900,
-                  fontSize: 12,
+                  fontSize: 12.5,
                   color: Color(0xFFD45100),
                 ),
               ),
@@ -412,7 +442,7 @@ class _TopBar extends StatelessWidget {
           ),
         ),
         const SizedBox(width: 8),
-        // XP Chip
+        // 3D XP Chip
         _XpChip(xp: xp),
         const SizedBox(width: 6),
         IconButton.filledTonal(
@@ -438,26 +468,32 @@ class _XpChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
         color: const Color(0xFFFFF3C4),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: const Color(0xFFFFD54F), width: 1.5),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x15D97706),
+            offset: Offset(0, 2),
+            blurRadius: 4,
+          ),
+        ],
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const VectorIcon(
-            type: VectorIconType.star,
-            size: 16,
-            color: Color(0xFFE6A800),
+          const Real3DTopBarIcon(
+            type: Real3DTopType.xp,
+            size: 18,
           ),
-          const SizedBox(width: 4),
+          const SizedBox(width: 5),
           LocalizedText(
             '$xp XP',
             style: const TextStyle(
               fontWeight: FontWeight.w900,
-              fontSize: 12,
+              fontSize: 12.5,
               color: Color(0xFF8A6A00),
             ),
           ),
@@ -592,202 +628,99 @@ class _ModulesGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final modules = [
-      _ModuleData(
-        type: VectorIconType.qaida,
-        title: 'ক্বায়দা',
-        subtitle: 'বর্ণমালা',
-        bg: const Color(0xFFE8F8D8),
-        accent: const Color(0xFF58A700),
-        onTap: () => Navigator.of(context).push(
-          MaterialPageRoute<void>(builder: (_) => const QaidaChaptersScreen()),
-        ),
-      ),
-      _ModuleData(
-        type: VectorIconType.book,
-        title: 'কুরআন',
-        subtitle: 'তিলাওয়াত',
-        bg: const Color(0xFFFFF0DB),
-        accent: const Color(0xFFE8913A),
-        onTap: () => Navigator.of(context).push(
-          MaterialPageRoute<void>(builder: (_) => const QuranScreen()),
-        ),
-      ),
-      _ModuleData(
-        type: VectorIconType.mosque,
-        title: 'নামাজ',
-        subtitle: 'সময় + নিয়ম',
-        bg: const Color(0xFFDCEBFF),
-        accent: const Color(0xFF3B82C4),
-        onTap: () => Navigator.of(context).push(
-          MaterialPageRoute<void>(builder: (_) => const PrayerScreen()),
-        ),
-      ),
-      _ModuleData(
-        type: VectorIconType.dua,
-        title: 'দোয়া',
-        subtitle: 'মাসনুন',
-        bg: const Color(0xFFF3E8FF),
-        accent: const Color(0xFF9B6BC9),
-        onTap: () => Navigator.of(context).push(
-          MaterialPageRoute<void>(builder: (_) => const DuasScreen()),
-        ),
-      ),
-      _ModuleData(
-        type: VectorIconType.scroll,
-        title: 'সীরাত',
-        subtitle: 'নবীর গল্প',
-        bg: const Color(0xFFFFE8EE),
-        accent: const Color(0xFFE05A7A),
-        onTap: () => Navigator.of(context).push(
-          MaterialPageRoute<void>(builder: (_) => const SeerahScreen()),
-        ),
-      ),
-      _ModuleData(
-        type: VectorIconType.crescent,
-        title: 'মৌলিক ইসলাম',
-        subtitle: 'গল্পে গল্পে শিখি',
-        bg: const Color(0xFFDDF4E9),
-        accent: const Color(0xFF0D7377),
-        onTap: () => Navigator.of(context).push(
-          MaterialPageRoute<void>(builder: (_) => const IslamBasicsScreen()),
-        ),
-      ),
-      _ModuleData(
-        type: VectorIconType.trophy,
-        title: 'অর্জন',
-        subtitle: 'ব্যাজ · লেভেল',
-        bg: const Color(0xFFFFF6D0),
-        accent: const Color(0xFFD4A017),
-        onTap: () => Navigator.of(context).push(
-          MaterialPageRoute<void>(builder: (_) => const AchievementsScreen()),
-        ),
-      ),
-    ];
-
     return GridView.count(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       crossAxisCount: isTablet ? 3 : 2,
-      mainAxisSpacing: 14,
-      crossAxisSpacing: 14,
-      childAspectRatio: isTablet ? 1.15 : 1.05,
+      mainAxisSpacing: DS.s4,
+      crossAxisSpacing: DS.s4,
+      childAspectRatio: isTablet ? 1.05 : 0.88,
       children: [
-        for (final m in modules) _ModuleCard(data: m, isTablet: isTablet),
+        DSModuleCard(
+          colors: DS.qaida,
+          title: 'ক্বায়দা',
+          subtitle: 'বর্ণমালা',
+          badgeAsset: 'assets/images/badge_qaida_3d.jpg',
+          iconPainter: const QaidaIconPainter(),
+          isTablet: isTablet,
+          onTap: () => Navigator.of(context).push(
+            MaterialPageRoute<void>(builder: (_) => const QaidaChaptersScreen()),
+          ),
+        ),
+        DSModuleCard(
+          colors: DS.quran,
+          title: 'কুরআন',
+          subtitle: 'তিলাওয়াত',
+          badgeAsset: 'assets/images/badge_quran_3d.jpg',
+          iconPainter: const QuranIconPainter(),
+          isTablet: isTablet,
+          onTap: () => Navigator.of(context).push(
+            MaterialPageRoute<void>(builder: (_) => const QuranScreen()),
+          ),
+        ),
+        DSModuleCard(
+          colors: DS.prayer,
+          title: 'নামাজ',
+          subtitle: 'সময় + নিয়ম',
+          badgeAsset: 'assets/images/badge_prayer_3d.jpg',
+          iconPainter: const PrayerIconPainter(),
+          isTablet: isTablet,
+          onTap: () => Navigator.of(context).push(
+            MaterialPageRoute<void>(builder: (_) => const PrayerScreen()),
+          ),
+        ),
+        DSModuleCard(
+          colors: DS.dua,
+          title: 'দোয়া',
+          subtitle: 'মাসনুন',
+          badgeAsset: 'assets/images/badge_dua_3d.jpg',
+          iconPainter: const DuaIconPainter(),
+          isTablet: isTablet,
+          onTap: () => Navigator.of(context).push(
+            MaterialPageRoute<void>(builder: (_) => const DuasScreen()),
+          ),
+        ),
+        DSModuleCard(
+          colors: DS.seerah,
+          title: 'সীরাত',
+          subtitle: 'নবীর গল্প',
+          badgeAsset: 'assets/images/badge_seerah_3d.jpg',
+          iconPainter: const SeerahIconPainter(),
+          isTablet: isTablet,
+          onTap: () => Navigator.of(context).push(
+            MaterialPageRoute<void>(builder: (_) => const SeerahScreen()),
+          ),
+        ),
+        DSModuleCard(
+          colors: DS.basics,
+          title: 'মৌলিক ইসলাম',
+          subtitle: 'গল্পে গল্পে শিখি',
+          badgeAsset: 'assets/images/badge_basics_3d.jpg',
+          iconPainter: const BasicsIconPainter(),
+          isTablet: isTablet,
+          onTap: () => Navigator.of(context).push(
+            MaterialPageRoute<void>(builder: (_) => const IslamBasicsScreen()),
+          ),
+        ),
+        DSModuleCard(
+          colors: DS.achievements,
+          title: 'অর্জন',
+          subtitle: 'ব্যাজ · লেভেল',
+          customBadge: const DSGamifyBadge(
+            emblem: BadgeEmblem.trophy,
+            primaryColor: Color(0xFFFFC800),
+            bevelColor: Color(0xFFE5A100),
+            ribbonColor: Color(0xFFFFD700),
+            ribbonText: 'অর্জন',
+            size: 76,
+          ),
+          iconPainter: const TrophyIconPainter(),
+          isTablet: isTablet,
+          onTap: () => Navigator.of(context).push(
+            MaterialPageRoute<void>(builder: (_) => const AchievementsScreen()),
+          ),
+        ),
       ],
-    );
-  }
-}
-
-class _ModuleData {
-  const _ModuleData({
-    required this.type,
-    required this.title,
-    required this.subtitle,
-    required this.bg,
-    required this.accent,
-    required this.onTap,
-  });
-  final VectorIconType type;
-  final String title;
-  final String subtitle;
-  final Color bg;
-  final Color accent;
-  final VoidCallback onTap;
-}
-
-class _ModuleCard extends StatefulWidget {
-  const _ModuleCard({required this.data, required this.isTablet});
-  final _ModuleData data;
-  final bool isTablet;
-
-  @override
-  State<_ModuleCard> createState() => _ModuleCardState();
-}
-
-class _ModuleCardState extends State<_ModuleCard> {
-  bool _pressed = false;
-
-  @override
-  Widget build(BuildContext context) {
-    final d = widget.data;
-    return GestureDetector(
-      onTapDown: (_) => setState(() => _pressed = true),
-      onTapUp: (_) {
-        setState(() => _pressed = false);
-        d.onTap();
-      },
-      onTapCancel: () => setState(() => _pressed = false),
-      child: Stack(
-        children: [
-          Positioned.fill(
-            top: 6,
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                color: HSLColor.fromColor(d.accent)
-                    .withLightness(
-                      (HSLColor.fromColor(d.accent).lightness - .16)
-                          .clamp(0.0, 1.0),
-                    )
-                    .toColor(),
-                borderRadius: BorderRadius.circular(22),
-              ),
-            ),
-          ),
-          AnimatedPositioned(
-            duration: const Duration(milliseconds: 90),
-            curve: Curves.easeOut,
-            top: _pressed ? 6 : 0,
-            bottom: _pressed ? 0 : 6,
-            left: 0,
-            right: 0,
-            child: Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [Colors.white.withValues(alpha: .28), d.bg],
-                ),
-                borderRadius: BorderRadius.circular(22),
-                border: Border.all(
-                  color: d.accent.withValues(alpha: .35),
-                  width: 1.5,
-                ),
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  IconBadge(
-                    type: d.type,
-                    size: widget.isTablet ? 58 : 50,
-                    iconSize: widget.isTablet ? 34 : 30,
-                    bgColor: Colors.white.withValues(alpha: .72),
-                    iconColor: d.accent,
-                  ),
-                  SizedBox(height: widget.isTablet ? 9 : 7),
-                  LocalizedText(
-                    d.title,
-                    style: TextStyle(
-                      fontSize: widget.isTablet ? 16 : 14,
-                      fontWeight: FontWeight.w900,
-                      color: AppTheme.darkText,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  LocalizedText(
-                    d.subtitle,
-                    style: TextStyle(
-                      fontSize: widget.isTablet ? 12 : 10.5,
-                      fontWeight: FontWeight.w700,
-                      color: AppTheme.darkText.withValues(alpha: 0.58),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
     );
   }
 }
@@ -913,7 +846,7 @@ class _DuolingoBottomNavBar extends StatelessWidget {
         children: [
           Expanded(
             child: _NavBarItem(
-              iconType: VectorIconType.compass,
+              navType: Real3DNavType.path,
               label: 'শেখার পথ',
               isSelected: currentIndex == 0,
               onTap: () => onTap(0),
@@ -921,7 +854,7 @@ class _DuolingoBottomNavBar extends StatelessWidget {
           ),
           Expanded(
             child: _NavBarItem(
-              iconType: VectorIconType.book,
+              navType: Real3DNavType.modules,
               label: 'মডিউল',
               isSelected: currentIndex == 1,
               onTap: () => onTap(1),
@@ -929,7 +862,7 @@ class _DuolingoBottomNavBar extends StatelessWidget {
           ),
           Expanded(
             child: _NavBarItem(
-              iconType: VectorIconType.target,
+              navType: Real3DNavType.missions,
               label: 'মিশন',
               isSelected: currentIndex == 2,
               onTap: () => onTap(2),
@@ -937,7 +870,7 @@ class _DuolingoBottomNavBar extends StatelessWidget {
           ),
           Expanded(
             child: _NavBarItem(
-              iconType: VectorIconType.trophy,
+              navType: Real3DNavType.achievements,
               label: 'অর্জন',
               isSelected: currentIndex == 3,
               onTap: () => onTap(3),
@@ -951,39 +884,39 @@ class _DuolingoBottomNavBar extends StatelessWidget {
 
 class _NavBarItem extends StatelessWidget {
   const _NavBarItem({
-    required this.iconType,
+    required this.navType,
     required this.label,
     required this.isSelected,
     required this.onTap,
   });
 
-  final VectorIconType iconType;
+  final Real3DNavType navType;
   final String label;
   final bool isSelected;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    const activeColor = Color(0xFF58CC02); // Duolingo signature vibrant green
-    const inactiveColor = Color(0xFF9CA3AF);
-
     return GestureDetector(
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
         decoration: BoxDecoration(
           color: isSelected ? const Color(0xFFE8F8D8) : Colors.transparent,
           borderRadius: BorderRadius.circular(16),
+          border: isSelected
+              ? Border.all(color: const Color(0xFF58CC02).withValues(alpha: 0.4), width: 1.5)
+              : null,
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            VectorIcon(
-              type: iconType,
-              size: 26,
-              color: isSelected ? activeColor : inactiveColor,
+            Real3DNavIcon(
+              type: navType,
+              size: isSelected ? 30 : 26,
+              isSelected: isSelected,
             ),
             const SizedBox(height: 3),
             LocalizedText(
@@ -991,7 +924,7 @@ class _NavBarItem extends StatelessWidget {
               style: TextStyle(
                 fontSize: 11,
                 fontWeight: isSelected ? FontWeight.w900 : FontWeight.w700,
-                color: isSelected ? const Color(0xFF46A302) : inactiveColor,
+                color: isSelected ? const Color(0xFF2D6A00) : const Color(0xFF9CA3AF),
               ),
             ),
           ],
