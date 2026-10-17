@@ -350,7 +350,7 @@ const _chapters = <_Chapter>[
       ]),
 ];
 
-enum _Stage { intro, story, reflect, quiz }
+enum _Stage { intro, story, reflect, quiz, result }
 
 class IslamBasicsScreen extends StatefulWidget {
   const IslamBasicsScreen({super.key});
@@ -365,6 +365,11 @@ class _IslamBasicsScreenState extends State<IslamBasicsScreen> {
   int? _selected;
   bool _checked = false;
 
+  int _correctAnswers = 0;
+  int _unansweredCount = 0;
+  final Map<int, bool> _firstAttemptStatus = {};
+  bool _lastCompletionEarnedXp = false;
+
   void _startChapter(int index) {
     final chapterId = 'basics_chapter_$index';
     final saved = context.read<AppState>().basicsProgress(chapterId);
@@ -376,12 +381,16 @@ class _IslamBasicsScreenState extends State<IslamBasicsScreen> {
       _itemIndex = itemIndex;
       _selected = null;
       _checked = false;
+      _correctAnswers = 0;
+      _unansweredCount = 0;
+      _firstAttemptStatus.clear();
+      _lastCompletionEarnedXp = false;
     });
   }
 
   Future<void> _saveCurrentProgress() async {
     final index = _chapterIndex;
-    if (index == null) return;
+    if (index == null || _stage == _Stage.result) return;
     await context.read<AppState>().saveBasicsProgress(
           'basics_chapter_$index',
           _stage.index * 100 + _itemIndex + 1,
@@ -397,7 +406,8 @@ class _IslamBasicsScreenState extends State<IslamBasicsScreen> {
         _Stage.intro => _Stage.story,
         _Stage.story => _Stage.reflect,
         _Stage.reflect => _Stage.quiz,
-        _Stage.quiz => _Stage.quiz,
+        _Stage.quiz => _Stage.result,
+        _Stage.result => _Stage.result,
       };
     });
     _saveCurrentProgress();
@@ -405,35 +415,79 @@ class _IslamBasicsScreenState extends State<IslamBasicsScreen> {
 
   Future<void> _finishChapter() async {
     final index = _chapterIndex!;
-    await context
-        .read<AppState>()
-        .recordQuizResult('basics_chapter_$index', 10);
-    final earned = await context
-        .read<AppState>()
-        .completeLesson('basics_chapter_$index', xp: 25);
-    await context.read<AppState>().clearBasicsProgress('basics_chapter_$index');
+    final score = _correctAnswers;
+    final appState = context.read<AppState>();
+    await appState.recordQuizResult('basics_chapter_$index', score);
+    final earned = await appState.completeLesson('basics_chapter_$index', xp: 25);
+    await appState.clearBasicsProgress('basics_chapter_$index');
     if (!mounted) return;
     setState(() {
-      _chapterIndex = null;
+      _lastCompletionEarnedXp = earned;
+      _stage = _Stage.result;
+    });
+  }
+
+  void _retryQuiz() {
+    setState(() {
+      _stage = _Stage.quiz;
+      _itemIndex = 0;
+      _selected = null;
+      _checked = false;
+      _correctAnswers = 0;
+      _unansweredCount = 0;
+      _firstAttemptStatus.clear();
+    });
+    _saveCurrentProgress();
+  }
+
+  void _restartChapter() {
+    setState(() {
       _stage = _Stage.intro;
       _itemIndex = 0;
       _selected = null;
       _checked = false;
+      _correctAnswers = 0;
+      _unansweredCount = 0;
+      _firstAttemptStatus.clear();
     });
-    await showDialog<void>(
+    _saveCurrentProgress();
+  }
+
+  Future<void> _handleExit() async {
+    if (_chapterIndex == null) {
+      Navigator.pop(context);
+      return;
+    }
+    if (_stage == _Stage.intro || _stage == _Stage.result) {
+      setState(() => _chapterIndex = null);
+      return;
+    }
+    final shouldExit = await showDialog<bool>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const LocalizedText('অধ্যায় সম্পন্ন!'),
-        content: LocalizedText(earned
-            ? '১০টির ১০টি কুইজ ঠিক হয়েছে। +২৫ XP পেয়েছ।'
-            : 'অধ্যায়টি আবার শেষ করেছ। +২৫ XP আগেই পেয়েছ।'),
+      builder: (ctx) => AlertDialog(
+        shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: const LocalizedText('পড়া থেকে বিরতি নেবে?'),
+        content: const LocalizedText(
+            'তোমার শেখার অগ্রগতি সেভ থাকবে। পরে এখান থেকেই শুরু করতে পারবে।'),
         actions: [
           TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const LocalizedText('চালিয়ে যাই')),
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const LocalizedText('চালিয়ে যাই'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            style: FilledButton.styleFrom(
+                backgroundColor: const Color(0xFFE05A7A)),
+            child: const LocalizedText('বের হই'),
+          ),
         ],
       ),
     );
+    if (shouldExit == true && mounted) {
+      await _saveCurrentProgress();
+      setState(() => _chapterIndex = null);
+    }
   }
 
   @override
@@ -441,26 +495,34 @@ class _IslamBasicsScreenState extends State<IslamBasicsScreen> {
     final tablet = MediaQuery.sizeOf(context).shortestSide >= 600;
     if (_chapterIndex == null) return _buildChapterList(tablet);
     final chapter = _chapters[_chapterIndex!];
-    return Scaffold(
-      backgroundColor: AppTheme.cream,
-      body: SafeArea(
-          child: Center(
-              child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 760),
-        child: Column(children: [
-          _topBar(chapter, tablet),
-          Padding(
-              padding: EdgeInsets.symmetric(horizontal: tablet ? 36 : 20),
-              child: ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: LinearProgressIndicator(
-                      value: _progress,
-                      minHeight: 10,
-                      backgroundColor: Colors.white,
-                      color: AppTheme.primaryGreen))),
-          Expanded(child: _stageContent(chapter, tablet)),
-        ]),
-      ))),
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop) {
+          _handleExit();
+        }
+      },
+      child: Scaffold(
+        backgroundColor: AppTheme.cream,
+        body: SafeArea(
+            child: Center(
+                child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 760),
+          child: Column(children: [
+            _topBar(chapter, tablet),
+            Padding(
+                padding: EdgeInsets.symmetric(horizontal: tablet ? 36 : 20),
+                child: ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: LinearProgressIndicator(
+                        value: _progress,
+                        minHeight: 10,
+                        backgroundColor: Colors.white,
+                        color: AppTheme.primaryGreen))),
+            Expanded(child: _stageContent(chapter, tablet)),
+          ]),
+        ))),
+      ),
     );
   }
 
@@ -468,26 +530,15 @@ class _IslamBasicsScreenState extends State<IslamBasicsScreen> {
         _Stage.intro => .08,
         _Stage.story => .18,
         _Stage.reflect => .2 + .3 * (_itemIndex + 1) / 10,
-        _Stage.quiz => .5 +
-            .5 *
-                (_itemIndex +
-                    (_checked &&
-                            _selected != null &&
-                            _optionsFor(_chapters[_chapterIndex!], _itemIndex)[
-                                    _selected!] ==
-                                _chapters[_chapterIndex!]
-                                    .quiz[_itemIndex]
-                                    .answer
-                        ? 1
-                        : 0)) /
-                10,
+        _Stage.quiz => .5 + .5 * (_itemIndex + (_checked ? 1 : 0)) / 10,
+        _Stage.result => 1.0,
       };
 
   Widget _topBar(_Chapter chapter, bool tablet) => Padding(
         padding: EdgeInsets.fromLTRB(tablet ? 32 : 18, 8, 18, 10),
         child: Row(children: [
           IconButton.filledTonal(
-              onPressed: () => setState(() => _chapterIndex = null),
+              onPressed: _handleExit,
               icon: const Icon(Icons.arrow_back_rounded),
               style: IconButton.styleFrom(backgroundColor: Colors.white)),
           const SizedBox(width: 8),
@@ -504,7 +555,8 @@ class _IslamBasicsScreenState extends State<IslamBasicsScreen> {
                 _Stage.intro => 'পাঠ ১',
                 _Stage.story => 'গল্প',
                 _Stage.reflect => 'ভাবি ${_itemIndex + 1}/১০',
-                _Stage.quiz => 'কুইজ ${_itemIndex + 1}/১০'
+                _Stage.quiz => 'কুইজ ${_itemIndex + 1}/১০',
+                _Stage.result => 'ফলাফল',
               },
               style: const TextStyle(
                   fontWeight: FontWeight.w800, color: AppTheme.primaryGreen)),
@@ -567,7 +619,7 @@ class _IslamBasicsScreenState extends State<IslamBasicsScreen> {
 
   Widget _stageContent(_Chapter chapter, bool tablet) {
     final pad = EdgeInsets.all(tablet ? 32 : 20);
-    if (_stage == _Stage.intro)
+    if (_stage == _Stage.intro) {
       return ListView(padding: pad, children: [
         _IllustrationCard(chapter: chapter),
         const SizedBox(height: 18),
@@ -588,7 +640,8 @@ class _IslamBasicsScreenState extends State<IslamBasicsScreen> {
         _primaryButton(
             'পরের পাঠ: গল্প পড়ি', Icons.auto_stories_rounded, _nextStage),
       ]);
-    if (_stage == _Stage.story)
+    }
+    if (_stage == _Stage.story) {
       return ListView(padding: pad, children: [
         _IllustrationCard(chapter: chapter, compact: true),
         const SizedBox(height: 17),
@@ -612,7 +665,8 @@ class _IslamBasicsScreenState extends State<IslamBasicsScreen> {
         _primaryButton(
             'গল্প নিয়ে ভাবি', Icons.psychology_alt_rounded, _nextStage),
       ]);
-    if (_stage == _Stage.reflect)
+    }
+    if (_stage == _Stage.reflect) {
       return ListView(padding: pad, children: [
         _StageLabel(
             color: chapter.color,
@@ -626,7 +680,7 @@ class _IslamBasicsScreenState extends State<IslamBasicsScreen> {
                 color: Colors.white, borderRadius: BorderRadius.circular(22)),
             child: Column(children: [
               LocalizedText('${_itemIndex + 1}',
-                  style: TextStyle(
+                  style: const TextStyle(
                       fontSize: 42,
                       fontWeight: FontWeight.w900,
                       color: AppTheme.primaryGreen)),
@@ -639,7 +693,8 @@ class _IslamBasicsScreenState extends State<IslamBasicsScreen> {
                       fontWeight: FontWeight.w800,
                       color: AppTheme.darkText)),
               const SizedBox(height: 16),
-              LocalizedText('নিজের ভাষায় উত্তর ভাবো। প্রস্তুত হলে পরের প্রশ্নে যাও।',
+              LocalizedText(
+                  'নিজের ভাষায় উত্তর ভাবো। প্রস্তুত হলে পরের প্রশ্নে যাও।',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                       color: AppTheme.darkText.withValues(alpha: .65),
@@ -650,25 +705,32 @@ class _IslamBasicsScreenState extends State<IslamBasicsScreen> {
             _itemIndex == 9 ? 'এবার ১০টি কুইজ দিই' : 'পরের ভাবনার প্রশ্ন',
             _itemIndex == 9 ? Icons.quiz_rounded : Icons.arrow_forward_rounded,
             () {
-          if (_itemIndex < 9)
+          if (_itemIndex < 9) {
             setState(() => _itemIndex++);
-          else
+          } else {
             _nextStage();
+          }
           _saveCurrentProgress();
         }),
       ]);
-    return _quizContent(chapter, tablet);
+    }
+    if (_stage == _Stage.quiz) {
+      return _quizContent(chapter, tablet);
+    }
+    return _resultContent(chapter, tablet);
   }
 
   Widget _quizContent(_Chapter chapter, bool tablet) {
     final item = chapter.quiz[_itemIndex];
     final options = _optionsFor(chapter, _itemIndex);
+    final isCorrect = _selected != null && options[_selected!] == item.answer;
+
     return ListView(padding: EdgeInsets.all(tablet ? 32 : 20), children: [
       _StageLabel(
           color: chapter.color,
           icon: Icons.quiz_rounded,
           title: 'শেখাটা মনে আছে?',
-          subtitle: '১০টির সব কটি ঠিক হলে অধ্যায়টি শেষ হবে।'),
+          subtitle: '১০টি কুইজ—সঠিক উত্তর বেছে নাও।'),
       const SizedBox(height: 18),
       Container(
           padding: const EdgeInsets.all(22),
@@ -697,37 +759,36 @@ class _IslamBasicsScreenState extends State<IslamBasicsScreen> {
                 correct: _checked && options[i] == item.answer,
                 color: chapter.color,
                 onTap: _checked ? null : () => setState(() => _selected = i))),
-      if (_checked)
+      if (_checked) ...[
         Padding(
             padding: const EdgeInsets.only(bottom: 12),
             child: LocalizedText(
-                options[_selected!] == item.answer
-                    ? 'ঠিক উত্তর! মাশাআল্লাহ।'
-                    : 'আবার চেষ্টা করো—শেখাটা মনে করে উত্তর বেছে নাও।',
-                style: const TextStyle(
+                isCorrect
+                    ? 'সঠিক উত্তর! মাশাআল্লাহ।'
+                    : 'উত্তরটি ভুল হয়েছে। সঠিক উত্তর: ${item.answer}',
+                style: TextStyle(
                     fontWeight: FontWeight.w800,
-                    color: AppTheme.primaryGreen))),
+                    color: isCorrect
+                        ? AppTheme.primaryGreen
+                        : const Color(0xFFD63031)))),
+      ],
       _primaryButton(
           !_checked
               ? 'উত্তর মিলিয়ে দেখি'
-              : options[_selected!] == item.answer
-                  ? (_itemIndex == 9 ? 'অধ্যায় সম্পন্ন করি' : 'পরের প্রশ্ন')
-                  : 'আবার চেষ্টা করি',
+              : (_itemIndex == 9 ? 'ফলাফল দেখি' : 'পরের প্রশ্ন'),
           !_checked
               ? Icons.check_rounded
-              : options[_selected!] == item.answer
-                  ? Icons.arrow_forward_rounded
-                  : Icons.refresh_rounded, () {
+              : Icons.arrow_forward_rounded, () {
         if (_selected == null) return;
         if (!_checked) {
+          final correct = options[_selected!] == item.answer;
+          if (!_firstAttemptStatus.containsKey(_itemIndex)) {
+            _firstAttemptStatus[_itemIndex] = correct;
+            if (correct) {
+              _correctAnswers++;
+            }
+          }
           setState(() => _checked = true);
-          return;
-        }
-        if (options[_selected!] != item.answer) {
-          setState(() {
-            _selected = null;
-            _checked = false;
-          });
           return;
         }
         if (_itemIndex < 9) {
@@ -741,7 +802,205 @@ class _IslamBasicsScreenState extends State<IslamBasicsScreen> {
         }
         _finishChapter();
       }, enabled: _checked || _selected != null),
+      if (!_checked) ...[
+        const SizedBox(height: 10),
+        Center(
+          child: TextButton.icon(
+            onPressed: () {
+              if (!_firstAttemptStatus.containsKey(_itemIndex)) {
+                _firstAttemptStatus[_itemIndex] = false;
+                _unansweredCount++;
+              }
+              if (_itemIndex < 9) {
+                setState(() {
+                  _itemIndex++;
+                  _selected = null;
+                  _checked = false;
+                });
+                _saveCurrentProgress();
+              } else {
+                _finishChapter();
+              }
+            },
+            icon: const Icon(Icons.skip_next_rounded, size: 18),
+            label: const LocalizedText('প্রশ্নটি এড়িয়ে যাই'),
+            style: TextButton.styleFrom(
+              foregroundColor: AppTheme.darkText.withValues(alpha: 0.6),
+            ),
+          ),
+        ),
+      ],
     ]);
+  }
+
+  Widget _resultContent(_Chapter chapter, bool tablet) {
+    final score = _correctAnswers;
+    final total = chapter.quiz.length;
+    final incorrect = total - score - _unansweredCount;
+    final earned = _lastCompletionEarnedXp;
+
+    return ListView(
+      padding: EdgeInsets.all(tablet ? 32 : 20),
+      children: [
+        Container(
+          padding: const EdgeInsets.symmetric(vertical: 28, horizontal: 20),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(24),
+            border: Border.all(
+              color: AppTheme.primaryGreen.withValues(alpha: 0.25),
+              width: 2,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: AppTheme.primaryGreen.withValues(alpha: 0.1),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Column(
+            children: [
+              Container(
+                width: 72,
+                height: 72,
+                decoration: BoxDecoration(
+                  color: score >= 7
+                      ? const Color(0xFFDDF4E9)
+                      : const Color(0xFFFFF4D4),
+                  shape: BoxShape.circle,
+                ),
+                child: Center(
+                  child: Icon(
+                    score >= 7
+                        ? Icons.emoji_events_rounded
+                        : Icons.stars_rounded,
+                    color: score >= 7
+                        ? AppTheme.primaryGreen
+                        : const Color(0xFFD4A017),
+                    size: 40,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              const LocalizedText(
+                'কুইজের ফলাফল',
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.w900,
+                  color: AppTheme.darkText,
+                ),
+              ),
+              const SizedBox(height: 8),
+              LocalizedText(
+                '$score / $total',
+                style: TextStyle(
+                  fontSize: 38,
+                  fontWeight: FontWeight.w900,
+                  color: score >= 7
+                      ? AppTheme.primaryGreen
+                      : const Color(0xFFD4A017),
+                ),
+              ),
+              const SizedBox(height: 8),
+              LocalizedText(
+                score == 10
+                    ? 'মাশাআল্লাহ! তুমি সব প্রশ্নের সঠিক উত্তর দিয়েছো!'
+                    : score >= 7
+                        ? 'খুব ভালো! তুমি সফলভাবে অধ্যায়টি সম্পন্ন করেছ।'
+                        : 'তুমি চেষ্টা করেছো! অধ্যায়টি আবার পড়ে আরও ভালো করতে পারো।',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: AppTheme.darkText.withValues(alpha: 0.7),
+                ),
+              ),
+              const SizedBox(height: 16),
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                decoration: BoxDecoration(
+                  color: earned
+                      ? const Color(0xFFE8F8D8)
+                      : const Color(0xFFF1EEE7),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      earned
+                          ? Icons.add_circle_rounded
+                          : Icons.check_circle_rounded,
+                      size: 18,
+                      color: AppTheme.primaryGreen,
+                    ),
+                    const SizedBox(width: 6),
+                    LocalizedText(
+                      earned
+                          ? '+২৫ XP অর্জিত হয়েছে!'
+                          : '+২৫ XP আগেই অর্জিত হয়েছে',
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w800,
+                        fontSize: 13,
+                        color: AppTheme.primaryGreen,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  _ResultStat(
+                    label: 'সঠিক',
+                    value: '$score',
+                    color: const Color(0xFF58A700),
+                  ),
+                  _ResultStat(
+                    label: 'ভুল',
+                    value: '$incorrect',
+                    color: const Color(0xFFD63031),
+                  ),
+                  if (_unansweredCount > 0)
+                    _ResultStat(
+                      label: 'এড়ানো',
+                      value: '$_unansweredCount',
+                      color: const Color(0xFF888888),
+                    ),
+                ],
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 20),
+        _primaryButton(
+          'কুইজ পুনরায় দিন (Retry)',
+          Icons.refresh_rounded,
+          _retryQuiz,
+        ),
+        const SizedBox(height: 10),
+        Duolingo3DButton(
+          text: 'অধ্যায় তালিকায় ফিরুন',
+          icon: const Icon(Icons.list_rounded),
+          color: const Color(0xFF0D7377),
+          onPressed: () => setState(() => _chapterIndex = null),
+        ),
+        const SizedBox(height: 10),
+        Center(
+          child: TextButton.icon(
+            onPressed: _restartChapter,
+            icon: const Icon(Icons.auto_stories_rounded, size: 18),
+            label: const LocalizedText('অধ্যায়টি শুরু থেকে আবার পড়ুন'),
+            style: TextButton.styleFrom(
+              foregroundColor: AppTheme.darkText.withValues(alpha: 0.7),
+            ),
+          ),
+        ),
+      ],
+    );
   }
 
   List<String> _optionsFor(_Chapter chapter, int index) {
@@ -981,3 +1240,41 @@ class _QuizOption extends StatelessWidget {
                             color: AppTheme.darkText)))
               ]))));
 }
+
+class _ResultStat extends StatelessWidget {
+  const _ResultStat({
+    required this.label,
+    required this.value,
+    required this.color,
+  });
+
+  final String label;
+  final String value;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        LocalizedText(
+          value,
+          style: TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.w900,
+            color: color,
+          ),
+        ),
+        const SizedBox(height: 2),
+        LocalizedText(
+          label,
+          style: TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w600,
+            color: AppTheme.darkText.withValues(alpha: 0.6),
+          ),
+        ),
+      ],
+    );
+  }
+}
+

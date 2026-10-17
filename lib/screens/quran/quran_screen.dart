@@ -8,6 +8,7 @@ import '../../widgets/vector_icons.dart';
 import '../../widgets/duolingo_appbar.dart';
 import 'quran_data.dart';
 import 'quran_reader_screen.dart';
+import '../seerah/seerah_screen.dart';
 
 class QuranScreen extends StatefulWidget {
   const QuranScreen({super.key, this.repository});
@@ -26,11 +27,18 @@ class _QuranScreenState extends State<QuranScreen> {
   bool _loading = true;
   String? _loadError;
   String _search = '';
+  final TextEditingController _searchController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     _loadSurahs();
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
   }
 
   Future<void> _loadSurahs() async {
@@ -60,10 +68,14 @@ class _QuranScreenState extends State<QuranScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final state = context.watch<AppState>();
+    final position = context.select<AppState, (int, int)?>((state) {
+      final savedPosition = state.quranReadingPosition;
+      return savedPosition == null
+          ? null
+          : (savedPosition.surahNumber, savedPosition.ayahNumber);
+    });
     final isTablet = MediaQuery.sizeOf(context).shortestSide >= 600;
-    final position = state.quranReadingPosition;
-    final savedSurah = _findSurah(position?.surahNumber);
+    final savedSurah = _findSurah(position?.$1);
     final continueSurah =
         savedSurah ?? (_surahs.isEmpty ? null : _surahs.first);
     return Scaffold(
@@ -96,12 +108,12 @@ class _QuranScreenState extends State<QuranScreen> {
                         surahLabel: continueSurah == null
                             ? 'সূরা লোড হলে আবার চেষ্টা করো'
                             : 'সূরা ${continueSurah.englishName}',
-                        ayahNumber: position?.ayahNumber,
+                        ayahNumber: position?.$2,
                         canResume: continueSurah != null,
                         onTap: () => _openReader(
                           context,
                           continueSurah,
-                          initialAyah: position?.ayahNumber ?? 1,
+                          initialAyah: position?.$2 ?? 1,
                         ),
                       ),
                       const SizedBox(height: 20),
@@ -128,6 +140,7 @@ class _QuranScreenState extends State<QuranScreen> {
                                 color: const Color(0xFFE5E7EB), width: 2),
                           ),
                           child: TextField(
+                            controller: _searchController,
                             onChanged: (v) => setState(
                                 () => _search = v.trim().toLowerCase()),
                             decoration: InputDecoration(
@@ -136,6 +149,16 @@ class _QuranScreenState extends State<QuranScreen> {
                                   const TextStyle(color: Color(0xFF9CA3AF)),
                               prefixIcon: const Icon(Icons.search_rounded,
                                   color: Color(0xFF9CA3AF)),
+                              suffixIcon: _search.isNotEmpty
+                                  ? IconButton(
+                                      icon: const Icon(Icons.clear_rounded,
+                                          color: Color(0xFF9CA3AF)),
+                                      onPressed: () {
+                                        _searchController.clear();
+                                        setState(() => _search = '');
+                                      },
+                                    )
+                                  : null,
                               filled: false,
                               border: InputBorder.none,
                               contentPadding:
@@ -155,26 +178,82 @@ class _QuranScreenState extends State<QuranScreen> {
                           _LoadError(message: _loadError!, onRetry: _loadSurahs)
                         else if (_surahs.isEmpty)
                           _EmptySurahs(onRetry: _loadSurahs)
-                        else
-                          for (final surah in _surahs.where((item) =>
-                              _search.isEmpty ||
-                              item.englishName
-                                  .toLowerCase()
-                                  .contains(_search) ||
-                              item.nameMeaning
-                                  .toLowerCase()
-                                  .contains(_search) ||
-                              item.arabicName.contains(_search)))
-                            _SurahCard(
-                              number: '${surah.number}',
-                              arabicName: surah.arabicName,
-                              title: surah.englishName,
-                              detail:
-                                  '${surah.ayahCount} আয়াত · ${surah.revelationType == 'Meccan' ? 'মক্কী' : 'মাদানী'} · ${surah.nameMeaning}',
-                              onTap: () => _openReader(context, surah),
-                            ),
+                        else ...[
+                          () {
+                            final filtered = _surahs
+                                .where((item) =>
+                                    _search.isEmpty ||
+                                    item.englishName
+                                        .toLowerCase()
+                                        .contains(_search) ||
+                                    item.nameMeaning
+                                        .toLowerCase()
+                                        .contains(_search) ||
+                                    item.arabicName.contains(_search))
+                                .toList();
+                            if (filtered.isEmpty && _search.isNotEmpty) {
+                              return _SearchEmptySurahs(
+                                query: _search,
+                                onClear: () {
+                                  _searchController.clear();
+                                  setState(() => _search = '');
+                                },
+                              );
+                            }
+                            return Column(
+                              children: [
+                                for (final surah in filtered)
+                                  _SurahCard(
+                                    number: '${surah.number}',
+                                    arabicName: surah.arabicName,
+                                    title: surah.englishName,
+                                    detail:
+                                        '${surah.ayahCount} আয়াত · ${surah.revelationType == 'Meccan' ? 'মক্কী' : 'মাদানী'} · ${surah.nameMeaning}',
+                                    onTap: () => _openReader(context, surah),
+                                  ),
+                              ],
+                            );
+                          }(),
+                        ],
+                      ] else if (_section == 1) ...[
+                        DuolingoSectionLabel(
+                            label: '৩০টি পারা / জুয',
+                            badgeText: '${quranJuzList.length} পারা',
+                            badgeColor: const Color(0xFFD4F0EC),
+                            badgeTextColor: const Color(0xFF0D7377)),
+                        const SizedBox(height: 12),
+                        for (final juz in quranJuzList)
+                          _JuzCard(
+                            juz: juz,
+                            onTap: () {
+                              final surah = _findSurah(juz.startSurahNumber);
+                              _openReader(context, surah,
+                                  initialAyah: juz.startAyahNumber);
+                            },
+                          ),
+                      ] else if (_section == 2) ...[
+                        () {
+                          final bookmarks =
+                              context.watch<AppState>().quranBookmarks;
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              DuolingoSectionLabel(
+                                  label: 'সংরক্ষিত আয়াত',
+                                  badgeText: '${bookmarks.length}টি',
+                                  badgeColor: const Color(0xFFD4F0EC),
+                                  badgeTextColor: const Color(0xFF0D7377)),
+                              const SizedBox(height: 12),
+                              if (bookmarks.isEmpty)
+                                const _BookmarksEmptyCard()
+                              else
+                                for (final key in bookmarks)
+                                  _buildBookmarkTile(context, key),
+                            ],
+                          );
+                        }(),
                       ] else ...[
-                        DuolingoSectionLabel(label: 'ছোট্ট ইসলামিক গল্প'),
+                        const DuolingoSectionLabel(label: 'ছোট্ট ইসলামিক গল্প'),
                         const SizedBox(height: 12),
                         _StoryCard(
                             iconType: VectorIconType.plant,
@@ -182,21 +261,24 @@ class _QuranScreenState extends State<QuranScreen> {
                             subtitle: 'ভালো আচরণ আর মমতা',
                             color: const Color(0xFFE8F5E9),
                             accent: const Color(0xFF58A700),
-                            onTap: () => _showComingSoon(context)),
+                            onTap: () => _openStoryInfo(
+                                context, 'দয়ার সুন্দর গল্প', 'ভালো আচরণ আর মমতা')),
                         _StoryCard(
                             iconType: VectorIconType.star,
                             title: 'সাহস ও ধৈর্যের গল্প',
                             subtitle: 'ছোটদের জন্য ছোট্ট শিক্ষা',
                             color: const Color(0xFFFFF2D1),
                             accent: const Color(0xFFD4A017),
-                            onTap: () => _showComingSoon(context)),
+                            onTap: () => _openStoryInfo(context,
+                                'সাহস ও ধৈর্যের গল্প', 'ছোটদের জন্য ছোট্ট শিক্ষা')),
                         _StoryCard(
                             iconType: VectorIconType.bird,
                             title: 'সত্য বলার গল্প',
                             subtitle: 'সুন্দর চরিত্রের অনুশীলন',
                             color: const Color(0xFFE8F1FA),
                             accent: const Color(0xFF3B82C4),
-                            onTap: () => _showComingSoon(context)),
+                            onTap: () => _openStoryInfo(context,
+                                'সত্য বলার গল্প', 'সুন্দর চরিত্রের অনুশীলন')),
                       ],
 
                       const SizedBox(height: 14),
@@ -236,12 +318,103 @@ class _QuranScreenState extends State<QuranScreen> {
             surah: surah, repository: _repository, initialAyah: initialAyah)));
   }
 
-  void _showComingSoon(BuildContext context) {
-    ScaffoldMessenger.of(context)
-      ..hideCurrentSnackBar()
-      ..showSnackBar(const SnackBar(
-          content: LocalizedText('এই অংশটি পরের ধাপে যোগ হবে।'),
-          behavior: SnackBarBehavior.floating));
+  void _openStoryInfo(
+      BuildContext context, String title, String subtitle) {
+    showDialog<void>(
+      context: context,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        title: Row(children: [
+          const VectorIcon(
+              type: VectorIconType.book, size: 24, color: AppTheme.primaryGreen),
+          const SizedBox(width: 10),
+          Expanded(child: LocalizedText(title)),
+        ]),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            LocalizedText(subtitle,
+                style: const TextStyle(
+                    fontWeight: FontWeight.w700, color: AppTheme.primaryGreen)),
+            const SizedBox(height: 12),
+            const LocalizedText(
+              'কুরআনিক শিক্ষণীয় ঘটনাভিত্তিক বিশেষ শিশুতোষ মডিউলটি নির্ভরযোগ্য তাফসির সূত্রের আলোকে সংকলন করা হচ্ছে।\n\nবর্তমানে তুমি ‘সীরাত’ মডিউল থেকে রাসুলুল্লাহ ﷺ-এর জীবনের নির্ভরযোগ্য ঐতিহাসিক গল্পগুলো পড়তে পারো।',
+              style: TextStyle(height: 1.6, color: AppTheme.darkText),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const LocalizedText('বুঝেছি'),
+          ),
+          FilledButton.icon(
+            onPressed: () {
+              Navigator.pop(context);
+              Navigator.of(context).push(
+                MaterialPageRoute<void>(builder: (_) => const SeerahScreen()),
+              );
+            },
+            icon: const Icon(Icons.auto_stories_rounded, size: 18),
+            label: const LocalizedText('সীরাতের গল্পে যাই'),
+            style:
+                FilledButton.styleFrom(backgroundColor: AppTheme.primaryGreen),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBookmarkTile(BuildContext context, String key) {
+    final parts = key.split(':');
+    final surahNum = parts.isNotEmpty ? int.tryParse(parts[0]) : null;
+    final ayahNum = parts.length > 1 ? int.tryParse(parts[1]) : null;
+    final surah = _findSurah(surahNum);
+
+    if (surah == null ||
+        ayahNum == null ||
+        ayahNum < 1 ||
+        ayahNum > surah.ayahCount) {
+      return Container(
+        margin: const EdgeInsets.only(bottom: 10),
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: const Color(0xFFF1B7B7)),
+        ),
+        child: Row(children: [
+          const Icon(Icons.broken_image_rounded,
+              color: Colors.redAccent, size: 22),
+          const SizedBox(width: 10),
+          Expanded(
+            child: LocalizedText('মুছে যাওয়া বা অপ্রাসঙ্গিক রেফারেন্স ($key)',
+                style: const TextStyle(fontSize: 12, color: Colors.black54)),
+          ),
+          IconButton(
+            onPressed: () {
+              if (surahNum != null && ayahNum != null) {
+                context
+                    .read<AppState>()
+                    .toggleQuranBookmark(surahNum, ayahNum);
+              }
+            },
+            icon:
+                const Icon(Icons.delete_outline_rounded, color: Colors.black45),
+            tooltip: context.uiText('মুছে ফেলো'),
+          ),
+        ]),
+      );
+    }
+
+    return _BookmarkCard(
+      surah: surah,
+      ayahNumber: ayahNum,
+      onOpen: () => _openReader(context, surah, initialAyah: ayahNum),
+      onRemove: () =>
+          context.read<AppState>().toggleQuranBookmark(surah.number, ayahNum),
+    );
   }
 }
 
@@ -393,7 +566,13 @@ class _SectionPicker extends StatelessWidget {
           _Tab(
               label: 'সূরা', selected: selected == 0, onTap: () => onSelect(0)),
           _Tab(
-              label: 'গল্প', selected: selected == 1, onTap: () => onSelect(1)),
+              label: 'পারা', selected: selected == 1, onTap: () => onSelect(1)),
+          _Tab(
+              label: 'বুকমার্ক',
+              selected: selected == 2,
+              onTap: () => onSelect(2)),
+          _Tab(
+              label: 'গল্প', selected: selected == 3, onTap: () => onSelect(3)),
         ]),
       );
 }
@@ -593,5 +772,182 @@ class _StoryCardState extends State<_StoryCard> {
             ),
           ]),
         ),
+      );
+}
+
+class _SearchEmptySurahs extends StatelessWidget {
+  const _SearchEmptySurahs({required this.query, required this.onClear});
+  final String query;
+  final VoidCallback onClear;
+
+  @override
+  Widget build(BuildContext context) => Container(
+        padding: const EdgeInsets.all(22),
+        decoration: BoxDecoration(
+            color: Colors.white, borderRadius: BorderRadius.circular(20)),
+        child: Column(children: [
+          const Icon(Icons.search_off_rounded,
+              color: Color(0xFF9CA3AF), size: 36),
+          const SizedBox(height: 8),
+          LocalizedText('“$query” দিয়ে কোনো সূরা পাওয়া যায়নি।',
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontWeight: FontWeight.w700)),
+          const SizedBox(height: 12),
+          OutlinedButton.icon(
+              onPressed: onClear,
+              icon: const Icon(Icons.clear_rounded),
+              label: const LocalizedText('অনুসন্ধান মুছুন')),
+        ]),
+      );
+}
+
+class _BookmarksEmptyCard extends StatelessWidget {
+  const _BookmarksEmptyCard();
+
+  @override
+  Widget build(BuildContext context) => Container(
+        padding: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+            color: Colors.white, borderRadius: BorderRadius.circular(20)),
+        child: const Column(children: [
+          Icon(Icons.bookmark_border_rounded,
+              color: Color(0xFF0D7377), size: 38),
+          SizedBox(height: 10),
+          LocalizedText('এখনো কোনো বুকমার্ক নেই',
+              style: TextStyle(
+                  fontWeight: FontWeight.w800,
+                  fontSize: 16,
+                  color: AppTheme.darkText)),
+          SizedBox(height: 6),
+          LocalizedText(
+              'কুরআন পড়ার সময় যেকোনো আয়াতের পাশে বুকমার্ক আইকনে চাপ দিলে এখানে সহজে খুঁজে পাবে।',
+              textAlign: TextAlign.center,
+              style: TextStyle(color: Colors.black54, fontSize: 12, height: 1.5)),
+        ]),
+      );
+}
+
+class _JuzCard extends StatelessWidget {
+  const _JuzCard({required this.juz, required this.onTap});
+  final QuranJuz juz;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) => Container(
+        margin: const EdgeInsets.only(bottom: 10),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(color: const Color(0xFFE5E7EB), width: 1.5),
+        ),
+        child: ListTile(
+          onTap: onTap,
+          leading: Container(
+            width: 44,
+            height: 44,
+            decoration: BoxDecoration(
+              color: const Color(0xFFD4F0EC),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            alignment: Alignment.center,
+            child: LocalizedText(
+              '${juz.number}',
+              style: const TextStyle(
+                color: Color(0xFF0D7377),
+                fontWeight: FontWeight.w900,
+                fontSize: 16,
+              ),
+            ),
+          ),
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              LocalizedText(
+                'পারা ${juz.number}',
+                style: const TextStyle(
+                  fontWeight: FontWeight.w800,
+                  color: AppTheme.darkText,
+                ),
+              ),
+              LocalizedText(
+                juz.arabicName,
+                textDirection: TextDirection.rtl,
+                style: const TextStyle(
+                  color: Color(0xFF0D7377),
+                  fontWeight: FontWeight.w800,
+                  fontSize: 18,
+                ),
+              ),
+            ],
+          ),
+          subtitle: LocalizedText(
+            'শুরু: সূরা ${juz.startSurahName} · আয়াত ${juz.startAyahNumber}',
+            style: const TextStyle(fontSize: 11, color: Colors.black54),
+          ),
+          trailing: const Icon(Icons.arrow_forward_ios_rounded,
+              size: 16, color: Colors.black38),
+        ),
+      );
+}
+
+class _BookmarkCard extends StatelessWidget {
+  const _BookmarkCard({
+    required this.surah,
+    required this.ayahNumber,
+    required this.onOpen,
+    required this.onRemove,
+  });
+
+  final QuranSurah surah;
+  final int ayahNumber;
+  final VoidCallback onOpen;
+  final VoidCallback onRemove;
+
+  @override
+  Widget build(BuildContext context) => Container(
+        margin: const EdgeInsets.only(bottom: 10),
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(color: const Color(0xFFE5E7EB), width: 1.5),
+        ),
+        child: Row(children: [
+          Container(
+            width: 44,
+            height: 44,
+            decoration: BoxDecoration(
+              color: const Color(0xFFFFF0DB),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            alignment: Alignment.center,
+            child: const Icon(Icons.bookmark_rounded,
+                color: Color(0xFFE8913A), size: 24),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              LocalizedText('সূরা ${surah.englishName} · আয়াত $ayahNumber',
+                  style: const TextStyle(
+                      fontWeight: FontWeight.w800,
+                      fontSize: 14,
+                      color: AppTheme.darkText)),
+              const SizedBox(height: 2),
+              LocalizedText('${surah.arabicName} · ${surah.nameMeaning}',
+                  style: const TextStyle(fontSize: 11, color: Colors.black54)),
+            ]),
+          ),
+          IconButton(
+            onPressed: onOpen,
+            tooltip: context.uiText('পড়া শুরু করি'),
+            icon: const Icon(Icons.menu_book_rounded, color: Color(0xFF0D7377)),
+          ),
+          IconButton(
+            onPressed: onRemove,
+            tooltip: context.uiText('বুকমার্ক সরাও'),
+            icon: const Icon(Icons.delete_outline_rounded, color: Colors.black45),
+          ),
+        ]),
       );
 }

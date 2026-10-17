@@ -82,6 +82,28 @@ class _DuasScreenState extends State<DuasScreen> {
       color: Color(0xFFDCEBFF),
       accent: Color(0xFF3B82C4),
     ),
+    _DuaEntry(
+      id: 'food_after',
+      title: 'খাবার শেষ করার পর',
+      category: 'দৈনন্দিন',
+      arabic: 'الْحَمْدُ لِلَّهِ الَّذِي أَطْعَمَنَا وَسَقَانَا وَجَعَلَنَا مُسْلِمِينَ',
+      meaning:
+          'সব প্রশংসা আল্লাহর, যিনি আমাদের আহার করিয়েছেন, পান করিয়েছেন এবং মুসলিম বানিয়েছেন।',
+      reference: 'আবু দাউদ ৩৮৫০',
+      color: Color(0xFFE8F8D8),
+      accent: Color(0xFF58A700),
+    ),
+    _DuaEntry(
+      id: 'leave_home',
+      title: 'ঘর থেকে বের হওয়ার সময়',
+      category: 'দৈনন্দিন',
+      arabic: 'بِسْمِ اللَّهِ تَوَكَّلْتُ عَلَى اللَّهِ، لَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللَّهِ',
+      meaning:
+          'আল্লাহর নামে, আল্লাহর ওপর ভরসা করলাম; আল্লাহর সাহায্য ছাড়া অনিষ্ট দূর বা মঙ্গল লাভের শক্তি নেই।',
+      reference: 'আবু দাউদ ৫০৯৫',
+      color: Color(0xFFFFF0DB),
+      accent: Color(0xFFE8913A),
+    ),
   ];
 
   int _selectedCategory = 0;
@@ -397,14 +419,37 @@ class _DuaCardState extends State<_DuaCard> {
                         fontWeight: FontWeight.w700)),
               ),
               const Spacer(),
-              LocalizedText('অডিও নেই',
-                  style: TextStyle(
-                      color: dua.accent,
-                      fontSize: 10,
-                      fontWeight: FontWeight.w700)),
-              const SizedBox(width: 10),
+              InkWell(
+                onTap: () => _showAudioInfo(context),
+                borderRadius: BorderRadius.circular(8),
+                child: Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.volume_off_rounded,
+                          size: 14, color: dua.accent),
+                      const SizedBox(width: 4),
+                      LocalizedText('অডিও নেই',
+                          style: TextStyle(
+                              color: dua.accent,
+                              fontSize: 10,
+                              fontWeight: FontWeight.w700)),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(width: 6),
+              IconButton(
+                  onPressed: () => _openDetail(context),
+                  tooltip: context.uiText('দোয়াটি অনুশীলন করি'),
+                  icon: Icon(Icons.touch_app_rounded,
+                      color: dua.accent, size: 20)),
+              const SizedBox(width: 4),
               IconButton(
                   onPressed: widget.onCopy,
+                  tooltip: context.uiText('কপি করো'),
                   icon: const Icon(Icons.copy_rounded,
                       color: Colors.black45, size: 18),
                   padding: EdgeInsets.zero,
@@ -413,6 +458,364 @@ class _DuaCardState extends State<_DuaCard> {
             ]),
           ),
         ],
+      ),
+    );
+  }
+
+  void _openDetail(BuildContext context) {
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => _DuaDetailSheet(
+        dua: widget.dua,
+        isFavorite: widget.isFavorite,
+        onFavorite: widget.onFavorite,
+        onCopy: widget.onCopy,
+        onShowAudioInfo: () => _showAudioInfo(context),
+      ),
+    );
+  }
+
+  void _showAudioInfo(BuildContext context) {
+    showDialog<void>(
+      context: context,
+      builder: (dialogCtx) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        title: const Row(children: [
+          Icon(Icons.volume_off_rounded,
+              color: AppTheme.primaryGreen, size: 26),
+          SizedBox(width: 10),
+          Expanded(child: LocalizedText('অডিও রেকর্ডিং তথ্য')),
+        ]),
+        content: const LocalizedText(
+          'এই দোয়ার জন্য যাচাইকৃত শিশুতোষ বিশুদ্ধ অডিও বর্তমানে সংযুক্ত নেই। অশুদ্ধ উচ্চারণ এড়াতে ইন্টারনেটের অননুমোদিত উৎসের অডিও ব্যবহার না করে প্রামাণ্য ক্বারীর রেকর্ডিং পরবর্তীতে যুক্ত করা হবে।',
+          style: TextStyle(height: 1.6),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogCtx),
+            child: const LocalizedText('বুঝেছি'),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _DuaDetailSheet extends StatefulWidget {
+  const _DuaDetailSheet({
+    required this.dua,
+    required this.isFavorite,
+    required this.onFavorite,
+    required this.onCopy,
+    required this.onShowAudioInfo,
+  });
+
+  final _DuaEntry dua;
+  final bool isFavorite;
+  final VoidCallback onFavorite;
+  final VoidCallback onCopy;
+  final VoidCallback onShowAudioInfo;
+
+  @override
+  State<_DuaDetailSheet> createState() => _DuaDetailSheetState();
+}
+
+class _DuaDetailSheetState extends State<_DuaDetailSheet> {
+  int _target = 3;
+  int _counter = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    final dua = widget.dua;
+    final isDone = _counter >= _target;
+
+    return Container(
+      decoration: const BoxDecoration(
+        color: AppTheme.cream,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+      ),
+      padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
+      child: SafeArea(
+        top: false,
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Center(
+                child: Container(
+                  width: 44,
+                  height: 5,
+                  decoration: BoxDecoration(
+                    color: Colors.black12,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: dua.color,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: LocalizedText(
+                      dua.category,
+                      style: TextStyle(
+                          color: dua.accent,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w800),
+                    ),
+                  ),
+                  const Spacer(),
+                  IconButton(
+                    onPressed: widget.onFavorite,
+                    tooltip: context.uiText(widget.isFavorite
+                        ? 'পছন্দ থেকে সরাও'
+                        : 'পছন্দে রাখো'),
+                    icon: Icon(
+                      widget.isFavorite
+                          ? Icons.bookmark_rounded
+                          : Icons.bookmark_border_rounded,
+                      color: widget.isFavorite ? dua.accent : Colors.black45,
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: widget.onCopy,
+                    tooltip: context.uiText('কপি করো'),
+                    icon: const Icon(Icons.copy_rounded, color: Colors.black45),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
+              LocalizedText(
+                dua.title,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w900,
+                  color: AppTheme.darkText,
+                ),
+              ),
+              const SizedBox(height: 16),
+              Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [dua.color, dua.color.withValues(alpha: 0.6)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.circular(22),
+                  border: Border.all(
+                      color: dua.accent.withValues(alpha: 0.3), width: 1.5),
+                ),
+                child: LocalizedText(
+                  dua.arabic,
+                  textDirection: TextDirection.rtl,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: dua.accent,
+                    fontSize: 26,
+                    height: 1.7,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 14),
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(18),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const LocalizedText(
+                      'অর্থ:',
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w800,
+                        color: AppTheme.darkText,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    LocalizedText(
+                      dua.meaning,
+                      style: const TextStyle(
+                        fontSize: 15,
+                        height: 1.6,
+                        color: AppTheme.darkText,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 3),
+                      decoration: BoxDecoration(
+                        color: dua.color,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: LocalizedText(
+                        'সূত্র: ${dua.reference}',
+                        style: TextStyle(
+                          color: dua.accent,
+                          fontSize: 11,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 16),
+              // Practice target & counter
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: const Color(0xFFE5E7EB), width: 1.5),
+                ),
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const LocalizedText(
+                          'দোয়া অনুশীলনের লক্ষ্য',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w800,
+                            fontSize: 13,
+                            color: AppTheme.darkText,
+                          ),
+                        ),
+                        Row(
+                          children: [
+                            for (final t in [1, 3, 7, 33])
+                              Padding(
+                                padding: const EdgeInsets.only(left: 6),
+                                child: InkWell(
+                                  onTap: () => setState(() {
+                                    _target = t;
+                                    if (_counter > _target) _counter = _target;
+                                  }),
+                                  borderRadius: BorderRadius.circular(8),
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8, vertical: 4),
+                                    decoration: BoxDecoration(
+                                      color: _target == t
+                                          ? dua.accent
+                                          : const Color(0xFFF3F4F6),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: LocalizedText(
+                                      '$t',
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w800,
+                                        color: _target == t
+                                            ? Colors.white
+                                            : Colors.black54,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 14),
+                    InkWell(
+                      onTap: () {
+                        setState(() {
+                          if (_counter < _target) _counter++;
+                        });
+                      },
+                      borderRadius: BorderRadius.circular(16),
+                      child: Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: isDone
+                                ? [
+                                    const Color(0xFF58CC02),
+                                    const Color(0xFF58A700)
+                                  ]
+                                : [dua.accent, dua.accent.withValues(alpha: 0.85)],
+                          ),
+                          borderRadius: BorderRadius.circular(16),
+                          boxShadow: [
+                            BoxShadow(
+                              color: (isDone
+                                      ? const Color(0xFF58A700)
+                                      : dua.accent)
+                                  .withValues(alpha: 0.3),
+                              blurRadius: 8,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: Column(
+                          children: [
+                            Icon(
+                              isDone
+                                  ? Icons.check_circle_rounded
+                                  : Icons.touch_app_rounded,
+                              color: Colors.white,
+                              size: 28,
+                            ),
+                            const SizedBox(height: 6),
+                            LocalizedText(
+                              isDone
+                                  ? 'মাশাআল্লাহ! লক্ষ্য পূর্ণ হয়েছে ($_target/$_target)'
+                                  : 'পড়েছি: $_counter / $_target বার',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w900,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    if (_counter > 0)
+                      TextButton.icon(
+                        onPressed: () => setState(() => _counter = 0),
+                        icon: const Icon(Icons.refresh_rounded, size: 16),
+                        label: const LocalizedText('কাউন্টার রিসেট করি'),
+                        style: TextButton.styleFrom(
+                            foregroundColor: Colors.black45),
+                      ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 14),
+              OutlinedButton.icon(
+                onPressed: widget.onShowAudioInfo,
+                icon: const Icon(Icons.volume_off_rounded, size: 18),
+                label: const LocalizedText('অডিও রেকর্ডিং তথ্য'),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: Colors.black54,
+                  side: const BorderSide(color: Color(0xFFD1D5DB)),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14)),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

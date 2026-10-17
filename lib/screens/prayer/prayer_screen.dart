@@ -1,9 +1,12 @@
 import '../../l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../theme/app_theme.dart';
+import '../../utils/app_state.dart';
 import '../../widgets/vector_icons.dart';
 import '../../widgets/duolingo_appbar.dart';
+import 'prayer_times.dart';
 
 class _PrayerChapter {
   const _PrayerChapter(
@@ -24,7 +27,11 @@ class _PrayerChapter {
 }
 
 class PrayerScreen extends StatelessWidget {
-  const PrayerScreen({super.key});
+  const PrayerScreen(
+      {super.key, this.repository, this.settingsStore, this.locationProvider});
+  final PrayerTimesRepository? repository;
+  final PrayerSettingsStore? settingsStore;
+  final PrayerDeviceLocationProvider? locationProvider;
 
   static const _fardChapters = <_PrayerChapter>[
     _PrayerChapter(
@@ -251,6 +258,10 @@ class PrayerScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tablet = MediaQuery.sizeOf(context).shortestSide >= 600;
+    final appState = context.watch<AppState>();
+    final salahCompleted = appState.isSalahCompleted;
+    final salahStep = appState.salahStep;
+
     return Scaffold(
       backgroundColor: const Color(0xFFEEF4FF),
       body: SafeArea(
@@ -274,7 +285,10 @@ class PrayerScreen extends StatelessWidget {
                         ],
                         onBack: () => Navigator.pop(context),
                       ),
-                      const _PrayerTimesCard(),
+                      _PrayerTimesCard(
+                          repository: repository,
+                          settingsStore: settingsStore,
+                          locationProvider: locationProvider),
                       const SizedBox(height: 22),
                       _PrayerChapterGroup(
                         number: 'অধ্যায় ১',
@@ -284,6 +298,13 @@ class PrayerScreen extends StatelessWidget {
                         color: const Color(0xFFE8E2FF),
                         initiallyExpanded: true,
                         children: [
+                          _SalahProgressCard(
+                            isCompleted: salahCompleted,
+                            currentStep: salahStep,
+                            onStart: () => _showStep(
+                                context, salahCompleted ? 0 : salahStep),
+                          ),
+                          const SizedBox(height: 14),
                           LayoutBuilder(builder: (context, constraints) {
                             if (constraints.maxWidth < 640) {
                               return Column(children: [
@@ -346,12 +367,6 @@ class PrayerScreen extends StatelessWidget {
                         ],
                       ),
                       const SizedBox(height: 12),
-                      const LocalizedText(
-                          'ঘড়ির সঠিক ওয়াক্ত শহর, তারিখ ও হিসাব-পদ্ধতি অনুযায়ী বদলায়। এই screen-এ এখন ওয়াক্তের সীমা শেখানো হচ্ছে; নির্দিষ্ট আজকের সময় জানতে স্থানীয় মসজিদ/বিশ্বস্ত ক্যালেন্ডার দেখো।',
-                          style: TextStyle(
-                              color: Colors.black54,
-                              fontSize: 11,
-                              height: 1.6)),
                     ]),
                   ),
                 ),
@@ -387,119 +402,256 @@ class PrayerScreen extends StatelessWidget {
   ];
 
   void _showStep(BuildContext context, int startIndex) {
-    var activeIndex = startIndex;
+    final appState = context.read<AppState>();
+    var activeIndex = startIndex.clamp(0, _steps.length - 1);
+    appState.saveSalahStep(activeIndex);
+
+    Future<bool> confirmExitMidway(BuildContext sheetContext) async {
+      if (activeIndex == 0 ||
+          activeIndex >= _steps.length - 1 ||
+          appState.isSalahCompleted) {
+        return true;
+      }
+      final shouldExit = await showDialog<bool>(
+        context: sheetContext,
+        builder: (dialogCtx) => AlertDialog(
+          title: const LocalizedText('নামাজ শেখা থেকে বের হবে?'),
+          content: LocalizedText(
+              'তোমার অগ্রগতি (ধাপ ${activeIndex + 1}) সংরক্ষিত থাকবে। পরে যেকোনো সময় এখান থেকে চালিয়ে যেতে পারবে।'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(dialogCtx, false),
+              child: const LocalizedText('পড়তে থাকি'),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.pop(dialogCtx, true),
+              child: const LocalizedText('বের হই'),
+            ),
+          ],
+        ),
+      );
+      return shouldExit ?? false;
+    }
+
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) => StatefulBuilder(builder: (context, setSheetState) {
+      builder: (sheetContext) =>
+          StatefulBuilder(builder: (context, setSheetState) {
         final step = _steps[activeIndex];
         final detail = _guideDetails[activeIndex];
-        return Container(
-          padding: const EdgeInsets.fromLTRB(22, 18, 22, 28),
-          decoration: BoxDecoration(
-            color: AppTheme.cream,
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
-            border: Border.all(
-              color: AppTheme.primaryGreen.withValues(alpha: .16),
-              width: 1.5,
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: AppTheme.primaryGreen.withValues(alpha: .22),
-                blurRadius: 0,
-                offset: const Offset(0, -6),
+        return PopScope(
+          canPop: false,
+          onPopInvokedWithResult: (didPop, _) async {
+            if (didPop) return;
+            final canLeave = await confirmExitMidway(sheetContext);
+            if (canLeave && sheetContext.mounted) {
+              Navigator.pop(sheetContext);
+            }
+          },
+          child: Container(
+            padding: const EdgeInsets.fromLTRB(22, 18, 22, 28),
+            decoration: BoxDecoration(
+              color: AppTheme.cream,
+              borderRadius:
+                  const BorderRadius.vertical(top: Radius.circular(30)),
+              border: Border.all(
+                color: AppTheme.primaryGreen.withValues(alpha: .16),
+                width: 1.5,
               ),
-            ],
-          ),
-          child: SafeArea(
-            top: false,
-            child: Column(mainAxisSize: MainAxisSize.min, children: [
-              Container(
-                  width: 42,
-                  height: 5,
+              boxShadow: [
+                BoxShadow(
+                  color: AppTheme.primaryGreen.withValues(alpha: .22),
+                  blurRadius: 0,
+                  offset: const Offset(0, -6),
+                ),
+              ],
+            ),
+            child: SafeArea(
+              top: false,
+              child: Column(mainAxisSize: MainAxisSize.min, children: [
+                Container(
+                    width: 42,
+                    height: 5,
+                    decoration: BoxDecoration(
+                        color: Colors.black12,
+                        borderRadius: BorderRadius.circular(8))),
+                const SizedBox(height: 14),
+                // Educational guidance banner
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
-                      color: Colors.black12,
-                      borderRadius: BorderRadius.circular(8))),
-              const SizedBox(height: 18),
-              Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                for (var i = 0; i < _steps.length; i++)
-                  AnimatedContainer(
-                      duration: const Duration(milliseconds: 180),
-                      width: i == activeIndex ? 28 : 8,
-                      height: 8,
-                      margin: const EdgeInsets.symmetric(horizontal: 3),
-                      decoration: BoxDecoration(
-                          color: i == activeIndex
-                              ? AppTheme.primaryGreen
-                              : const Color(0xFFD9E4D5),
-                          borderRadius: BorderRadius.circular(8))),
-              ]),
-              const SizedBox(height: 16),
-              Container(
-                  width: 76,
-                  height: 76,
-                  decoration: BoxDecoration(
-                      color: step.$5.withValues(alpha: .14),
-                      borderRadius: BorderRadius.circular(24)),
-                  child: Icon(step.$4, size: 38, color: step.$5)),
-              const SizedBox(height: 13),
-              LocalizedText('ধাপ ${activeIndex + 1} · ${step.$2}',
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                      color: AppTheme.darkText,
-                      fontSize: 20,
-                      fontWeight: FontWeight.w800)),
-              const SizedBox(height: 7),
-              LocalizedText(detail.$1,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                      color: AppTheme.primaryGreen,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w800)),
-              const SizedBox(height: 9),
-              LocalizedText(detail.$2,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(color: Colors.black54, height: 1.55)),
-              const SizedBox(height: 15),
-              Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                      color: const Color(0xFFFFF2CE),
-                      borderRadius: BorderRadius.circular(15)),
-                  child: const LocalizedText(
-                      'মাযহাবভেদে কিছু নিয়মে পার্থক্য থাকতে পারে—পরিবারের অভিভাবক বা শিক্ষকের কাছ থেকে নিজের পদ্ধতিটি শিখে নাও।',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                          color: Color(0xFF735B24),
+                    color: AppTheme.primaryGreen.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.school_rounded,
+                          size: 16, color: AppTheme.primaryGreen),
+                      SizedBox(width: 6),
+                      LocalizedText(
+                        'শিক্ষামূলক অনুশীলন · নামাজের অঙ্গভঙ্গি শেখা',
+                        style: TextStyle(
                           fontSize: 11,
-                          height: 1.5))),
-              const SizedBox(height: 17),
-              Row(children: [
-                if (activeIndex > 0)
+                          fontWeight: FontWeight.w700,
+                          color: AppTheme.primaryGreen,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 14),
+                Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                  for (var i = 0; i < _steps.length; i++)
+                    AnimatedContainer(
+                        duration: const Duration(milliseconds: 180),
+                        width: i == activeIndex ? 28 : 8,
+                        height: 8,
+                        margin: const EdgeInsets.symmetric(horizontal: 3),
+                        decoration: BoxDecoration(
+                            color: i == activeIndex
+                                ? AppTheme.primaryGreen
+                                : const Color(0xFFD9E4D5),
+                            borderRadius: BorderRadius.circular(8))),
+                ]),
+                const SizedBox(height: 16),
+                Container(
+                    width: 76,
+                    height: 76,
+                    decoration: BoxDecoration(
+                        color: step.$5.withValues(alpha: .14),
+                        borderRadius: BorderRadius.circular(24)),
+                    child: Icon(step.$4, size: 38, color: step.$5)),
+                const SizedBox(height: 13),
+                LocalizedText('ধাপ ${activeIndex + 1} · ${step.$2}',
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                        color: AppTheme.darkText,
+                        fontSize: 20,
+                        fontWeight: FontWeight.w800)),
+                const SizedBox(height: 7),
+                LocalizedText(detail.$1,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                        color: AppTheme.primaryGreen,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w800)),
+                const SizedBox(height: 9),
+                LocalizedText(detail.$2,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(color: Colors.black54, height: 1.55)),
+                const SizedBox(height: 15),
+                Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                        color: const Color(0xFFFFF2CE),
+                        borderRadius: BorderRadius.circular(15)),
+                    child: const LocalizedText(
+                        'মাযহাবভেদে কিছু নিয়মে পার্থক্য থাকতে পারে—পরিবারের অভিভাবক বা শিক্ষকের কাছ থেকে নিজের পদ্ধতিটি শিখে নাও।',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            color: Color(0xFF735B24),
+                            fontSize: 11,
+                            height: 1.5))),
+                const SizedBox(height: 17),
+                Row(children: [
+                  if (activeIndex > 0)
+                    Expanded(
+                        child: OutlinedButton.icon(
+                            onPressed: () {
+                              setSheetState(() => activeIndex--);
+                              appState.saveSalahStep(activeIndex);
+                            },
+                            icon: const Icon(Icons.arrow_back_rounded),
+                            label: const LocalizedText('আগের ধাপ')))
+                  else
+                    const Spacer(),
+                  const SizedBox(width: 10),
                   Expanded(
-                      child: OutlinedButton.icon(
-                          onPressed: () => setSheetState(() => activeIndex--),
-                          icon: const Icon(Icons.arrow_back_rounded),
-                          label: const LocalizedText('আগের ধাপ')))
-                else
-                  const Spacer(),
-                const SizedBox(width: 10),
-                Expanded(
-                    child: FilledButton.icon(
-                        onPressed: activeIndex < _steps.length - 1
-                            ? () => setSheetState(() => activeIndex++)
-                            : () => Navigator.pop(context),
-                        icon: Icon(activeIndex < _steps.length - 1
-                            ? Icons.arrow_forward_rounded
-                            : Icons.check_rounded),
-                        label: LocalizedText(activeIndex < _steps.length - 1
-                            ? 'পরের ধাপ'
-                            : 'শেষ করি'),
-                        style: FilledButton.styleFrom(
-                            backgroundColor: AppTheme.primaryGreen))),
+                      child: FilledButton.icon(
+                          onPressed: () async {
+                            if (activeIndex < _steps.length - 1) {
+                              setSheetState(() => activeIndex++);
+                              await appState.saveSalahStep(activeIndex);
+                            } else {
+                              final earned =
+                                  await appState.completeSalahLesson();
+                              if (!sheetContext.mounted) return;
+                              Navigator.pop(sheetContext);
+                              if (!context.mounted) return;
+                              showDialog<void>(
+                                context: context,
+                                builder: (dialogCtx) => AlertDialog(
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(24)),
+                                  title: const Row(children: [
+                                    Icon(Icons.celebration_rounded,
+                                        color: AppTheme.primaryGreen, size: 28),
+                                    SizedBox(width: 8),
+                                    Expanded(
+                                        child: LocalizedText(
+                                            'মাশাআল্লাহ! নামাজ শেখা সম্পন্ন')),
+                                  ]),
+                                  content: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      LocalizedText(
+                                        earned
+                                            ? 'তুমি ওজু থেকে সালাম পর্যন্ত ৫টি মৌলিক ধাপ সফলভাবে সম্পন্ন করেছ। +১৫ XP পেয়েছ!'
+                                            : 'নামাজের ধাপগুলো আবার পূর্ণ মনোযোগ দিয়ে পড়ে শেষ করেছ।',
+                                        style: const TextStyle(height: 1.5),
+                                      ),
+                                      const SizedBox(height: 10),
+                                      const LocalizedText(
+                                        'আজকের ওয়াক্ত অনুযায়ী সঠিক সময়ে নামাজ আদায়ের জন্য মূল স্ক্রিনের সময়সূচি দেখো।',
+                                        style: TextStyle(
+                                            fontSize: 12,
+                                            color: Colors.black54,
+                                            height: 1.4),
+                                      ),
+                                    ],
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () async {
+                                        await appState.resetSalahProgress();
+                                        if (dialogCtx.mounted) {
+                                          Navigator.pop(dialogCtx);
+                                        }
+                                        if (context.mounted) {
+                                          _showStep(context, 0);
+                                        }
+                                      },
+                                      child:
+                                          const LocalizedText('আবার রিভিশন দিই'),
+                                    ),
+                                    FilledButton(
+                                      onPressed: () => Navigator.pop(dialogCtx),
+                                      style: FilledButton.styleFrom(
+                                          backgroundColor:
+                                              AppTheme.primaryGreen),
+                                      child: const LocalizedText('শেষ করি'),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }
+                          },
+                          icon: Icon(activeIndex < _steps.length - 1
+                              ? Icons.arrow_forward_rounded
+                              : Icons.check_rounded),
+                          label: LocalizedText(activeIndex < _steps.length - 1
+                              ? 'পরের ধাপ'
+                              : 'পাঠ শেষ করি'),
+                          style: FilledButton.styleFrom(
+                              backgroundColor: AppTheme.primaryGreen))),
+                ]),
               ]),
-            ]),
+            ),
           ),
         );
       }),
@@ -507,72 +659,572 @@ class PrayerScreen extends StatelessWidget {
   }
 }
 
-class _PrayerTimesCard extends StatelessWidget {
-  const _PrayerTimesCard();
+class _SalahProgressCard extends StatelessWidget {
+  const _SalahProgressCard({
+    required this.isCompleted,
+    required this.currentStep,
+    required this.onStart,
+  });
+
+  final bool isCompleted;
+  final int currentStep;
+  final VoidCallback onStart;
+
+  @override
+  Widget build(BuildContext context) => Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+              color: isCompleted
+                  ? AppTheme.primaryGreen.withValues(alpha: 0.3)
+                  : const Color(0xFFE5E7EB),
+              width: 1.5),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 48,
+              height: 48,
+              decoration: BoxDecoration(
+                color: isCompleted
+                    ? const Color(0xFFDDF4E9)
+                    : const Color(0xFFE8E2FF),
+                borderRadius: BorderRadius.circular(14),
+              ),
+              child: Icon(
+                isCompleted
+                    ? Icons.check_circle_rounded
+                    : Icons.self_improvement_rounded,
+                color: isCompleted
+                    ? AppTheme.primaryGreen
+                    : const Color(0xFF8D79C7),
+                size: 26,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: isCompleted
+                              ? const Color(0xFFDDF4E9)
+                              : const Color(0xFFFFF0DB),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: LocalizedText(
+                          isCompleted
+                              ? 'সম্পন্ন ✓'
+                              : (currentStep > 0
+                                  ? 'ধাপ ${currentStep + 1}/৫ চলছে'
+                                  : 'নতুন পাঠ'),
+                          style: TextStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w800,
+                            color: isCompleted
+                                ? AppTheme.primaryGreen
+                                : const Color(0xFFE8913A),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                  LocalizedText(
+                    isCompleted
+                        ? 'মাশাআল্লাহ! ৫টি ধাপই সম্পন্ন হয়েছে।'
+                        : (currentStep > 0
+                            ? 'ধাপ ${currentStep + 1} থেকে অনুশীলন চালিয়ে যাও।'
+                            : 'ওজু থেকে সালাম পর্যন্ত ৫টি ধাপ ধাপে ধাপে শিখি।'),
+                    style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: AppTheme.darkText,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 8),
+            FilledButton.tonal(
+              onPressed: onStart,
+              style: FilledButton.styleFrom(
+                backgroundColor: isCompleted
+                    ? const Color(0xFFDDF4E9)
+                    : AppTheme.primaryGreen,
+                foregroundColor:
+                    isCompleted ? AppTheme.primaryGreen : Colors.white,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+              ),
+              child: LocalizedText(
+                isCompleted
+                    ? 'রিভিশন'
+                    : (currentStep > 0 ? 'চালিয়ে যাই' : 'শুরু করি'),
+                style: const TextStyle(fontWeight: FontWeight.w800),
+              ),
+            ),
+          ],
+        ),
+      );
+}
+
+class _PrayerTimesCard extends StatefulWidget {
+  const _PrayerTimesCard(
+      {this.repository, this.settingsStore, this.locationProvider});
+  final PrayerTimesRepository? repository;
+  final PrayerSettingsStore? settingsStore;
+  final PrayerDeviceLocationProvider? locationProvider;
+  @override
+  State<_PrayerTimesCard> createState() => _PrayerTimesCardState();
+}
+
+class _PrayerTimesCardState extends State<_PrayerTimesCard>
+    with WidgetsBindingObserver {
+  late final PrayerTimesRepository _repository =
+      widget.repository ?? AlAdhanPrayerTimesRepository();
+  late final PrayerSettingsStore _store =
+      widget.settingsStore ?? SharedPreferencesPrayerSettingsStore();
+  late final PrayerDeviceLocationProvider _location =
+      widget.locationProvider ?? GeolocatorPrayerDeviceLocationProvider();
+  PrayerCalculationSettings _settings = const PrayerCalculationSettings();
+  PrayerTimesResult? _result;
+  DateTime _date = PrayerDateTools.today();
+  bool _todayMode = true, _loading = false, _ready = false;
+  String? _error;
+  final _cityController = TextEditingController();
+  final _countryController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    _initialize();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    _cityController.dispose();
+    _countryController.dispose();
+    if (widget.repository == null &&
+        _repository is AlAdhanPrayerTimesRepository) {
+      _repository.dispose();
+    }
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed &&
+        _todayMode &&
+        _settings.location != null) {
+      _load();
+    }
+  }
+
+  Future<void> _initialize() async {
+    final saved = await _store.load();
+    if (!mounted) return;
+    setState(() {
+      _settings = saved;
+      _ready = true;
+    });
+    if (saved.location != null) {
+      _date = PrayerDateTools.today(timeZoneId: saved.location!.timeZoneId);
+      await _load();
+    }
+  }
+
+  Future<void> _load() async {
+    final location = _settings.location;
+    if (location == null) return;
+    setState(() {
+      _loading = true;
+      _error = null;
+      _result = null;
+    });
+    try {
+      var result = await _repository.calculate(
+          location: location,
+          date: _date,
+          methodId: _settings.methodId,
+          asrSchool: _settings.asrSchool);
+      final updatedLocation = location.withTimeZone(result.timeZoneId);
+      if (_todayMode &&
+          !PrayerDateTools.sameDate(
+              _date, PrayerDateTools.today(timeZoneId: result.timeZoneId))) {
+        _date = PrayerDateTools.today(timeZoneId: result.timeZoneId);
+        result = await _repository.calculate(
+            location: updatedLocation,
+            date: _date,
+            methodId: _settings.methodId,
+            asrSchool: _settings.asrSchool);
+      }
+      final updatedSettings = _settings.copyWith(location: updatedLocation);
+      await _store.save(updatedSettings);
+      if (mounted) {
+        setState(() {
+          _settings = updatedSettings;
+          _result = result;
+          _loading = false;
+        });
+      }
+    } catch (_) {
+      if (mounted) {
+        setState(() {
+          _loading = false;
+          _error =
+              'Prayer times could not load. Check your connection and try again.';
+        });
+      }
+    }
+  }
+
+  Future<void> _saveSettings(PrayerCalculationSettings next) async {
+    await _store.save(next);
+    if (!mounted) return;
+    setState(() {
+      _settings = next;
+      _date = _todayMode
+          ? PrayerDateTools.today(timeZoneId: next.location?.timeZoneId)
+          : _date;
+    });
+    if (next.location != null) await _load();
+  }
+
+  Future<void> _useDeviceLocation() async {
+    final accepted = await showDialog<bool>(
+        context: context,
+        builder: (context) => AlertDialog(
+              title: Text(context.uiText('Use your location?')),
+              content: Text(context.uiText(
+                  'Your location is used only to calculate prayer times and is sent to AlAdhan. You can enter a city instead.')),
+              actions: [
+                TextButton(
+                    onPressed: () => Navigator.pop(context, false),
+                    child: Text(context.uiText('Cancel'))),
+                FilledButton(
+                    onPressed: () => Navigator.pop(context, true),
+                    child: Text(context.uiText('Continue')))
+              ],
+            ));
+    if (accepted != true || !mounted) return;
+    setState(() {
+      _loading = true;
+      _error = null;
+    });
+    try {
+      final position = await _location.currentCoordinates();
+      final next = _settings.copyWith(
+          location: PrayerLocationSelection.device(
+              latitude: position.latitude, longitude: position.longitude));
+      await _saveSettings(next);
+    } on DeviceLocationException catch (error) {
+      final message = switch (error.failure) {
+        DeviceLocationFailure.serviceDisabled =>
+          'Turn on location services or enter a city.',
+        DeviceLocationFailure.denied =>
+          'Location permission was not allowed. You can enter a city instead.',
+        DeviceLocationFailure.deniedForever =>
+          'Location permission is blocked. Open app settings or enter a city.',
+        DeviceLocationFailure.unavailable =>
+          'Your location is unavailable. Try again or enter a city.',
+      };
+      if (mounted) {
+        setState(() {
+          _loading = false;
+          _error = message;
+        });
+      }
+    }
+  }
+
+  Future<void> _enterCity() async {
+    _cityController.text = _settings.location?.city ?? '';
+    _countryController.text = _settings.location?.country ?? '';
+    final values = await showDialog<(String, String)>(
+        context: context,
+        builder: (context) => AlertDialog(
+              title: Text(context.uiText('Enter a city')),
+              content: Column(mainAxisSize: MainAxisSize.min, children: [
+                TextField(
+                    controller: _cityController,
+                    decoration:
+                        InputDecoration(labelText: context.uiText('City'))),
+                TextField(
+                    controller: _countryController,
+                    decoration:
+                        InputDecoration(labelText: context.uiText('Country')))
+              ]),
+              actions: [
+                TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: Text(context.uiText('Cancel'))),
+                FilledButton(
+                    onPressed: () {
+                      if (_cityController.text.trim().isNotEmpty &&
+                          _countryController.text.trim().isNotEmpty) {
+                        Navigator.pop(context, (
+                          _cityController.text.trim(),
+                          _countryController.text.trim()
+                        ));
+                      }
+                    },
+                    child: Text(context.uiText('Save')))
+              ],
+            ));
+    if (values == null || !mounted) return;
+    _todayMode = true;
+    _date = PrayerDateTools.today();
+    await _saveSettings(_settings.copyWith(
+        location:
+            PrayerLocationSelection.city(city: values.$1, country: values.$2)));
+  }
+
+  String _methodLabel(int id) =>
+      const {
+        0: 'Shia Ithna-Ansari',
+        1: 'University of Islamic Sciences, Karachi',
+        2: 'Islamic Society of North America',
+        3: 'Muslim World League',
+        4: 'Umm Al-Qura University, Makkah',
+        5: 'Egyptian General Authority of Survey',
+        7: 'Institute of Geophysics, University of Tehran',
+        8: 'Gulf Region',
+        9: 'Kuwait',
+        10: 'Qatar',
+        11: 'Majlis Ugama Islam Singapura',
+        12: 'Union Organization Islamic de France',
+        13: 'Diyanet İşleri Başkanlığı, Turkey',
+        14: 'Spiritual Administration of Muslims of Russia',
+        15: 'Moonsighting Committee Worldwide',
+        16: 'Dubai',
+        17: 'Jabatan Kemajuan Islam Malaysia',
+        18: 'Tunisia',
+        19: 'Algeria',
+        20: 'KEMENAG',
+        21: 'Morocco',
+        22: 'Portugal',
+        23: 'Jordan'
+      }[id] ??
+      'Karachi';
+  Future<void> _settingsDialog() async {
+    var method = _settings.methodId, school = _settings.asrSchool;
+    await showDialog<void>(
+        context: context,
+        builder: (context) => StatefulBuilder(
+            builder: (context, update) => AlertDialog(
+                  title: Text(context.uiText('Calculation settings')),
+                  content: Column(mainAxisSize: MainAxisSize.min, children: [
+                    DropdownButtonFormField<int>(
+                        value: method,
+                        isExpanded: true,
+                        decoration: InputDecoration(
+                            labelText: context.uiText('Calculation method')),
+                        items: supportedPrayerMethodIds
+                            .map((id) => DropdownMenuItem(
+                                value: id,
+                                child: Text(_methodLabel(id),
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis)))
+                            .toList(),
+                        onChanged: (v) {
+                          if (v != null) update(() => method = v);
+                        }),
+                    DropdownButtonFormField<int>(
+                        value: school,
+                        decoration: InputDecoration(
+                            labelText: context.uiText('Asr method')),
+                        items: [
+                          DropdownMenuItem(
+                              value: 0,
+                              child: Text(context.uiText('Standard (Shafi)'))),
+                          DropdownMenuItem(
+                              value: 1, child: Text(context.uiText('Hanafi')))
+                        ],
+                        onChanged: (v) {
+                          if (v != null) update(() => school = v);
+                        })
+                  ]),
+                  actions: [
+                    TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: Text(context.uiText('Cancel'))),
+                    FilledButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                          _saveSettings(_settings.copyWith(
+                              methodId: method, asrSchool: school));
+                        },
+                        child: Text(context.uiText('Save')))
+                  ],
+                )));
+  }
+
+  Future<void> _changeDate(int amount) async {
+    final next = _date.add(Duration(days: amount));
+    setState(() {
+      _todayMode = PrayerDateTools.sameDate(next,
+          PrayerDateTools.today(timeZoneId: _settings.location?.timeZoneId));
+      _date = next;
+    });
+    await _load();
+  }
+
   @override
   Widget build(BuildContext context) => DuolingoCard(
-        accentColor: AppTheme.primaryGreen,
-        margin: EdgeInsets.zero,
-        padding: const EdgeInsets.all(17),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Row(children: [
-            Container(
-                width: 42,
-                height: 42,
-                decoration: BoxDecoration(
-                    color: const Color(0xFFE7F2E6),
-                    borderRadius: BorderRadius.circular(14)),
-                child: const Icon(Icons.location_on_rounded,
-                    color: AppTheme.primaryGreen)),
-            const SizedBox(width: 11),
-            const Expanded(
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                  LocalizedText('নামাজের সময়',
-                      style: TextStyle(
-                          color: AppTheme.darkText,
-                          fontWeight: FontWeight.w800,
-                          fontSize: 16)),
-                  SizedBox(height: 3),
-                  LocalizedText('শহর ও গণনা-পদ্ধতি সেটআপ বাকি',
-                      style: TextStyle(color: Colors.black54, fontSize: 11))
-                ])),
+      accentColor: AppTheme.primaryGreen,
+      margin: EdgeInsets.zero,
+      padding: const EdgeInsets.all(17),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Row(children: [
+          Container(
+              width: 42,
+              height: 42,
+              decoration: BoxDecoration(
+                  color: const Color(0xFFE7F2E6),
+                  borderRadius: BorderRadius.circular(14)),
+              child: const Icon(Icons.location_on_rounded,
+                  color: AppTheme.primaryGreen)),
+          const SizedBox(width: 11),
+          Expanded(
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                Text(context.uiText('Prayer times'),
+                    style: const TextStyle(
+                        color: AppTheme.darkText,
+                        fontWeight: FontWeight.w800,
+                        fontSize: 16)),
+                Text(
+                    _settings.location == null
+                        ? context.uiText('Choose a location')
+                        : _settings.location!.kind == PrayerLocationKind.device
+                            ? context.uiText(
+                                'Device location ({latitude}, {longitude})'
+                                    .replaceAll(
+                                        '{latitude}',
+                                        _settings.location!.latitude!
+                                            .toStringAsFixed(3))
+                                    .replaceAll(
+                                        '{longitude}',
+                                        _settings.location!.longitude!
+                                            .toStringAsFixed(3)))
+                            : _settings.location!.displayName,
+                    style: const TextStyle(color: Colors.black54, fontSize: 11))
+              ])),
+          IconButton(
+              tooltip: context.uiText('Calculation settings'),
+              onPressed: _settingsDialog,
+              icon: const Icon(Icons.tune_rounded))
+        ]),
+        Wrap(spacing: 4, children: [
+          TextButton.icon(
+              onPressed: _useDeviceLocation,
+              icon: const Icon(Icons.my_location),
+              label: Text(context.uiText('Use device location'))),
+          TextButton.icon(
+              onPressed: _enterCity,
+              icon: const Icon(Icons.location_city),
+              label: Text(context.uiText('Enter city')))
+        ]),
+        if (_settings.location != null) ...[
+          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+            IconButton(
+                onPressed: () => _changeDate(-1),
+                icon: const Icon(Icons.chevron_left)),
+            Text(context.uiText(
+                '${_date.year}-${_date.month.toString().padLeft(2, '0')}-${_date.day.toString().padLeft(2, '0')}')),
+            IconButton(
+                onPressed: () => _changeDate(1),
+                icon: const Icon(Icons.chevron_right)),
             TextButton(
-                onPressed: () => _showSetupNotice(context),
-                child: const LocalizedText('সেটআপ'))
+                onPressed: () {
+                  _todayMode = true;
+                  _date = PrayerDateTools.today(
+                      timeZoneId: _settings.location?.timeZoneId);
+                  _load();
+                },
+                child: Text(context.uiText('Today')))
           ]),
-          const SizedBox(height: 10),
-          const Divider(height: 1, color: Color(0xFFECEDE7)),
-          const SizedBox(height: 12),
+          Text(
+              '${context.uiText('Method')}: ${_methodLabel(_settings.methodId)} · ${_settings.asrSchool == 1 ? context.uiText('Hanafi') : context.uiText('Standard (Shafi)')}',
+              style: const TextStyle(fontSize: 11, color: Colors.black54)),
+        ],
+        const Divider(),
+        if (_loading || !_ready)
+          const Center(
+              child: Padding(
+                  padding: EdgeInsets.all(16),
+                  child: CircularProgressIndicator()))
+        else if (_error != null)
+          Column(children: [
+            Text(context.uiText(_error!), textAlign: TextAlign.center),
+            TextButton.icon(
+                onPressed: _load,
+                icon: const Icon(Icons.refresh),
+                label: Text(context.uiText('Retry'))),
+            if (_error!.contains('blocked'))
+              TextButton(
+                  onPressed: _location.openAppSettings,
+                  child: Text(context.uiText('Open app settings')))
+          ])
+        else if (_settings.location == null)
+          Text(
+              context.uiText(
+                  'Choose a city or use your location to see prayer times.'),
+              style: const TextStyle(color: Colors.black54))
+        else if (_result != null) ...[
           Wrap(spacing: 8, runSpacing: 8, children: [
             for (final prayer in PrayerScreen._prayers)
               _PrayerTimeChip(
-                  name: prayer.$1, arabic: prayer.$2, icon: prayer.$3)
+                  name: prayer.$1,
+                  arabic: prayer.$2,
+                  icon: prayer.$3,
+                  times: _result!.times)
           ]),
-          const SizedBox(height: 11),
-          const LocalizedText(
-              'সময় দেখানোর আগে সঠিক শহর ও হিসাব-পদ্ধতি নির্বাচন করতে হবে।',
-              style:
-                  TextStyle(color: Colors.black45, fontSize: 10, height: 1.5)),
-        ]),
-      );
-
-  void _showSetupNotice(BuildContext context) {
-    ScaffoldMessenger.of(context)
-      ..hideCurrentSnackBar()
-      ..showSnackBar(const SnackBar(
-          content:
-              LocalizedText('লোকেশন ও নামাজের হিসাব-পদ্ধতি সেটআপ পরের ধাপে যোগ হবে।'),
-          behavior: SnackBarBehavior.floating));
-  }
+          const SizedBox(height: 10),
+          Row(children: [
+            const Icon(Icons.wb_sunny_outlined,
+                size: 18, color: AppTheme.secondaryGold),
+            const SizedBox(width: 6),
+            Text(
+                '${context.uiText('Sunrise (reference only, not a prayer)')}: ${_formatPrayerTime(_result!.times['Sunrise'])}')
+          ]),
+        ],
+      ]));
 }
+
+String _formatPrayerTime(DateTime? time) => time == null
+    ? '--:--'
+    : '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}';
 
 class _PrayerTimeChip extends StatelessWidget {
   const _PrayerTimeChip(
-      {required this.name, required this.arabic, required this.icon});
+      {required this.name,
+      required this.arabic,
+      required this.icon,
+      this.times = const {}});
   final String name, arabic;
   final IconData icon;
+  final Map<String, DateTime> times;
+  String get _key =>
+      const {
+        'ফজর': 'Fajr',
+        'যোহর': 'Dhuhr',
+        'আসর': 'Asr',
+        'মাগরিব': 'Maghrib',
+        'ইশা': 'Isha'
+      }[name] ??
+      name;
   @override
   Widget build(BuildContext context) => Container(
         width: 105,
@@ -593,8 +1245,11 @@ class _PrayerTimeChip extends StatelessWidget {
               style:
                   const TextStyle(color: AppTheme.primaryGreen, fontSize: 11)),
           const SizedBox(height: 4),
-          const LocalizedText('--:--',
-              style: TextStyle(
+          Text(
+              times[_key] == null
+                  ? '--:--'
+                  : '${times[_key]!.hour.toString().padLeft(2, '0')}:${times[_key]!.minute.toString().padLeft(2, '0')}',
+              style: const TextStyle(
                   color: Colors.black38,
                   fontWeight: FontWeight.w700,
                   fontSize: 12))

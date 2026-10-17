@@ -31,6 +31,8 @@ class AppState extends ChangeNotifier {
   final Map<String, int> _quizResults = {};
   final Map<String, int> _basicsProgress = {};
   final Set<String> _quranBookmarks = {};
+  int _salahStep = 0;
+  final Map<String, int> _seerahProgress = {};
   QuranReadingPosition? _quranReadingPosition;
   Future<void> _progressSaveQueue = Future<void>.value();
   Future<void> _quranSaveQueue = Future<void>.value();
@@ -88,6 +90,34 @@ class AppState extends ChangeNotifier {
   bool isDuaFavorite(String duaId) => _duaFavorites.contains(duaId);
   int? quizResult(String id) => _quizResults[id];
   int basicsProgress(String chapterId) => _basicsProgress[chapterId] ?? 0;
+  int get salahStep => _salahStep;
+  bool get isSalahCompleted => hasCompletedLesson('salah_guide');
+  int seerahProgress(String storyId) => _seerahProgress[storyId] ?? 0;
+
+  Future<void> saveSalahStep(int step) async {
+    if (step < 0 || step > 4) return;
+    _salahStep = step;
+    notifyListeners();
+    await _saveProgress();
+  }
+
+  Future<bool> completeSalahLesson({int xp = 15}) async {
+    final earned = await completeLesson('salah_guide', xp: xp);
+    return earned;
+  }
+
+  Future<void> resetSalahProgress() async {
+    _salahStep = 0;
+    notifyListeners();
+    await _saveProgress();
+  }
+
+  Future<void> saveSeerahProgress(String storyId, int step) async {
+    if (storyId.isEmpty || step < 0) return;
+    _seerahProgress[storyId] = step;
+    notifyListeners();
+    await _saveProgress();
+  }
 
   Future<void> toggleDuaFavorite(String duaId) async {
     if (duaId.isEmpty) return;
@@ -155,6 +185,13 @@ class AppState extends ChangeNotifier {
     _basicsProgress
       ..clear()
       ..addAll(_readIntMap(savedProgress?['basicsProgress']));
+    final salahVal = savedProgress?['salahStep'];
+    _salahStep = (salahVal is int && salahVal >= 0 && salahVal <= 4)
+        ? salahVal
+        : (prefs.getInt('salah_step') ?? 0).clamp(0, 4);
+    _seerahProgress
+      ..clear()
+      ..addAll(_readIntMap(savedProgress?['seerahProgress']));
     _quranBookmarks
       ..clear()
       ..addAll(prefs.getStringList('quran_bookmarks') ?? const []);
@@ -199,6 +236,8 @@ class AppState extends ChangeNotifier {
       'duaFavorites': _duaFavorites.toList(),
       'quizResults': _quizResults,
       'basicsProgress': _basicsProgress,
+      'salahStep': _salahStep,
+      'seerahProgress': _seerahProgress,
     });
     final save = _progressSaveQueue.catchError((_) {}).then((_) async {
       final prefs = await SharedPreferences.getInstance();
@@ -486,6 +525,8 @@ class AppState extends ChangeNotifier {
     _qaidaLessonSteps.clear();
     _quranBookmarks.clear();
     _quranReadingPosition = null;
+    _salahStep = 0;
+    _seerahProgress.clear();
     draftName = '';
     draftAge = 8;
     draftLanguage = 'bn';

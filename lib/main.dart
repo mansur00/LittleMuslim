@@ -43,10 +43,10 @@ class LittleMuslimApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final appState = context.watch<AppState>();
-    final language = appState.hasCompletedOnboarding
-        ? appState.selectedLanguage
-        : appState.draftLanguage;
+    final language = context.select<AppState, String>((appState) =>
+        appState.hasCompletedOnboarding
+            ? appState.selectedLanguage
+            : appState.draftLanguage);
     return MaterialApp(
       title: 'LittleMuslim',
       debugShowCheckedModeBanner: false,
@@ -69,10 +69,12 @@ class _AppEntryPoint extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final appState = context.watch<AppState>();
+    final (isLoaded, hasCompletedOnboarding) =
+        context.select<AppState, (bool, bool)>(
+            (appState) => (appState.isLoaded, appState.hasCompletedOnboarding));
 
     // Wait until SharedPreferences have been read to avoid flashing onboarding
-    if (!appState.isLoaded) {
+    if (!isLoaded) {
       return const Scaffold(
         backgroundColor: AppTheme.cream,
         body: Center(
@@ -83,7 +85,7 @@ class _AppEntryPoint extends StatelessWidget {
       );
     }
 
-    if (appState.hasCompletedOnboarding) {
+    if (hasCompletedOnboarding) {
       return const HomeScreen();
     } else {
       return const OnboardingScreen();

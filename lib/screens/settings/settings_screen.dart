@@ -335,7 +335,7 @@ class _SettingsSection extends StatelessWidget {
                   fontWeight: FontWeight.w900,
                   fontSize: 16)),
           const SizedBox(height: 8),
-          child,
+          Material(type: MaterialType.transparency, child: child),
         ]),
       );
 }

@@ -28,6 +28,8 @@
 	<true/>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>আরবি অক্ষরের উচ্চারণ অনুশীলনের জন্য মাইক্রোফোন ব্যবহার করা হয়।</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>তুমি যখন চাইবে, তোমার অবস্থান দিয়ে নামাজের সময় হিসাব করা হবে। শহরের নাম লিখেও সময় দেখতে পারো।</string>
 	<key>NSSpeechRecognitionUsageDescription</key>
 	<string>তোমার বলা আরবি অক্ষরটি চিনে অনুশীলনে সাহায্য করার জন্য speech recognition ব্যবহার করা হয়।</string>
 	<key>UIApplicationSceneManifest</key>

@@ -14,11 +14,15 @@ class AppLocalizations {
 
   String translate(String source) {
     var value = translations[source] ?? _translateTemplate(source) ?? source;
+    const banglaDigits = '০১২৩৪৫৬৭৮৯';
+    const englishDigits = '0123456789';
     if (locale.languageCode == 'en') {
-      const banglaDigits = '০১২৩৪৫৬৭৮৯';
-      const englishDigits = '0123456789';
       for (var i = 0; i < banglaDigits.length; i++) {
         value = value.replaceAll(banglaDigits[i], englishDigits[i]);
+      }
+    } else {
+      for (var i = 0; i < englishDigits.length; i++) {
+        value = value.replaceAll(englishDigits[i], banglaDigits[i]);
       }
     }
     return value;
@@ -79,7 +83,7 @@ class AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
   }
 
   @override
-  bool shouldReload(AppLocalizationsDelegate old) => true;
+  bool shouldReload(AppLocalizationsDelegate old) => false;
 }
 
 extension LocalizedBuildContext on BuildContext {

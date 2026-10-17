@@ -30,10 +30,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final appState = context.watch<AppState>();
     final size = MediaQuery.sizeOf(context);
     final isTablet = size.shortestSide >= 600;
-    final name = appState.userName.isNotEmpty ? appState.userName : 'বন্ধু';
 
     return Scaffold(
       backgroundColor: const Color(0xFFFBF8F2),
@@ -48,10 +46,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 isTablet ? 36 : 18,
                 10,
               ),
-              child: _TopBar(
-                name: name,
-                xp: appState.xp,
-                streakDays: appState.streakDays,
+              child: _HomeTopBar(
                 isTablet: isTablet,
                 onSettings: () => Navigator.of(context).push(
                   MaterialPageRoute<void>(
@@ -65,7 +60,10 @@ class _HomeScreenState extends State<HomeScreen> {
               child: IndexedStack(
                 index: _currentTabIndex,
                 children: [
-                  _HomePathTab(isTablet: isTablet),
+                  _HomePathTab(
+                    isTablet: isTablet,
+                    isActive: _currentTabIndex == 0,
+                  ),
                   _HomeModulesTab(isTablet: isTablet),
                   const DailyMissionsScreen(),
                   const AchievementsScreen(),
@@ -84,17 +82,43 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-/// The Main Learning Path tab (Duolingo-style roadmap & interactive journey)
-class _HomePathTab extends StatelessWidget {
-  const _HomePathTab({required this.isTablet});
+class _HomeTopBar extends StatelessWidget {
+  const _HomeTopBar({required this.isTablet, required this.onSettings});
+
   final bool isTablet;
+  final VoidCallback onSettings;
 
   @override
   Widget build(BuildContext context) {
-    final appState = context.watch<AppState>();
+    final (userName, xp, streakDays) =
+        context.select<AppState, (String, int, int)>(
+            (state) => (state.userName, state.xp, state.streakDays));
+    return _TopBar(
+      name: userName.isNotEmpty ? userName : 'বন্ধু',
+      xp: xp,
+      streakDays: streakDays,
+      isTablet: isTablet,
+      onSettings: onSettings,
+    );
+  }
+}
+
+/// The Main Learning Path tab (Duolingo-style roadmap & interactive journey)
+class _HomePathTab extends StatelessWidget {
+  const _HomePathTab({required this.isTablet, required this.isActive});
+  final bool isTablet;
+  final bool isActive;
+
+  @override
+  Widget build(BuildContext context) {
     const lessons = qaidaLetters;
-    final letterProgress =
-        lessons.where((l) => appState.hasCompletedLesson(l.id)).length;
+    final (
+      todayQaidaLessons,
+      letterProgress
+    ) = context.select<AppState, (int, int)>((state) => (
+          state.todayQaidaLessons,
+          lessons.where((lesson) => state.hasCompletedLesson(lesson.id)).length,
+        ));
 
     return CustomScrollView(
       physics: const BouncingScrollPhysics(),
@@ -113,10 +137,10 @@ class _HomePathTab extends StatelessWidget {
                 // Cheerful mascot speech banner (Noor encouraging the child)
                 MascotSpeechBanner(
                   title: 'নুর বলছে',
-                  message: appState.todayQaidaLessons > 0
+                  message: todayQaidaLessons > 0
                       ? 'মাশাআল্লাহ! আজকের মিশন সম্পূর্ণ করেছ।'
                       : 'আসসালামু আলাইকুম! চলো আজ নতুন পাঠ শিখি!',
-                  mood: appState.todayQaidaLessons > 0
+                  mood: todayQaidaLessons > 0
                       ? MascotMood.celebrating
                       : MascotMood.waving,
                   mascotSize: isTablet ? 72 : 60,
@@ -250,7 +274,7 @@ class _HomePathTab extends StatelessWidget {
 
         // The flagship vertical Duolingo serpentine winding path
         SliverToBoxAdapter(
-          child: DuolingoPathView(isTablet: isTablet),
+          child: DuolingoPathView(isTablet: isTablet, isActive: isActive),
         ),
 
         // Explore Modules Section below the road

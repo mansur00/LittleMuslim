@@ -213,7 +213,9 @@ class _QuranReaderScreenState extends State<QuranReaderScreen>
 
   @override
   Widget build(BuildContext context) {
-    final appState = context.watch<AppState>();
+    final appState = context.read<AppState>();
+    final bookmarks =
+        context.select<AppState, Set<String>>((state) => state.quranBookmarks);
     final tablet = MediaQuery.sizeOf(context).shortestSide >= 600;
     return PopScope<void>(
       canPop: _allowPop,
@@ -231,8 +233,8 @@ class _QuranReaderScreenState extends State<QuranReaderScreen>
                   padding: EdgeInsets.fromLTRB(
                       tablet ? 36 : 18, 10, tablet ? 36 : 18, 8),
                   child: _ReaderToolbar(
-                    bookmarked: appState.isQuranAyahBookmarked(
-                        _surah.number, _currentAyah),
+                    bookmarked:
+                        bookmarks.contains('${_surah.number}:$_currentAyah'),
                     onBack: _leaveReader,
                     onBookmark: () => unawaited(appState.toggleQuranBookmark(
                         _surah.number, _currentAyah)),

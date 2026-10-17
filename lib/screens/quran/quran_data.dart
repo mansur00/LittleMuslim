@@ -49,6 +49,55 @@ class QuranSurahContent {
   final List<QuranAyah> ayahs;
 }
 
+class QuranJuz {
+  const QuranJuz({
+    required this.number,
+    required this.arabicName,
+    required this.startSurahNumber,
+    required this.startSurahName,
+    required this.startAyahNumber,
+  });
+
+  final int number;
+  final String arabicName;
+  final int startSurahNumber;
+  final String startSurahName;
+  final int startAyahNumber;
+}
+
+const List<QuranJuz> quranJuzList = [
+  QuranJuz(number: 1, arabicName: 'الم', startSurahNumber: 1, startSurahName: 'Al-Fatiha', startAyahNumber: 1),
+  QuranJuz(number: 2, arabicName: 'سَيَقُولُ', startSurahNumber: 2, startSurahName: 'Al-Baqarah', startAyahNumber: 142),
+  QuranJuz(number: 3, arabicName: 'تِلْكَ الرُّسُلُ', startSurahNumber: 2, startSurahName: 'Al-Baqarah', startAyahNumber: 253),
+  QuranJuz(number: 4, arabicName: 'كُلُّ الطَّعَامِ', startSurahNumber: 3, startSurahName: 'Ali \'Imran', startAyahNumber: 93),
+  QuranJuz(number: 5, arabicName: 'وَالْمُحْصَنَاتُ', startSurahNumber: 4, startSurahName: 'An-Nisa', startAyahNumber: 24),
+  QuranJuz(number: 6, arabicName: 'لَا يُحِبُّ اللَّهُ', startSurahNumber: 4, startSurahName: 'An-Nisa', startAyahNumber: 148),
+  QuranJuz(number: 7, arabicName: 'وَإِذَا سَمِعُوا', startSurahNumber: 5, startSurahName: 'Al-Ma\'idah', startAyahNumber: 82),
+  QuranJuz(number: 8, arabicName: 'وَلَوْ أَنَّنَا', startSurahNumber: 6, startSurahName: 'Al-An\'am', startAyahNumber: 111),
+  QuranJuz(number: 9, arabicName: 'قَالَ الْمَلَأُ', startSurahNumber: 7, startSurahName: 'Al-A\'raf', startAyahNumber: 88),
+  QuranJuz(number: 10, arabicName: 'وَاعْلَمُوا', startSurahNumber: 8, startSurahName: 'Al-Anfal', startAyahNumber: 41),
+  QuranJuz(number: 11, arabicName: 'يَعْتَذِرُونَ', startSurahNumber: 9, startSurahName: 'At-Tawbah', startAyahNumber: 93),
+  QuranJuz(number: 12, arabicName: 'وَمَا مِنْ دَابَّةٍ', startSurahNumber: 11, startSurahName: 'Hud', startAyahNumber: 6),
+  QuranJuz(number: 13, arabicName: 'وَمَا أُبَرِّئُ', startSurahNumber: 12, startSurahName: 'Yusuf', startAyahNumber: 53),
+  QuranJuz(number: 14, arabicName: 'رُبَمَا', startSurahNumber: 15, startSurahName: 'Al-Hijr', startAyahNumber: 1),
+  QuranJuz(number: 15, arabicName: 'سُبْحَانَ الَّذِي', startSurahNumber: 17, startSurahName: 'Al-Isra', startAyahNumber: 1),
+  QuranJuz(number: 16, arabicName: 'قَالَ أَلَمْ', startSurahNumber: 18, startSurahName: 'Al-Kahf', startAyahNumber: 75),
+  QuranJuz(number: 17, arabicName: 'اقْتَرَبَ لِلنَّاسِ', startSurahNumber: 21, startSurahName: 'Al-Anbiya', startAyahNumber: 1),
+  QuranJuz(number: 18, arabicName: 'قَدْ أَفْلَحَ', startSurahNumber: 23, startSurahName: 'Al-Mu\'minun', startAyahNumber: 1),
+  QuranJuz(number: 19, arabicName: 'وَقَالَ الَّذِينَ', startSurahNumber: 25, startSurahName: 'Al-Furqan', startAyahNumber: 21),
+  QuranJuz(number: 20, arabicName: 'فَمَا كَانَ', startSurahNumber: 27, startSurahName: 'An-Naml', startAyahNumber: 56),
+  QuranJuz(number: 21, arabicName: 'وَلَا تُجَادِلُوا', startSurahNumber: 29, startSurahName: 'Al-\'Ankabut', startAyahNumber: 46),
+  QuranJuz(number: 22, arabicName: 'وَمَنْ يَقْنُتْ', startSurahNumber: 33, startSurahName: 'Al-Ahzab', startAyahNumber: 31),
+  QuranJuz(number: 23, arabicName: 'وَمَا أَنْزَلْنَا', startSurahNumber: 36, startSurahName: 'Ya-Sin', startAyahNumber: 28),
+  QuranJuz(number: 24, arabicName: 'فَمَنْ أَظْلَمُ', startSurahNumber: 39, startSurahName: 'Az-Zumar', startAyahNumber: 32),
+  QuranJuz(number: 25, arabicName: 'إِلَيْهِ يُرَدُّ', startSurahNumber: 41, startSurahName: 'Fussilat', startAyahNumber: 47),
+  QuranJuz(number: 26, arabicName: 'حم', startSurahNumber: 46, startSurahName: 'Al-Ahqaf', startAyahNumber: 1),
+  QuranJuz(number: 27, arabicName: 'قَالَ فَمَا خَطْبُكُمْ', startSurahNumber: 51, startSurahName: 'Adh-Dhariyat', startAyahNumber: 31),
+  QuranJuz(number: 28, arabicName: 'قَدْ سَمِعَ اللَّهُ', startSurahNumber: 58, startSurahName: 'Al-Mujadila', startAyahNumber: 1),
+  QuranJuz(number: 29, arabicName: 'تَبَارَكَ الَّذِي', startSurahNumber: 67, startSurahName: 'Al-Mulk', startAyahNumber: 1),
+  QuranJuz(number: 30, arabicName: 'عَمَّ', startSurahNumber: 78, startSurahName: 'An-Naba', startAyahNumber: 1),
+];
+
 abstract interface class QuranRepository {
   Future<List<QuranSurah>> getSurahs();
   Future<QuranSurahContent> getSurah(QuranSurah surah);

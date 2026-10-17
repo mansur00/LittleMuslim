@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../l10n/app_localizations.dart';
 import 'vector_icons.dart';
 
 /// Shared Duolingo-style page header used on every inner screen.
@@ -136,14 +137,14 @@ class DuolingoPageHeader extends StatelessWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(title,
+                              LocalizedText(title,
                                   style: const TextStyle(
                                       color: Colors.white,
                                       fontSize: 20,
                                       fontWeight: FontWeight.w900,
                                       height: 1.2)),
                               const SizedBox(height: 3),
-                              Text(subtitle,
+                              LocalizedText(subtitle,
                                   style: TextStyle(
                                       color:
                                           Colors.white.withValues(alpha: 0.85),
@@ -197,7 +198,7 @@ class DuolingoSectionLabel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(children: [
       Expanded(
-          child: Text(label,
+          child: LocalizedText(label,
               style: const TextStyle(
                   color: Color(0xFF1A3C34),
                   fontSize: 17,
@@ -208,7 +209,7 @@ class DuolingoSectionLabel extends StatelessWidget {
           decoration: BoxDecoration(
               color: badgeColor ?? const Color(0xFFE8F8D8),
               borderRadius: BorderRadius.circular(12)),
-          child: Text(badgeText!,
+          child: LocalizedText(badgeText!,
               style: TextStyle(
                   color: badgeTextColor ?? const Color(0xFF58A700),
                   fontSize: 11,
@@ -315,7 +316,7 @@ class _CategoryPillState extends State<_CategoryPill> {
             ),
           ],
         ),
-        child: Text(
+        child: LocalizedText(
           widget.label,
           style: TextStyle(
             color: widget.isActive ? Colors.white : const Color(0xFF6B7280),

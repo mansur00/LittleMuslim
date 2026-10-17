@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import '../l10n/app_localizations.dart';
 
 enum MascotMood {
   happy,
@@ -186,8 +187,10 @@ class _MascotPainter extends CustomPainter {
     // 4. Ears
     canvas.drawCircle(Offset(s * 0.18, s * 0.48), s * 0.09, handPaint);
     canvas.drawCircle(Offset(s * 0.82, s * 0.48), s * 0.09, handPaint);
-    canvas.drawCircle(Offset(s * 0.18, s * 0.48), s * 0.05, Paint()..color = skinShadow);
-    canvas.drawCircle(Offset(s * 0.82, s * 0.48), s * 0.05, Paint()..color = skinShadow);
+    canvas.drawCircle(
+        Offset(s * 0.18, s * 0.48), s * 0.05, Paint()..color = skinShadow);
+    canvas.drawCircle(
+        Offset(s * 0.82, s * 0.48), s * 0.05, Paint()..color = skinShadow);
 
     // 5. Head / Round face
     final headRect = Rect.fromCenter(
@@ -382,10 +385,10 @@ class _MascotPainter extends CustomPainter {
   }
 
   void _drawMiniCrescent(Canvas canvas, Offset c, double r, Color col) {
-    final path = Path()
-      ..addOval(Rect.fromCircle(center: c, radius: r));
+    final path = Path()..addOval(Rect.fromCircle(center: c, radius: r));
     final cut = Path()
-      ..addOval(Rect.fromCircle(center: Offset(c.dx + r * 0.35, c.dy - r * 0.2), radius: r * 0.8));
+      ..addOval(Rect.fromCircle(
+          center: Offset(c.dx + r * 0.35, c.dy - r * 0.2), radius: r * 0.8));
     final crescent = Path.combine(PathOperation.difference, path, cut);
     canvas.drawPath(crescent, Paint()..color = col);
   }
@@ -397,7 +400,8 @@ class _MascotPainter extends CustomPainter {
       final a = i * math.pi / 2;
       final a2 = a + math.pi / 4;
       final p1 = Offset(c.dx + r * math.cos(a), c.dy + r * math.sin(a));
-      final p2 = Offset(c.dx + r * 0.3 * math.cos(a2), c.dy + r * 0.3 * math.sin(a2));
+      final p2 =
+          Offset(c.dx + r * 0.3 * math.cos(a2), c.dy + r * 0.3 * math.sin(a2));
       if (i == 0) {
         path.moveTo(p1.dx, p1.dy);
       } else {
@@ -458,12 +462,13 @@ class MascotSpeechBanner extends StatelessWidget {
                 Row(
                   children: [
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 3),
                       decoration: BoxDecoration(
                         color: const Color(0xFF0D7377),
                         borderRadius: BorderRadius.circular(10),
                       ),
-                      child: Text(
+                      child: LocalizedText(
                         title,
                         style: const TextStyle(
                           fontSize: 11,
@@ -475,7 +480,7 @@ class MascotSpeechBanner extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 6),
-                Text(
+                LocalizedText(
                   message,
                   style: const TextStyle(
                     fontSize: 13,

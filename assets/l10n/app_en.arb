@@ -1,41 +1,5 @@
 {
   "@@locale": "en",
-  "appLanguage": "App language",
-  "@appLanguage": {
-    "description": "অ্যাপের ভাষা"
-  },
-  "chooseLanguage": "Choose a language",
-  "@chooseLanguage": {
-    "description": "ভাষা বেছে নাও"
-  },
-  "languageInstruction": "Choose the app language. You can change it later.",
-  "@languageInstruction": {
-    "description": "অ্যাপের ভাষা নির্বাচন করো। পরে পরিবর্তন করা যাবে।"
-  },
-  "homePath": "Your learning path",
-  "@homePath": {
-    "description": "তোমার শেখার পথ"
-  },
-  "tapNode": "Tap a step to learn",
-  "@tapNode": {
-    "description": "প্রতিটি নোডে ট্যাপ করে শেখো"
-  },
-  "greeting": "Assalamu alaikum",
-  "@greeting": {
-    "description": "আসসালামু আলাইকুম"
-  },
-  "teacherHome": "Learn Quran and Islam with a teacher",
-  "@teacherHome": {
-    "description": "শিক্ষকের সাথে কুরআন ও ইসলাম শিখি"
-  },
-  "monthlyLive": "Live classes in a monthly plan",
-  "@monthlyLive": {
-    "description": "মাসিক পরিকল্পনায় সরাসরি live class"
-  },
-  "classPlan": "View classes and plans  ›",
-  "@classPlan": {
-    "description": "ক্লাস ও পরিকল্পনা দেখো  ›"
-  },
   "learnWithTeacher": "Learn with a teacher",
   "@learnWithTeacher": {
     "description": "শিক্ষকের সাথে শিখি"
@@ -43,10 +7,6 @@
   "classDetailsHeading": "Your classes",
   "@classDetailsHeading": {
     "description": "তোমার ক্লাস"
-  },
-  "teacherClassInfo": "Class details from your teacher will appear here.",
-  "@teacherClassInfo": {
-    "description": "শিক্ষকের দেওয়া ক্লাসের তথ্য এখানে দেখবে।"
   },
   "noSchedule": "There are no classes scheduled yet.",
   "@noSchedule": {
@@ -59,10 +19,6 @@
   "scheduleUnavailable": "Could not load class information.",
   "@scheduleUnavailable": {
     "description": "ক্লাসের তথ্য আনা যায়নি।"
-  },
-  "tryAgain": "Try again",
-  "@tryAgain": {
-    "description": "আবার চেষ্টা"
   },
   "gettingClassInfo": "Loading class information…",
   "@gettingClassInfo": {
@@ -140,65 +96,17 @@
   "@unsafeMeetingLink": {
     "description": "নিরাপদ HTTPS মিটিং লিংক না থাকায় যোগ দেওয়া যাবে না।"
   },
-  "meetingLaunchFailed": "Could not open the meeting link. Ask a grown-up for help.",
-  "@meetingLaunchFailed": {
-    "description": "মিটিং লিংক খুলতে পারিনি। অভিভাবকের সাহায্য নাও।"
-  },
   "copyLink": "Copy link",
   "@copyLink": {
     "description": "লিংক কপি"
-  },
-  "classDetailsAction": "View details  ›",
-  "@classDetailsAction": {
-    "description": "বিস্তারিত দেখো  ›"
-  },
-  "scheduleNote": "Class times and links must come from your teacher or school.",
-  "@scheduleNote": {
-    "description": "ক্লাসের সময়সূচি ও লিংক শিক্ষক/প্রতিষ্ঠানের কাছ থেকে আসতে হবে।"
   },
   "joinHelp": "If you have trouble joining, ask a grown-up. Attendance and class materials are not available in the app yet.",
   "@joinHelp": {
     "description": "ক্লাসে যোগ দিতে সমস্যা হলে অভিভাবককে বলো. ক্লাসের উপস্থিতি ও উপকরণ এখন অ্যাপে সংযুক্ত নেই."
   },
-  "languageTitle": "Language",
-  "@languageTitle": {
-    "description": "ভাষা"
-  },
-  "noFavoriteDuas": "You have no favorite duas yet.",
-  "@noFavoriteDuas": {
-    "description": "এখনো কোনো পছন্দের দোয়া নেই।"
-  },
-  "favoriteAdded": "Added to favorites.",
-  "@favoriteAdded": {
-    "description": "পছন্দে রাখা হয়েছে।"
-  },
-  "favoriteRemoved": "Removed from favorites.",
-  "@favoriteRemoved": {
-    "description": "পছন্দ থেকে সরানো হয়েছে।"
-  },
-  "copyDuaDone": "Dua copied.",
-  "@copyDuaDone": {
-    "description": "দোয়াটি কপি হয়েছে।"
-  },
-  "audioUnavailable": "Audio unavailable",
-  "@audioUnavailable": {
-    "description": "অডিও নেই"
-  },
   "learningPath": "Learning path",
   "@learningPath": {
     "description": "শেখার পথ"
-  },
-  "continueReading": "Continue reading",
-  "@continueReading": {
-    "description": "পড়া চালিয়ে যাও"
-  },
-  "quranReading": "Spend time with the Quran",
-  "@quranReading": {
-    "description": "কুরআনের সাথে সময় কাটাই"
-  },
-  "noSurahs": "No surahs are available right now.",
-  "@noSurahs": {
-    "description": "এখন কোনো সূরা পাওয়া যায়নি।"
   },
   "surahListError": "Could not load the surah list. Check your internet and try again.",
   "@surahListError": {
@@ -216,22 +124,6 @@
   "@retrySurahList": {
     "description": "সূরা লোড হলে আবার চেষ্টা করো"
   },
-  "basicsComplete": "Chapter complete!",
-  "@basicsComplete": {
-    "description": "অধ্যায় সম্পন্ন!"
-  },
-  "continueOn": "Continue",
-  "@continueOn": {
-    "description": "চালিয়ে যাই"
-  },
-  "simpleExplanation": "Let's learn the basics",
-  "@simpleExplanation": {
-    "description": "সহজ করে জানি"
-  },
-  "shortStory": "A short story",
-  "@shortStory": {
-    "description": "একটি ছোট্ট গল্প"
-  },
   "lessonComplete": "You finished this lesson and earned +10 XP!",
   "@lessonComplete": {
     "description": "এই পাঠ শেষ করে +১০ XP পেয়েছ!"
@@ -248,37 +140,9 @@
   "@tryAgainPrompt": {
     "description": "আবার চেষ্টা করো। বড় হরফটি দেখে ধীরে ভাবো—তুমি পারবে!"
   },
-  "readyName": "You are ready, {name}!",
-  "@readyName": {
-    "description": "তুমি প্রস্তুত, {name}!"
-  },
-  "chapterNumber": "Chapter {number}",
-  "@chapterNumber": {
-    "description": "অধ্যায় {number}"
-  },
-  "ageYears": "{age} years old",
-  "@ageYears": {
-    "description": "{age} বছর"
-  },
-  "questionNumber": "Question {number} / 10",
-  "@questionNumber": {
-    "description": "প্রশ্ন {number} / ১০"
-  },
-  "duaHabit": "A little habit for today",
-  "@duaHabit": {
-    "description": "আজকের ছোট্ট অভ্যাস"
-  },
-  "learnDua": "Learn one dua and its meaning.",
-  "@learnDua": {
-    "description": "একটি দোয়া শেখো, অর্থটাও জেনে নাও।"
-  },
   "seerahTitle": "Learn from the Prophet’s life",
   "@seerahTitle": {
     "description": "নবীজির জীবন থেকে শিখি"
-  },
-  "storyLesson": "A lesson from the story",
-  "@storyLesson": {
-    "description": "গল্পের শিক্ষা"
   },
   "profileTitle": "Student profile",
   "@profileTitle": {
@@ -308,29 +172,9 @@
   "@dailyMission": {
     "description": "আজকের মিশন"
   },
-  "missionDone": "Great! You reached today's goal. Let's learn again tomorrow!",
-  "@missionDone": {
-    "description": "দারুণ! আজকের লক্ষ্য পূরণ হয়েছে। কাল আবার শিখবো!"
-  },
-  "yourName": "What is your name?",
-  "@yourName": {
-    "description": "তোমার নাম কী?"
-  },
-  "yourAge": "How old are you?",
-  "@yourAge": {
-    "description": "তোমার বয়স কত?"
-  },
   "ageRange": "Made for children ages 6–14. Lessons are shown for your age.",
   "@ageRange": {
     "description": "৬-১৪ বছরের বাচ্চাদের জন্য তৈরি। তোমার বয়স অনুযায়ী কন্টেন্ট দেখানো হবে।"
-  },
-  "writeName": "Please enter your name.",
-  "@writeName": {
-    "description": "তোমার নাম লিখো প্লিজ"
-  },
-  "favoriteDuas": "Favorites",
-  "@favoriteDuas": {
-    "description": "পছন্দের"
   },
   "duaAudioStatus": "Dua audio is not available.",
   "@duaAudioStatus": {
@@ -340,29 +184,9 @@
   "@onboardingArabicNote": {
     "description": "কুরআনের আরবি টেক্সট সবসময় আরবিতেই থাকবে। শুধু অ্যাপের বাটন ও নির্দেশনা পরিবর্তন হবে।"
   },
-  "readMode": "Reading mode",
-  "@readMode": {
-    "description": "পাঠ মোড"
-  },
-  "smallText": "Smaller text",
-  "@smallText": {
-    "description": "ছোট লেখা"
-  },
-  "largeText": "Larger text",
-  "@largeText": {
-    "description": "বড় লেখা"
-  },
   "bookmark": "Bookmark",
   "@bookmark": {
     "description": "বুকমার্ক"
-  },
-  "removeBookmark": "Remove bookmark",
-  "@removeBookmark": {
-    "description": "বুকমার্ক সরাও"
-  },
-  "settingsLanguage": "App language",
-  "@settingsLanguage": {
-    "description": "অ্যাপের ভাষা"
   },
   "completionFeedback": "10 out of 10 answers were correct. You earned +25 XP.",
   "@completionFeedback": {
@@ -372,10 +196,6 @@
   "@completionRepeat": {
     "description": "অধ্যায়টি আবার শেষ করেছ। +২৫ XP আগেই পেয়েছ।"
   },
-  "scheduleDescription": "Class times and meeting links must be supplied by a teacher or school.",
-  "@scheduleDescription": {
-    "description": "ক্লাসের সময়সূচি ও লিংক শিক্ষক/প্রতিষ্ঠানের কাছ থেকে আসতে হবে।"
-  },
   "hearts": "Well done!",
   "@hearts": {
     "description": "মাশাআল্লাহ!"
@@ -384,17 +204,9 @@
   "@welcomeTagline": {
     "description": "কুরআন শেখো · মজার সাথে · ইসলাম জানো"
   },
-  "begin": "Let's begin",
-  "@begin": {
-    "description": "শুরু করি"
-  },
   "backStep": "Previous",
   "@backStep": {
     "description": "আগের ধাপ"
-  },
-  "nextStep": "Next step",
-  "@nextStep": {
-    "description": "পরের ধাপে যাই"
   },
   "languageBangla": "Bangla",
   "@languageBangla": {
@@ -420,10 +232,6 @@
   "@readyEveryDay": {
     "description": "এখন থেকে প্রতিদিন একটু একটু করে কুরআন ও ইসলাম শিখবে মজার সাথে"
   },
-  "homeGreeting": "Peace be upon you! Let's learn something new today!",
-  "@homeGreeting": {
-    "description": "আসসালামু আলাইকুম! চলো আজ নতুন পাঠ শিখি!"
-  },
   "listenArabic": "Listen to the Arabic letter",
   "@listenArabic": {
     "description": "আরবি উচ্চারণ শুনি"
@@ -436,33 +244,9 @@
   "@letterName": {
     "description": "হরফের নাম শোনো"
   },
-  "speechCheckNote": "Voice matching is a basic practice. Ask a teacher or grown-up to check pronunciation.",
-  "@speechCheckNote": {
-    "description": "ভয়েস মিলিয়ে দেখা একটি প্রাথমিক অনুশীলন। সঠিক মাখরাজের জন্য শিক্ষক/অভিভাবকের শোনা জরুরি।"
-  },
-  "speechUnavailable": "Sound is unavailable on this device.",
-  "@speechUnavailable": {
-    "description": "এই ডিভাইসে শব্দ শোনানো যাচ্ছে না।"
-  },
-  "guardianHelp": "Ask a grown-up for help",
-  "@guardianHelp": {
-    "description": "অভিভাবকের সাহায্য"
-  },
   "guardianConfirm": "I listened and it sounds right",
   "@guardianConfirm": {
     "description": "শুনেছি, ঠিক বলেছে"
-  },
-  "tryAgainShort": "Try again",
-  "@tryAgainShort": {
-    "description": "আবার চেষ্টা"
-  },
-  "basicsTitle": "Basic Islamic learning",
-  "@basicsTitle": {
-    "description": "মৌলিক ইসলাম শিক্ষা"
-  },
-  "seerahStories": "Stories from the Prophet’s life",
-  "@seerahStories": {
-    "description": "রাসূল (সা.)-এর সীরাত"
   },
   "todayDuaHabit": "A small habit for today",
   "@todayDuaHabit": {
@@ -480,18 +264,6 @@
   "@achievement": {
     "description": "অর্জন"
   },
-  "currentLevel": "Your current level",
-  "@currentLevel": {
-    "description": "তোমার বর্তমান লেভেল"
-  },
-  "completedQaida": "Qaida lessons completed",
-  "@completedQaida": {
-    "description": "সম্পন্ন ক্বায়দা পাঠ"
-  },
-  "practiceInYourWords": "Think of your answer in your own words. Continue when you are ready.",
-  "@practiceInYourWords": {
-    "description": "নিজের ভাষায় উত্তর ভাবো। প্রস্তুত হলে পরের প্রশ্নে যাও।"
-  },
   "shortQuestions": "Ten short questions—answer in your mind.",
   "@shortQuestions": {
     "description": "১০টি ছোট প্রশ্ন—নিজের মনে উত্তর দাও।"
@@ -508,14 +280,6 @@
   "@duaListSource": {
     "description": "আরবি পাঠ ও হাদিস নম্বর Sunnah.com-এ উল্লেখিত রেফারেন্সের সঙ্গে মিলিয়ে দেওয়া হয়েছে।"
   },
-  "seerahSubtitle": "Short stories, big lessons",
-  "@seerahSubtitle": {
-    "description": "ছোট গল্প, বড় শিক্ষা"
-  },
-  "storyListHelp": "These stories are brief summaries. See the hadith reference on each card for the source.",
-  "@storyListHelp": {
-    "description": "গল্পগুলো সংক্ষেপে লেখা। সূত্রের বিস্তারিত জানতে কার্ডে দেওয়া হাদিস নম্বর দেখো।"
-  },
   "readTimeTwo": "2 minutes",
   "@readTimeTwo": {
     "description": "২ মিনিট"
@@ -524,21 +288,9 @@
   "@readTimeThree": {
     "description": "৩ মিনিট"
   },
-  "duaAddedToast": "Added to favorites.",
-  "@duaAddedToast": {
-    "description": "পছন্দে রাখা হয়েছে।"
-  },
-  "duaRemovedToast": "Removed from favorites.",
-  "@duaRemovedToast": {
-    "description": "পছন্দ থেকে সরানো হয়েছে।"
-  },
   "salahLearn": "Learn prayer step by step",
   "@salahLearn": {
     "description": "ওজু থেকে সালাম পর্যন্ত শিখি"
-  },
-  "prayerTimes": "Prayer times",
-  "@prayerTimes": {
-    "description": "নামাজের সময়"
   },
   "setupNeeded": "Setup needed",
   "@setupNeeded": {
@@ -555,22 +307,6 @@
   "stepLabel": "Step {number}",
   "@stepLabel": {
     "description": "ধাপ {number}"
-  },
-  "chapterCompleteCount": "{count} lessons",
-  "@chapterCompleteCount": {
-    "description": "{count} টি পাঠ"
-  },
-  "profileSavedToast": "Profile saved.",
-  "@profileSavedToast": {
-    "description": "প্রোফাইল সংরক্ষণ হয়েছে"
-  },
-  "noSpeech": "Audio could not start. Check your internet connection and try again.",
-  "@noSpeech": {
-    "description": "অডিও চালু হয়নি। ইন্টারনেট সংযোগ দেখে আবার চেষ্টা করো।"
-  },
-  "audioNoDevice": "Arabic audio is unavailable on this device.",
-  "@audioNoDevice": {
-    "description": "এই ডিভাইসে আরবি অডিও পাওয়া যায়নি।"
   },
   "classListTeacher": "Teacher: {teacher}",
   "@classListTeacher": {
@@ -612,22 +348,6 @@
   "@notifications": {
     "description": "নোটিফিকেশন ও স্ট্রিক রিমাইন্ডার"
   },
-  "dailyLearningReminder": "Daily learning reminder",
-  "@dailyLearningReminder": {
-    "description": "দৈনিক শেখার রিমাইন্ডার"
-  },
-  "streakReminder": "A reminder to keep your streak going",
-  "@streakReminder": {
-    "description": "স্ট্রিক ধরে রাখতে মনে করিয়ে দেবে"
-  },
-  "teacherUpdates": "Teacher class updates",
-  "@teacherUpdates": {
-    "description": "শিক্ষকের ক্লাসের আপডেট"
-  },
-  "reminderTime": "Reminder time",
-  "@reminderTime": {
-    "description": "রিমাইন্ডারের সময়"
-  },
   "languageName": "Language",
   "@languageName": {
     "description": "ভাষা"
@@ -648,17 +368,13 @@
   "@guardianEmail": {
     "description": "অভিভাবকের email"
   },
-  "passwordLabel": "Password",
-  "@passwordLabel": {
+  "passwordEnglishLabel": "Password",
+  "@passwordEnglishLabel": {
     "description": "Password"
   },
   "lessonCountOld": "{count} lessons",
   "@lessonCountOld": {
     "description": "$lessonCount টি পাঠ"
-  },
-  "unavailableStory": "This section will be added later.",
-  "@unavailableStory": {
-    "description": "এই অংশটি পরের ধাপে যোগ হবে।"
   },
   "startLesson": "Start a lesson",
   "@startLesson": {
@@ -668,15 +384,11 @@
   "@finishLesson": {
     "description": "শেষ করি"
   },
-  "listenAndChoose": "Listen to the sound and choose the letter.",
-  "@listenAndChoose": {
-    "description": "শুনে সঠিক হরফটি বেছে নাও।"
-  },
   "searchSurah": "Find a surah",
   "@searchSurah": {
     "description": "সূরা খুঁজে দেখো"
   },
-  "wakeDua": "When waking up",
+  "wakeDua": "After waking up",
   "@wakeDua": {
     "description": "ঘুম থেকে উঠলে"
   },
@@ -684,7 +396,7 @@
   "@foodDua": {
     "description": "খাবার শুরু করার আগে"
   },
-  "sleepDua": "Before sleeping",
+  "sleepDua": "At bedtime",
   "@sleepDua": {
     "description": "ঘুমাতে যাওয়ার সময়"
   },
@@ -712,11 +424,11 @@
   "@storyAbuUmayrSub": {
     "description": "শিশুদের সঙ্গে নবীজির কোমল ব্যবহার"
   },
-  "storyHasan": "Kindness to Hasan (RA)",
+  "storyHasan": "Kindness to Hasan (may Allah be pleased with him)",
   "@storyHasan": {
     "description": "হাসান (রা.)-এর প্রতি মমতা"
   },
-  "storyKindnessSub": "Kindness is a beautiful habit",
+  "storyKindnessSub": "Showing kindness is a good habit",
   "@storyKindnessSub": {
     "description": "দয়া দেখানো আমাদের সুন্দর অভ্যাস"
   },
@@ -728,11 +440,11 @@
   "@storyKnowledgeSub": {
     "description": "জ্ঞান ও সত্যের এক নতুন শুরু"
   },
-  "basicsFaith": "What is faith?",
+  "basicsFaith": "What is Iman?",
   "@basicsFaith": {
     "description": "ঈমান কী?"
   },
-  "basicsBelief": "What is aqidah?",
+  "basicsBelief": "What is Aqidah?",
   "@basicsBelief": {
     "description": "আকিদা কী?"
   },
@@ -740,7 +452,7 @@
   "@basicsIslam": {
     "description": "ইসলাম কী?"
   },
-  "basicsHalal": "Halal and haram",
+  "basicsHalal": "Halal and Haram",
   "@basicsHalal": {
     "description": "হালাল ও হারাম"
   },
@@ -776,10 +488,6 @@
   "@speakPractice": {
     "description": "মুখে বলি"
   },
-  "startHere": "Start learning",
-  "@startHere": {
-    "description": "শুরু করি"
-  },
   "seeLesson": "View lesson",
   "@seeLesson": {
     "description": "পাঠ দেখি"
@@ -799,10 +507,6 @@
   "ageOld": "{age} years old",
   "@ageOld": {
     "description": "{age} বছর"
-  },
-  "missionDateNotice": "Today’s mission is based on lesson activity saved on this device.",
-  "@missionDateNotice": {
-    "description": "আজকের মিশন এই ডিভাইসে সংরক্ষিত পাঠের তারিখ থেকে হিসাব করা হয়।"
   },
   "duasHeading": "Daily duas",
   "@duasHeading": {
@@ -843,10 +547,6 @@
   "correctAnswer": "That's right! Mashallah.",
   "@correctAnswer": {
     "description": "ঠিক উত্তর! মাশাআল্লাহ।"
-  },
-  "sectionUnavailable": "This section will be added later.",
-  "@sectionUnavailable": {
-    "description": "এই অংশটি পরের ধাপে যোগ হবে।"
   },
   "wakeMeaning": "All praise is for Allah, who gave us life after sleep; and to Him is the return.",
   "@wakeMeaning": {
@@ -1064,8 +764,8 @@
   "@phase4_44": {
     "description": "ভয়েস মিলিয়ে দেখা একটি প্রাথমিক অনুশীলন। সঠিক মাখরাজের জন্য শিক্ষক/অভিভাবকের শোনা জরুরি।"
   },
-  "phase4_45": "Listen · Recognize · Dot puzzle · Quiz · Say it",
-  "@phase4_45": {
+  "qaidaLessonSteps": "Listen · Recognize · Dot puzzle · Quiz · Speak",
+  "@qaidaLessonSteps": {
     "description": "শোনা · রূপ চেনা · বিন্দুর পাজল · কুইজ · বলা"
   },
   "phase4_46": "Sound is unavailable on this device.",
@@ -1135,10 +835,6 @@
   "phase4_62": "You are ready, {name}!",
   "@phase4_62": {
     "description": "তুমি প্রস্তুত, {name}!"
-  },
-  "phase4_63": "From today, learn a little Quran and Islam every day—with fun!",
-  "@phase4_63": {
-    "description": "এখন থেকে প্রতিদিন একটু একটু করে\nকুরআন ও ইসলাম শিখবে মজার সাথে"
   },
   "phase4_64": "Let’s begin",
   "@phase4_64": {
@@ -1228,10 +924,6 @@
   "@phase4_85": {
     "description": "নামাজের সময়"
   },
-  "phase4_86": "Previous step",
-  "@phase4_86": {
-    "description": "আগের ধাপ"
-  },
   "phase4_87": "Prayer times change with your city, date and calculation method. This screen teaches prayer-time ranges; check a local mosque or trusted calendar for today’s exact times.",
   "@phase4_87": {
     "description": "ঘড়ির সঠিক ওয়াক্ত শহর, তারিখ ও হিসাব-পদ্ধতি অনুযায়ী বদলায়। এই screen-এ এখন ওয়াক্তের সীমা শেখানো হচ্ছে; নির্দিষ্ট আজকের সময় জানতে স্থানীয় মসজিদ/বিশ্বস্ত ক্যালেন্ডার দেখো।"
@@ -1239,10 +931,6 @@
   "phase4_88": "Some details differ by school of thought. Ask your family or teacher about the way you follow.",
   "@phase4_88": {
     "description": "মাযহাবভেদে কিছু নিয়মে পার্থক্য থাকতে পারে—পরিবারের অভিভাবক বা শিক্ষকের কাছ থেকে নিজের পদ্ধতিটি শিখে নাও।"
-  },
-  "phase4_89": "Save profile",
-  "@phase4_89": {
-    "description": "প্রোফাইল সংরক্ষণ"
   },
   "phase4_90": "Log in / Create account",
   "@phase4_90": {
@@ -1355,5 +1043,1049 @@
   "phase4_117": "Audio unavailable",
   "@phase4_117": {
     "description": "অডিও নেই"
+  },
+  "completion_1": "Okay",
+  "@completion_1": {
+    "description": "ঠিক আছে"
+  },
+  "completion_2": "Monthly live-class plan with a teacher",
+  "@completion_2": {
+    "description": "শিক্ষকের সঙ্গে live class-এর মাসিক পরিকল্পনা"
+  },
+  "completion_3": "This preview never asks for a card number, wallet PIN or one-time code. A payment provider must be connected before online payments can begin.",
+  "@completion_3": {
+    "description": "নিরাপত্তার জন্য এই preview-তে card number, mobile wallet PIN বা OTP চাওয়া হয় না। Live payment চালুর আগে merchant account, payment gateway ও subscription backend যুক্ত করতে হবে।"
+  },
+  "completion_4": "Payments are not connected yet",
+  "@completion_4": {
+    "description": "পেমেন্ট এখনো যুক্ত হয়নি"
+  },
+  "completion_5": "A secure payment flow can be added here after the monthly price and subscription terms are set up with a payment provider.",
+  "@completion_5": {
+    "description": "মাসিক মূল্য ও subscription নিয়ম ঠিক করে payment merchant account/API key যুক্ত হলে এখান থেকেই নিরাপদ payment flow চালু করা যাবে।"
+  },
+  "completion_6": "These choices are saved in this preview. A notification service is still needed to send reminders at a set time.",
+  "@completion_6": {
+    "description": "এই preview-তে পছন্দগুলো সংরক্ষিত হয়। ফোনে নির্দিষ্ট সময়ে push/local alert পাঠাতে notification service এখনো যুক্ত করতে হবে।"
+  },
+  "completion_7": "Account login and sync",
+  "@completion_7": {
+    "description": "Account login ও sync"
+  },
+  "completion_8": "Login is not available yet. No password has been saved.",
+  "@completion_8": {
+    "description": "Login service এখনো যুক্ত হয়নি; কোনো password সংরক্ষণ করা হয়নি।"
+  },
+  "completion_9": "From today, learn a little Quran and Islam every day—with fun!",
+  "@completion_9": {
+    "description": "এখন থেকে প্রতিদিন একটু একটু করে\nকুরআন ও ইসলাম শিখবে মজার সাথে"
+  },
+  "completion_10": "Noor says",
+  "@completion_10": {
+    "description": "নুর বলছে"
+  },
+  "completion_11": "Mashallah! You finished today’s mission.",
+  "@completion_11": {
+    "description": "মাশাআল্লাহ! আজকের মিশন সম্পূর্ণ করেছ।"
+  },
+  "completion_12": "Assalamu alaikum! Let’s learn something new today!",
+  "@completion_12": {
+    "description": "আসসালামু আলাইকুম! চলো আজ নতুন পাঠ শিখি!"
+  },
+  "completion_13": "This step is still locked!",
+  "@completion_13": {
+    "description": "এই ধাপটি এখনও লক!"
+  },
+  "completion_14": "Finish the earlier lessons to reach this step. Let’s begin!",
+  "@completion_14": {
+    "description": "আগের পাঠগুলো সফলভাবে শেষ করে এখানে পৌঁছাও। চলো শুরু করি!"
+  },
+  "completion_15": "Got it",
+  "@completion_15": {
+    "description": "বুঝেছি"
+  },
+  "completion_16": "Gift collected!",
+  "@completion_16": {
+    "description": "উপহার নেওয়া হয়েছে!"
+  },
+  "completion_17": "Congratulations! Chapter milestone!",
+  "@completion_17": {
+    "description": "অভিনন্দন! অধ্যায় মাইলস্টোন!"
+  },
+  "completion_18": "You already collected +{xp} XP from this treasure chest.",
+  "@completion_18": {
+    "description": "তুমি আগেই এই ট্রেজার বক্স থেকে +{xp} XP সংগ্রহ করেছ।"
+  },
+  "completion_19": "Great progress! This chest has a +{xp} XP bonus for you!",
+  "@completion_19": {
+    "description": "চমৎকার অগ্রগতি! এই বক্সে তোমার জন্য আছে +{xp} বোনাস XP!"
+  },
+  "completion_20": "Unit {number}",
+  "@completion_20": {
+    "description": "ইউনিট {number}"
+  },
+  "completion_21": "Start here!",
+  "@completion_21": {
+    "description": "এখানে শুরু করো!"
+  },
+  "completion_22": "Gift collected",
+  "@completion_22": {
+    "description": "উপহার সম্পন্ন"
+  },
+  "completion_23": "+{xp} XP gift",
+  "@completion_23": {
+    "description": "+{xp} XP উপহার"
+  },
+  "completion_24": "Locked chest",
+  "@completion_24": {
+    "description": "লক চেস্ট"
+  },
+  "completion_25": "Continue",
+  "@completion_25": {
+    "description": "চালিয়ে যাও"
+  },
+  "completion_26": "Learn from Alif to Kha",
+  "@completion_26": {
+    "description": "আলিফ থেকে খা পর্যন্ত শিখি"
+  },
+  "completion_27": "Learn from Dal to Sad",
+  "@completion_27": {
+    "description": "দাল থেকে সাদ পর্যন্ত শিখি"
+  },
+  "completion_28": "Learn from Dad to Kaf",
+  "@completion_28": {
+    "description": "দ্বাদ থেকে কাফ পর্যন্ত শিখি"
+  },
+  "completion_29": "Finish from Lam to Ya",
+  "@completion_29": {
+    "description": "লাম থেকে ইয়া পর্যন্ত সমাপ্তি"
+  },
+  "completion_30": "Joined letters · Vowels · Madd · Ayahs",
+  "@completion_30": {
+    "description": "যুক্ত বর্ণ · হরকত · মাদ · আয়াত"
+  },
+  "completion_31": "Joined letters",
+  "@completion_31": {
+    "description": "যুক্ত বর্ণ"
+  },
+  "completion_32": "Vowels",
+  "@completion_32": {
+    "description": "হরকত"
+  },
+  "completion_33": "Madd and Ghunnah",
+  "@completion_33": {
+    "description": "মাদ ও গুন্নাহ"
+  },
+  "completion_34": "Read ayahs",
+  "@completion_34": {
+    "description": "আয়াত পড়া"
+  },
+  "profileSaveButton": "Save profile",
+  "@profileSaveButton": {
+    "description": "প্রোফাইল সংরক্ষণ করুন"
+  },
+  "dynamicInfoLabel": "{label}: ",
+  "@dynamicInfoLabel": {
+    "description": "{label}: "
+  },
+  "numberWithSubtitle": "{number} · {subtitle}",
+  "@numberWithSubtitle": {
+    "description": "{number} · {subtitle}"
+  },
+  "badgesUnlocked": "{unlocked} / {total} unlocked",
+  "@badgesUnlocked": {
+    "description": "{unlocked} / {total} পাওয়া"
+  },
+  "nextLevelXp": "Next level: {level} · {xp} XP to go",
+  "@nextLevelXp": {
+    "description": "পরের লেভেল: {level} · আর {xp} XP"
+  },
+  "qaidaSpeakIntoMic": "Say the Arabic letter name into the microphone: {arabicName}",
+  "@qaidaSpeakIntoMic": {
+    "description": "মাইক্রোফোনে আরবি নামটি বলো: {arabicName}"
+  },
+  "qaidaSayGently": "Say it gently: {arabicName}",
+  "@qaidaSayGently": {
+    "description": "শান্তভাবে বলো: {arabicName}"
+  },
+  "qaidaHeardWords": "Heard: {words}",
+  "@qaidaHeardWords": {
+    "description": "শোনা গেছে: {words}"
+  },
+  "qaidaGuardianCheck": "Did the child try to say “{arabicName}”? Confirm if it sounded right.",
+  "@qaidaGuardianCheck": {
+    "description": "শিশুটি কি “{arabicName}” বলার চেষ্টা করেছে? শুনে ঠিক মনে হলে নিশ্চিত করুন।"
+  },
+  "qaidaLetterName01": "Alif",
+  "@qaidaLetterName01": {
+    "description": "আলিফ"
+  },
+  "qaidaLetterTitle01": "Learn Alif",
+  "@qaidaLetterTitle01": {
+    "description": "আলিফ চিনি"
+  },
+  "qaidaLetterName02": "Ba",
+  "@qaidaLetterName02": {
+    "description": "বা"
+  },
+  "qaidaLetterTitle02": "Learn Ba",
+  "@qaidaLetterTitle02": {
+    "description": "বা চিনি"
+  },
+  "qaidaLetterName03": "Ta",
+  "@qaidaLetterName03": {
+    "description": "তা"
+  },
+  "qaidaLetterTitle03": "Learn Ta",
+  "@qaidaLetterTitle03": {
+    "description": "তা চিনি"
+  },
+  "qaidaLetterName04": "Tha",
+  "@qaidaLetterName04": {
+    "description": "ছা"
+  },
+  "qaidaLetterTitle04": "Learn Tha",
+  "@qaidaLetterTitle04": {
+    "description": "ছা চিনি"
+  },
+  "qaidaLetterName05": "Jim",
+  "@qaidaLetterName05": {
+    "description": "জীম"
+  },
+  "qaidaLetterTitle05": "Learn Jim",
+  "@qaidaLetterTitle05": {
+    "description": "জীম চিনি"
+  },
+  "qaidaLetterName06": "Ha",
+  "@qaidaLetterName06": {
+    "description": "হা"
+  },
+  "qaidaLetterTitle06": "Learn Ha",
+  "@qaidaLetterTitle06": {
+    "description": "হা চিনি"
+  },
+  "qaidaLetterName07": "Kha",
+  "@qaidaLetterName07": {
+    "description": "খা"
+  },
+  "qaidaLetterTitle07": "Learn Kha",
+  "@qaidaLetterTitle07": {
+    "description": "খা চিনি"
+  },
+  "qaidaLetterName08": "Dal",
+  "@qaidaLetterName08": {
+    "description": "দাল"
+  },
+  "qaidaLetterTitle08": "Learn Dal",
+  "@qaidaLetterTitle08": {
+    "description": "দাল চিনি"
+  },
+  "qaidaLetterName09": "Dhal",
+  "@qaidaLetterName09": {
+    "description": "যাল"
+  },
+  "qaidaLetterTitle09": "Learn Dhal",
+  "@qaidaLetterTitle09": {
+    "description": "যাল চিনি"
+  },
+  "qaidaLetterName10": "Ra",
+  "@qaidaLetterName10": {
+    "description": "রা"
+  },
+  "qaidaLetterTitle10": "Learn Ra",
+  "@qaidaLetterTitle10": {
+    "description": "রা চিনি"
+  },
+  "qaidaLetterName11": "Zay",
+  "@qaidaLetterName11": {
+    "description": "যাই"
+  },
+  "qaidaLetterTitle11": "Learn Zay",
+  "@qaidaLetterTitle11": {
+    "description": "যাই চিনি"
+  },
+  "qaidaLetterName12": "Sin",
+  "@qaidaLetterName12": {
+    "description": "সীন"
+  },
+  "qaidaLetterTitle12": "Learn Sin",
+  "@qaidaLetterTitle12": {
+    "description": "সীন চিনি"
+  },
+  "qaidaLetterName13": "Shin",
+  "@qaidaLetterName13": {
+    "description": "শীন"
+  },
+  "qaidaLetterTitle13": "Learn Shin",
+  "@qaidaLetterTitle13": {
+    "description": "শীন চিনি"
+  },
+  "qaidaLetterName14": "Sad",
+  "@qaidaLetterName14": {
+    "description": "সোয়াদ"
+  },
+  "qaidaLetterTitle14": "Learn Sad",
+  "@qaidaLetterTitle14": {
+    "description": "সোয়াদ চিনি"
+  },
+  "qaidaLetterName15": "Dad",
+  "@qaidaLetterName15": {
+    "description": "দোয়াদ"
+  },
+  "qaidaLetterTitle15": "Learn Dad",
+  "@qaidaLetterTitle15": {
+    "description": "দোয়াদ চিনি"
+  },
+  "qaidaLetterName16": "Ta",
+  "@qaidaLetterName16": {
+    "description": "তোয়া"
+  },
+  "qaidaLetterTitle16": "Learn Ta",
+  "@qaidaLetterTitle16": {
+    "description": "তোয়া চিনি"
+  },
+  "qaidaLetterName17": "Za",
+  "@qaidaLetterName17": {
+    "description": "জোয়া"
+  },
+  "qaidaLetterTitle17": "Learn Za",
+  "@qaidaLetterTitle17": {
+    "description": "জোয়া চিনি"
+  },
+  "qaidaLetterName18": "Ain",
+  "@qaidaLetterName18": {
+    "description": "আইন"
+  },
+  "qaidaLetterTitle18": "Learn Ain",
+  "@qaidaLetterTitle18": {
+    "description": "আইন চিনি"
+  },
+  "qaidaLetterName19": "Ghayn",
+  "@qaidaLetterName19": {
+    "description": "গাইন"
+  },
+  "qaidaLetterTitle19": "Learn Ghayn",
+  "@qaidaLetterTitle19": {
+    "description": "গাইন চিনি"
+  },
+  "qaidaLetterName20": "Fa",
+  "@qaidaLetterName20": {
+    "description": "ফা"
+  },
+  "qaidaLetterTitle20": "Learn Fa",
+  "@qaidaLetterTitle20": {
+    "description": "ফা চিনি"
+  },
+  "qaidaLetterName21": "Qaf",
+  "@qaidaLetterName21": {
+    "description": "ক্বাফ"
+  },
+  "qaidaLetterTitle21": "Learn Qaf",
+  "@qaidaLetterTitle21": {
+    "description": "ক্বাফ চিনি"
+  },
+  "qaidaLetterName22": "Kaf",
+  "@qaidaLetterName22": {
+    "description": "কাফ"
+  },
+  "qaidaLetterTitle22": "Learn Kaf",
+  "@qaidaLetterTitle22": {
+    "description": "কাফ চিনি"
+  },
+  "qaidaLetterName23": "Lam",
+  "@qaidaLetterName23": {
+    "description": "লাম"
+  },
+  "qaidaLetterTitle23": "Learn Lam",
+  "@qaidaLetterTitle23": {
+    "description": "লাম চিনি"
+  },
+  "qaidaLetterName24": "Mim",
+  "@qaidaLetterName24": {
+    "description": "মীম"
+  },
+  "qaidaLetterTitle24": "Learn Mim",
+  "@qaidaLetterTitle24": {
+    "description": "মীম চিনি"
+  },
+  "qaidaLetterName25": "Nun",
+  "@qaidaLetterName25": {
+    "description": "নূন"
+  },
+  "qaidaLetterTitle25": "Learn Nun",
+  "@qaidaLetterTitle25": {
+    "description": "নূন চিনি"
+  },
+  "qaidaLetterName26": "Ha",
+  "@qaidaLetterName26": {
+    "description": "হা"
+  },
+  "qaidaLetterTitle26": "Learn Ha",
+  "@qaidaLetterTitle26": {
+    "description": "হা চিনি"
+  },
+  "qaidaLetterName27": "Waw",
+  "@qaidaLetterName27": {
+    "description": "ওয়াও"
+  },
+  "qaidaLetterTitle27": "Learn Waw",
+  "@qaidaLetterTitle27": {
+    "description": "ওয়াও চিনি"
+  },
+  "qaidaLetterName28": "Ya",
+  "@qaidaLetterName28": {
+    "description": "ইয়া"
+  },
+  "qaidaLetterTitle28": "Learn Ya",
+  "@qaidaLetterTitle28": {
+    "description": "ইয়া চিনি"
+  },
+  "qaidaListenChoose": "Listen for “{letterName}” and choose the letter.",
+  "@qaidaListenChoose": {
+    "description": "“{letterName}” অক্ষরটি শুনে বেছে নাও।"
+  },
+  "qaidaLetterForm": "This is another form of the same letter. Find the matching one.",
+  "@qaidaLetterForm": {
+    "description": "এটি একই হরফের আরেকটি রূপ। মিল আছে এমনটি খুঁজে নাও।"
+  },
+  "qaidaDotQuestion": "Which dot piece belongs on the letter “{letterName}”?",
+  "@qaidaDotQuestion": {
+    "description": "কোন বিন্দুর টুকরোটি “{letterName}” হরফে বসবে?"
+  },
+  "qaidaMemoryQuestion": "Which letter is “{letterName}”?",
+  "@qaidaMemoryQuestion": {
+    "description": "“{letterName}” অক্ষরটি কোনটি?"
+  },
+  "qaidaArabicSpeakPrompt": "Say the Arabic letter name into the microphone: {arabicName}",
+  "@qaidaArabicSpeakPrompt": {
+    "description": "মাইক্রোফোনে আরবি নামটি বলো: {arabicName}"
+  },
+  "qaidaGentlyPrompt": "Say it gently: {arabicName}",
+  "@qaidaGentlyPrompt": {
+    "description": "শান্তভাবে বলো: {arabicName}"
+  },
+  "qaidaHeardPrompt": "Heard: {words}",
+  "@qaidaHeardPrompt": {
+    "description": "শোনা গেছে: {words}"
+  },
+  "qaidaGuardianPrompt": "Did the child try to say “{arabicName}”? Confirm if it sounded right.",
+  "@qaidaGuardianPrompt": {
+    "description": "শিশুটি কি “{arabicName}” বলার চেষ্টা করেছে? শুনে ঠিক মনে হলে নিশ্চিত করুন।"
+  },
+  "qaidaCourse_001": "Letter introduction · 1",
+  "@qaidaCourse_001": {
+    "description": "ഹരফ পরিচয় · ১"
+  },
+  "qaidaCourse_002": "Letter introduction · 2",
+  "@qaidaCourse_002": {
+    "description": "হরফ পরিচয় · ২"
+  },
+  "qaidaCourse_003": "Letter introduction · 3",
+  "@qaidaCourse_003": {
+    "description": "হরফ পরিচয় · ৩"
+  },
+  "qaidaCourse_004": "Letter introduction · 4",
+  "@qaidaCourse_004": {
+    "description": "হরফ পরিচয় · ৪"
+  },
+  "qaidaCourse_005": "From Alif to Tha",
+  "@qaidaCourse_005": {
+    "description": "আলিফ থেকে ছা"
+  },
+  "qaidaCourse_006": "From Jim to Dhal",
+  "@qaidaCourse_006": {
+    "description": "জীম থেকে যাল"
+  },
+  "qaidaCourse_007": "From Ra to Ain",
+  "@qaidaCourse_007": {
+    "description": "রা থেকে আইন"
+  },
+  "qaidaCourse_008": "From Ghayn to Ya",
+  "@qaidaCourse_008": {
+    "description": "গাইন থেকে ইয়া"
+  },
+  "qaidaCourse_009": "Learn how joined letters form words",
+  "@qaidaCourse_009": {
+    "description": "হরফ জুড়ে শব্দের রূপ চিনি"
+  },
+  "qaidaCourse_010": "Fatha · Kasra · Damma",
+  "@qaidaCourse_010": {
+    "description": "যবর · যের · পেশ"
+  },
+  "qaidaCourse_011": "Learn lengthening and nasal sounds",
+  "@qaidaCourse_011": {
+    "description": "টেনে পড়া ও নাকের অনুরণন"
+  },
+  "qaidaCourse_012": "Read ayahs using what you have learned",
+  "@qaidaCourse_012": {
+    "description": "শেখা নিয়ম দিয়ে আয়াত পড়ি"
+  },
+  "qaidaCourse_013": "Learn how separate letters join to form words",
+  "@qaidaCourse_013": {
+    "description": "আলাদা হরফ জুড়ে শব্দের রূপ চিনি"
+  },
+  "qaidaCourse_014": "Look and learn",
+  "@qaidaCourse_014": {
+    "description": "দেখে শিখি"
+  },
+  "qaidaCourse_015": "Which form do ب + ا make when joined?",
+  "@qaidaCourse_015": {
+    "description": "ب + ا একসাথে লিখলে কোন রূপ হবে?"
+  },
+  "qaidaCourse_016": "Recognize the form",
+  "@qaidaCourse_016": {
+    "description": "رূপ চিনি"
+  },
+  "qaidaCourse_017": "What does ب look like at the start of a word?",
+  "@qaidaCourse_017": {
+    "description": "শব্দের শুরুতে ب দেখতে কেমন?"
+  },
+  "qaidaCourse_018": "Join the letters",
+  "@qaidaCourse_018": {
+    "description": "জোড়া লাগাই"
+  },
+  "qaidaCourse_019": "Which form do ت + ا make when joined?",
+  "@qaidaCourse_019": {
+    "description": "ت + ا যুক্ত হলে কোনটি হবে?"
+  },
+  "qaidaCourse_020": "Remember",
+  "@qaidaCourse_020": {
+    "description": "মনে রাখি"
+  },
+  "qaidaCourse_021": "Which letters do not join to the next letter?",
+  "@qaidaCourse_021": {
+    "description": "কোন অক্ষরগুলো পরের অক্ষরের সঙ্গে যুক্ত হয় না?"
+  },
+  "qaidaCourse_022": "Read it yourself",
+  "@qaidaCourse_022": {
+    "description": "নিজে পড়ে দেখি"
+  },
+  "qaidaCourse_023": "Which two letters are in با?",
+  "@qaidaCourse_023": {
+    "description": "با-তে কোন দুই হরফ আছে?"
+  },
+  "qaidaCourse_024": "What sound does a letter with fatha (َ) above it make?",
+  "@qaidaCourse_024": {
+    "description": "বর্ণের ওপরে যবর (َ) থাকলে কী ধ্বনি?"
+  },
+  "qaidaCourse_025": "Short “a” sound",
+  "@qaidaCourse_025": {
+    "description": "ছোট “আ/অ” ধ্বনি"
+  },
+  "qaidaCourse_026": "Short “i” sound",
+  "@qaidaCourse_026": {
+    "description": "ছোট “ই” ধ্বনি"
+  },
+  "qaidaCourse_027": "Short “u” sound",
+  "@qaidaCourse_027": {
+    "description": "ছোট “উ” ধ্বনি"
+  },
+  "qaidaCourse_028": "What sound does a letter with kasra (ِ) below it make?",
+  "@qaidaCourse_028": {
+    "description": "বর্ণের নিচে যের (ِ) থাকলে কী ধ্বনি?"
+  },
+  "qaidaCourse_029": "A lengthened “aa” sound",
+  "@qaidaCourse_029": {
+    "description": "টেনে “আ”"
+  },
+  "qaidaCourse_030": "How do we read بُ?",
+  "@qaidaCourse_030": {
+    "description": "بُ কোনভাবে পড়ি?"
+  },
+  "qaidaCourse_031": "Bu",
+  "@qaidaCourse_031": {
+    "description": "বু"
+  },
+  "qaidaCourse_032": "Bi",
+  "@qaidaCourse_032": {
+    "description": "বি"
+  },
+  "qaidaCourse_034": "What is the correct order for بَ بِ بُ?",
+  "@qaidaCourse_034": {
+    "description": "بَ بِ بُ এর সঠিক ক্রম কোনটি?"
+  },
+  "qaidaCourse_035": "Ba · Bi · Bu",
+  "@qaidaCourse_035": {
+    "description": "বা · বি · বু"
+  },
+  "qaidaCourse_036": "Bi · Bu · Ba",
+  "@qaidaCourse_036": {
+    "description": "বি · বু · বা"
+  },
+  "qaidaCourse_037": "Bu · Ba · Bi",
+  "@qaidaCourse_037": {
+    "description": "বু · বা · বি"
+  },
+  "qaidaCourse_038": "What kind of vowel sound does one harakat usually make?",
+  "@qaidaCourse_038": {
+    "description": "একটি হরকত সাধারণত কেমন স্বর দেয়?"
+  },
+  "qaidaCourse_039": "A short vowel",
+  "@qaidaCourse_039": {
+    "description": "ছোট স্বর"
+  },
+  "qaidaCourse_040": "A two-count lengthening",
+  "@qaidaCourse_040": {
+    "description": "দুই হারাকাত টান"
+  },
+  "qaidaCourse_041": "A full stop",
+  "@qaidaCourse_041": {
+    "description": "পুরো থামা"
+  },
+  "qaidaCourse_042": "How do we read a madd sound?",
+  "@qaidaCourse_042": {
+    "description": "মাদ হলে ধ্বনি কীভাবে পড়ি?"
+  },
+  "qaidaCourse_043": "Lengthen it according to the rule",
+  "@qaidaCourse_043": {
+    "description": "নিয়ম অনুযায়ী টেনে"
+  },
+  "qaidaCourse_044": "Skip it completely",
+  "@qaidaCourse_044": {
+    "description": "একেবারে বাদ দিয়ে"
+  },
+  "qaidaCourse_045": "As quickly as possible",
+  "@qaidaCourse_045": {
+    "description": "যত দ্রুত সম্ভব"
+  },
+  "qaidaCourse_046": "Which are the common madd letters?",
+  "@qaidaCourse_046": {
+    "description": "সাধারণ মাদের হরফ কোনগুলো?"
+  },
+  "qaidaCourse_047": "ا و ي",
+  "@qaidaCourse_047": {
+    "description": "ا و ي"
+  },
+  "qaidaCourse_048": "ب ت ث",
+  "@qaidaCourse_048": {
+    "description": "ب ت ث"
+  },
+  "qaidaCourse_049": "ج ح خ",
+  "@qaidaCourse_049": {
+    "description": "ج ح خ"
+  },
+  "qaidaCourse_050": "Where does the nasal sound of ghunnah come from?",
+  "@qaidaCourse_050": {
+    "description": "গুন্নাহর অনুরণন কোথা দিয়ে হয়?"
+  },
+  "qaidaCourse_051": "Through the nose",
+  "@qaidaCourse_051": {
+    "description": "নাক দিয়ে"
+  },
+  "qaidaCourse_052": "Only through the lips",
+  "@qaidaCourse_052": {
+    "description": "শুধু ঠোঁট দিয়ে"
+  },
+  "qaidaCourse_053": "By pressing the teeth together",
+  "@qaidaCourse_053": {
+    "description": "দাঁত চেপে"
+  },
+  "qaidaCourse_054": "What do we practise for نّ or مّ?",
+  "@qaidaCourse_054": {
+    "description": "نّ বা مّ এলে কী অনুশীলন করি?"
+  },
+  "qaidaCourse_055": "Ghunnah with a nasal sound",
+  "@qaidaCourse_055": {
+    "description": "নাকের অনুরণনসহ গুন্নাহ"
+  },
+  "qaidaCourse_056": "Always stopping",
+  "@qaidaCourse_056": {
+    "description": "সবসময় থামা"
+  },
+  "qaidaCourse_057": "Skipping a letter",
+  "@qaidaCourse_057": {
+    "description": "হরফ বাদ দেওয়া"
+  },
+  "qaidaCourse_058": "How can I learn the right length for madd and ghunnah?",
+  "@qaidaCourse_058": {
+    "description": "মাদ ও গুন্নাহর সঠিক মাত্রা কীভাবে শিখব?"
+  },
+  "qaidaCourse_059": "By listening to a teacher recite",
+  "@qaidaCourse_059": {
+    "description": "শিক্ষকের তিলাওয়াত শুনে"
+  },
+  "qaidaCourse_060": "By guessing",
+  "@qaidaCourse_060": {
+    "description": "অনুমান করে"
+  },
+  "qaidaCourse_061": "By lengthening every sound the same way",
+  "@qaidaCourse_061": {
+    "description": "সব জায়গায় একই টান দিয়ে"
+  },
+  "qaidaCourse_062": "What should I look for before reading an ayah?",
+  "@qaidaCourse_062": {
+    "description": "আয়াত পড়ার আগে কী দেখি?"
+  },
+  "qaidaCourse_063": "Letters, vowel marks and pause signs",
+  "@qaidaCourse_063": {
+    "description": "হরফ, হরকত ও থামার চিহ্ন"
+  },
+  "qaidaCourse_064": "Only the last word",
+  "@qaidaCourse_064": {
+    "description": "শুধু শেষের শব্দ"
+  },
+  "qaidaCourse_065": "Only the colors",
+  "@qaidaCourse_065": {
+    "description": "শুধু রং"
+  },
+  "qaidaCourse_066": "What helps make a word easier to read?",
+  "@qaidaCourse_066": {
+    "description": "শব্দ পড়া সহজ করতে কী কাজে দেয়?"
+  },
+  "qaidaCourse_067": "Recognizing joined forms",
+  "@qaidaCourse_067": {
+    "description": "যুক্ত রূপ চেনা"
+  },
+  "qaidaCourse_068": "Ignoring the dots",
+  "@qaidaCourse_068": {
+    "description": "বিন্দু উপেক্ষা"
+  },
+  "qaidaCourse_069": "Leaving out the vowel marks",
+  "@qaidaCourse_069": {
+    "description": "হরকত বাদ"
+  },
+  "qaidaCourse_070": "How should we read while learning a new ayah?",
+  "@qaidaCourse_070": {
+    "description": "নতুন আয়াত শেখার সময় কেমন পড়ি?"
+  },
+  "qaidaCourse_071": "Slowly and clearly",
+  "@qaidaCourse_071": {
+    "description": "ধীরে, স্পষ্ট করে"
+  },
+  "qaidaCourse_072": "In a rush",
+  "@qaidaCourse_072": {
+    "description": "দৌড়ে"
+  },
+  "qaidaCourse_073": "What should we do when we see madd or ghunnah?",
+  "@qaidaCourse_073": {
+    "description": "মাদ/গুন্নাহ দেখলে কী করি?"
+  },
+  "qaidaCourse_074": "Read by following tajweed rules",
+  "@qaidaCourse_074": {
+    "description": "tাজবিদের নিয়ম মেনে পড়ি"
+  },
+  "qaidaCourse_075": "Remove the marks",
+  "@qaidaCourse_075": {
+    "description": "চিহ্ন মুছে ফেলি"
+  },
+  "qaidaCourse_076": "Read everything the same way",
+  "@qaidaCourse_076": {
+    "description": "সব একইভাবে পড়ি"
+  },
+  "qaidaCourse_077": "Who can help us learn correct recitation?",
+  "@qaidaCourse_077": {
+    "description": "তিলাওয়াত শুদ্ধ করতে কার কাছে শুনব?"
+  },
+  "qaidaCourse_078": "A qualified teacher or parent",
+  "@qaidaCourse_078": {
+    "description": "যোগ্য শিক্ষক/অভিভাবকের কাছে"
+  },
+  "qaidaCourse_079": "Only our own guesses",
+  "@qaidaCourse_079": {
+    "description": "শুধু নিজের অনুমান"
+  },
+  "qaidaCourse_080": "Without listening",
+  "@qaidaCourse_080": {
+    "description": "না শুনেই"
+  },
+  "qaidaCourse_081": "Look · Listen · Speak",
+  "@qaidaCourse_081": {
+    "description": "দেখে · শুনে · বলি"
+  },
+  "qaidaCourse_082": "One question",
+  "@qaidaCourse_082": {
+    "description": "একটি প্রশ্ন"
+  },
+  "qaidaCourse_083": "{done}/{total} lessons",
+  "@qaidaCourse_083": {
+    "description": "{done}/{total} পাঠ"
+  },
+  "qaidaCourse_084": "{completed}/{total} complete",
+  "@qaidaCourse_084": {
+    "description": "{completed}/{total}টি শেষ"
+  },
+  "qaidaExtra_01": "Recognize the form",
+  "@qaidaExtra_01": {
+    "description": "রূপ চিনি"
+  },
+  "qaidaExtra_02": "ب and ا",
+  "@qaidaExtra_02": {
+    "description": "ব এবং ا"
+  },
+  "qaidaExtra_03": "ب and ت",
+  "@qaidaExtra_03": {
+    "description": "ব এবং ت"
+  },
+  "qaidaExtra_04": "ا and ت",
+  "@qaidaExtra_04": {
+    "description": "ا এবং ت"
+  },
+  "qaidaExtra_05": "Read short vowel sounds using fatha, kasra and damma",
+  "@qaidaExtra_05": {
+    "description": "যবর, যের ও পেশ দিয়ে ছোট স্বর পড়ি"
+  },
+  "qaidaExtra_06": "Learn fatha",
+  "@qaidaExtra_06": {
+    "description": "যবর চিনি"
+  },
+  "qaidaExtra_07": "Learn kasra",
+  "@qaidaExtra_07": {
+    "description": "যের চিনি"
+  },
+  "qaidaExtra_08": "Learn damma",
+  "@qaidaExtra_08": {
+    "description": "পেশ চিনি"
+  },
+  "qaidaExtra_09": "Put them in order",
+  "@qaidaExtra_09": {
+    "description": "ক্রম মিলাই"
+  },
+  "qaidaExtra_10": "Learn lengthening and nasal sounds",
+  "@qaidaExtra_10": {
+    "description": "টেনে পড়া ও নাকের অনুরণন চিনি"
+  },
+  "qaidaExtra_11": "Learn madd",
+  "@qaidaExtra_11": {
+    "description": "মাদ চিনি"
+  },
+  "qaidaExtra_12": "Madd letters",
+  "@qaidaExtra_12": {
+    "description": "মাদের হরফ"
+  },
+  "qaidaExtra_13": "Learn ghunnah",
+  "@qaidaExtra_13": {
+    "description": "গুন্নাহ চিনি"
+  },
+  "qaidaExtra_14": "Listen and remember",
+  "@qaidaExtra_14": {
+    "description": "শুনে মনে রাখি"
+  },
+  "qaidaExtra_15": "Read short ayahs using the rules you learned",
+  "@qaidaExtra_15": {
+    "description": "শেখা নিয়ম দিয়ে ছোট আয়াত পড়ি"
+  },
+  "qaidaExtra_16": "Look at the ayah",
+  "@qaidaExtra_16": {
+    "description": "আয়াত দেখি"
+  },
+  "qaidaExtra_17": "Join the letters",
+  "@qaidaExtra_17": {
+    "description": "হরফ জুড়ি"
+  },
+  "qaidaExtra_18": "Read slowly",
+  "@qaidaExtra_18": {
+    "description": "ধীরে পড়ি"
+  },
+  "qaidaExtra_19": "Remember the rules",
+  "@qaidaExtra_19": {
+    "description": "নিয়ম মনে রাখি"
+  },
+  "qaidaExtra_20": "Read by following tajweed rules",
+  "@qaidaExtra_20": {
+    "description": "তাজবিদের নিয়ম মেনে পড়ি"
+  },
+  "qaidaExtra_21": "Listen and check",
+  "@qaidaExtra_21": {
+    "description": "শুনে মিলাই"
+  },
+  "phase4content_001": "New learner",
+  "@phase4content_001": {
+    "description": "নতুন শিক্ষার্থী"
+  },
+  "phase4content_002": "Curious reader",
+  "@phase4content_002": {
+    "description": "কৌতূহলী পাঠক"
+  },
+  "phase4content_003": "Knowledge seeker",
+  "@phase4content_003": {
+    "description": "জ্ঞান অন্বেষী"
+  },
+  "phase4content_004": "Bright learner",
+  "@phase4content_004": {
+    "description": "আলোকিত শিক্ষার্থী"
+  },
+  "phase4content_005": "First lesson",
+  "@phase4content_005": {
+    "description": "প্রথম পাঠ"
+  },
+  "phase4content_006": "Finish 1 Qaida lesson",
+  "@phase4content_006": {
+    "description": "১টি ক্বায়দা পাঠ শেষ করো"
+  },
+  "phase4content_007": "Three steps ahead",
+  "@phase4content_007": {
+    "description": "তিন ধাপ এগিয়ে"
+  },
+  "phase4content_008": "Finish 3 Qaida lessons",
+  "@phase4content_008": {
+    "description": "৩টি ক্বায়দা পাঠ শেষ করো"
+  },
+  "phase4content_009": "Five-lesson friend",
+  "@phase4content_009": {
+    "description": "পাঁচ পাঠের বন্ধু"
+  },
+  "phase4content_010": "Finish 5 Qaida lessons",
+  "@phase4content_010": {
+    "description": "৫টি ক্বায়দা পাঠ শেষ করো"
+  },
+  "phase4content_011": "XP collector",
+  "@phase4content_011": {
+    "description": "XP সংগ্রাহক"
+  },
+  "phase4content_012": "Earn 100 XP",
+  "@phase4content_012": {
+    "description": "১০০ XP অর্জন করো"
+  },
+  "phase4content_017": "Clothing and modesty",
+  "@phase4content_017": {
+    "description": "পোশাক ও শালীনতা"
+  },
+  "phase4content_018": "Kind words",
+  "@phase4content_018": {
+    "description": "সুন্দর কথা"
+  },
+  "phase4content_019": "Good manners",
+  "@phase4content_019": {
+    "description": "ভালো আচরণ"
+  },
+  "phase4content_020": "How we treat others",
+  "@phase4content_020": {
+    "description": "মানুষের সঙ্গে ব্যবহার"
+  },
+  "phase4content_021": "Halal food",
+  "@phase4content_021": {
+    "description": "হালাল খাবার"
+  },
+  "phase4content_022": "Avoiding forbidden foods",
+  "@phase4content_022": {
+    "description": "হারাম খাবার থেকে বাঁচি"
+  },
+  "phase4content_028": "At bedtime",
+  "@phase4content_028": {
+    "description": "ঘুমাতে যাওয়ার সময়"
+  },
+  "phase4content_037": "Sahih al-Bukhari {number}",
+  "@phase4content_037": {
+    "description": "সহিহ বুখারি {number}"
+  },
+  "phase5Prayer01": "Prayer times",
+  "@phase5Prayer01": {
+    "description": "Prayer times"
+  },
+  "phase5Prayer02": "Choose a location",
+  "@phase5Prayer02": {
+    "description": "Choose a location"
+  },
+  "phase5Prayer03": "Use device location",
+  "@phase5Prayer03": {
+    "description": "Use device location"
+  },
+  "phase5Prayer04": "Enter city",
+  "@phase5Prayer04": {
+    "description": "Enter city"
+  },
+  "phase5Prayer05": "Calculation settings",
+  "@phase5Prayer05": {
+    "description": "Calculation settings"
+  },
+  "phase5Prayer06": "Calculation method",
+  "@phase5Prayer06": {
+    "description": "Calculation method"
+  },
+  "phase5Prayer07": "Asr method",
+  "@phase5Prayer07": {
+    "description": "Asr method"
+  },
+  "phase5Prayer08": "Standard (Shafi)",
+  "@phase5Prayer08": {
+    "description": "Standard (Shafi)"
+  },
+  "phase5Prayer09": "Hanafi",
+  "@phase5Prayer09": {
+    "description": "Hanafi"
+  },
+  "phase5Prayer10": "Method",
+  "@phase5Prayer10": {
+    "description": "Method"
+  },
+  "phase5Prayer11": "Today",
+  "@phase5Prayer11": {
+    "description": "Today"
+  },
+  "phase5Prayer12": "Sunrise (reference)",
+  "@phase5Prayer12": {
+    "description": "Sunrise (reference)"
+  },
+  "phase5Prayer13": "Use your location?",
+  "@phase5Prayer13": {
+    "description": "Use your location?"
+  },
+  "phase5Prayer14": "Your location is used only to calculate prayer times and is sent to AlAdhan. You can enter a city instead.",
+  "@phase5Prayer14": {
+    "description": "Your location is used only to calculate prayer times and is sent to AlAdhan. You can enter a city instead."
+  },
+  "phase5Prayer15": "Cancel",
+  "@phase5Prayer15": {
+    "description": "Cancel"
+  },
+  "phase5Prayer16": "Continue",
+  "@phase5Prayer16": {
+    "description": "Continue"
+  },
+  "phase5Prayer17": "Enter a city",
+  "@phase5Prayer17": {
+    "description": "Enter a city"
+  },
+  "phase5Prayer18": "City",
+  "@phase5Prayer18": {
+    "description": "City"
+  },
+  "phase5Prayer19": "Country",
+  "@phase5Prayer19": {
+    "description": "Country"
+  },
+  "phase5Prayer20": "Save",
+  "@phase5Prayer20": {
+    "description": "Save"
+  },
+  "phase5Prayer21": "Prayer times could not load. Check your connection and try again.",
+  "@phase5Prayer21": {
+    "description": "Prayer times could not load. Check your connection and try again."
+  },
+  "phase5Prayer22": "Turn on location services or enter a city.",
+  "@phase5Prayer22": {
+    "description": "Turn on location services or enter a city."
+  },
+  "phase5Prayer23": "Location permission was not allowed. You can enter a city instead.",
+  "@phase5Prayer23": {
+    "description": "Location permission was not allowed. You can enter a city instead."
+  },
+  "phase5Prayer24": "Location permission is blocked. Open app settings or enter a city.",
+  "@phase5Prayer24": {
+    "description": "Location permission is blocked. Open app settings or enter a city."
+  },
+  "phase5Prayer25": "Your location is unavailable. Try again or enter a city.",
+  "@phase5Prayer25": {
+    "description": "Your location is unavailable. Try again or enter a city."
+  },
+  "phase5Prayer26": "Choose a city or use your location to see prayer times.",
+  "@phase5Prayer26": {
+    "description": "Choose a city or use your location to see prayer times."
+  },
+  "phase5Prayer27": "Retry",
+  "@phase5Prayer27": {
+    "description": "Retry"
+  },
+  "phase5Prayer28": "Open app settings",
+  "@phase5Prayer28": {
+    "description": "Open app settings"
+  },
+  "phase5PrayerDeviceCoordinates": "Device location ({latitude}, {longitude})",
+  "@phase5PrayerDeviceCoordinates": {
+    "description": "Device location ({latitude}, {longitude})"
+  },
+  "phase5PrayerSunriseReference": "Sunrise (reference only, not a prayer)",
+  "@phase5PrayerSunriseReference": {
+    "description": "Sunrise (reference only, not a prayer)"
   }
 }

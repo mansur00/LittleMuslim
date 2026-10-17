@@ -104,15 +104,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         TextField(
                           controller: _nameController,
                           textCapitalization: TextCapitalization.words,
-                          decoration: const InputDecoration(
-                              labelText: 'নাম',
+                          decoration: InputDecoration(
+                              labelText: context.uiText('নাম'),
                               prefixIcon: Icon(Icons.person_outline_rounded)),
                         ),
                         const SizedBox(height: 13),
                         DropdownButtonFormField<int>(
                           value: _age,
-                          decoration: const InputDecoration(
-                              labelText: 'বয়স',
+                          decoration: InputDecoration(
+                              labelText: context.uiText('বয়স'),
                               prefixIcon: Icon(Icons.cake_outlined)),
                           items: [
                             for (var age = 6; age <= 14; age++)
@@ -138,7 +138,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                           'প্রোফাইল সংরক্ষণ হয়েছে')));
                             },
                             icon: const Icon(Icons.check_rounded),
-                            label: const LocalizedText('প্রোফাইল সংরক্ষণ'),
+                            label: const LocalizedText('প্রোফাইল সংরক্ষণ করুন'),
                             style: FilledButton.styleFrom(
                                 backgroundColor: AppTheme.primaryGreen),
                           ),

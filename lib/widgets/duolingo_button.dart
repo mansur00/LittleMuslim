@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../l10n/app_localizations.dart';
 
 /// Tactile 3D Duolingo-style pushable button.
 /// Depresses downward with a 3D bevel when pressed for an ultra-satisfying tactile feel.
@@ -119,8 +120,7 @@ class _Duolingo3DButtonState extends State<Duolingo3DButton> {
     final depth = widget.depth;
     final totalHeight = widget.height + depth;
 
-    final effectiveColor =
-        isDisabled ? const Color(0xFFE5E7EB) : widget.color;
+    final effectiveColor = isDisabled ? const Color(0xFFE5E7EB) : widget.color;
     final effectiveShadowColor =
         isDisabled ? const Color(0xFFD1D5DB) : widget.shadowColor;
     final effectiveTextColor =
@@ -177,8 +177,8 @@ class _Duolingo3DButtonState extends State<Duolingo3DButton> {
                           height: 22,
                           child: CircularProgressIndicator(
                             strokeWidth: 2.5,
-                            valueColor:
-                                AlwaysStoppedAnimation<Color>(effectiveTextColor),
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                                effectiveTextColor),
                           ),
                         )
                       : Padding(
@@ -191,7 +191,7 @@ class _Duolingo3DButtonState extends State<Duolingo3DButton> {
                                 widget.icon!,
                                 const SizedBox(width: 8),
                               ],
-                              Text(
+                              LocalizedText(
                                 widget.text,
                                 style: TextStyle(
                                   color: effectiveTextColor,

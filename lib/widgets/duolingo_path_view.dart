@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import '../l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 
 import '../theme/app_theme.dart';
@@ -48,9 +49,11 @@ class DuolingoPathView extends StatefulWidget {
   const DuolingoPathView({
     super.key,
     this.isTablet = false,
+    this.isActive = true,
   });
 
   final bool isTablet;
+  final bool isActive;
 
   @override
   State<DuolingoPathView> createState() => _DuolingoPathViewState();
@@ -68,11 +71,24 @@ class _DuolingoPathViewState extends State<DuolingoPathView>
       vsync: this,
       duration: const Duration(milliseconds: 1400),
     );
-    if (!WidgetsBinding.instance.runtimeType.toString().contains('Test')) {
+    _items = _generatePathItems();
+    _syncPulseAnimation();
+  }
+
+  @override
+  void didUpdateWidget(covariant DuolingoPathView oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.isActive != widget.isActive) _syncPulseAnimation();
+  }
+
+  void _syncPulseAnimation() {
+    final isWidgetTest =
+        WidgetsBinding.instance.runtimeType.toString().contains('Test');
+    if (!widget.isActive || isWidgetTest) {
+      _pulseController.stop();
+    } else {
       _pulseController.repeat(reverse: true);
     }
-
-    _items = _generatePathItems();
   }
 
   @override
@@ -284,7 +300,7 @@ class _DuolingoPathViewState extends State<DuolingoPathView>
               size: 64,
             ),
             const SizedBox(height: 16),
-            const Text(
+            const LocalizedText(
               'এই ধাপটি এখনও লক!',
               style: TextStyle(
                 fontSize: 18,
@@ -293,7 +309,7 @@ class _DuolingoPathViewState extends State<DuolingoPathView>
               ),
             ),
             const SizedBox(height: 8),
-            const Text(
+            const LocalizedText(
               'আগের পাঠগুলো সফলভাবে শেষ করে এখানে পৌঁছাও। চলো শুরু করি!',
               textAlign: TextAlign.center,
               style: TextStyle(
@@ -333,9 +349,7 @@ class _DuolingoPathViewState extends State<DuolingoPathView>
           children: [
             VectorMascot(
               size: 90,
-              mood: alreadyOpened
-                  ? MascotMood.happy
-                  : MascotMood.celebrating,
+              mood: alreadyOpened ? MascotMood.happy : MascotMood.celebrating,
             ),
             const SizedBox(height: 12),
             VectorIcon(
@@ -345,7 +359,7 @@ class _DuolingoPathViewState extends State<DuolingoPathView>
               size: 64,
             ),
             const SizedBox(height: 12),
-            Text(
+            LocalizedText(
               alreadyOpened
                   ? 'উপহার নেওয়া হয়েছে!'
                   : 'অভিনন্দন! অধ্যায় মাইলস্টোন!',
@@ -357,7 +371,7 @@ class _DuolingoPathViewState extends State<DuolingoPathView>
               ),
             ),
             const SizedBox(height: 8),
-            Text(
+            LocalizedText(
               alreadyOpened
                   ? 'তুমি আগেই এই ট্রেজার বক্স থেকে +${item.chestRewardXp} XP সংগ্রহ করেছ।'
                   : 'চমৎকার অগ্রগতি! এই বক্সে তোমার জন্য আছে +${item.chestRewardXp} বোনাস XP!',
@@ -388,8 +402,6 @@ class _DuolingoPathViewState extends State<DuolingoPathView>
       ),
     );
   }
-
-
 
   void _openQaidaLesson(BuildContext context, {required int letterIndex}) {
     final lesson = qaidaLetters[letterIndex];
@@ -430,7 +442,10 @@ class _DuolingoPathViewState extends State<DuolingoPathView>
 
   @override
   Widget build(BuildContext context) {
-    final state = context.watch<AppState>();
+    final selectedState = context.select<AppState, (AppState, String)>(
+      (state) => (state, _progressSignature(state)),
+    );
+    final state = selectedState.$1;
     final currentIndex = _findCurrentItemIndex(state);
     final isTablet = widget.isTablet;
 
@@ -485,7 +500,8 @@ class _DuolingoPathViewState extends State<DuolingoPathView>
                             item: item,
                             isUnlocked: isUnlocked,
                             isOpened: isCompleted,
-                            onTap: () => _onNodeTapped(context, item, isUnlocked),
+                            onTap: () =>
+                                _onNodeTapped(context, item, isUnlocked),
                           )
                         : _DuolingoNodeWidget(
                             item: item,
@@ -493,7 +509,8 @@ class _DuolingoPathViewState extends State<DuolingoPathView>
                             isCompleted: isCompleted,
                             isCurrent: isCurrent,
                             pulseController: _pulseController,
-                            onTap: () => _onNodeTapped(context, item, isUnlocked),
+                            onTap: () =>
+                                _onNodeTapped(context, item, isUnlocked),
                           ),
                   ),
                 ),
@@ -504,6 +521,13 @@ class _DuolingoPathViewState extends State<DuolingoPathView>
       ),
     );
   }
+
+  String _progressSignature(AppState state) => _items
+      .asMap()
+      .entries
+      .map((entry) =>
+          '${_isItemUnlocked(state, entry.value, entry.key) ? 1 : 0}${_isItemCompleted(state, entry.value) ? 1 : 0}')
+      .join();
 }
 
 /// The wooden signboard dividing units on the path (Reference 1: "第1单元")
@@ -548,7 +572,7 @@ class _UnitSignboard extends StatelessWidget {
               color: Colors.white,
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Text(
+            child: LocalizedText(
               'ইউনিট $unitNumber',
               style: const TextStyle(
                 fontWeight: FontWeight.w900,
@@ -562,7 +586,7 @@ class _UnitSignboard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
+                LocalizedText(
                   title,
                   style: const TextStyle(
                     color: Colors.white,
@@ -570,7 +594,7 @@ class _UnitSignboard extends StatelessWidget {
                     fontWeight: FontWeight.w900,
                   ),
                 ),
-                Text(
+                LocalizedText(
                   subtitle,
                   style: TextStyle(
                     color: Colors.white.withValues(alpha: 0.9),
@@ -650,7 +674,8 @@ class _DuolingoNodeWidget extends StatelessWidget {
               },
               child: Container(
                 margin: const EdgeInsets.only(bottom: 6),
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(16),
@@ -672,7 +697,7 @@ class _DuolingoNodeWidget extends StatelessWidget {
                       color: Color(0xFFFF6B4A),
                     ),
                     SizedBox(width: 6),
-                    Text(
+                    LocalizedText(
                       'এখানে শুরু করো!',
                       style: TextStyle(
                         fontSize: 12,
@@ -718,7 +743,8 @@ class _DuolingoNodeWidget extends StatelessWidget {
                       boxShadow: [
                         if (isCurrent)
                           BoxShadow(
-                            color: const Color(0xFFFFC800).withValues(alpha: 0.6),
+                            color:
+                                const Color(0xFFFFC800).withValues(alpha: 0.6),
                             blurRadius: 16,
                             spreadRadius: 2,
                           ),
@@ -737,7 +763,7 @@ class _DuolingoNodeWidget extends StatelessWidget {
                                   size: 30,
                                   color: Colors.white,
                                 )
-                              : Text(
+                              : LocalizedText(
                                   letterDisplay,
                                   style: const TextStyle(
                                     fontSize: 30,
@@ -781,7 +807,7 @@ class _DuolingoNodeWidget extends StatelessWidget {
           ],
           if (item.isLetterLesson) ...[
             const SizedBox(height: 3),
-            Text(
+            LocalizedText(
               qaidaLetters[item.lessonIndex!].name,
               style: TextStyle(
                 fontSize: 12,
@@ -791,7 +817,7 @@ class _DuolingoNodeWidget extends StatelessWidget {
             ),
           ] else if (item.isCourseLesson) ...[
             const SizedBox(height: 3),
-            Text(
+            LocalizedText(
               qaidaCourseTitles[item.courseIndex!],
               style: TextStyle(
                 fontSize: 11,
@@ -854,9 +880,7 @@ class _MilestoneChestNode extends StatelessWidget {
               ],
             ),
             child: VectorIcon(
-              type: isOpened
-                  ? VectorIconType.chestOpen
-                  : VectorIconType.chest,
+              type: isOpened ? VectorIconType.chestOpen : VectorIconType.chest,
               size: 44,
             ),
           ),
@@ -868,7 +892,7 @@ class _MilestoneChestNode extends StatelessWidget {
               borderRadius: BorderRadius.circular(10),
               border: Border.all(color: const Color(0xFFE5E7EB)),
             ),
-            child: Text(
+            child: LocalizedText(
               isOpened
                   ? 'উপহার সম্পন্ন'
                   : isUnlocked
@@ -977,9 +1001,11 @@ class _PathCobblestonePainter extends CustomPainter {
     // Tree crown (fluffy round greens)
     final foliage = Paint()..color = const Color(0xFF81C784);
     final darkFoliage = Paint()..color = const Color(0xFF66BB6A);
-    canvas.drawCircle(Offset(pos.dx, pos.dy + radius * 0.2), radius * 0.9, darkFoliage);
+    canvas.drawCircle(
+        Offset(pos.dx, pos.dy + radius * 0.2), radius * 0.9, darkFoliage);
     canvas.drawCircle(Offset(pos.dx, pos.dy), radius * 0.8, foliage);
-    canvas.drawCircle(Offset(pos.dx - radius * 0.2, pos.dy - radius * 0.2), radius * 0.35, Paint()..color = const Color(0xFFA5D6A7));
+    canvas.drawCircle(Offset(pos.dx - radius * 0.2, pos.dy - radius * 0.2),
+        radius * 0.35, Paint()..color = const Color(0xFFA5D6A7));
   }
 
   @override

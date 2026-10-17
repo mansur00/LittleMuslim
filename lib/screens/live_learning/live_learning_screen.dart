@@ -235,10 +235,10 @@ class _LiveClassDetailScreenState extends State<LiveClassDetailScreen> {
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
         ..showSnackBar(SnackBar(
-          content:
-              const LocalizedText('মিটিং লিংক খুলতে পারিনি। অভিভাবকের সাহায্য নাও।'),
+          content: const LocalizedText(
+              'মিটিং লিংক খুলতে পারিনি। অভিভাবকের সাহায্য নাও।'),
           action: SnackBarAction(
-            label: 'লিংক কপি',
+            label: context.uiText('লিংক কপি'),
             onPressed: () =>
                 Clipboard.setData(ClipboardData(text: uri.toString())),
           ),
@@ -325,7 +325,8 @@ class _LiveClassDetailScreenState extends State<LiveClassDetailScreen> {
                       child: CircularProgressIndicator(strokeWidth: 2),
                     )
                   : const Icon(Icons.open_in_new_rounded),
-              label: LocalizedText(_opening ? 'লিংক খোলা হচ্ছে…' : 'ক্লাসে যোগ দাও'),
+              label: LocalizedText(
+                  _opening ? 'লিংক খোলা হচ্ছে…' : 'ক্লাসে যোগ দাও'),
               style: FilledButton.styleFrom(
                 minimumSize: const Size.fromHeight(52),
                 backgroundColor: AppTheme.primaryGreen,

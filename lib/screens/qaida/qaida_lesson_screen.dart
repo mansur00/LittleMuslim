@@ -169,23 +169,53 @@ class _QaidaLessonScreenState extends State<QaidaLessonScreen> {
     super.dispose();
   }
 
+  Future<void> _handleExit() async {
+    if (_step > 0 && _step < 5 && !_lessonAlreadyCompleted) {
+      final shouldExit = await showDialog<bool>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const LocalizedText('পাঠ থেকে বের হবে?'),
+          content: LocalizedText(
+              'তোমার অগ্রগতি (ধাপ ${_step + 1}) সংরক্ষিত থাকবে। পরে যেকোনো সময় এখান থেকে শুরু করতে পারবে।'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const LocalizedText('পড়তে থাকি'),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: const LocalizedText('বের হই'),
+            ),
+          ],
+        ),
+      );
+      if (shouldExit != true || !mounted) return;
+    }
+    Navigator.pop(context);
+  }
+
   @override
   Widget build(BuildContext context) {
     final xp = context.watch<AppState>().xp;
     final tablet = MediaQuery.sizeOf(context).shortestSide >= 600;
-    return Scaffold(
-      backgroundColor: AppTheme.cream,
-      body: SafeArea(
-        child: Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 760),
-            child: Column(children: [
-              _LessonHeader(
-                onClose: () => Navigator.pop(context),
-                xp: xp,
-                step: _step,
-                stepCount: _stepNames.length,
-              ),
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop) _handleExit();
+      },
+      child: Scaffold(
+        backgroundColor: AppTheme.cream,
+        body: SafeArea(
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 760),
+              child: Column(children: [
+                _LessonHeader(
+                  onClose: _handleExit,
+                  xp: xp,
+                  step: _step,
+                  stepCount: _stepNames.length,
+                ),
               Expanded(
                 child: ListView(
                   padding: EdgeInsets.fromLTRB(
@@ -215,7 +245,7 @@ class _QaidaLessonScreenState extends State<QaidaLessonScreen> {
           ),
         ),
       ),
-    );
+    ));
   }
 
   Widget _buildStepCard() {
@@ -264,7 +294,7 @@ class _QaidaLessonScreenState extends State<QaidaLessonScreen> {
                   fontSize: 11)),
         ]),
         const SizedBox(height: 13),
-        LocalizedText(_stepPrompt,
+        LocalizedText(_stepPrompt(context),
             style: const TextStyle(
                 color: AppTheme.darkText,
                 fontSize: 17,
@@ -297,11 +327,12 @@ class _QaidaLessonScreenState extends State<QaidaLessonScreen> {
     );
   }
 
-  String get _stepPrompt => switch (_step) {
-        0 => '“${widget.letterName}” অক্ষরটি শুনে বেছে নাও।',
+  String _stepPrompt(BuildContext context) => switch (_step) {
+        0 => '“${context.uiText(widget.letterName)}” অক্ষরটি শুনে বেছে নাও।',
         1 => 'এটি একই হরফের আরেকটি রূপ। মিল আছে এমনটি খুঁজে নাও।',
-        2 => 'কোন বিন্দুর টুকরোটি “${widget.letterName}” হরফে বসবে?',
-        3 => '“${widget.letterName}” অক্ষরটি কোনটি?',
+        2 =>
+          'কোন বিন্দুর টুকরোটি “${context.uiText(widget.letterName)}” হরফে বসবে?',
+        3 => '“${context.uiText(widget.letterName)}” অক্ষরটি কোনটি?',
         4 => 'মাইক্রোফোনে আরবি নামটি বলো: $_arabicName',
         _ => '',
       };

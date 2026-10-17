@@ -58,15 +58,15 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: Column(children: [
                     TextField(
                       keyboardType: TextInputType.emailAddress,
-                      decoration: const InputDecoration(
-                          labelText: 'অভিভাবকের email',
+                      decoration: InputDecoration(
+                          labelText: context.uiText('অভিভাবকের email'),
                           prefixIcon: Icon(Icons.email_outlined)),
                     ),
                     const SizedBox(height: 13),
                     TextField(
                       obscureText: _hidePassword,
                       decoration: InputDecoration(
-                        labelText: 'Password',
+                        labelText: context.uiText('Password'),
                         prefixIcon: const Icon(Icons.lock_outline_rounded),
                         suffixIcon: IconButton(
                           onPressed: () =>

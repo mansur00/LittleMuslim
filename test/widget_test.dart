@@ -1,7 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:little_muslim/screens/home/home_screen.dart';
+import 'package:little_muslim/screens/settings/settings_screen.dart';
 import 'package:little_muslim/screens/duas/duas_screen.dart';
 import 'package:little_muslim/screens/prayer/prayer_screen.dart';
 import 'package:little_muslim/screens/qaida/qaida_lesson_screen.dart';
@@ -125,6 +129,7 @@ class _LocalizedTestApp extends StatelessWidget {
         value: state,
         child: Consumer<AppState>(
           builder: (context, appState, _) => MaterialApp(
+            key: ValueKey(home),
             locale: Locale(appState.selectedLanguage),
             supportedLocales: const [Locale('bn'), Locale('en')],
             localizationsDelegates: const [
@@ -139,50 +144,221 @@ class _LocalizedTestApp extends StatelessWidget {
       );
 }
 
-class _LanguageSwitcher extends StatelessWidget {
-  const _LanguageSwitcher({required this.state});
-  final AppState state;
-
-  @override
-  Widget build(BuildContext context) => Scaffold(
-        body: Column(
-          children: [
-            const LocalizedText('সেটিংস'),
-            DropdownButton<String>(
-              value: state.selectedLanguage,
-              items: const [
-                DropdownMenuItem(value: 'bn', child: Text('বাংলা')),
-                DropdownMenuItem(value: 'en', child: Text('English')),
-              ],
-              onChanged: (value) {
-                if (value != null) state.updateLanguage(value);
-              },
-            ),
-          ],
-        ),
-      );
-}
-
 void main() {
-  testWidgets('language switch updates screens and persists after restart',
+  testWidgets('Bangla and English catalogs have paired keys and no conflicts',
       (tester) async {
+    final contents = await tester.runAsync(() async => Future.wait([
+          rootBundle.loadString('assets/l10n/app_en.arb'),
+          rootBundle.loadString('assets/l10n/app_bn.arb'),
+        ]));
+    expect(contents, isNotNull);
+    final english = jsonDecode(contents![0]) as Map<String, dynamic>;
+    final bangla = jsonDecode(contents[1]) as Map<String, dynamic>;
+    final englishKeys = english.keys
+        .where((key) => !key.startsWith('@') && key != '@@locale')
+        .toSet();
+    final banglaKeys = bangla.keys
+        .where((key) => !key.startsWith('@') && key != '@@locale')
+        .toSet();
+    expect(englishKeys.difference(banglaKeys), isEmpty);
+
+    for (final catalog in [english, bangla]) {
+      final sourceTranslations = <String, String>{};
+      for (final key in catalog.keys
+          .where((key) => !key.startsWith('@') && key != '@@locale')) {
+        expect(catalog[key], isA<String>(), reason: '$key must be a string');
+        final metadata = catalog['@$key'];
+        expect(metadata, isA<Map<String, dynamic>>(), reason: '$key metadata');
+        final source = (metadata! as Map<String, dynamic>)['description'];
+        expect(source, isA<String>(),
+            reason: '$key needs a source description');
+        final previous = sourceTranslations[source as String];
+        expect(previous == null || previous == catalog[key], isTrue,
+            reason: 'Conflicting translations for "$source"');
+        sourceTranslations[source] = catalog[key] as String;
+      }
+    }
+  });
+
+  testWidgets(
+      'Settings language selector updates visible UI immediately and persists',
+      (tester) async {
+    SharedPreferences.setMockInitialValues({
+      'language': 'en',
+      'onboarding_done': true,
+      'user_name': 'Amina',
+      'user_age': 9,
+      'xp': 50,
+    });
+    final state = AppState();
+    await state.loadFromPrefs();
+    await tester.pumpWidget(
+        _LocalizedTestApp(state: state, home: const SettingsScreen()));
+    await tester.runAsync(
+        () => Future<void>.delayed(const Duration(milliseconds: 100)));
+    await tester.pumpAndSettle();
+    expect(find.text('Settings'), findsOneWidget);
+    expect(find.text('Make your learning experience your own'), findsOneWidget);
+    expect(find.text('App language'), findsOneWidget);
+    expect(find.text('Age 9 · saved on this device'), findsOneWidget);
+    expect(find.text('Amina'), findsOneWidget);
+
+    await tester.tap(find.byType(DropdownButton<String>));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('বাংলা').last);
+    await tester.pumpAndSettle();
+    await tester.runAsync(
+        () => Future<void>.delayed(const Duration(milliseconds: 100)));
+    await tester.pumpAndSettle();
+
+    expect(state.selectedLanguage, 'bn');
+    expect(find.byType(SettingsScreen), findsOneWidget);
+    expect(find.text('সেটিংস'), findsOneWidget);
+    expect(find.text('শেখার অভিজ্ঞতা নিজের মতো সাজাও'), findsOneWidget);
+    expect(find.text('অ্যাপের ভাষা'), findsOneWidget);
+    expect(find.text('বয়স ৯ · এই ডিভাইসে সংরক্ষিত'), findsOneWidget);
+    expect(find.text('Amina'), findsOneWidget);
+    expect(state.xp, 50);
+    await tester.tap(find.byType(DropdownButton<String>));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('English').last);
+    await tester.pumpAndSettle();
+    await tester.runAsync(
+        () => Future<void>.delayed(const Duration(milliseconds: 100)));
+    await tester.pumpAndSettle();
+
+    expect(state.selectedLanguage, 'en');
+    expect(find.text('Settings'), findsOneWidget);
+    expect(find.byType(SettingsScreen), findsOneWidget);
+
+    final restoredState = AppState();
+    await restoredState.loadFromPrefs();
+    expect(restoredState.selectedLanguage, 'en');
+    await tester.pumpWidget(
+        _LocalizedTestApp(state: restoredState, home: const SettingsScreen()));
+    await tester.runAsync(
+        () => Future<void>.delayed(const Duration(milliseconds: 100)));
+    await tester.pumpAndSettle();
+    expect(find.text('Settings'), findsOneWidget);
+  });
+
+  testWidgets('Bangla Settings layout fits a small phone screen',
+      (tester) async {
+    tester.view.physicalSize = const Size(320, 640);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
     SharedPreferences.setMockInitialValues({'language': 'bn'});
     final state = AppState();
     await state.loadFromPrefs();
     await tester.pumpWidget(
-        _LocalizedTestApp(state: state, home: _LanguageSwitcher(state: state)));
+        _LocalizedTestApp(state: state, home: const SettingsScreen()));
+    await tester.runAsync(
+        () => Future<void>.delayed(const Duration(milliseconds: 100)));
     await tester.pumpAndSettle();
     expect(find.text('সেটিংস'), findsOneWidget);
+    expect(find.text('অ্যাপের ভাষা'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
 
-    await state.updateLanguage('en');
-    final restoredState = AppState();
-    await restoredState.loadFromPrefs();
-    expect(restoredState.selectedLanguage, 'en');
+  testWidgets('Qaida lesson text switches locale without losing the lesson',
+      (tester) async {
+    SharedPreferences.setMockInitialValues({'language': 'en'});
+    final state = AppState();
+    await state.loadFromPrefs();
+    await tester.pumpWidget(_LocalizedTestApp(
+      state: state,
+      home: const QaidaLessonScreen(
+        lessonId: 'qaida_alif_localization',
+        lessonTitle: 'আলিফ চিনি',
+        letter: 'ا',
+        letterName: 'আলিফ',
+        options: ['ب', 'ا', 'ت'],
+      ),
+    ));
+    await tester.runAsync(
+        () => Future<void>.delayed(const Duration(milliseconds: 100)));
+    await tester.pumpAndSettle();
+    expect(find.text('Learn Alif'), findsOneWidget);
     expect(
-      AppLocalizations(const Locale('en'), const {'তোমার শেখার পথ': 'Your learning path'})
-          .translate('তোমার শেখার পথ'),
-      'Your learning path',
-    );
+        find.text('Listen for “Alif” and choose the letter.'), findsOneWidget);
+
+    await state.updateLanguage('bn');
+    await tester.pumpAndSettle();
+    await tester.runAsync(
+        () => Future<void>.delayed(const Duration(milliseconds: 100)));
+    await tester.pumpAndSettle();
+    expect(find.text('আলিফ চিনি'), findsOneWidget);
+    expect(find.text('“আলিফ” অক্ষরটি শুনে বেছে নাও।'), findsOneWidget);
+    expect(state.xp, 0);
+  });
+
+  testWidgets('Home and Live Learning screens repaint in both locales',
+      (tester) async {
+    SharedPreferences.setMockInitialValues({'language': 'en'});
+    final state = AppState();
+    await state.loadFromPrefs();
+    await tester
+        .pumpWidget(_LocalizedTestApp(state: state, home: const HomeScreen()));
+    await tester.runAsync(
+        () => Future<void>.delayed(const Duration(milliseconds: 100)));
+    await tester.pumpAndSettle();
+    expect(find.text('Your learning path'), findsOneWidget);
+    expect(find.text('Tap a step to learn'), findsOneWidget);
+
+    await state.updateLanguage('bn');
+    await tester.pumpAndSettle();
+    await tester.runAsync(
+        () => Future<void>.delayed(const Duration(milliseconds: 100)));
+    await tester.pumpAndSettle();
+    expect(find.text('তোমার শেখার পথ'), findsOneWidget);
+    expect(find.text('প্রতিটি নোডে ট্যাপ করে শেখো'), findsOneWidget);
+
+    await tester.pumpWidget(_LocalizedTestApp(
+        state: state,
+        home:
+            LiveLearningScreen(repository: _FakeClassScheduleRepository([]))));
+    await tester.runAsync(
+        () => Future<void>.delayed(const Duration(milliseconds: 100)));
+    await tester.pumpAndSettle();
+    expect(find.text('তোমার ক্লাস'), findsOneWidget);
+    expect(find.text('এখনো কোনো ক্লাসের সময়সূচি নেই।'), findsOneWidget);
+    await state.updateLanguage('en');
+    await tester.pumpAndSettle();
+    await tester.runAsync(
+        () => Future<void>.delayed(const Duration(milliseconds: 100)));
+    await tester.pumpAndSettle();
+    expect(find.text('Your classes'), findsOneWidget);
+    expect(find.text('There are no classes scheduled yet.'), findsOneWidget);
+
+    final startsAt = DateTime(2026, 3, 8, 10);
+    await tester.pumpWidget(_LocalizedTestApp(
+      state: state,
+      home: LiveLearningScreen(
+        repository: _FakeClassScheduleRepository([
+          LiveClass(
+            id: 'localized-class',
+            title: 'সাপ্তাহিক ক্লাস',
+            teacher: 'Amina',
+            startAt: startsAt,
+            endAt: startsAt.add(const Duration(hours: 1)),
+          ),
+        ]),
+        now: () => startsAt.add(const Duration(minutes: 5)),
+      ),
+    ));
+    await tester.runAsync(
+        () => Future<void>.delayed(const Duration(milliseconds: 100)));
+    await tester.pumpAndSettle();
+    expect(find.text('Teacher: Amina'), findsOneWidget);
+    expect(find.text('Live now'), findsOneWidget);
+    await state.updateLanguage('bn');
+    await tester.pumpAndSettle();
+    await tester.runAsync(
+        () => Future<void>.delayed(const Duration(milliseconds: 100)));
+    await tester.pumpAndSettle();
+    expect(find.text('শিক্ষক: Amina'), findsOneWidget);
+    expect(find.text('এখন চলছে'), findsOneWidget);
   });
 
   test('class schedule derives states and accepts only safe HTTPS links', () {
@@ -730,14 +906,25 @@ void main() {
 
   testWidgets('prayer screen shows times setup and step-by-step guide',
       (tester) async {
-    await tester.pumpWidget(const MaterialApp(home: PrayerScreen()));
+    SharedPreferences.setMockInitialValues({});
+    final appState = AppState();
+    await appState.loadFromPrefs();
+    await tester.pumpWidget(
+        _LocalizedTestApp(state: appState, home: const PrayerScreen()));
+    await tester.runAsync(
+        () => Future<void>.delayed(const Duration(milliseconds: 100)));
     await tester.pumpAndSettle();
 
     expect(find.text('নামাজ শিখি'), findsOneWidget);
-    expect(find.text('শহর ও গণনা-পদ্ধতি সেটআপ বাকি'), findsOneWidget);
-    expect(find.text('--:--'), findsNWidgets(5));
+    expect(find.text('নামাজের সময়'), findsOneWidget);
+    expect(find.text('ডিভাইসের লোকেশন ব্যবহার করো'), findsOneWidget);
+    expect(find.text('নামাজের সময় দেখতে শহর বেছে নাও অথবা লোকেশন ব্যবহার করো।'),
+        findsOneWidget);
 
-    await tester.tap(find.text('প্রস্তুতি'));
+    final stepFinder = find.text('প্রস্তুতি');
+    await tester.ensureVisible(stepFinder);
+    await tester.pumpAndSettle();
+    await tester.tap(stepFinder);
     await tester.pumpAndSettle();
     expect(find.text('ওজু করে প্রস্তুত হও'), findsOneWidget);
     expect(find.text('পরের ধাপ'), findsOneWidget);
@@ -789,6 +976,13 @@ void main() {
     expect(find.text('নবীজির জীবন থেকে শিখি'), findsOneWidget);
     await tester.tap(find.text('আবু উমাইরের ছোট্ট বন্ধু'));
     await tester.pumpAndSettle();
+
+    final advanceButton = find.text('গল্পের শিক্ষা পড়ি →');
+    await tester.scrollUntilVisible(advanceButton, 250,
+        scrollable: find.byType(Scrollable).last);
+    await tester.tap(advanceButton);
+    await tester.pumpAndSettle();
+
     expect(find.text('গল্পের শিক্ষা'), findsOneWidget);
     await tester.scrollUntilVisible(
       find.text('সূত্র: সহিহ বুখারি ৬২০৩'),
