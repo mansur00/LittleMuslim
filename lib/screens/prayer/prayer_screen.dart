@@ -281,7 +281,12 @@ class PrayerScreen extends StatelessWidget {
                       DuolingoPageHeader(
                         title: 'নামাজ শিখি',
                         subtitle: 'সময় জেনে নাও, ধাপে ধাপে শিখে নাও।',
-                        iconType: VectorIconType.mosque,
+                        customIcon: Image.asset(
+                          'assets/images/badge_prayer_3d.png',
+                          width: 36,
+                          height: 36,
+                          fit: BoxFit.contain,
+                        ),
                         gradientColors: const [
                           Color(0xFF5B86E5),
                           Color(0xFF36D1DC)

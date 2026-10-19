@@ -172,8 +172,10 @@ class QaidaChaptersScreen extends StatelessWidget {
                                   color: const Color(0xFFEEF2FF),
                                   borderRadius: BorderRadius.circular(8),
                                 ),
-                                child: const Icon(Icons.replay_rounded,
-                                    color: Color(0xFF4F46E5), size: 18),
+                                child: const VectorIcon(
+                                    type: VectorIconType.plant,
+                                    size: 20,
+                                    color: Color(0xFF4F46E5)),
                               ),
                               const SizedBox(width: 8),
                               Flexible(
@@ -249,8 +251,10 @@ class QaidaChaptersScreen extends StatelessWidget {
                                   color: const Color(0xFFF0FDF4),
                                   borderRadius: BorderRadius.circular(8),
                                 ),
-                                child: const Icon(Icons.insights_rounded,
-                                    color: Color(0xFF16A34A), size: 18),
+                                child: const VectorIcon(
+                                    type: VectorIconType.target,
+                                    size: 20,
+                                    color: Color(0xFF16A34A)),
                               ),
                               const SizedBox(width: 8),
                               const Flexible(
@@ -328,8 +332,10 @@ class QaidaChaptersScreen extends StatelessWidget {
                                   color: const Color(0xFFFFFBEB),
                                   borderRadius: BorderRadius.circular(8),
                                 ),
-                                child: const Icon(Icons.quiz_rounded,
-                                    color: Color(0xFFD97706), size: 18),
+                                child: const VectorIcon(
+                                    type: VectorIconType.scroll,
+                                    size: 20,
+                                    color: Color(0xFFD97706)),
                               ),
                               const SizedBox(width: 8),
                               const Flexible(
@@ -401,8 +407,10 @@ class QaidaChaptersScreen extends StatelessWidget {
                                   color: const Color(0xFFFAF5FF),
                                   borderRadius: BorderRadius.circular(8),
                                 ),
-                                child: const Icon(Icons.workspace_premium_rounded,
-                                    color: Color(0xFF9333EA), size: 18),
+                                child: const VectorIcon(
+                                    type: VectorIconType.trophy,
+                                    size: 20,
+                                    color: Color(0xFF9333EA)),
                               ),
                               const SizedBox(width: 8),
                               const Flexible(
@@ -464,8 +472,8 @@ class QaidaChaptersScreen extends StatelessWidget {
                           children: [
                             Text(
                               state.isAdmin
-                                  ? '🛠️ এডমিন মোড সক্রিয়'
-                                  : '👶 শিক্ষার্থী মোড (ধাপে ধাপে আনলক)',
+                                  ? 'এডমিন মোড সক্রিয়'
+                                  : 'শিক্ষার্থী মোড (ধাপে ধাপে আনলক)',
                               style: TextStyle(
                                 fontSize: 13,
                                 color: state.isAdmin ? const Color(0xFF92400E) : const Color(0xFF334155),
@@ -555,7 +563,12 @@ class _QaidaHeader extends StatelessWidget {
   Widget build(BuildContext context) => DuolingoPageHeader(
         title: 'নূরানী ক্বায়দা',
         subtitle: '১৭টি ধাপের পূর্ণাঙ্গ লার্নিং ম্যাপ',
-        iconType: VectorIconType.qaida,
+        customIcon: Image.asset(
+          'assets/images/badge_qaida_3d.png',
+          width: 36,
+          height: 36,
+          fit: BoxFit.contain,
+        ),
         gradientColors: const [Color(0xFF58CC02), Color(0xFF46A302)],
         onBack: onBack,
         trailing: Container(

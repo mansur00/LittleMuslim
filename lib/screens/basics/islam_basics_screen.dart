@@ -584,7 +584,12 @@ class _IslamBasicsScreenState extends State<IslamBasicsScreen> {
                           DuolingoPageHeader(
                             title: 'মৌলিক ইসলাম শিক্ষা',
                             subtitle: 'গল্পে শিখি, কাজে লাগাই',
-                            iconType: VectorIconType.book,
+                            customIcon: Image.asset(
+                              'assets/images/badge_basics_3d.png',
+                              width: 36,
+                              height: 36,
+                              fit: BoxFit.contain,
+                            ),
                             gradientColors: const [
                               Color(0xFF58CC02),
                               Color(0xFF46A302)

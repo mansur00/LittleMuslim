@@ -96,7 +96,12 @@ class _QuranScreenState extends State<QuranScreen> {
                       DuolingoPageHeader(
                         title: 'কুরআনের সাথে সময় কাটাই',
                         subtitle: 'শান্ত মনে পড়ো, ভাবো, আর সুন্দর গল্প শোনো।',
-                        iconType: VectorIconType.book,
+                        customIcon: Image.asset(
+                          'assets/images/quran_3d_open.png',
+                          width: 36,
+                          height: 36,
+                          fit: BoxFit.contain,
+                        ),
                         gradientColors: const [
                           Color(0xFF58CC02),
                           Color(0xFF46A302)
@@ -513,8 +518,12 @@ class _ContinueReadingCardState extends State<_ContinueReadingCard> {
                   color: Colors.white.withValues(alpha: .16),
                   borderRadius: BorderRadius.circular(19)),
               alignment: Alignment.center,
-              child: const LocalizedText('۩',
-                  style: TextStyle(color: Color(0xFFFFD776), fontSize: 32)),
+              child: Image.asset(
+                'assets/images/quran_3d_open.png',
+                width: 44,
+                height: 44,
+                fit: BoxFit.contain,
+              ),
             ),
             const SizedBox(width: 14),
             Expanded(

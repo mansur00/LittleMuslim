@@ -99,7 +99,7 @@ class ReadyPage extends StatelessWidget {
                               color: Color(0xFFD97706), size: 16),
                           SizedBox(width: 6),
                           LocalizedText(
-                            '🛠️ অ্যাডমিন মোড: সব ধাপ ও লেভেল আনলক থাকবে',
+                            'অ্যাডমিন মোড: সব ধাপ ও লেভেল আনলক থাকবে',
                             style: TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.w700,

@@ -13,6 +13,7 @@ import '../../theme/design_system.dart';
 import '../../utils/app_state.dart';
 import '../../widgets/duolingo_button.dart';
 import '../../widgets/quran_book_mascot.dart';
+import '../../widgets/vector_icons.dart';
 
 // =============================================================================
 // MAIN ACTIVITY SCREEN (HIGHLY GAMIFIED)
@@ -1925,14 +1926,31 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
         if (matched)
           Padding(
             padding: const EdgeInsets.only(bottom: 14),
-            child: Text(
-              '🌟 মাশাআল্লাহ! সব জোড়া মিলে গেছে! 🌟',
-              style: GoogleFonts.hindSiliguri(
-                fontSize: 17,
-                fontWeight: FontWeight.bold,
-                color: const Color(0xFF16A34A),
-              ),
-              textAlign: TextAlign.center,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const VectorIcon(
+                  type: VectorIconType.star,
+                  size: 20,
+                  color: Color(0xFFFFC800),
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  'মাশাআল্লাহ! সব জোড়া মিলে গেছে!',
+                  style: GoogleFonts.hindSiliguri(
+                    fontSize: 17,
+                    fontWeight: FontWeight.bold,
+                    color: const Color(0xFF16A34A),
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(width: 8),
+                const VectorIcon(
+                  type: VectorIconType.star,
+                  size: 20,
+                  color: Color(0xFFFFC800),
+                ),
+              ],
             ),
           ),
         GridView.builder(
@@ -4665,7 +4683,11 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Text('🏆', style: TextStyle(fontSize: 24)),
+              const VectorIcon(
+                type: VectorIconType.trophy,
+                size: 26,
+                color: Color(0xFFD97706),
+              ),
               const SizedBox(width: 10),
               Text(
                 'বস চ্যালেঞ্জ (ধাপের চূড়ান্ত পরীক্ষা)',
@@ -5092,7 +5114,7 @@ class _GamifiedComboBadge extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Text('🔥', style: TextStyle(fontSize: 14)),
+          const Real3DTopBarIcon(type: Real3DTopType.flame, size: 16),
           const SizedBox(width: 4),
           Text(
             '$combo Combo!',

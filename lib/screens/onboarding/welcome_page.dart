@@ -45,7 +45,11 @@ class WelcomePage extends StatelessWidget {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Text('✨', style: TextStyle(fontSize: 18)),
+                const VectorIcon(
+                  type: VectorIconType.sparkle,
+                  size: 20,
+                  color: Color(0xFFFFC800),
+                ),
                 const SizedBox(width: 8),
                 LocalizedText(
                   'আসসালামু আলাইকুম! চলো শুরু করি',
@@ -201,7 +205,7 @@ class WelcomePage extends StatelessWidget {
             },
             icon: const Icon(Icons.admin_panel_settings_rounded, size: 18, color: DS.orange600),
             label: const LocalizedText(
-              '🛠️ অ্যাডমিন মোড (সব আনলক দিয়ে শুরু)',
+              'অ্যাডমিন মোড (সব আনলক দিয়ে শুরু)',
               style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w800,

@@ -346,7 +346,12 @@ class SeerahScreen extends StatelessWidget {
                       DuolingoPageHeader(
                         title: 'নবীজির জীবন থেকে শিখি',
                         subtitle: 'ছোট গল্প, বড় শিক্ষা',
-                        iconType: VectorIconType.scroll,
+                        customIcon: Image.asset(
+                          'assets/images/badge_seerah_3d.png',
+                          width: 36,
+                          height: 36,
+                          fit: BoxFit.contain,
+                        ),
                         gradientColors: const [
                           Color(0xFFE05A7A),
                           Color(0xFFC44569)

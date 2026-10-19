@@ -142,8 +142,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               children: [
                                 LocalizedText(
                                   state.isAdmin
-                                      ? '🛠️ অ্যাডমিন মোড (সব আনলক)'
-                                      : '👶 মূল শিক্ষার্থী মোড',
+                                      ? 'অ্যাডমিন মোড (সব আনলক)'
+                                      : 'মূল শিক্ষার্থী মোড',
                                   style: TextStyle(
                                     fontWeight: FontWeight.w900,
                                     fontSize: 15,
@@ -184,8 +184,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     SnackBar(
                                       content: LocalizedText(
                                         state.isAdmin
-                                            ? '🛠️ অ্যাডমিন মোড চালু: সব ধাপ আনলক!'
-                                            : '👶 শিক্ষার্থী মোড চালু: স্বাভাবিক লক নিয়ম সক্রিয়!',
+                                            ? 'অ্যাডমিন মোড চালু: সব ধাপ আনলক!'
+                                            : 'শিক্ষার্থী মোড চালু: স্বাভাবিক লক নিয়ম সক্রিয়!',
                                       ),
                                       behavior: SnackBarBehavior.floating,
                                       backgroundColor: state.isAdmin

@@ -1124,14 +1124,27 @@ class _FinalExamRoadNode extends StatelessWidget {
                   isPassed ? const Color(0xFFFDE68A) : const Color(0xFFC7D2FE),
             ),
           ),
-          child: Text(
-            isPassed ? '🏆 ট্র্যাক ${track.trackNumber} সমাপনী উত্তীর্ণ!' : 'চূড়ান্ত পরীক্ষা',
-            style: TextStyle(
-              fontSize: 11,
-              fontWeight: FontWeight.bold,
-              color:
-                  isPassed ? const Color(0xFFB45309) : const Color(0xFF4338CA),
-            ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (isPassed) ...[
+                const VectorIcon(
+                  type: VectorIconType.trophy,
+                  size: 14,
+                  color: Color(0xFFB45309),
+                ),
+                const SizedBox(width: 5),
+              ],
+              Text(
+                isPassed ? 'ট্র্যাক ${track.trackNumber} সমাপনী উত্তীর্ণ!' : 'চূড়ান্ত পরীক্ষা',
+                style: TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.bold,
+                  color:
+                      isPassed ? const Color(0xFFB45309) : const Color(0xFF4338CA),
+                ),
+              ),
+            ],
           ),
         ),
       ],

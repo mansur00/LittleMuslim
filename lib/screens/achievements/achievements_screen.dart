@@ -103,7 +103,14 @@ class AchievementsScreen extends StatelessWidget {
                       DuolingoPageHeader(
                         title: 'আমার অর্জন',
                         subtitle: 'XP ও ব্যাজ সংগ্রহ দেখো',
-                        iconType: VectorIconType.trophy,
+                        customIcon: const DSGamifyBadge(
+                          emblem: BadgeEmblem.trophy,
+                          primaryColor: Color(0xFFFFC800),
+                          bevelColor: Color(0xFFE5A100),
+                          ribbonColor: Color(0xFFFFD700),
+                          ribbonText: 'অর্জন',
+                          size: 38,
+                        ),
                         gradientColors: const [
                           Color(0xFFF59E0B),
                           Color(0xFFD97706)

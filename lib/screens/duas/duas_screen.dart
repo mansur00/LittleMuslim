@@ -453,7 +453,12 @@ class _DuasScreenState extends State<DuasScreen> {
                       DuolingoPageHeader(
                         title: 'মাসনুন দোয়া',
                         subtitle: 'ছোট ছোট দোয়া, প্রতিদিন',
-                        iconType: VectorIconType.dua,
+                        customIcon: Image.asset(
+                          'assets/images/badge_dua_3d.png',
+                          width: 36,
+                          height: 36,
+                          fit: BoxFit.contain,
+                        ),
                         gradientColors: const [
                           Color(0xFF9B6BC9),
                           Color(0xFF7B4FA8)

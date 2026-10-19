@@ -209,6 +209,7 @@ enum DSButtonVariant {
   primary,
   secondary,
   gold,
+  orange,
   blue,
   danger,
   purple,
@@ -290,6 +291,11 @@ class _DSButtonState extends State<DSButton> {
         case DSButtonVariant.gold:
           faceColor = widget.color ?? const Color(0xFFFFC800);
           bevelColor = widget.shadowColor ?? const Color(0xFFE5A100);
+          labelColor = widget.textColor ?? Colors.white;
+          break;
+        case DSButtonVariant.orange:
+          faceColor = widget.color ?? const Color(0xFFF97316);
+          bevelColor = widget.shadowColor ?? const Color(0xFFEA580C);
           labelColor = widget.textColor ?? Colors.white;
           break;
         case DSButtonVariant.blue:

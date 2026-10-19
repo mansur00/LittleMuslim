@@ -158,7 +158,7 @@ class _HomePathTab extends StatelessWidget {
                         const SizedBox(width: 8),
                         const Expanded(
                           child: LocalizedText(
-                            '🛠️ অ্যাডমিন মোড: সব লেভেল ও ধাপ আনলক',
+                            'অ্যাডমিন মোড: সব লেভেল ও ধাপ আনলক',
                             style: TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.w800,
@@ -367,8 +367,12 @@ class _HomeContinueTab extends StatelessWidget {
                   color: Colors.white.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(18),
                 ),
-                child: const Icon(Icons.auto_stories_rounded,
-                    color: Colors.white, size: 30),
+                child: Image.asset(
+                  'assets/images/quran_3d_open.png',
+                  width: isTablet ? 46 : 38,
+                  height: isTablet ? 46 : 38,
+                  fit: BoxFit.contain,
+                ),
               ),
               const SizedBox(width: 14),
               Expanded(
@@ -673,8 +677,12 @@ class _HomeContinueTab extends StatelessWidget {
                   borderRadius: BorderRadius.circular(14),
                   border: Border.all(color: const Color(0xFFFDBA74)),
                 ),
-                child: const Icon(Icons.menu_book_rounded,
-                    color: Color(0xFFEA580C), size: 26),
+                child: Image.asset(
+                  'assets/images/quran_3d_open.png',
+                  width: 36,
+                  height: 36,
+                  fit: BoxFit.contain,
+                ),
               ),
               const SizedBox(width: 14),
               Expanded(
@@ -699,18 +707,14 @@ class _HomeContinueTab extends StatelessWidget {
                   ],
                 ),
               ),
-              FilledButton(
+              DSButton(
+                label: 'পড়ি ›',
+                variant: DSButtonVariant.orange,
+                height: 38,
+                width: 84,
                 onPressed: () => Navigator.of(context).push(
                   MaterialPageRoute<void>(builder: (_) => const QuranScreen()),
                 ),
-                style: FilledButton.styleFrom(
-                  backgroundColor: const Color(0xFFF97316),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                ),
-                child: const LocalizedText('পড়ি ›'),
               ),
             ],
           ),

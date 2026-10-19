@@ -11,6 +11,7 @@ import '../../theme/design_system.dart';
 import '../../utils/app_state.dart';
 import '../../widgets/duolingo_button.dart';
 import '../../widgets/quran_book_mascot.dart';
+import '../../widgets/vector_icons.dart';
 import 'qaida_revision_screen.dart';
 
 /// The 3 Tiers of the Nurani Qaida Examination System.
@@ -423,8 +424,11 @@ class _QaidaExamScreenState extends State<QaidaExamScreen> {
                       ),
                       child: Row(
                         children: [
-                          const Icon(Icons.stars_rounded,
-                              color: Color(0xFF2563EB), size: 18),
+                          const VectorIcon(
+                            type: VectorIconType.target,
+                            size: 20,
+                            color: Color(0xFF2563EB),
+                          ),
                           const SizedBox(width: 8),
                           Expanded(
                             child: Text(
@@ -719,7 +723,11 @@ class _QaidaExamScreenState extends State<QaidaExamScreen> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Text('🏅', style: TextStyle(fontSize: 18)),
+                      const VectorIcon(
+                        type: VectorIconType.trophy,
+                        size: 20,
+                        color: Color(0xFFD97706),
+                      ),
                       const SizedBox(width: 8),
                       Text(
                         '“আবার চেষ্টা ব্যাজ” অর্জিত হয়েছে!',
