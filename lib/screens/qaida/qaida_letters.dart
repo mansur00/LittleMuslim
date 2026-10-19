@@ -13,7 +13,72 @@ class QaidaLetter {
 
   String get title => '$name চিনি';
   String? get audioAsset => qaidaLetterAudioAssets[id];
+
+  String get transliteration => qaidaLetterTransliteration[letter] ?? id.replaceAll('qaida_', '');
+  String get arabicName => qaidaLetterArabicNames[letter] ?? letter;
 }
+
+const Map<String, String> qaidaLetterTransliteration = {
+  'ا': 'Alif',
+  'ب': 'Baa',
+  'ت': 'Taa',
+  'ث': 'Thaa',
+  'ج': 'Jeem',
+  'ح': 'Haa',
+  'خ': 'Khaa',
+  'د': 'Daal',
+  'ذ': 'Dhaal',
+  'ر': 'Raa',
+  'ز': 'Zaay',
+  'س': 'Seen',
+  'ش': 'Sheen',
+  'ص': 'Saad',
+  'ض': 'Daad',
+  'ط': 'Toa',
+  'ظ': 'Zoa',
+  'ع': 'Ayn',
+  'غ': 'Ghayn',
+  'ف': 'Faa',
+  'ق': 'Qaaf',
+  'ك': 'Kaaf',
+  'ل': 'Laam',
+  'م': 'Meem',
+  'ن': 'Noon',
+  'ه': 'Haa',
+  'و': 'Waaw',
+  'ي': 'Yaa',
+};
+
+const Map<String, String> qaidaLetterArabicNames = {
+  'ا': 'أَلِف',
+  'ب': 'بَاء',
+  'ت': 'تَاء',
+  'ث': 'ثَاء',
+  'ج': 'جِيم',
+  'ح': 'حَاء',
+  'خ': 'خَاء',
+  'د': 'دَال',
+  'ذ': 'ذَال',
+  'ر': 'رَاء',
+  'ز': 'زَاي',
+  'س': 'سِين',
+  'ش': 'شِين',
+  'ص': 'صَاد',
+  'ض': 'ضَاد',
+  'ط': 'طَاء',
+  'ظ': 'ظَاء',
+  'ع': 'عَيْن',
+  'غ': 'غَيْن',
+  'ف': 'فَاء',
+  'ق': 'قَاف',
+  'ك': 'كَاف',
+  'ل': 'لَام',
+  'م': 'مِيم',
+  'ن': 'نُون',
+  'ه': 'هَاء',
+  'و': 'وَاو',
+  'ي': 'يَاء',
+};
 
 const Map<String, String> qaidaLetterAudioAssets = {
   'qaida_alif': 'assets/audio/letters/alif.mp3',

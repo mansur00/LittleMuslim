@@ -9,6 +9,7 @@ import '../../theme/app_theme.dart';
 import '../../utils/app_state.dart';
 import '../../widgets/vector_icons.dart';
 import '../../widgets/vector_mascot.dart';
+import 'qaida_chapters_screen.dart';
 import 'qaida_letters.dart';
 import 'qaida_next_course_screen.dart';
 
@@ -827,7 +828,7 @@ class _QaidaLessonScreenState extends State<QaidaLessonScreen> {
         return;
       }
       Navigator.of(context).pushReplacement(MaterialPageRoute<void>(
-        builder: (_) => const QaidaNextCourseScreen(),
+        builder: (_) => const QaidaChaptersScreen(),
       ));
       return;
     }

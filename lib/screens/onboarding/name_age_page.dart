@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../../theme/app_theme.dart';
 import '../../theme/design_system.dart';
 import '../../utils/app_state.dart';
+import '../../widgets/faceless_silhouette.dart';
 
 class NameAgePage extends StatefulWidget {
   final bool isTablet;
@@ -26,6 +27,8 @@ class _NameAgePageState extends State<NameAgePage> {
   final TextEditingController _nameController = TextEditingController();
   int _selectedAge = 8;
   String _selectedRole = 'child';
+  String _selectedAvatarType = 'topi';
+  int _selectedAvatarColor = 0xFF10B981;
   final List<int> _ages = List.generate(9, (i) => i + 6); // 6 to 14
   bool _initialized = false;
 
@@ -39,6 +42,8 @@ class _NameAgePageState extends State<NameAgePage> {
       }
       _selectedAge = appState.draftAge;
       _selectedRole = appState.draftRole;
+      _selectedAvatarType = appState.draftAvatarType;
+      _selectedAvatarColor = appState.draftAvatarColor;
       _initialized = true;
     }
   }
@@ -77,11 +82,11 @@ class _NameAgePageState extends State<NameAgePage> {
                   ],
                 ),
                 child: ClipOval(
-                  child: Image.asset(
-                    'assets/images/mascot_reading.jpg',
-                    fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) =>
-                        const Icon(Icons.face_rounded, color: DS.green500),
+                  child: Center(
+                    child: FacelessSilhouette(
+                      size: widget.isTablet ? 48 : 38,
+                      pose: SilhouettePose.reading,
+                    ),
                   ),
                 ),
               ),
@@ -300,6 +305,160 @@ class _NameAgePageState extends State<NameAgePage> {
 
           const SizedBox(height: 20),
 
+          // Avatar & Color Picker Section (Prani-chhara Faceless Silhouette)
+          LocalizedText(
+            'অবতার ও প্রিয় রঙ বেছে নাও',
+            style: TextStyle(
+              fontSize: widget.isTablet ? 18 : 15,
+              fontWeight: DS.black,
+              color: DS.textPrimary,
+            ),
+          ).animate().fadeIn(delay: 380.ms, duration: 350.ms),
+
+          const SizedBox(height: 10),
+
+          Container(
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(DS.rLg),
+              border: Border.all(color: const Color(0xFFE5E7EB), width: 2),
+              boxShadow: const [
+                BoxShadow(
+                  color: Color(0x0A000000),
+                  offset: Offset(0, 3),
+                  blurRadius: 6,
+                ),
+              ],
+            ),
+            child: Column(
+              children: [
+                // Live preview & type toggle
+                Row(
+                  children: [
+                    // Avatar Silhouette Circle Preview
+                    AnimatedContainer(
+                      duration: const Duration(milliseconds: 250),
+                      width: widget.isTablet ? 68 : 58,
+                      height: widget.isTablet ? 68 : 58,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Color(_selectedAvatarColor).withValues(alpha: 0.12),
+                        border: Border.all(
+                          color: Color(_selectedAvatarColor),
+                          width: 2.5,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Color(_selectedAvatarColor).withValues(alpha: 0.25),
+                            blurRadius: 10,
+                            offset: const Offset(0, 3),
+                          ),
+                        ],
+                      ),
+                      child: Center(
+                        child: FacelessSilhouette(
+                          size: widget.isTablet ? 50 : 42,
+                          type: SilhouetteType.fromString(_selectedAvatarType),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    // Type selector buttons
+                    Expanded(
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: _AvatarTypeChip(
+                              title: 'টুপি (Topi)',
+                              icon: Icons.person_rounded,
+                              isSelected: _selectedAvatarType == 'topi',
+                              activeColor: Color(_selectedAvatarColor),
+                              onTap: () {
+                                setState(() => _selectedAvatarType = 'topi');
+                                context.read<AppState>().updateDraftAvatar(type: 'topi');
+                              },
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: _AvatarTypeChip(
+                              title: 'হিজাব (Hijab)',
+                              icon: Icons.face_3_rounded,
+                              isSelected: _selectedAvatarType == 'hijab',
+                              activeColor: Color(_selectedAvatarColor),
+                              onTap: () {
+                                setState(() => _selectedAvatarType = 'hijab');
+                                context.read<AppState>().updateDraftAvatar(type: 'hijab');
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                const Divider(color: Color(0xFFF3F4F6), height: 1),
+                const SizedBox(height: 10),
+                // Color palette row
+                Row(
+                  children: [
+                    const LocalizedText(
+                      'রঙ:',
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF6B7280),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Wrap(
+                        spacing: 8,
+                        runSpacing: 6,
+                        children: kAvatarColors.map((col) {
+                          final isSelected = col.value == _selectedAvatarColor;
+                          return GestureDetector(
+                            onTap: () {
+                              setState(() => _selectedAvatarColor = col.value);
+                              context.read<AppState>().updateDraftAvatar(color: col.value);
+                            },
+                            child: AnimatedContainer(
+                              duration: const Duration(milliseconds: 200),
+                              width: widget.isTablet ? 30 : 26,
+                              height: widget.isTablet ? 30 : 26,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: col,
+                                border: Border.all(
+                                  color: isSelected ? Colors.white : Colors.transparent,
+                                  width: 2.5,
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: col.withValues(alpha: isSelected ? 0.45 : 0.15),
+                                    blurRadius: isSelected ? 6 : 2,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
+                              ),
+                              child: isSelected
+                                  ? const Icon(Icons.check, color: Colors.white, size: 15)
+                                  : null,
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ).animate().fadeIn(delay: 400.ms, duration: 400.ms),
+
+          const SizedBox(height: 20),
+
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
@@ -448,6 +607,61 @@ class _RoleCard extends StatelessWidget {
                 fontWeight: FontWeight.w600,
                 color: Color(0xFF6B7280),
                 height: 1.25,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _AvatarTypeChip extends StatelessWidget {
+  final String title;
+  final IconData icon;
+  final bool isSelected;
+  final Color activeColor;
+  final VoidCallback onTap;
+
+  const _AvatarTypeChip({
+    required this.title,
+    required this.icon,
+    required this.isSelected,
+    required this.activeColor,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(10),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 180),
+        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+        decoration: BoxDecoration(
+          color: isSelected ? activeColor.withValues(alpha: 0.12) : const Color(0xFFF9FAFB),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(
+            color: isSelected ? activeColor : const Color(0xFFE5E7EB),
+            width: isSelected ? 2 : 1.2,
+          ),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              icon,
+              size: 16,
+              color: isSelected ? activeColor : Colors.grey.shade600,
+            ),
+            const SizedBox(width: 4),
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                color: isSelected ? activeColor : const Color(0xFF4B5563),
               ),
             ),
           ],

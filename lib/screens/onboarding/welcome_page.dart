@@ -6,6 +6,7 @@ import '../../theme/app_theme.dart';
 import '../../theme/design_system.dart';
 import '../../utils/app_state.dart';
 import '../../widgets/vector_icons.dart';
+import '../../widgets/faceless_silhouette.dart';
 
 class WelcomePage extends StatelessWidget {
   final bool isTablet;
@@ -85,14 +86,10 @@ class WelcomePage extends StatelessWidget {
               ],
             ),
             child: ClipOval(
-              child: Image.asset(
-                'assets/images/mascot_happy.jpg',
-                fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) => const Center(
-                  child: CustomPaint(
-                    size: Size(80, 80),
-                    painter: QuranIllustrationPainter(),
-                  ),
+              child: Center(
+                child: FacelessSilhouette(
+                  size: mascotSize * 0.95,
+                  pose: SilhouettePose.portrait,
                 ),
               ),
             ),

@@ -5,10 +5,13 @@ import '../../theme/app_theme.dart';
 import '../../theme/design_system.dart';
 import '../../utils/app_state.dart';
 import '../../widgets/vector_icons.dart';
+import '../../widgets/faceless_silhouette.dart';
+import '../../widgets/duolingo_appbar.dart';
 
-import '../../widgets/duolingo_path_view.dart';
-import '../qaida/qaida_letters.dart';
+import '../../data/qaida_curriculum_data.dart';
+import '../../data/nurani_qaida_data.dart';
 import '../qaida/qaida_chapters_screen.dart';
+import '../qaida/qaida_activity_screen.dart';
 import '../prayer/prayer_screen.dart';
 import '../quran/quran_screen.dart';
 import '../duas/duas_screen.dart';
@@ -18,6 +21,9 @@ import '../missions/daily_missions_screen.dart';
 import '../basics/islam_basics_screen.dart';
 import '../live_learning/live_learning_screen.dart';
 import '../settings/settings_screen.dart';
+import '../qaida/qaida_revision_screen.dart';
+import '../qaida/qaida_report_screen.dart';
+import '../../services/alert_sound_service.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -65,7 +71,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     isTablet: isTablet,
                     isActive: _currentTabIndex == 0,
                   ),
-                  _HomeModulesTab(isTablet: isTablet),
+                  _HomeContinueTab(isTablet: isTablet),
                   const DailyMissionsScreen(),
                   const AchievementsScreen(),
                 ],
@@ -112,14 +118,8 @@ class _HomePathTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const lessons = qaidaLetters;
-    final (
-      todayQaidaLessons,
-      letterProgress
-    ) = context.select<AppState, (int, int)>((state) => (
-          state.todayQaidaLessons,
-          lessons.where((lesson) => state.hasCompletedLesson(lesson.id)).length,
-        ));
+    final todayQaidaLessons =
+        context.select<AppState, int>((state) => state.todayQaidaLessons);
 
     return CustomScrollView(
       physics: const BouncingScrollPhysics(),
@@ -198,71 +198,12 @@ class _HomePathTab extends StatelessWidget {
                   isTablet: isTablet,
                 ),
                 SizedBox(height: isTablet ? 14 : 10),
+                // ── Smart Review Recommendation ──
+                _ReviewRecommendationCard(isTablet: isTablet),
+                _ContinueLearningCard(isTablet: isTablet),
+                SizedBox(height: isTablet ? 14 : 10),
 
-                // Section header: 'তোমার শেখার পথ' with progress chip
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          LocalizedText(
-                            'তোমার শেখার পথ',
-                            style: TextStyle(
-                              fontSize: isTablet ? 22 : 18,
-                              fontWeight: FontWeight.w900,
-                              color: AppTheme.darkText,
-                            ),
-                          ),
-                          const SizedBox(height: 2),
-                          LocalizedText(
-                            'প্রতিটি নোডে ট্যাপ করে শেখো',
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: AppTheme.darkText.withValues(alpha: 0.55),
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 6),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFE8F8D8),
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(
-                          color: const Color(0xFF58CC02).withValues(alpha: 0.3),
-                          width: 1.5,
-                        ),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const VectorIcon(
-                            type: VectorIconType.star,
-                            size: 14,
-                            color: Color(0xFF58A700),
-                          ),
-                          const SizedBox(width: 5),
-                          LocalizedText(
-                            '$letterProgress / ${lessons.length}',
-                            style: const TextStyle(
-                              fontWeight: FontWeight.w900,
-                              fontSize: 12,
-                              color: Color(0xFF58A700),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                // Reference 2: Playful category selector pills
+                // Playful category selector pills
                 SizedBox(
                   height: 38,
                   child: ListView(
@@ -272,8 +213,11 @@ class _HomePathTab extends StatelessWidget {
                       _QuickPill(
                         label: 'ক্বায়দা',
                         icon: VectorIconType.qaida,
-                        isSelected: true,
-                        onTap: () {},
+                        onTap: () => Navigator.of(context).push(
+                          MaterialPageRoute<void>(
+                            builder: (_) => const QaidaChaptersScreen(),
+                          ),
+                        ),
                       ),
                       const SizedBox(width: 8),
                       _QuickPill(
@@ -324,17 +268,12 @@ class _HomePathTab extends StatelessWidget {
           ),
         ),
 
-        // The flagship vertical Duolingo serpentine winding path
-        SliverToBoxAdapter(
-          child: DuolingoPathView(isTablet: isTablet, isActive: isActive),
-        ),
-
-        // Explore Modules Section below the road
+        // Explore Modules Section
         SliverToBoxAdapter(
           child: Padding(
             padding: EdgeInsets.fromLTRB(
               isTablet ? 36 : 18,
-              28,
+              16,
               isTablet ? 36 : 18,
               32,
             ),
@@ -359,28 +298,592 @@ class _HomePathTab extends StatelessWidget {
   }
 }
 
-/// Standalone Modules Tab
-class _HomeModulesTab extends StatelessWidget {
-  const _HomeModulesTab({required this.isTablet});
+String _formatTime(String value) {
+  final parts = value.split(':');
+  final hour = int.tryParse(parts.first) ?? 17;
+  final minute = int.tryParse(parts.last) ?? 30;
+  final period = hour >= 12 ? 'PM' : 'AM';
+  final shownHour = hour % 12 == 0 ? 12 : hour % 12;
+  return '$shownHour:${minute.toString().padLeft(2, '0')} $period';
+}
+
+/// My Learning Journey Tab ("আমার পড়া" / Continue Learning Hub)
+/// Acts as the child's personal dashboard to resume right where they left off.
+class _HomeContinueTab extends StatelessWidget {
+  const _HomeContinueTab({required this.isTablet});
   final bool isTablet;
 
   @override
   Widget build(BuildContext context) {
+    final state = context.watch<AppState>();
+
+    // 1. Determine next Qaida lesson to resume
+    final allNuraniLessons =
+        NuraniQaidaData.steps.expand((s) => s.lessons).toList();
+    final nextLesson = allNuraniLessons.firstWhere(
+      (l) => !state.hasCompletedLesson(l.id),
+      orElse: () => allNuraniLessons.first,
+    );
+    final step = NuraniQaidaData.getStepForLesson(nextLesson.id) ??
+        NuraniQaidaData.steps.first;
+
+    final quranPos = state.quranReadingPosition;
+    final hasDue = state.hasSkillsDueForReview;
+    final hasMistakes = state.hasRecentMistakes;
+
     return ListView(
       physics: const BouncingScrollPhysics(),
       padding: EdgeInsets.fromLTRB(
         isTablet ? 36 : 18,
         14,
         isTablet ? 36 : 18,
-        32,
+        36,
       ),
       children: [
+        // ── 1. Personalized Header Banner ──
+        Container(
+          padding: const EdgeInsets.all(18),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              colors: [Color(0xFF0D7377), Color(0xFF14919B)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.circular(24),
+            boxShadow: [
+              BoxShadow(
+                color: const Color(0xFF0D7377).withValues(alpha: 0.25),
+                blurRadius: 12,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: isTablet ? 64 : 54,
+                height: isTablet ? 64 : 54,
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(18),
+                ),
+                child: const Icon(Icons.auto_stories_rounded,
+                    color: Colors.white, size: 30),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    LocalizedText(
+                      'আমার পড়ার ড্যাশবোর্ড',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: isTablet ? 20 : 17,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                    const SizedBox(height: 3),
+                    const LocalizedText(
+                      'যেখান থেকে শেষ করেছিলে, সেখান থেকেই পড়া চালিয়ে যাও!',
+                      style: TextStyle(
+                        color: Colors.white70,
+                        fontSize: 12,
+                        height: 1.3,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 16),
+
+        // ── 2. Primary 1-Tap Qaida Resume Card ──
+        _SectionTitle(
+          title: 'চলমান কায়দা পাঠ',
+          subtitle: 'ধাপ ${step.stepNumber}: ${step.title}',
+          isTablet: isTablet,
+        ),
+        const SizedBox(height: 10),
+        DuolingoCard(
+          accentColor: AppTheme.primaryGreen,
+          margin: EdgeInsets.zero,
+          padding: EdgeInsets.all(isTablet ? 20 : 16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: AppTheme.primaryGreen.withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Text(
+                      'স্টেপ ${step.stepNumber}: ${step.title}',
+                      style: const TextStyle(
+                        fontSize: 11.5,
+                        fontWeight: FontWeight.w800,
+                        color: AppTheme.primaryGreen,
+                      ),
+                    ),
+                  ),
+                  const Spacer(),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFF1F5F9),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.bolt_rounded,
+                            size: 14, color: Color(0xFFFF9600)),
+                        const SizedBox(width: 3),
+                        Text(
+                          'পাঠ ${nextLesson.lessonNumber}/${step.lessons.length}',
+                          style: const TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF475569),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  Container(
+                    width: isTablet ? 66 : 56,
+                    height: isTablet ? 66 : 56,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFF0FDF4),
+                      borderRadius: BorderRadius.circular(18),
+                      border: Border.all(color: const Color(0xFF86EFAC), width: 1.5),
+                    ),
+                    alignment: Alignment.center,
+                    child: Text(
+                      nextLesson.arabicDisplay,
+                      style: TextStyle(
+                        fontFamily: AppTheme.arabicFontFamily,
+                        fontSize: isTablet ? 32 : 28,
+                        fontWeight: FontWeight.bold,
+                        color: const Color(0xFF0F172A),
+                      ),
+                      textDirection: TextDirection.rtl,
+                    ),
+                  ),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          nextLesson.title,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w900,
+                            color: Color(0xFF0F172A),
+                          ),
+                        ),
+                        const SizedBox(height: 3),
+                        Text(
+                          nextLesson.subtitle,
+                          style: const TextStyle(
+                            fontSize: 12,
+                            color: Color(0xFF64748B),
+                            fontWeight: FontWeight.w500,
+                          ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 14),
+              // Big 3D Duolingo Action Button
+              InkWell(
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute<void>(
+                      builder: (_) => QaidaActivityScreen(lesson: nextLesson),
+                    ),
+                  );
+                },
+                borderRadius: BorderRadius.circular(16),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  decoration: BoxDecoration(
+                    color: AppTheme.duoGreen,
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: const [
+                      BoxShadow(
+                        color: AppTheme.duoGreenDark,
+                        offset: Offset(0, 4),
+                        blurRadius: 0,
+                      ),
+                    ],
+                  ),
+                  alignment: Alignment.center,
+                  child: const Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.play_arrow_rounded, color: Colors.white, size: 24),
+                      SizedBox(width: 8),
+                      Text(
+                        'কায়দা পড়া চালিয়ে যাই',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 15.5,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+              // Secondary shortcuts
+              Row(
+                children: [
+                  Expanded(
+                    child: InkWell(
+                      onTap: () => Navigator.of(context).push(
+                        MaterialPageRoute<void>(
+                          builder: (_) => const QaidaChaptersScreen(),
+                        ),
+                      ),
+                      borderRadius: BorderRadius.circular(12),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(vertical: 9, horizontal: 8),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFEFF6FF),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: const Color(0xFFBFDBFE)),
+                        ),
+                        child: const Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.map_rounded, size: 14, color: Color(0xFF2563EB)),
+                            SizedBox(width: 5),
+                            Flexible(
+                              child: Text(
+                                '১৭টি ধাপের মানচিত্র',
+                                style: TextStyle(
+                                  fontSize: 11.5,
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xFF1D4ED8),
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: InkWell(
+                      onTap: () => Navigator.of(context).push(
+                        MaterialPageRoute<void>(
+                          builder: (_) => const QaidaReportScreen(),
+                        ),
+                      ),
+                      borderRadius: BorderRadius.circular(12),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(vertical: 9, horizontal: 8),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFFAF5FF),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: const Color(0xFFE9D5FF)),
+                        ),
+                        child: const Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.insights_rounded, size: 14, color: Color(0xFF9333EA)),
+                            SizedBox(width: 5),
+                            Flexible(
+                              child: Text(
+                                'পড়ার রিপোর্ট (হিটম্যাপ)',
+                                style: TextStyle(
+                                  fontSize: 11.5,
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xFF7E22CE),
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 18),
+
+        // ── 3. Spaced Repetition / Smart Review ──
+        if (hasDue || hasMistakes) ...[
+          _SectionTitle(
+            title: 'স্মার্ট রিভিশন',
+            subtitle: hasMistakes
+                ? 'কিছু হরফে ভুল হয়েছিল, পুনরায় ঝালিয়ে নাও'
+                : 'পরবর্তী পড়ার আগে রিভিশন করে নাও',
+            isTablet: isTablet,
+          ),
+          const SizedBox(height: 10),
+          _ReviewRecommendationCard(isTablet: isTablet),
+          const SizedBox(height: 18),
+        ],
+
+        // ── 4. Quran Bookmark Resume Card ──
+        _SectionTitle(
+          title: 'পবিত্র কুরআন তিলাওয়াত',
+          subtitle: quranPos != null
+              ? 'সূরা নম্বর ${quranPos.surahNumber} · আয়াত ${quranPos.ayahNumber}'
+              : 'সূরা আল-ফাতিহা থেকে শুরু করো',
+          isTablet: isTablet,
+        ),
+        const SizedBox(height: 10),
+        DuolingoCard(
+          accentColor: const Color(0xFFF97316),
+          margin: EdgeInsets.zero,
+          padding: EdgeInsets.all(isTablet ? 18 : 14),
+          child: Row(
+            children: [
+              Container(
+                width: 50,
+                height: 50,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFFF7ED),
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(color: const Color(0xFFFDBA74)),
+                ),
+                child: const Icon(Icons.menu_book_rounded,
+                    color: Color(0xFFEA580C), size: 26),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    LocalizedText(
+                      quranPos != null
+                          ? 'সূরা নম্বর ${quranPos.surahNumber} · আয়াত ${quranPos.ayahNumber}'
+                          : 'সূরা আল-ফাতিহা (১ম আয়াত)',
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w900,
+                        fontSize: 14.5,
+                        color: Color(0xFF1E293B),
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    const LocalizedText(
+                      'উচ্চারণ ও অর্থসহ সুন্দর তিলাওয়াত',
+                      style: TextStyle(color: Color(0xFF64748B), fontSize: 11),
+                    ),
+                  ],
+                ),
+              ),
+              FilledButton(
+                onPressed: () => Navigator.of(context).push(
+                  MaterialPageRoute<void>(builder: (_) => const QuranScreen()),
+                ),
+                style: FilledButton.styleFrom(
+                  backgroundColor: const Color(0xFFF97316),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                ),
+                child: const LocalizedText('পড়ি ›'),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 18),
+
+        // ── 5. Prayer Adhan & Learning Alarm Audio Panel ──
+        _SectionTitle(
+          title: 'আযান ও পড়ার অ্যালার্ম',
+          subtitle: 'সুমধুর আযান ও আউযুবিল্লাহ-বিসমিল্লাহ শুনুন',
+          isTablet: isTablet,
+        ),
+        const SizedBox(height: 10),
+        DuolingoCard(
+          accentColor: const Color(0xFF3B82F6),
+          margin: EdgeInsets.zero,
+          padding: const EdgeInsets.all(14),
+          child: Column(
+            children: [
+              ValueListenableBuilder<AlertSoundType?>(
+                valueListenable: AlertSoundService.instance.currentPlayingNotifier,
+                builder: (context, playingType, _) {
+                  final isAdhanPlaying = playingType == AlertSoundType.adhan;
+                  final isAlarmPlaying = playingType == AlertSoundType.learningAlarm;
+
+                  return Row(
+                    children: [
+                      // Adhan Button
+                      Expanded(
+                        child: InkWell(
+                          onTap: () => AlertSoundService.instance.playAdhan(),
+                          borderRadius: BorderRadius.circular(14),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(vertical: 11),
+                            decoration: BoxDecoration(
+                              color: isAdhanPlaying
+                                  ? const Color(0xFFEF4444)
+                                  : const Color(0xFF10B981),
+                              borderRadius: BorderRadius.circular(14),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: (isAdhanPlaying
+                                          ? const Color(0xFFEF4444)
+                                          : const Color(0xFF10B981))
+                                      .withValues(alpha: 0.25),
+                                  blurRadius: 4,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ],
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  isAdhanPlaying
+                                      ? Icons.stop_rounded
+                                      : Icons.volume_up_rounded,
+                                  color: Colors.white,
+                                  size: 17,
+                                ),
+                                const SizedBox(width: 5),
+                                Flexible(
+                                  child: Text(
+                                    isAdhanPlaying ? 'আযান থামান' : 'আযান শুনুন',
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w800,
+                                      fontSize: 12,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      // Learning Alarm Button
+                      Expanded(
+                        child: InkWell(
+                          onTap: () => AlertSoundService.instance.playLearningAlarm(),
+                          borderRadius: BorderRadius.circular(14),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(vertical: 11),
+                            decoration: BoxDecoration(
+                              color: isAlarmPlaying
+                                  ? const Color(0xFFEF4444)
+                                  : const Color(0xFFF59E0B),
+                              borderRadius: BorderRadius.circular(14),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: (isAlarmPlaying
+                                          ? const Color(0xFFEF4444)
+                                          : const Color(0xFFF59E0B))
+                                      .withValues(alpha: 0.25),
+                                  blurRadius: 4,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ],
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  isAlarmPlaying
+                                      ? Icons.stop_rounded
+                                      : Icons.play_arrow_rounded,
+                                  color: Colors.white,
+                                  size: 18,
+                                ),
+                                const SizedBox(width: 4),
+                                Flexible(
+                                  child: Text(
+                                    isAlarmPlaying ? 'অ্যালার্ম থামান' : 'পড়ার অ্যালার্ম শুনুন',
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w800,
+                                      fontSize: 12,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              ),
+              const SizedBox(height: 10),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'পড়ার অ্যালার্ম: ${_formatTime(state.learningAlarmTime)}',
+                    style: const TextStyle(
+                      fontSize: 11.5,
+                      fontWeight: FontWeight.w700,
+                      color: Color(0xFF475569),
+                    ),
+                  ),
+                  InkWell(
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute<void>(builder: (_) => const PrayerScreen()),
+                    ),
+                    child: const Text(
+                      'নামাজের সময়সূচি ›',
+                      style: TextStyle(
+                        fontSize: 11.5,
+                        fontWeight: FontWeight.w800,
+                        color: Color(0xFF2563EB),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 22),
+
+        // ── 6. Compact Subject Directory (All Modules) ──
         _SectionTitle(
           title: 'সব মডিউল',
           subtitle: 'কুরআন, নামাজ, দোয়া ও ইসলামিক গল্প শিখি',
           isTablet: isTablet,
         ),
-        SizedBox(height: isTablet ? 18 : 14),
+        SizedBox(height: isTablet ? 16 : 12),
         _ModulesGrid(isTablet: isTablet),
         const SizedBox(height: 20),
         _TeacherLearningBanner(isTablet: isTablet),
@@ -409,32 +912,14 @@ class _TopBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        // 3D Mascot Avatar
-        Container(
-          width: isTablet ? 48 : 42,
-          height: isTablet ? 48 : 42,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: Colors.white,
-            border: Border.all(color: const Color(0xFFFFD700), width: 2.5),
-            boxShadow: [
-              BoxShadow(
-                color: const Color(0xFF58CC02).withValues(alpha: 0.35),
-                blurRadius: 8,
-                offset: const Offset(0, 3),
-              ),
-            ],
-          ),
-          child: ClipOval(
-            child: Image.asset(
-              'assets/images/mascot_happy.jpg',
-              fit: BoxFit.cover,
-              errorBuilder: (_, __, ___) => const IconBadge(
-                type: VectorIconType.crescent,
-                bgColor: Color(0xFFD4F0EC),
-                size: 42,
-                iconColor: AppTheme.primaryGreen,
-              ),
+        // Faceless Silhouette Avatar (Tap to change avatar & color)
+        GestureDetector(
+          onTap: () => showAvatarCustomizerModal(context),
+          child: Tooltip(
+            message: 'অবতার ও রঙ পরিবর্তন করুন',
+            child: FacelessSilhouette(
+              size: isTablet ? 48 : 42,
+              circleBackground: true,
             ),
           ),
         ),
@@ -592,10 +1077,10 @@ class _QuranSpeechCard extends StatelessWidget {
           ClipRRect(
             borderRadius: BorderRadius.circular(12),
             child: Image.asset(
-              'assets/images/quran_3d.jpg',
+              'assets/images/quran_3d.png',
               width: isTablet ? 68 : 58,
               height: isTablet ? 68 : 58,
-              fit: BoxFit.cover,
+              fit: BoxFit.contain,
             ),
           ),
           const SizedBox(width: 14),
@@ -638,6 +1123,376 @@ class _QuranSpeechCard extends StatelessWidget {
     );
   }
 }
+
+/// Smart review recommendation — shown when skills are due for spaced review
+/// or when the learner has recent mistakes. Hidden when nothing to review.
+class _ReviewRecommendationCard extends StatelessWidget {
+  const _ReviewRecommendationCard({required this.isTablet});
+  final bool isTablet;
+
+  @override
+  Widget build(BuildContext context) {
+    final state = context.watch<AppState>();
+    final hasDue = state.hasSkillsDueForReview;
+    final hasMistakes = state.hasRecentMistakes;
+
+    if (!hasDue && !hasMistakes) return const SizedBox.shrink();
+
+    final message = hasMistakes
+        ? 'কিছু দক্ষতায় আরো মনোযোগ দরকার। ভুল সংশোধন করে এগিয়ে যাও!'
+        : 'কিছু পুরনো পাঠ পুনরায় অনুশীলন করার সময় হয়েছে।';
+    final icon = hasMistakes ? Icons.auto_fix_high_rounded : Icons.replay_rounded;
+    final color = hasMistakes ? const Color(0xFFF59E0B) : const Color(0xFF6366F1);
+    final bgColor =
+        hasMistakes ? const Color(0xFFFEF3C7) : const Color(0xFFEEF2FF);
+    final borderColor =
+        hasMistakes ? const Color(0xFFFDE68A) : const Color(0xFFC7D2FE);
+    final btnLabel =
+        hasMistakes ? 'ভুল সংশোধন করি' : 'পুনরায় অনুশীলন করি';
+
+    return Padding(
+      padding: EdgeInsets.only(bottom: isTablet ? 12 : 10),
+      child: InkWell(
+        onTap: () => Navigator.of(context).push(
+          MaterialPageRoute<void>(
+            builder: (_) => const QaidaRevisionScreen(),
+          ),
+        ),
+        borderRadius: BorderRadius.circular(16),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+          decoration: BoxDecoration(
+            color: bgColor,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: borderColor, width: 1.5),
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: color.withValues(alpha: 0.15),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(icon, color: color, size: 22),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      hasMistakes ? 'ভুল সংশোধন' : 'পুনরায় অনুশীলন',
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold,
+                        color: color,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      message,
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: color.withValues(alpha: 0.8),
+                        height: 1.3,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 8),
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                decoration: BoxDecoration(
+                  color: color,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Text(
+                  btnLabel,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 11,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ContinueLearningCard extends StatelessWidget {
+  const _ContinueLearningCard({required this.isTablet});
+  final bool isTablet;
+
+  @override
+  Widget build(BuildContext context) {
+    final state = context.watch<AppState>();
+    if (state.completedQaidaLessons == 0) {
+      return const SizedBox.shrink();
+    }
+    final allNuraniLessons =
+        NuraniQaidaData.steps.expand((s) => s.lessons).toList();
+    final nextLesson = allNuraniLessons.firstWhere(
+      (l) => !state.hasCompletedLesson(l.id),
+      orElse: () => allNuraniLessons.first,
+    );
+    final step = NuraniQaidaData.getStepForLesson(nextLesson.id) ??
+        NuraniQaidaData.steps.first;
+
+    return Container(
+      padding: EdgeInsets.all(isTablet ? 18 : 14),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(22),
+        border: Border.all(color: const Color(0xFFE2E8F0), width: 1.8),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            offset: const Offset(0, 4),
+            blurRadius: 10,
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF0D7377).withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Text(
+                  'চলমান: স্টেপ ${step.stepNumber}: ${step.title}',
+                  style: const TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF0D7377),
+                  ),
+                ),
+              ),
+              const Spacer(),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF1F5F9),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.bolt_rounded,
+                        size: 14, color: Color(0xFFFF9600)),
+                    const SizedBox(width: 4),
+                    Text(
+                      'পাঠ ${nextLesson.lessonNumber}/${step.lessons.length}',
+                      style: const TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF475569),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Row(
+            children: [
+              Container(
+                width: 54,
+                height: 54,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF8FAFC),
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(color: const Color(0xFFE2E8F0)),
+                ),
+                alignment: Alignment.center,
+                child: Text(
+                  nextLesson.arabicDisplay,
+                  style: TextStyle(
+                    fontFamily: AppTheme.arabicFontFamily,
+                    fontSize: 26,
+                    fontWeight: FontWeight.bold,
+                    color: const Color(0xFF0F172A),
+                  ),
+                  textDirection: TextDirection.rtl,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      nextLesson.title,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF0F172A),
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      nextLesson.subtitle,
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: Color(0xFF64748B),
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          // Primary Obvious Action: Continue Learning Button
+          InkWell(
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute<void>(
+                  builder: (_) => QaidaActivityScreen(lesson: nextLesson),
+                ),
+              );
+            },
+            borderRadius: BorderRadius.circular(14),
+            child: Container(
+              padding: const EdgeInsets.symmetric(vertical: 13),
+              decoration: BoxDecoration(
+                color: AppTheme.duoGreen,
+                borderRadius: BorderRadius.circular(14),
+                boxShadow: const [
+                  BoxShadow(
+                    color: AppTheme.duoGreenDark,
+                    offset: Offset(0, 3.5),
+                    blurRadius: 0,
+                  ),
+                ],
+              ),
+              alignment: Alignment.center,
+              child: const Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.play_arrow_rounded, color: Colors.white, size: 22),
+                  SizedBox(width: 6),
+                  Text(
+                    'পড়া চালিয়ে যাই',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 10),
+          // Secondary row: 8 Tracks & Teacher Help
+          Row(
+            children: [
+              Expanded(
+                child: InkWell(
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute<void>(
+                        builder: (_) => const QaidaChaptersScreen(),
+                      ),
+                    );
+                  },
+                  borderRadius: BorderRadius.circular(10),
+                  child: Container(
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFEFF6FF),
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: const Color(0xFFBFDBFE)),
+                    ),
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.auto_stories_rounded,
+                            size: 13, color: Color(0xFF2563EB)),
+                        const SizedBox(width: 4),
+                        Flexible(
+                          child: Text(
+                            '১৭টি স্টেপ',
+                            style: const TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF1D4ED8),
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: InkWell(
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute<void>(
+                        builder: (_) => const LiveLearningScreen(),
+                      ),
+                    );
+                  },
+                  borderRadius: BorderRadius.circular(10),
+                  child: Container(
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFFAF5FF),
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: const Color(0xFFE9D5FF)),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.school_rounded,
+                            size: 13, color: Color(0xFF9333EA)),
+                        const SizedBox(width: 4),
+                        Flexible(
+                          child: Text(
+                            'শিক্ষক সহায়তা',
+                            style: const TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF7E22CE),
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 
 class _SectionTitle extends StatelessWidget {
 
@@ -695,7 +1550,7 @@ class _ModulesGrid extends StatelessWidget {
           colors: DS.qaida,
           title: 'ক্বায়দা',
           subtitle: 'বর্ণমালা',
-          badgeAsset: 'assets/images/badge_qaida_3d.jpg',
+          badgeAsset: 'assets/images/badge_qaida_3d.png',
           iconPainter: const QaidaIconPainter(),
           isTablet: isTablet,
           onTap: () => Navigator.of(context).push(
@@ -706,7 +1561,7 @@ class _ModulesGrid extends StatelessWidget {
           colors: DS.quran,
           title: 'কুরআন',
           subtitle: 'তিলাওয়াত',
-          badgeAsset: 'assets/images/badge_quran_3d.jpg',
+          badgeAsset: 'assets/images/badge_quran_3d.png',
           iconPainter: const QuranIconPainter(),
           isTablet: isTablet,
           onTap: () => Navigator.of(context).push(
@@ -717,7 +1572,7 @@ class _ModulesGrid extends StatelessWidget {
           colors: DS.prayer,
           title: 'নামাজ',
           subtitle: 'সময় + নিয়ম',
-          badgeAsset: 'assets/images/badge_prayer_3d.jpg',
+          badgeAsset: 'assets/images/badge_prayer_3d.png',
           iconPainter: const PrayerIconPainter(),
           isTablet: isTablet,
           onTap: () => Navigator.of(context).push(
@@ -728,7 +1583,7 @@ class _ModulesGrid extends StatelessWidget {
           colors: DS.dua,
           title: 'দোয়া',
           subtitle: 'মাসনুন',
-          badgeAsset: 'assets/images/badge_dua_3d.jpg',
+          badgeAsset: 'assets/images/badge_dua_3d.png',
           iconPainter: const DuaIconPainter(),
           isTablet: isTablet,
           onTap: () => Navigator.of(context).push(
@@ -739,7 +1594,7 @@ class _ModulesGrid extends StatelessWidget {
           colors: DS.seerah,
           title: 'সীরাত',
           subtitle: 'নবীর গল্প',
-          badgeAsset: 'assets/images/badge_seerah_3d.jpg',
+          badgeAsset: 'assets/images/badge_seerah_3d.png',
           iconPainter: const SeerahIconPainter(),
           isTablet: isTablet,
           onTap: () => Navigator.of(context).push(
@@ -750,7 +1605,7 @@ class _ModulesGrid extends StatelessWidget {
           colors: DS.basics,
           title: 'মৌলিক ইসলাম',
           subtitle: 'গল্পে গল্পে শিখি',
-          badgeAsset: 'assets/images/badge_basics_3d.jpg',
+          badgeAsset: 'assets/images/badge_basics_3d.png',
           iconPainter: const BasicsIconPainter(),
           isTablet: isTablet,
           onTap: () => Navigator.of(context).push(
@@ -910,7 +1765,7 @@ class _DuolingoBottomNavBar extends StatelessWidget {
           Expanded(
             child: _NavBarItem(
               navType: Real3DNavType.modules,
-              label: 'মডিউল',
+              label: 'আমার পড়া',
               isSelected: currentIndex == 1,
               onTap: () => onTap(1),
             ),

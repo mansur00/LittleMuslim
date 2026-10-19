@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
+import '../models/qaida/qaida_models.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class QuranReadingPosition {
@@ -23,6 +24,16 @@ class AppState extends ChangeNotifier {
   bool _streakAlertsEnabled = true;
   bool _classAlertsEnabled = true;
   String _reminderTime = '19:00';
+  bool _prayerAlertsEnabled = true;
+  Map<String, bool> _prayerAlertToggles = {
+    'Fajr': true,
+    'Dhuhr': true,
+    'Asr': true,
+    'Maghrib': true,
+    'Isha': true,
+  };
+  bool _learningAlarmEnabled = true;
+  String _learningAlarmTime = '17:30';
   final Set<String> _completedLessons = {};
   final Set<String> _lessonActivity = {};
   final Set<String> _openedChests = {};
@@ -37,12 +48,27 @@ class AppState extends ChangeNotifier {
   Future<void> _progressSaveQueue = Future<void>.value();
   Future<void> _quranSaveQueue = Future<void>.value();
 
+  // ── Skill mastery tracking (separate from lesson completion) ──
+  final Map<String, SkillProgress> _skillProgress = {};
+
+  // ── Checkpoint / exam scores ──
+  // key: examId (e.g. 'track_1_letters_checkpoint_1'), value: 0–100
+  final Map<String, int> _examScores = {};
+
+  // ── Per-lesson activity attempt tracking ──
+  // key: lessonId, value: current activity index (resume support)
+  final Map<String, int> _lessonActivityIndex = {};
+
   // In-progress onboarding values, kept separate until setup is completed.
   String draftName = '';
   int draftAge = 8;
   String draftLanguage = 'bn';
   String draftRole = 'child'; // 'child' (regular) or 'admin'
+  String draftAvatarType = 'topi'; // 'topi' or 'hijab'
+  int draftAvatarColor = 0xFF10B981; // Default Emerald Green
   String _userRole = 'child';
+  String _avatarType = 'topi';
+  int _avatarColor = 0xFF10B981;
 
   bool get isLoaded => _isLoaded;
   bool get hasCompletedOnboarding => _hasCompletedOnboarding;
@@ -50,11 +76,21 @@ class AppState extends ChangeNotifier {
   int get age => _age;
   String get selectedLanguage => _selectedLanguage;
   String get userRole => _userRole;
+  String get avatarType => _avatarType;
+  int get avatarColor => _avatarColor;
   bool get isAdmin => _userRole == 'admin';
   int get xp => _xp;
   bool get streakAlertsEnabled => _streakAlertsEnabled;
   bool get classAlertsEnabled => _classAlertsEnabled;
   String get reminderTime => _reminderTime;
+  bool get prayerAlertsEnabled => _prayerAlertsEnabled;
+  Map<String, bool> get prayerAlertToggles => Map.unmodifiable(_prayerAlertToggles);
+  bool isPrayerAlertEnabled(String prayerName) {
+    if (!_prayerAlertsEnabled) return false;
+    return _prayerAlertToggles[prayerName] ?? true;
+  }
+  bool get learningAlarmEnabled => _learningAlarmEnabled;
+  String get learningAlarmTime => _learningAlarmTime;
   QuranReadingPosition? get quranReadingPosition => _quranReadingPosition;
   int get streakDays {
     final activeDays = _lessonActivity
@@ -97,6 +133,38 @@ class AppState extends ChangeNotifier {
   int get salahStep => _salahStep;
   bool get isSalahCompleted => hasCompletedLesson('salah_guide');
   int seerahProgress(String storyId) => _seerahProgress[storyId] ?? 0;
+
+  // ── Skill mastery ──
+  SkillProgress? skillProgress(String skillId) => _skillProgress[skillId];
+  Map<String, SkillProgress> get allSkillProgress =>
+      Map.unmodifiable(_skillProgress);
+
+  /// Skills that are due for spaced repetition review.
+  List<SkillProgress> get skillsDueForReview => _skillProgress.values
+      .where((s) => s.isDueForReview)
+      .toList()
+    ..sort((a, b) => b.revisionPriority.compareTo(a.revisionPriority));
+
+  bool get hasSkillsDueForReview => skillsDueForReview.isNotEmpty;
+
+  /// Returns true if any Qaida skill was missed (accuracy < 70%) recently.
+  bool get hasRecentMistakes => _skillProgress.values.any(
+        (s) =>
+            s.incorrectAttempts > 0 &&
+            s.accuracy < 0.7 &&
+            DateTime.now().difference(s.lastPracticedAt).inDays <= 3,
+      );
+
+  // ── Exam scores ──
+  int? examScore(String examId) => _examScores[examId];
+  bool examPassed(String examId, {int passingThreshold = 80}) {
+    final score = _examScores[examId];
+    return score != null && score >= passingThreshold;
+  }
+
+  // ── Activity resume index ──
+  int lessonActivityIndex(String lessonId) =>
+      _lessonActivityIndex[lessonId] ?? 0;
 
   Future<void> saveSalahStep(int step) async {
     if (step < 0 || step > 4) return;
@@ -158,11 +226,25 @@ class AppState extends ChangeNotifier {
     _selectedLanguage = prefs.getString('language') == 'en' ? 'en' : 'bn';
     _userRole = prefs.getString('user_role') ?? 'child';
     draftRole = _userRole;
+    _avatarType = prefs.getString('avatar_type') ?? 'topi';
+    _avatarColor = prefs.getInt('avatar_color') ?? 0xFF10B981;
+    draftAvatarType = _avatarType;
+    draftAvatarColor = _avatarColor;
     final savedXp = savedProgress?['xp'];
     _xp = savedXp is int && savedXp >= 0 ? savedXp : prefs.getInt('xp') ?? 0;
     _streakAlertsEnabled = prefs.getBool('streak_alerts') ?? true;
     _classAlertsEnabled = prefs.getBool('class_alerts') ?? true;
     _reminderTime = prefs.getString('reminder_time') ?? '19:00';
+    _prayerAlertsEnabled = prefs.getBool('prayer_alerts_enabled') ?? true;
+    final savedPrayerToggles = prefs.getString('prayer_alert_toggles');
+    if (savedPrayerToggles != null) {
+      try {
+        final decoded = jsonDecode(savedPrayerToggles) as Map<String, dynamic>;
+        _prayerAlertToggles = decoded.map((k, v) => MapEntry(k, v == true));
+      } catch (_) {}
+    }
+    _learningAlarmEnabled = prefs.getBool('learning_alarm_enabled') ?? true;
+    _learningAlarmTime = prefs.getString('learning_alarm_time') ?? '17:30';
     _completedLessons
       ..clear()
       ..addAll(_savedStringList(savedProgress?['completedLessons'],
@@ -203,19 +285,124 @@ class AppState extends ChangeNotifier {
       ..addAll(prefs.getStringList('quran_bookmarks') ?? const []);
     _quranReadingPosition =
         _readQuranPosition(prefs.getString('quran_last_read'));
+    // Load skill progress
+    _skillProgress
+      ..clear()
+      ..addAll(_readSkillProgress(savedProgress?['skillProgress']));
+    // Load exam scores
+    _examScores
+      ..clear()
+      ..addAll(_readIntMap(savedProgress?['examScores']));
+    // Load activity resume indices
+    _lessonActivityIndex
+      ..clear()
+      ..addAll(_readIntMap(savedProgress?['lessonActivityIndex']));
     _isLoaded = true;
     notifyListeners();
+  }
+
+  Map<String, SkillProgress> _readSkillProgress(Object? raw) {
+    if (raw is! Map<String, dynamic>) return {};
+    final result = <String, SkillProgress>{};
+    for (final entry in raw.entries) {
+      try {
+        if (entry.key.isNotEmpty && entry.value is Map<String, dynamic>) {
+          result[entry.key] =
+              SkillProgress.fromJson(entry.value as Map<String, dynamic>);
+        }
+      } catch (_) {}
+    }
+    return result;
   }
 
   /// Awards XP once per lesson and saves the learner's progress locally.
   Future<bool> completeLesson(String lessonId, {int xp = 10}) async {
     if (!_completedLessons.add(lessonId)) return false;
     _qaidaLessonSteps.remove(lessonId);
+    _lessonActivityIndex.remove(lessonId);
     _xp += xp;
     _lessonActivity.add('$lessonId|${_todayKey()}');
     notifyListeners();
     await _saveProgress();
     return true;
+  }
+
+  /// Record an activity attempt and update per-skill mastery state.
+  Future<void> recordActivityAttempt({
+    required String skillId,
+    required bool isCorrect,
+    required String lessonId,
+    required int activityIndex,
+  }) async {
+    if (skillId.isEmpty) return;
+    final existing = _skillProgress[skillId];
+    final updated = existing != null
+        ? existing.copyWith(
+            correctAttempts:
+                existing.correctAttempts + (isCorrect ? 1 : 0),
+            incorrectAttempts:
+                existing.incorrectAttempts + (isCorrect ? 0 : 1),
+            masteryState: isCorrect
+                ? _advanceMastery(existing.masteryState)
+                : existing.masteryState,
+            revisionPriority: isCorrect
+                ? (existing.revisionPriority > 0
+                    ? existing.revisionPriority - 1
+                    : 0)
+                : (existing.revisionPriority + 1).clamp(0, 2),
+            lastPracticedAt: DateTime.now(),
+          )
+        : SkillProgress(
+            skillId: skillId,
+            correctAttempts: isCorrect ? 1 : 0,
+            incorrectAttempts: isCorrect ? 0 : 1,
+            masteryState: isCorrect
+                ? SkillMasteryState.inProgress
+                : SkillMasteryState.notStarted,
+            revisionPriority: isCorrect ? 0 : 1,
+            lastPracticedAt: DateTime.now(),
+          );
+    _skillProgress[skillId] = updated;
+    _lessonActivityIndex[lessonId] = activityIndex;
+    notifyListeners();
+    await _saveProgress();
+  }
+
+  SkillMasteryState _advanceMastery(SkillMasteryState current) {
+    switch (current) {
+      case SkillMasteryState.notStarted:
+        return SkillMasteryState.inProgress;
+      case SkillMasteryState.inProgress:
+        return SkillMasteryState.practiceCompleted;
+      case SkillMasteryState.practiceCompleted:
+        return SkillMasteryState.lessonCheckPassed;
+      case SkillMasteryState.lessonCheckPassed:
+        return SkillMasteryState.lessonCompleted;
+      case SkillMasteryState.lessonCompleted:
+        return SkillMasteryState.masteryDeveloping;
+      case SkillMasteryState.masteryDeveloping:
+        return SkillMasteryState.masteryDemonstrated;
+      case SkillMasteryState.masteryDemonstrated:
+      case SkillMasteryState.teacherReviewRequired:
+        return current;
+    }
+  }
+
+  /// Record an exam score (Lesson Check, Checkpoint, Track Final).
+  Future<void> recordExamScore(String examId, int score) async {
+    if (examId.isEmpty || score < 0 || score > 100) return;
+    _examScores[examId] = score;
+    notifyListeners();
+    await _saveProgress();
+  }
+
+  /// Save current activity index for resume support.
+  Future<void> saveLessonActivityIndex(
+      String lessonId, int activityIndex) async {
+    if (lessonId.isEmpty || activityIndex < 0) return;
+    if (_completedLessons.contains(lessonId)) return;
+    _lessonActivityIndex[lessonId] = activityIndex;
+    await _saveProgress();
   }
 
   /// Awards bonus XP when a milestone treasure chest is opened.
@@ -227,13 +414,24 @@ class AppState extends ChangeNotifier {
     return true;
   }
 
+  /// Awards bonus XP directly (e.g. from guardian teach back or bonus mini-games).
+  Future<void> addXp(int points) async {
+    if (points <= 0) return;
+    _xp += points;
+    notifyListeners();
+    await _saveProgress();
+  }
+
   Future<void> _saveProgress() async {
     final xp = _xp;
     final completedLessons = _completedLessons.toList();
     final lessonActivity = _lessonActivity.toList();
     final openedChests = _openedChests.toList();
+    final skillProgressData = {
+      for (final e in _skillProgress.entries) e.key: e.value.toJson()
+    };
     final progress = jsonEncode({
-      'version': 1,
+      'version': 2,
       'xp': xp,
       'completedLessons': completedLessons,
       'lessonActivity': lessonActivity,
@@ -244,6 +442,9 @@ class AppState extends ChangeNotifier {
       'basicsProgress': _basicsProgress,
       'salahStep': _salahStep,
       'seerahProgress': _seerahProgress,
+      'skillProgress': skillProgressData,
+      'examScores': _examScores,
+      'lessonActivityIndex': _lessonActivityIndex,
     });
     final save = _progressSaveQueue.catchError((_) {}).then((_) async {
       final prefs = await SharedPreferences.getInstance();
@@ -354,7 +555,8 @@ class AppState extends ChangeNotifier {
     if (raw == null) return null;
     try {
       final decoded = jsonDecode(raw);
-      if (decoded is Map<String, dynamic> && decoded['version'] == 1) {
+      if (decoded is Map<String, dynamic> &&
+          (decoded['version'] == 1 || decoded['version'] == 2)) {
         return decoded;
       }
     } catch (_) {
@@ -442,6 +644,33 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> updatePrayerAlertSettings({
+    bool? masterEnabled,
+    String? prayerKey,
+    bool? prayerEnabled,
+  }) async {
+    if (masterEnabled != null) _prayerAlertsEnabled = masterEnabled;
+    if (prayerKey != null && prayerEnabled != null) {
+      _prayerAlertToggles[prayerKey] = prayerEnabled;
+    }
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('prayer_alerts_enabled', _prayerAlertsEnabled);
+    await prefs.setString('prayer_alert_toggles', jsonEncode(_prayerAlertToggles));
+    notifyListeners();
+  }
+
+  Future<void> updateLearningAlarmSettings({
+    bool? enabled,
+    String? time,
+  }) async {
+    if (enabled != null) _learningAlarmEnabled = enabled;
+    if (time != null) _learningAlarmTime = time;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('learning_alarm_enabled', _learningAlarmEnabled);
+    await prefs.setString('learning_alarm_time', _learningAlarmTime);
+    notifyListeners();
+  }
+
   String _todayKey() {
     final now = DateTime.now();
     final month = now.month.toString().padLeft(2, '0');
@@ -466,6 +695,27 @@ class AppState extends ChangeNotifier {
 
   void updateDraftRole(String role) {
     draftRole = role == 'admin' ? 'admin' : 'child';
+    notifyListeners();
+  }
+
+  void updateDraftAvatar({String? type, int? color}) {
+    if (type != null) draftAvatarType = type;
+    if (color != null) draftAvatarColor = color;
+    notifyListeners();
+  }
+
+  Future<void> updateAvatar({String? type, int? color}) async {
+    if (type != null) {
+      _avatarType = type;
+      draftAvatarType = type;
+    }
+    if (color != null) {
+      _avatarColor = color;
+      draftAvatarColor = color;
+    }
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('avatar_type', _avatarType);
+    await prefs.setInt('avatar_color', _avatarColor);
     notifyListeners();
   }
 
@@ -507,12 +757,17 @@ class AppState extends ChangeNotifier {
     final language = draftLanguage == 'en' ? 'en' : 'bn';
     final roleToSave = role ?? (draftRole == 'admin' ? 'admin' : 'child');
 
+    _avatarType = draftAvatarType;
+    _avatarColor = draftAvatarColor;
+
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('onboarding_done', true);
     await prefs.setString('user_name', name);
     await prefs.setInt('user_age', age);
     await prefs.setString('language', language);
     await prefs.setString('user_role', roleToSave);
+    await prefs.setString('avatar_type', _avatarType);
+    await prefs.setInt('avatar_color', _avatarColor);
     await prefs.setInt('xp', 0);
     await prefs.setStringList('completed_lessons', const []);
     await prefs.setStringList('lesson_activity', const []);
@@ -566,6 +821,9 @@ class AppState extends ChangeNotifier {
     _quranReadingPosition = null;
     _salahStep = 0;
     _seerahProgress.clear();
+    _skillProgress.clear();
+    _examScores.clear();
+    _lessonActivityIndex.clear();
     draftName = '';
     draftAge = 8;
     draftLanguage = 'bn';

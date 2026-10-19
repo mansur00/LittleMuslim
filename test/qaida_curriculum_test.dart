@@ -1,6 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:little_muslim/data/qaida_curriculum_data.dart';
-import 'package:little_muslim/models/qaida/qaida_models.dart';
 import 'package:little_muslim/utils/app_state.dart';
 
 void main() {
@@ -18,11 +17,26 @@ void main() {
       expect(tracks[7].id, equals('track_8_sentences'));
     });
 
-    test('Track 1 has 28 Hijaiyah letters with activities', () {
+    test('Non-negotiable rule: Every standard lesson has exactly 10 mandatory activities', () {
+      final tracks = QaidaCurriculumData.tracks;
+      for (final track in tracks) {
+        for (final lesson in track.lessons) {
+          expect(lesson.activities.length, equals(10),
+              reason: '${lesson.id} in ${track.id} must have exactly 10 activities');
+          expect(lesson.mandatoryActivityCount, equals(10));
+          // Verify slot numbers 1 to 10
+          for (var i = 0; i < 10; i++) {
+            expect(lesson.activities[i].slotNumber, equals(i + 1));
+          }
+        }
+      }
+    });
+
+    test('Track 1 has 28 Hijaiyah letters with 10 activities each', () {
       final track1 = QaidaCurriculumData.tracks[0];
       expect(track1.lessons.length, equals(28));
       for (final lesson in track1.lessons) {
-        expect(lesson.activities.isNotEmpty, isTrue);
+        expect(lesson.activities.length, equals(10));
         expect(lesson.arabicDisplay.isNotEmpty, isTrue);
       }
     });
@@ -31,13 +45,16 @@ void main() {
       final track2 = QaidaCurriculumData.tracks[1];
       expect(track2.lessons.length, equals(28));
       for (final lesson in track2.lessons) {
-        expect(lesson.activities.length, greaterThanOrEqualTo(4));
+        expect(lesson.activities.length, equals(10));
       }
     });
 
     test('Track 3 has 7 Harakat, Tanwin and Sukun lessons', () {
       final track3 = QaidaCurriculumData.tracks[2];
       expect(track3.lessons.length, equals(7));
+      for (final lesson in track3.lessons) {
+        expect(lesson.activities.length, equals(10));
+      }
     });
 
     test('Track 4 has 10 Madd lessons matching the verified taxonomy', () {

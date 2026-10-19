@@ -6,7 +6,9 @@ import '../../theme/app_theme.dart';
 import '../../utils/app_state.dart';
 import '../../widgets/duolingo_appbar.dart';
 import '../../widgets/vector_icons.dart';
+import '../../widgets/faceless_silhouette.dart';
 import '../../services/notification_service.dart';
+import '../../services/alert_sound_service.dart';
 import '../profile/profile_screen.dart';
 
 class SettingsScreen extends StatelessWidget {
@@ -37,17 +39,9 @@ class SettingsScreen extends StatelessWidget {
                   child: Column(children: [
                     ListTile(
                       contentPadding: EdgeInsets.zero,
-                      leading: CircleAvatar(
-                        backgroundColor: const Color(0xFFDDF4E9),
-                        child: state.userName.isEmpty
-                            ? const Icon(Icons.person_rounded,
-                                color: AppTheme.primaryGreen)
-                            : LocalizedText(
-                                state.userName.substring(0, 1),
-                                style: const TextStyle(
-                                    color: AppTheme.primaryGreen,
-                                    fontWeight: FontWeight.w800),
-                              ),
+                      leading: const FacelessSilhouette(
+                        size: 44,
+                        circleBackground: true,
                       ),
                       title: LocalizedText(
                           state.userName.isEmpty
@@ -60,6 +54,30 @@ class SettingsScreen extends StatelessWidget {
                       onTap: () => Navigator.of(context).push(
                           MaterialPageRoute<void>(
                               builder: (_) => const ProfileScreen())),
+                    ),
+                    ListTile(
+                      contentPadding: EdgeInsets.zero,
+                      leading: Container(
+                        width: 44,
+                        height: 44,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Color(state.avatarColor).withValues(alpha: 0.15),
+                        ),
+                        child: Icon(
+                          Icons.palette_rounded,
+                          color: Color(state.avatarColor),
+                        ),
+                      ),
+                      title: const LocalizedText('অবতার ও রঙ নির্বাচন',
+                          style: TextStyle(fontWeight: FontWeight.w900)),
+                      subtitle: LocalizedText(
+                        state.avatarType == 'hijab'
+                            ? 'হিজাব অবতার · রঙ পরিবর্তন করুন'
+                            : 'টুপি অবতার · রঙ পরিবর্তন করুন',
+                      ),
+                      trailing: const Icon(Icons.chevron_right_rounded),
+                      onTap: () => showAvatarCustomizerModal(context),
                     ),
                     ListTile(
                       contentPadding: EdgeInsets.zero,
@@ -88,13 +106,266 @@ class SettingsScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 13),
                 _SettingsSection(
-                  title: 'নোটিফিকেশন ও স্ট্রিক রিমাইন্ডার',
+                  title: 'নামাজের আযান অ্যালার্ট',
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SwitchListTile.adaptive(
+                        contentPadding: EdgeInsets.zero,
+                        value: state.prayerAlertsEnabled,
+                        activeThumbColor: AppTheme.primaryGreen,
+                        title: const LocalizedText('নামাজের সময় আযান বাজবে',
+                            style: TextStyle(
+                                fontWeight: FontWeight.w800, fontSize: 14)),
+                        subtitle: const LocalizedText(
+                            'ওয়াক্ত হলে সুমধুর আযানের অ্যালার্ট ও নোটিফিকেশন আসবে',
+                            style: TextStyle(fontSize: 11)),
+                        onChanged: (value) async {
+                          final appState = context.read<AppState>();
+                          if (value) {
+                            await NotificationService.instance
+                                .requestPermissions();
+                          }
+                          await appState.updatePrayerAlertSettings(
+                              masterEnabled: value);
+                        },
+                      ),
+                      if (state.prayerAlertsEnabled) ...[
+                        const SizedBox(height: 6),
+                        const LocalizedText(
+                          'ওয়াক্ত অনুযায়ী আযান নির্বাচন:',
+                          style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w700,
+                              color: AppTheme.darkText),
+                        ),
+                        const SizedBox(height: 8),
+                        Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
+                          children: [
+                            for (final entry in const [
+                              ('Fajr', 'ফজর'),
+                              ('Dhuhr', 'যোহর'),
+                              ('Asr', 'আসর'),
+                              ('Maghrib', 'মাগরিব'),
+                              ('Isha', 'ইশা'),
+                            ])
+                              FilterChip(
+                                label: Text(entry.$2),
+                                selected: state.isPrayerAlertEnabled(entry.$1),
+                                onSelected: (selected) {
+                                  context
+                                      .read<AppState>()
+                                      .updatePrayerAlertSettings(
+                                        prayerKey: entry.$1,
+                                        prayerEnabled: selected,
+                                      );
+                                },
+                                selectedColor: const Color(0xFFE8F5E9),
+                                checkmarkColor: AppTheme.primaryGreen,
+                                labelStyle: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 12,
+                                  color: state.isPrayerAlertEnabled(entry.$1)
+                                      ? AppTheme.primaryGreen
+                                      : Colors.black54,
+                                ),
+                              ),
+                          ],
+                        ),
+                      ],
+                      const SizedBox(height: 12),
+                      ValueListenableBuilder<AlertSoundType?>(
+                        valueListenable:
+                            AlertSoundService.instance.currentPlayingNotifier,
+                        builder: (context, playingType, _) {
+                          final isPlaying =
+                              playingType == AlertSoundType.adhan;
+                          return InkWell(
+                            onTap: () =>
+                                AlertSoundService.instance.playAdhan(),
+                            borderRadius: BorderRadius.circular(14),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 14, vertical: 10),
+                              decoration: BoxDecoration(
+                                color: isPlaying
+                                    ? const Color(0xFFFEE2E2)
+                                    : const Color(0xFFF0FDF4),
+                                borderRadius: BorderRadius.circular(14),
+                                border: Border.all(
+                                  color: isPlaying
+                                      ? const Color(0xFFFCA5A5)
+                                      : const Color(0xFF86EFAC),
+                                  width: 1.5,
+                                ),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    isPlaying
+                                        ? Icons.stop_circle_rounded
+                                        : Icons.play_circle_fill_rounded,
+                                    color: isPlaying
+                                        ? const Color(0xFFDC2626)
+                                        : const Color(0xFF16A34A),
+                                    size: 22,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Flexible(
+                                    child: Text(
+                                      isPlaying
+                                          ? 'আযান থামান'
+                                          : 'আযান টেস্ট করুন / শুনুন',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w800,
+                                        fontSize: 13,
+                                        color: isPlaying
+                                            ? const Color(0xFFDC2626)
+                                            : const Color(0xFF16A34A),
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 13),
+                _SettingsSection(
+                  title: 'পড়ার অ্যালার্ম ও স্ট্রিক রিমাইন্ডার',
                   child: Column(children: [
+                    SwitchListTile.adaptive(
+                      contentPadding: EdgeInsets.zero,
+                      value: state.learningAlarmEnabled,
+                      activeThumbColor: AppTheme.primaryGreen,
+                      title: const LocalizedText(
+                          'দৈনিক পড়ার অ্যালার্ম (আউযুবিল্লাহ ও বিসমিল্লাহ)',
+                          style: TextStyle(
+                              fontWeight: FontWeight.w800, fontSize: 14)),
+                      subtitle: const LocalizedText(
+                          'নির্ধারিত সময়ে আউযুবিল্লাহ ও বিসমিল্লাহ পড়ে পড়ার জন্য ডাকবে',
+                          style: TextStyle(fontSize: 11)),
+                      onChanged: (value) async {
+                        final appState = context.read<AppState>();
+                        if (value) {
+                          await NotificationService.instance
+                              .requestPermissions();
+                        }
+                        await appState.updateLearningAlarmSettings(
+                            enabled: value);
+                        await NotificationService.instance
+                            .syncWithAppState(appState);
+                      },
+                    ),
+                    if (state.learningAlarmEnabled) ...[
+                      ListTile(
+                        contentPadding: EdgeInsets.zero,
+                        leading: const Icon(Icons.alarm_rounded,
+                            color: AppTheme.primaryGreen),
+                        title: const LocalizedText('পড়ার অ্যালার্মের সময়',
+                            style: TextStyle(
+                                fontWeight: FontWeight.w800, fontSize: 14)),
+                        subtitle: LocalizedText(
+                            _formatTime(state.learningAlarmTime)),
+                        trailing: const Icon(Icons.edit_rounded, size: 19),
+                        onTap: () async {
+                          final appState = context.read<AppState>();
+                          final parts = state.learningAlarmTime.split(':');
+                          final initial = TimeOfDay(
+                            hour: int.tryParse(parts.first) ?? 17,
+                            minute: int.tryParse(parts.last) ?? 30,
+                          );
+                          final chosen = await showTimePicker(
+                              context: context, initialTime: initial);
+                          if (chosen != null) {
+                            final newTime =
+                                '${chosen.hour.toString().padLeft(2, '0')}:${chosen.minute.toString().padLeft(2, '0')}';
+                            await appState.updateLearningAlarmSettings(
+                              time: newTime,
+                            );
+                            await NotificationService.instance
+                                .syncWithAppState(appState);
+                          }
+                        },
+                      ),
+                      const SizedBox(height: 4),
+                      ValueListenableBuilder<AlertSoundType?>(
+                        valueListenable:
+                            AlertSoundService.instance.currentPlayingNotifier,
+                        builder: (context, playingType, _) {
+                          final isPlaying =
+                              playingType == AlertSoundType.learningAlarm;
+                          return InkWell(
+                            onTap: () => AlertSoundService.instance
+                                .playLearningAlarm(),
+                            borderRadius: BorderRadius.circular(14),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 14, vertical: 10),
+                              decoration: BoxDecoration(
+                                color: isPlaying
+                                    ? const Color(0xFFFEE2E2)
+                                    : const Color(0xFFFEF3C7),
+                                borderRadius: BorderRadius.circular(14),
+                                border: Border.all(
+                                  color: isPlaying
+                                      ? const Color(0xFFFCA5A5)
+                                      : const Color(0xFFFCD34D),
+                                  width: 1.5,
+                                ),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    isPlaying
+                                        ? Icons.stop_circle_rounded
+                                        : Icons.play_circle_fill_rounded,
+                                    color: isPlaying
+                                        ? const Color(0xFFDC2626)
+                                        : const Color(0xFFD97706),
+                                    size: 22,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Flexible(
+                                    child: Text(
+                                      isPlaying
+                                          ? 'পড়ার অ্যালার্ম থামান'
+                                          : 'পড়ার অ্যালার্ম টেস্ট করুন (আউযুবিল্লাহ ও বিসমিল্লাহ)',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w800,
+                                        fontSize: 12,
+                                        color: isPlaying
+                                            ? const Color(0xFFDC2626)
+                                            : const Color(0xFFB45309),
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                      const SizedBox(height: 8),
+                    ],
+                    const Divider(height: 16),
                     SwitchListTile.adaptive(
                       contentPadding: EdgeInsets.zero,
                       value: state.streakAlertsEnabled,
                       activeThumbColor: AppTheme.primaryGreen,
-                      title: const LocalizedText('দৈনিক শেখার রিমাইন্ডার',
+                      title: const LocalizedText('দৈনিক স্ট্রিক রিমাইন্ডার',
                           style: TextStyle(
                               fontWeight: FontWeight.w800, fontSize: 14)),
                       subtitle: const LocalizedText(
@@ -137,7 +408,7 @@ class SettingsScreen extends StatelessWidget {
                       contentPadding: EdgeInsets.zero,
                       leading: const Icon(Icons.alarm_rounded,
                           color: AppTheme.primaryGreen),
-                      title: const LocalizedText('রিমাইন্ডারের সময়',
+                      title: const LocalizedText('স্ট্রিক রিমাইন্ডারের সময়',
                           style: TextStyle(
                               fontWeight: FontWeight.w800, fontSize: 14)),
                       subtitle: LocalizedText(_formatTime(state.reminderTime)),

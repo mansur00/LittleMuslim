@@ -3,6 +3,7 @@ import '../models/qaida/qaida_models.dart';
 import '../screens/qaida/qaida_letters.dart';
 
 /// Master curriculum data for the 8 tracks of the Qaida system.
+/// Every standard lesson contains exactly 10 mandatory practice activities.
 class QaidaCurriculumData {
   static final List<QaidaTrackInfo> tracks = [
     _track1Letters,
@@ -31,6 +32,16 @@ class QaidaCurriculumData {
     return null;
   }
 
+  // Helper to find the next incomplete lesson for "Continue Learning"
+  static QaidaLessonInfo getFirstIncompleteLesson(bool Function(String id) hasCompleted) {
+    for (final track in tracks) {
+      for (final lesson in track.lessons) {
+        if (!hasCompleted(lesson.id)) return lesson;
+      }
+    }
+    return tracks.first.lessons.first;
+  }
+
   // -------------------------------------------------------------
   // TRACK 1: 28 Hijaiyah Letters (হরফ পরিচয়)
   // -------------------------------------------------------------
@@ -46,22 +57,29 @@ class QaidaCurriculumData {
     lessons: List.generate(qaidaLetters.length, (index) {
       final letter = qaidaLetters[index];
       final audio = qaidaLetterAudioAssets[letter.id];
-      final prevLetter = index > 0 ? qaidaLetters[index - 1] : null;
-      final nextLetter = index < qaidaLetters.length - 1 ? qaidaLetters[index + 1] : null;
+      final prevLetter = index > 0 ? qaidaLetters[index - 1] : qaidaLetters.last;
+      final nextLetter = index < qaidaLetters.length - 1 ? qaidaLetters[index + 1] : qaidaLetters.first;
 
-      // Distractor options
-      final distractors = <String>[];
-      if (prevLetter != null) distractors.add(prevLetter.letter);
-      if (nextLetter != null) distractors.add(nextLetter.letter);
-      while (distractors.length < 3) {
-        final candidate = qaidaLetters[(index + distractors.length + 3) % qaidaLetters.length].letter;
-        if (candidate != letter.letter && !distractors.contains(candidate)) {
-          distractors.add(candidate);
+      // Group similar-looking letters for Differentiate step
+      final similarGroups = [
+        ['ب', 'ت', 'ث'],
+        ['ج', 'ح', 'خ'],
+        ['د', 'ذ'],
+        ['ر', 'ز'],
+        ['س', 'ش'],
+        ['ص', 'ض'],
+        ['ط', 'ظ'],
+        ['ع', 'غ'],
+        ['ف', 'ق'],
+      ];
+      String similar = prevLetter.letter;
+      for (final g in similarGroups) {
+        if (g.contains(letter.letter)) {
+          final others = g.where((c) => c != letter.letter).toList();
+          if (others.isNotEmpty) similar = others.first;
+          break;
         }
       }
-
-      final options1 = [letter.letter, distractors[0], distractors[1]]..shuffle();
-      final options2 = [letter.name, prevLetter?.name ?? 'তা', nextLetter?.name ?? 'জীম']..shuffle();
 
       return QaidaLessonInfo(
         id: letter.id,
@@ -74,56 +92,127 @@ class QaidaCurriculumData {
         audioAsset: audio,
         makhraj: letter.makhraj,
         activities: [
-          // 1. Intro
+          // 1. Warm-up / Recall
           QaidaActivity(
-            id: '${letter.id}_intro',
-            type: QaidaActivityType.letterIntro,
-            prompt: 'মনোযোগ দিয়ে হরফটি লক্ষ্য করি এবং তিলাওয়াত শুনি',
-            arabicTarget: letter.letter,
-            audioAsset: audio,
-            makhrajInfo: letter.makhraj,
-            explanation: 'মাখরাজ: ${letter.makhraj}',
+            id: '${letter.id}_step1_recall',
+            slotNumber: 1,
+            type: QaidaActivityType.warmupRecall,
+            prompt: 'পূর্ববর্তী পাঠ স্মরণ: হরফ “${prevLetter.letter}”-এর নাম কী?',
+            arabicTarget: prevLetter.letter,
+            options: [prevLetter.letter, letter.letter, nextLetter.letter],
+            correctIndex: 0,
+            explanation: 'মাশাআল্লাহ! এটি পূর্বের হরফ “${prevLetter.name}” (${prevLetter.letter})।',
           ),
-          // 2. Identify letter
+          // 2. Recognize
           QaidaActivity(
-            id: '${letter.id}_identify',
-            type: QaidaActivityType.identifyLetter,
-            prompt: 'নিচের কোনটি “${letter.name}” (${letter.letter})?',
+            id: '${letter.id}_step2_recognize',
+            slotNumber: 2,
+            type: QaidaActivityType.recognize,
+            prompt: 'আজকের নতুন হরফ চিনে নিই: কোনটি “${letter.name}” (${letter.letter})?',
             arabicTarget: letter.letter,
-            options: options1,
-            correctIndex: options1.indexOf(letter.letter),
+            options: [letter.letter, prevLetter.letter, nextLetter.letter],
+            correctIndex: 0,
             explanation: 'সঠিক! এটি “${letter.letter}” (${letter.name})।',
           ),
-          // 3. Listen and identify
+          // 3. Listen & Identify
           QaidaActivity(
-            id: '${letter.id}_listen',
+            id: '${letter.id}_step3_listen',
+            slotNumber: 3,
             type: QaidaActivityType.listenAndIdentify,
-            prompt: 'অডিও শুনে সঠিক হরফটি বাছাই করো',
+            prompt: 'উচ্চারণ শুনুন এবং সঠিক হরফটি বাছাই করুন',
             arabicTarget: letter.letter,
             audioAsset: audio,
-            options: options1,
-            correctIndex: options1.indexOf(letter.letter),
-            explanation: 'মাশাআল্লাহ! আপনি সঠিক হরফ চিনেছেন।',
+            options: [letter.letter, nextLetter.letter, prevLetter.letter],
+            correctIndex: 0,
+            explanation: 'চমৎকার! আপনি শুনে সঠিক হরফ নির্বাচন করেছেন।',
           ),
-          // 4. Letter name matching
+          // 4. Match Pairs — tap-to-match interactive UI
           QaidaActivity(
-            id: '${letter.id}_name',
-            type: QaidaActivityType.identifyLetter,
-            prompt: 'হরফ “${letter.letter}” এর নাম কী?',
+            id: '${letter.id}_step4_match',
+            slotNumber: 4,
+            type: QaidaActivityType.matchPairs,
+            prompt: 'হরফ ও তার নামের জোড়া মিলাও',
+            pairs: {
+              letter.letter: letter.transliteration,
+              prevLetter.letter: prevLetter.transliteration,
+              nextLetter.letter: nextLetter.transliteration,
+            },
+            explanation: 'চমৎকার! প্রতিটি হরফের আরবি নাম আলাদা ও অনন্য।',
+            feedbackCorrect: 'মাশাআল্লাহ! সব জোড়া সঠিক!',
+            feedbackIncorrect: 'আবার চেষ্টা করো — হরফের আকৃতি দেখে মিলাও।',
+            skillId: 'letter_name_\${letter.id}',
+            difficulty: QaidaActivityDifficulty.easy,
+          ),
+          // 5. Differentiate (similar looking)
+          QaidaActivity(
+            id: '${letter.id}_step5_diff',
+            slotNumber: 5,
+            type: QaidaActivityType.differentiate,
+            prompt: 'সদৃশ হরফের পার্থক্য: নিচের কোনটি “${letter.name}” (${letter.letter}), “$similar” নয়?',
             arabicTarget: letter.letter,
-            options: options2,
-            correctIndex: options2.indexOf(letter.name),
-            explanation: 'আলহামদুলিল্লাহ! হরফটির নাম “${letter.name}”।',
+            options: [letter.letter, similar, 'ا'],
+            correctIndex: 0,
+            explanation: 'খুব ভালো! নুকতা বা আকৃতি খেয়াল করে আপনি “${letter.letter}” আলাদা করেছেন।',
           ),
-          // 5. Final lesson check
+          // 6. Build / Arrange — tile-based ordering
           QaidaActivity(
-            id: '${letter.id}_check',
+            id: '${letter.id}_step6_arrange',
+            slotNumber: 6,
+            type: QaidaActivityType.buildArrange,
+            prompt: 'হরফমালার ক্রমে সাজাও: "${prevLetter.letter}"-এর পরে কোনটি আসে?',
+            tiles: [
+              ActivityTile(id: prevLetter.id, label: prevLetter.transliteration, arabicLabel: prevLetter.letter),
+              ActivityTile(id: letter.id, label: letter.transliteration, arabicLabel: letter.letter),
+              ActivityTile(id: nextLetter.id, label: nextLetter.transliteration, arabicLabel: nextLetter.letter),
+            ],
+            explanation: 'ঠিক তাই! "${prevLetter.letter}"-এর পরের ক্রম হলো "${letter.letter}"।',
+            feedbackCorrect: 'চমৎকার! সঠিক ক্রম মনে রেখো।',
+            feedbackIncorrect: 'হরফমালার ক্রম আবার দেখো।',
+            skillId: 'letter_order_\${letter.id}',
+          ),
+          // 7. Read in Context
+          QaidaActivity(
+            id: '${letter.id}_step7_context',
+            slotNumber: 7,
+            type: QaidaActivityType.readInContext,
+            prompt: 'শব্দের মাঝে লক্ষ্য করুন: “${letter.letter}” হরফটি চিহ্নিত করুন',
+            arabicTarget: 'قَالَ',
+            options: [letter.letter, 'ب', 'م'],
+            correctIndex: 0,
+            explanation: 'হরফটি বিভিন্ন শব্দের মধ্যে সহীহভাবে পড়া যায়।',
+          ),
+          // 8. Apply the Rule
+          QaidaActivity(
+            id: '${letter.id}_step8_rule',
+            slotNumber: 8,
+            type: QaidaActivityType.applyRule,
+            prompt: 'মাখরাজ লক্ষ্য করি: এই স্থান থেকে কোন হরফটি উচ্চারিত হয়? (${letter.makhraj})',
+            arabicTarget: letter.letter,
+            options: [letter.letter, nextLetter.letter, 'م'],
+            correctIndex: 0,
+            explanation: 'মাখরাজ: ${letter.makhraj}',
+          ),
+          // 9. Mixed Practice
+          QaidaActivity(
+            id: '${letter.id}_step9_mixed',
+            slotNumber: 9,
+            type: QaidaActivityType.mixedPractice,
+            prompt: 'মিশ্র যাচাই: “${prevLetter.letter}”, “${letter.letter}”, “${nextLetter.letter}” এর মধ্যে “${letter.name}” কোনটি?',
+            arabicTarget: letter.letter,
+            options: [letter.letter, prevLetter.letter, nextLetter.letter],
+            correctIndex: 0,
+            explanation: 'মাশাআল্লাহ! আপনি সঠিক হরফ বাছাই করেছেন।',
+          ),
+          // 10. Lesson Check
+          QaidaActivity(
+            id: '${letter.id}_step10_check',
+            slotNumber: 10,
             type: QaidaActivityType.lessonCheck,
-            prompt: 'হরফটি আবার যাচাই করি — “${letter.name}” চিনে নিন',
+            prompt: 'চূড়ান্ত পাঠ যাচাই: হরফ “${letter.name}” চিহ্নিত করুন',
             arabicTarget: letter.letter,
-            options: options1,
-            correctIndex: options1.indexOf(letter.letter),
-            explanation: 'চমৎকার! আপনি “${letter.name}” পাঠ সফলভাবে সম্পন্ন করেছেন।',
+            options: [letter.letter, similar, prevLetter.letter],
+            correctIndex: 0,
+            explanation: 'অভিনন্দন! আপনি “${letter.name}” পাঠের ১০টি ধাপ সফলভাবে শেষ করেছেন!',
           ),
         ],
       );
@@ -135,7 +224,7 @@ class QaidaCurriculumData {
   // -------------------------------------------------------------
   static final List<Map<String, dynamic>> _letterFormsRaw = [
     {'name': 'আলিফ', 'iso': 'ا', 'init': 'ا', 'med': 'ـا', 'fin': 'ـا', 'join': false},
-    {'name': 'বা', 'iso': 'ب', 'init': 'بـ', 'med': 'ـبـ', 'fin': 'ـب', 'join': true},
+    {'name': 'বা', 'iso': 'ب', 'init': 'بـ', 'med': 'ـبـ', 'fin': 'ـব', 'join': true},
     {'name': 'তা', 'iso': 'ت', 'init': 'تـ', 'med': 'ـتـ', 'fin': 'ـت', 'join': true},
     {'name': 'ছা', 'iso': 'ث', 'init': 'ثـ', 'med': 'ـثـ', 'fin': 'ـث', 'join': true},
     {'name': 'জীম', 'iso': 'ج', 'init': 'جـ', 'med': 'ـجـ', 'fin': 'ـج', 'join': true},
@@ -194,54 +283,130 @@ class QaidaCurriculumData {
             ? 'এই হরফটি দুই পাশেই জোড়া লাগে।'
             : 'গুরুত্বপূর্ণ: এই হরফটি নিজের পরের অক্ষরের সাথে জোড়া লাগে না!',
         activities: [
+          // 1. Recall
           QaidaActivity(
-            id: 'form_${index}_intro',
-            type: QaidaActivityType.shapeMatching,
-            prompt: '$name ($iso) হরফের রূপগুলো লক্ষ্য করি',
-            arabicTarget: '$init    $med    $fin',
-            explanation: 'শুরুতে: $init | মাঝে: $med | শেষে: $fin',
+            id: 'form_${index}_step1_recall',
+            slotNumber: 1,
+            type: QaidaActivityType.warmupRecall,
+            prompt: '$name-এর একাকী (মূল) রূপ কোনটি?',
+            arabicTarget: iso,
+            options: [iso, 'د', 'ر'],
+            correctIndex: 0,
+            explanation: 'সঠিক! এটি $name-এর মূল রূপ: $iso',
           ),
+          // 2. Recognize
           QaidaActivity(
-            id: 'form_${index}_init',
-            type: QaidaActivityType.shapeMatching,
+            id: 'form_${index}_step2_recognize',
+            slotNumber: 2,
+            type: QaidaActivityType.recognize,
             prompt: 'শব্দের শুরুতে $name দেখতে কেমন?',
             arabicTarget: init,
             options: [init, med, fin],
             correctIndex: 0,
-            explanation: 'সঠিক! শব্দের শুরুতে $name এমন রূপ ধারণ করে: $init',
+            explanation: 'শব্দের শুরুতে $name রূপ ধারণ করে: $init',
           ),
+          // 3. Listen & Identify
           QaidaActivity(
-            id: 'form_${index}_med',
-            type: QaidaActivityType.shapeMatching,
-            prompt: 'শব্দের মাঝে $name দেখতে কেমন রূপ হয়?',
+            id: 'form_${index}_step3_listen',
+            slotNumber: 3,
+            type: QaidaActivityType.listenAndIdentify,
+            prompt: 'উচ্চারণ লক্ষ্য করে $name-এর মাঝের রূপটি বাছুন',
             arabicTarget: med,
             options: [med, init, fin],
             correctIndex: 0,
-            explanation: 'মাশাআল্লাহ! মাঝের রূপ হলো: $med',
+            explanation: 'মাঝের রূপ হলো: $med',
           ),
+          // 4. Match Pairs
           QaidaActivity(
-            id: 'form_${index}_fin',
-            type: QaidaActivityType.shapeMatching,
-            prompt: 'শব্দের শেষে $name এর রূপ কোনটি?',
+            id: 'form_${index}_step4_match',
+            slotNumber: 4,
+            type: QaidaActivityType.matchPairs,
+            prompt: '$name-এর রূপের জোড়া মিলাও',
             arabicTarget: fin,
-            options: [fin, init, med],
-            correctIndex: 0,
-            explanation: 'আলহামদুলিল্লাহ! শেষের রূপ হলো: $fin',
+            pairs: {
+              init: med,
+              iso: fin,
+            },
+            explanation: 'সঠিক জোড়া: শুরু ($init) ও মধ্য ($med); মূল ($iso) ও শেষ ($fin)।',
+            feedbackCorrect: 'মাশাআল্লাহ! রূপের জোড়া মিলেছে!',
+            feedbackIncorrect: 'আবার চেষ্টা করো — রূপ দুটি খেয়াল করো।',
           ),
+          // 5. Differentiate
           QaidaActivity(
-            id: 'form_${index}_rule',
-            type: QaidaActivityType.ruleInContext,
+            id: 'form_${index}_step5_diff',
+            slotNumber: 5,
+            type: QaidaActivityType.differentiate,
+            prompt: 'শুরু ($init) এবং শেষের ($fin) রূপের পার্থক্য করুন — কোনটি শুরুর রূপ?',
+            arabicTarget: init,
+            options: [init, fin, iso],
+            correctIndex: 0,
+            explanation: 'শুরুতে ডানপাশে খোলা থাকে এবং বামে যুক্ত হয়: $init',
+          ),
+          // 6. Build / Arrange
+          QaidaActivity(
+            id: 'form_${index}_step6_arrange',
+            slotNumber: 6,
+            type: QaidaActivityType.buildArrange,
+            prompt: '$name-এর রূপের ক্রম (শুরু ➔ মধ্য ➔ শেষ) সাজাও',
+            arabicTarget: '$init  $med  $fin',
+            tiles: [
+              ActivityTile(id: '1', label: '1', arabicLabel: init),
+              ActivityTile(id: '2', label: '2', arabicLabel: med),
+              ActivityTile(id: '3', label: '3', arabicLabel: fin),
+            ],
+            explanation: 'সঠিক ক্রম: শুরু ($init) ➔ মধ্য ($med) ➔ শেষ ($fin)।',
+            feedbackCorrect: 'চমৎকার! রূপের ধারাবাহিক ক্রম সঠিক!',
+            feedbackIncorrect: 'শুরু থেকে শেষ পর্যন্ত আবার সাজাও।',
+          ),
+          // 7. Read in Context
+          QaidaActivity(
+            id: 'form_${index}_step7_context',
+            slotNumber: 7,
+            type: QaidaActivityType.readInContext,
+            prompt: 'শব্দে $name-এর রূপটি লক্ষ্য করুন',
+            arabicTarget: '$initـت',
+            options: [iso, 'س', 'م'],
+            correctIndex: 0,
+            explanation: 'শব্দের শুরুতে $name স্পষ্টভাবে চেনা যায়।',
+          ),
+          // 8. Apply Rule
+          QaidaActivity(
+            id: 'form_${index}_step8_rule',
+            slotNumber: 8,
+            type: QaidaActivityType.applyRule,
             prompt: joins
                 ? '$name কি পরের অক্ষরের সাথে জোড়া লাগে?'
                 : '$name কি নিজের পরের অক্ষরের সাথে জোড়া লাগে?',
             arabicTarget: iso,
             options: joins
-                ? ['হ্যাঁ, জোড়া লাগে', 'না, কখনো জোড়া লাগে না']
-                : ['না, পরের অক্ষরের সাথে জোড়া লাগে না', 'হ্যাঁ, সবসময় জোড়া লাগে'],
+                ? ['ـ$isoـ', iso]
+                : [iso, 'ـ$isoـ'],
             correctIndex: 0,
             explanation: joins
-                ? '$name একটি সংযোগকারী হরফ।'
-                : 'মনে রাখুন: (ا د ذ ر ز و) এই ৬টি হরফ নিজের পরের হরফের সাথে জোড়া লাগে না!',
+                ? '$name সংযোগকারী হরফ।'
+                : 'মনে রাখুন: (ا د ذ ر ز و) পরের অক্ষরের সাথে জোড়া লাগে না!',
+          ),
+          // 9. Mixed Practice
+          QaidaActivity(
+            id: 'form_${index}_step9_mixed',
+            slotNumber: 9,
+            type: QaidaActivityType.mixedPractice,
+            prompt: 'নিচের কোনটিতে $name-এর মাঝের রূপ রয়েছে?',
+            arabicTarget: med,
+            options: [med, 'ـسـ', 'ـعـ'],
+            correctIndex: 0,
+            explanation: 'মাশাআল্লাহ! আপনি সঠিক রূপ চিনেছেন।',
+          ),
+          // 10. Lesson Check
+          QaidaActivity(
+            id: 'form_${index}_step10_check',
+            slotNumber: 10,
+            type: QaidaActivityType.lessonCheck,
+            prompt: 'পাঠ যাচাই: $name-এর ৩টি রূপ ($init · $med · $fin) আয়ত্ত হয়েছে?',
+            arabicTarget: '$init $med $fin',
+            options: [med, 'ـعـ', 'ـفـ'],
+            correctIndex: 0,
+            explanation: 'আলহামদুলিল্লাহ! $name-এর রূপভেদের ১০টি ধাপ সফল হয়েছে!',
           ),
         ],
       );
@@ -260,230 +425,152 @@ class QaidaCurriculumData {
     description: 'আরবি স্বরচিহ্নসমূহ চেনা এবং ছোট স্বর ও জযমযুক্ত হরফ সহীহভাবে পড়া।',
     colorHex: 0xFFFF9600, // Duo Orange
     icon: Icons.graphic_eq_rounded,
-    lessons: [
-      QaidaLessonInfo(
-        id: 'qaida_harakat_fatha',
-        trackId: 'track_3_harakat',
-        lessonNumber: 1,
-        title: 'যবর (ফাতহাহ)',
-        subtitle: 'হরফের উপরে আ-কার স্বরধ্বনি',
-        arabicDisplay: 'بَ  تَ  ثَ',
-        description: 'যবর হরফের উপরে থাকে এবং দ্রুত ছোট “আ/অ” ধ্বনি দেয়। একে না টেনে এক হারাকাত পড়তে হয়।',
-        activities: [
-          QaidaActivity(
-            id: 'fatha_intro',
-            type: QaidaActivityType.letterIntro,
-            prompt: 'যবর ( َ ) হরফের উপরে বসে “আ” ধ্বনি তৈরি করে',
-            arabicTarget: 'بَ',
-            explanation: 'بَ = বা (যবরকে এক আলিফ টানা যাবে না, দ্রুত পড়তে হয়)',
-          ),
-          QaidaActivity(
-            id: 'fatha_sound',
-            type: QaidaActivityType.identifyLetter,
-            prompt: '“দাল” হরফের উপর যবর থাকলে কীভাবে পড়ব?',
-            arabicTarget: 'دَ',
-            options: ['দা', 'দি', 'দু'],
-            correctIndex: 0,
-            explanation: 'সঠিক! দাল যবর “দা”।',
-          ),
-          QaidaActivity(
-            id: 'fatha_odd',
-            type: QaidaActivityType.oddOneOut,
-            prompt: 'কোনটিতে যবর নেই?',
-            options: ['بِ', 'بَ', 'تَ'],
-            correctIndex: 0,
-            explanation: 'بِ এর নিচে যের রয়েছে, যবর নয়।',
-          ),
-          QaidaActivity(
-            id: 'fatha_check',
-            type: QaidaActivityType.lessonCheck,
-            prompt: 'رَ এর সঠিক উচ্চারণ কোনটি?',
-            arabicTarget: 'رَ',
-            options: ['র', 'রি', 'রু'],
-            correctIndex: 0,
-            explanation: 'র এর উপর যবর থাকলে তা ভারী/মোটা করে “র” উচ্চারিত হয়।',
-          ),
-        ],
-      ),
-      QaidaLessonInfo(
-        id: 'qaida_harakat_kasra',
-        trackId: 'track_3_harakat',
-        lessonNumber: 2,
-        title: 'যের (কাসরাহ)',
-        subtitle: 'হরফের নিচে ই-কার স্বরধ্বনি',
-        arabicDisplay: 'بِ  تِ  ثِ',
-        description: 'যের হরফের নিচে থাকে এবং ছোট “ই” ধ্বনি দেয়।',
-        activities: [
-          QaidaActivity(
-            id: 'kasra_intro',
-            type: QaidaActivityType.letterIntro,
-            prompt: 'যের ( ِ ) হরফের নিচে বসে “ই” ধ্বনি তৈরি করে',
-            arabicTarget: 'بِ',
-            explanation: 'بِ = বি (না টেনে দ্রুত উচ্চারণ করতে হয়)',
-          ),
-          QaidaActivity(
-            id: 'kasra_identify',
-            type: QaidaActivityType.identifyLetter,
-            prompt: 'مِ এর সঠিক উচ্চারণ কোনটি?',
-            arabicTarget: 'مِ',
-            options: ['মি', 'মা', 'মু'],
-            correctIndex: 0,
-            explanation: 'মীম যের “মি”।',
-          ),
-          QaidaActivity(
-            id: 'kasra_odd',
-            type: QaidaActivityType.oddOneOut,
-            prompt: 'কোনটিতে যের রয়েছে?',
-            options: ['سِ', 'سَ', 'سُ'],
-            correctIndex: 0,
-            explanation: 'সীন-এর নিচে দাগটি হলো যের ( ِ )।',
-          ),
-        ],
-      ),
-      QaidaLessonInfo(
-        id: 'qaida_harakat_damma',
-        trackId: 'track_3_harakat',
-        lessonNumber: 3,
-        title: 'পেশ (দাম্মাহ)',
-        subtitle: 'হরফের উপরে উ-কার স্বরধ্বনি',
-        arabicDisplay: 'بُ  تُ  ثُ',
-        description: 'পেশ হরফের উপরে ওয়াও-এর মতো ক্ষুদ্র আকারে থাকে এবং ঠোঁট গোল করে “উ” ধ্বনি দেয়।',
-        activities: [
-          QaidaActivity(
-            id: 'damma_intro',
-            type: QaidaActivityType.letterIntro,
-            prompt: 'পেশ ( ُ ) ঠোঁট গোল করে “উ” ধ্বনি প্রকাশ করে',
-            arabicTarget: 'بُ',
-            explanation: 'বা পেশ “বু”।',
-          ),
-          QaidaActivity(
-            id: 'damma_seq',
-            type: QaidaActivityType.sortGroups,
-            prompt: 'বَ بِ بُ — এর সঠিক উচ্চারণ ক্রম কোনটি?',
-            arabicTarget: 'بَ بِ بُ',
-            options: ['বা · বি · বু', 'বি · বু · বা', 'বু · বা · বি'],
-            correctIndex: 0,
-            explanation: 'যবর (আ), যের (ই), পেশ (উ) = বা · বি · বু।',
-          ),
-        ],
-      ),
-      QaidaLessonInfo(
-        id: 'qaida_tanwin_fathatayn',
-        trackId: 'track_3_harakat',
-        lessonNumber: 4,
-        title: 'দুই যবর (তানউইন)',
-        subtitle: 'হরফের উপরে দুই যবর “আন” ধ্বনি',
-        arabicDisplay: 'بًا  تًا  ثًا',
-        description: 'দুই যবরকে তানউইন বলে। এর সাথে একটি অদৃশ্য নূন সাকিনের ধ্বনি “আন” যুক্ত হয়।',
-        activities: [
-          QaidaActivity(
-            id: 'tanwin_f_intro',
-            type: QaidaActivityType.letterIntro,
-            prompt: 'দুই যবর ( ً ) যুক্ত হলে “আন” ধ্বনি তৈরি হয়',
-            arabicTarget: 'بًا',
-            explanation: 'بًا = বা আলিফ দুই যবর “বান্”।',
-          ),
-          QaidaActivity(
-            id: 'tanwin_f_identify',
-            type: QaidaActivityType.identifyLetter,
-            prompt: 'أَبًا এর উচ্চারণ কী হবে?',
-            arabicTarget: 'أَبًا',
-            options: ['আবান্', 'আবা', 'আবি'],
-            correctIndex: 0,
-            explanation: 'সঠিক! আলিফ যবর আ, বা দুই যবর বান্ = আবান্।',
-          ),
-        ],
-      ),
-      QaidaLessonInfo(
-        id: 'qaida_tanwin_kasratayn',
-        trackId: 'track_3_harakat',
-        lessonNumber: 5,
-        title: 'দুই যের (তানউইন)',
-        subtitle: 'হরফের নিচে দুই যের “ইন” ধ্বনি',
-        arabicDisplay: 'بٍ  تٍ  ثٍ',
-        description: 'হরফের নিচে দুই যের থাকলে তানউইনের “ইন” ধ্বনি সৃষ্টি হয়।',
-        activities: [
-          QaidaActivity(
-            id: 'tanwin_k_intro',
-            type: QaidaActivityType.letterIntro,
-            prompt: 'দুই যের ( ٍ ) থাকলে “ইন” ধ্বনি উচ্চারিত হয়',
-            arabicTarget: 'بٍ',
-            explanation: 'بٍ = বিন্।',
-          ),
-          QaidaActivity(
-            id: 'tanwin_k_read',
-            type: QaidaActivityType.identifyLetter,
-            prompt: 'قَوْمٍ এর শেষ হরফের ধ্বনি কী?',
-            arabicTarget: 'قَوْمٍ',
-            options: ['মিন্ (দুই যের)', 'মান্', 'মুন'],
-            correctIndex: 0,
-            explanation: 'মাশাআল্লাহ! মীম দুই যের “মিন্”।',
-          ),
-        ],
-      ),
-      QaidaLessonInfo(
-        id: 'qaida_tanwin_dammatayn',
-        trackId: 'track_3_harakat',
-        lessonNumber: 6,
-        title: 'দুই পেশ (তানউইন)',
-        subtitle: 'হরফের উপরে দুই পেশ “উন” ধ্বনি',
-        arabicDisplay: 'بٌ  تٌ  ثٌ',
-        description: 'হরফের উপরে দুই পেশ থাকলে “উন” ধ্বনি উচ্চারিত হয়।',
-        activities: [
-          QaidaActivity(
-            id: 'tanwin_d_intro',
-            type: QaidaActivityType.letterIntro,
-            prompt: 'দুই পেশ ( ٌ ) থাকলে “উন” ধ্বনি উচ্চারিত হয়',
-            arabicTarget: 'بٌ',
-            explanation: 'بٌ = বুন।',
-          ),
-          QaidaActivity(
-            id: 'tanwin_d_read',
-            type: QaidaActivityType.identifyLetter,
-            prompt: 'أَحَدٌ এর শেষে কী আছে?',
-            arabicTarget: 'أَحَدٌ',
-            options: ['দাল দুই পেশ “দুন”', 'দাল পেশ “দু”', 'দাল যবর “দা”'],
-            correctIndex: 0,
-            explanation: 'সঠিক! কুল হুয়াল্লাহু আহাদুন-এ দাল দুই পেশ “দুন”।',
-          ),
-        ],
-      ),
-      QaidaLessonInfo(
-        id: 'qaida_sukun_jazm',
-        trackId: 'track_3_harakat',
-        lessonNumber: 7,
-        title: 'জযম বা সুকুন',
-        subtitle: 'হরফের স্থির বা থামা রূপ ( ْ )',
-        arabicDisplay: 'أَبْ  أَتْ  أَثْ',
-        description: 'জযমযুক্ত হরফ একা পড়া যায় না; পূর্বের হরকতের সাথে মিলিয়ে স্থিরভাবে পড়তে হয়।',
-        activities: [
-          QaidaActivity(
-            id: 'sukun_intro',
-            type: QaidaActivityType.letterIntro,
-            prompt: 'জযম ( ْ ) যুক্ত হরফ তার আগের হরকতের সাথে মিলিত হয়ে পড়া হয়',
-            arabicTarget: 'أَبْ',
-            explanation: 'আলিফ যবর আ, বা জযম আব্ = আব্।',
-          ),
-          QaidaActivity(
-            id: 'sukun_check',
-            type: QaidaActivityType.lessonCheck,
-            prompt: 'مَنْ শব্দটিতে কোন হরফে জযম আছে?',
-            arabicTarget: 'مَنْ',
-            options: ['নূন (نْ)', 'মীম (مَ)', 'কোনটিতেই নয়'],
-            correctIndex: 0,
-            explanation: 'নূন-এর উপর জযম আছে, তাই এটি মীম যবর ও নূন মিলে “মান্”।',
-          ),
-        ],
-      ),
-    ],
+    lessons: _generateTrack3Lessons(),
   );
+
+    static List<QaidaLessonInfo> _generateTrack3Lessons() {
+    final definitions = [
+      {
+        'id': 'qaida_h_fatha',
+        'name': 'যবর (ফাতহাহ)',
+        'sub': 'আ-কার ধ্বনি · ১ হারাকাত',
+        'sym': 'بَ',
+        'sound': 'বা (আ)',
+        'desc': 'হরফের উপরে এক দাগকে যবর (ফাতহাহ) বলে। যবরযুক্ত হরফকে না টেনে দ্রুত পড়তে হয়।',
+        'letters': ['ـَ'],
+        'words': ['دَرَجَ', 'زَرَعَ', 'طَلَبَ', 'وَجَدَ', 'كَتَبَ', 'نَظَرَ', 'صَبَرَ', 'فَتَحَ', 'ذَهَبَ', 'عَبَدَ'],
+        'contrasts': ['كُتِبَ', 'شَرِبَ', 'عَلِمَ', 'سَمِعَ', 'ظُلِمَ', 'قُتِلَ'],
+        'pairs': {'دَرَجَ': 'زَرَعَ', 'طَلَبَ': 'وَجَدَ', 'كُتِبَ': 'شَرِبَ'},
+        'tiles': [ActivityTile(id: '1', label: '1', arabicLabel: 'كَ'), ActivityTile(id: '2', label: '2', arabicLabel: 'تَ'), ActivityTile(id: '3', label: '3', arabicLabel: 'بَ')],
+        'blank': 'كَتَ___َ',
+        'blankOpts': ['ب', 'ت', 'م'],
+      },
+      {
+        'id': 'qaida_h_kasra',
+        'name': 'যের (কাসরাহ)',
+        'sub': 'ই-কার ধ্বনি · ১ হারাকাত',
+        'sym': 'بِ',
+        'sound': 'বি (ই)',
+        'desc': 'হরফের নিচে এক দাগকে যের (কাসরাহ) বলে। যেরযুক্ত হরফকে না টেনে দ্রুত পড়তে হয়।',
+        'letters': ['ـِ'],
+        'words': ['شَرِبَ', 'سَمِعَ', 'عَلِمَ', 'رَحِمَ', 'حَمِدَ', 'لَعِبَ', 'غَضِبَ', 'خَسِرَ', 'بَرِقَ', 'فَهِمَ'],
+        'contrasts': ['دَرَجَ', 'كَتَبَ', 'كُتِبَ', 'ظُلِمَ', 'نَظَرَ', 'صَبَرَ'],
+        'pairs': {'شَرِبَ': 'سَمِعَ', 'عَلِمَ': 'رَحِمَ', 'دَرَجَ': 'كَتَبَ'},
+        'tiles': [ActivityTile(id: '1', label: '1', arabicLabel: 'عَ'), ActivityTile(id: '2', label: '2', arabicLabel: 'لِ'), ActivityTile(id: '3', label: '3', arabicLabel: 'مَ')],
+        'blank': 'عَ___مَ',
+        'blankOpts': ['لِ', 'لَ', 'لُ'],
+      },
+      {
+        'id': 'qaida_h_damma',
+        'name': 'পেশ (দাম্মাহ)',
+        'sub': 'উ-কার ধ্বনি · ঠোঁট গোল করে',
+        'sym': 'بُ',
+        'sound': 'বু (উ)',
+        'desc': 'হরফের উপরে ছোট ওয়াও-এর মতো চিহ্নকে পেশ (দাম্মাহ) বলে। ঠোঁট গোল করে না টেনে পড়তে হয়।',
+        'letters': ['ـُ'],
+        'words': ['كُتِبَ', 'ظُلِمَ', 'قُتِلَ', 'ضُرِبَ', 'جُمِعَ', 'حُشِرَ', 'رُفِعَ', 'خُلِقَ', 'نُصِرَ', 'بُعِثَ'],
+        'contrasts': ['دَرَجَ', 'شَرِبَ', 'كَتَبَ', 'سَمِعَ', 'فَتَحَ', 'عَلِمَ'],
+        'pairs': {'كُتِبَ': 'ظُلِمَ', 'قُتِلَ': 'ضُرِبَ', 'دَرَجَ': 'شَرِبَ'},
+        'tiles': [ActivityTile(id: '1', label: '1', arabicLabel: 'كُ'), ActivityTile(id: '2', label: '2', arabicLabel: 'تِ'), ActivityTile(id: '3', label: '3', arabicLabel: 'بَ')],
+        'blank': '___تِبَ',
+        'blankOpts': ['كُ', 'كَ', 'كِ'],
+      },
+      {
+        'id': 'qaida_t_fatha',
+        'name': 'দুই যবর (তানউইন)',
+        'sub': 'আন ধ্বনি · নূন সাকিন সমতুল্য',
+        'sym': 'بًا',
+        'sound': 'বান্',
+        'desc': 'হরফের উপরে দুই দাগকে দুই যবর (তানউইন) বলে। এর ভেতরে একটি অপ্রকাশিত নূন সাকিন থাকে।',
+        'letters': ['ـً'],
+        'words': ['أَحَدًا', 'عَمَلًا', 'رَحْمَةً', 'كِتَابًا', 'بَصِيرًا', 'عَلِيمًا', 'حَكِيمًا', 'قَرِيبًا', 'شَكُورًا', 'غَفُورًا'],
+        'contrasts': ['أَحَدٌ', 'لَهَبٍ', 'عَمَلٍ', 'خَوْفٍ', 'رَحْمَةٌ', 'كِتَابٌ'],
+        'pairs': {'أَحَدًا': 'عَمَلًا', 'بَصِيرًا': 'عَلِيمًا', 'أَحَدٌ': 'لَهَبٍ'},
+        'tiles': [ActivityTile(id: '1', label: '1', arabicLabel: 'أَ'), ActivityTile(id: '2', label: '2', arabicLabel: 'حَ'), ActivityTile(id: '3', label: '3', arabicLabel: 'دًا')],
+        'blank': 'أَحَ___',
+        'blankOpts': ['دًا', 'دٌ', 'دٍ'],
+      },
+      {
+        'id': 'qaida_t_kasra',
+        'name': 'দুই যের (তানউইন)',
+        'sub': 'ইন ধ্বনি · নূন সাকিন সমতুল্য',
+        'sym': 'بٍ',
+        'sound': 'বিন্',
+        'desc': 'হরফের নিচে দুই দাগকে দুই যের (তানউইন) বলে। দ্রুত ইন ধ্বনি দিয়ে পড়তে হয়।',
+        'letters': ['ـٍ'],
+        'words': ['لَهَبٍ', 'مَسَدٍ', 'خَوْفٍ', 'بَيْتٍ', 'حَسَدٍ', 'عَلَقٍ', 'قَدَرٍ', 'شَيْءٍ', 'كُلٍّ', 'يَوْمٍ'],
+        'contrasts': ['أَحَدًا', 'أَحَدٌ', 'عَمَلًا', 'عَلِيمًا', 'شَكُورٌ', 'غَفُورًا'],
+        'pairs': {'لَهَبٍ': 'مَسَدٍ', 'خَوْفٍ': 'بَيْتٍ', 'أَحَدًا': 'أَحَدٌ'},
+        'tiles': [ActivityTile(id: '1', label: '1', arabicLabel: 'لَ'), ActivityTile(id: '2', label: '2', arabicLabel: 'هَ'), ActivityTile(id: '3', label: '3', arabicLabel: 'بٍ')],
+        'blank': 'لَهَ___',
+        'blankOpts': ['بٍ', 'بًا', 'بٌ'],
+      },
+      {
+        'id': 'qaida_t_damma',
+        'name': 'দুই পেশ (তানউইন)',
+        'sub': 'উন ধ্বনি · নূন সাকিন সমতুল্য',
+        'sym': 'بٌ',
+        'sound': 'বুন',
+        'desc': 'হরফের উপরে দুই পেশকে তানউইন বলে। ঠোঁট গোল করে উন ধ্বনি দিয়ে পড়তে হয়।',
+        'letters': ['ـٌ'],
+        'words': ['أَحَدٌ', 'صَمَدٌ', 'نَارٌ', 'عَذَابٌ', 'غَفُورٌ', 'رَحِيمٌ', 'سَمِيعٌ', 'عَلِيمٌ', 'حَسِيبٌ', 'قَرِيبٌ'],
+        'contrasts': ['أَحَدًا', 'لَهَبٍ', 'مَسَدٍ', 'عَمَلًا', 'خَوْفٍ', 'بَيْتٍ'],
+        'pairs': {'أَحَدٌ': 'صَمَدٌ', 'غَفُورٌ': 'رَحِيمٌ', 'أَحَدًا': 'لَهَبٍ'},
+        'tiles': [ActivityTile(id: '1', label: '1', arabicLabel: 'أَ'), ActivityTile(id: '2', label: '2', arabicLabel: 'حَ'), ActivityTile(id: '3', label: '3', arabicLabel: 'دٌ')],
+        'blank': 'أَحَ___',
+        'blankOpts': ['دٌ', 'دًا', 'دٍ'],
+      },
+      {
+        'id': 'qaida_s_sukun',
+        'name': 'জযম বা সুকুন',
+        'sub': 'স্থির থামা রূপ · পূর্বের হরকতের সাথে যুক্ত',
+        'sym': 'أَبْ',
+        'sound': 'আব্',
+        'desc': 'হরফের উপরে ছোট বৃত্ত বা চাঁদের মতো চিহ্নকে জযম/সুকুন বলে। সুকুনযুক্ত হরফ নিজে উচ্চারিত হতে পারে না, পূর্বের হরকতের সাথে মিলিত হয়ে থামে।',
+        'letters': ['ـْ'],
+        'words': ['أَبْ', 'يَعْلَمُ', 'يَذْهَبُ', 'نَعْبُدُ', 'نَسْتَعِينُ', 'يَسْمَعُ', 'يَفْعَلُ', 'يَشْرَبُ', 'يَكْتُبُ', 'يَدْخُلُ'],
+        'contrasts': ['كَتَبَ', 'شَرِبَ', 'دَرَجَ', 'عَلِمَ', 'ظُلِمَ', 'قُتِلَ'],
+        'pairs': {'نَعْبُدُ': 'نَسْتَعِينُ', 'يَعْلَمُ': 'يَذْهَبُ', 'كَتَبَ': 'شَرِبَ'},
+        'tiles': [ActivityTile(id: '1', label: '1', arabicLabel: 'نَعْ'), ActivityTile(id: '2', label: '2', arabicLabel: 'بُ'), ActivityTile(id: '3', label: '3', arabicLabel: 'دُ')],
+        'blank': 'نَ___ْبُدُ',
+        'blankOpts': ['ع', 'م', 'ت'],
+      },
+    ];
+
+    return definitions.map((d) {
+      final words = d['words'] as List<String>;
+      final contrasts = d['contrasts'] as List<String>;
+      final letters = d['letters'] as List<String>;
+      return QaidaLessonInfo(
+        id: d['id'] as String,
+        trackId: 'track_3_harakat',
+        lessonNumber: definitions.indexOf(d) + 1,
+        title: d['name'] as String,
+        subtitle: d['sub'] as String,
+        arabicDisplay: d['sym'] as String,
+        description: d['desc'] as String,
+        ruleSummary: d['desc'] as String,
+        ruleLetters: letters,
+        exampleWords: words.take(4).toList(),
+        activities: _buildTajweed10StepLesson(
+          lessonId: d['id'] as String,
+          topicName: d['name'] as String,
+          ruleDescription: d['desc'] as String,
+          practiceWords: words,
+          contrastWords: contrasts,
+          ruleLetters: letters,
+          matchPairs: d['pairs'] as Map<String, String>,
+          arrangeTiles: d['tiles'] as List<ActivityTile>,
+          blankWord: d['blank'] as String,
+          blankOptions: d['blankOpts'] as List<String>,
+          blankCorrectIndex: 0,
+        ),
+      );
+    }).toList();
+  }
 
   // -------------------------------------------------------------
   // TRACK 4: 10 Madd Lessons (১০ প্রকার মাদ্দ - Verified Taxonomy)
-  // 1-alif Madd: 3 types (Tabii, Badal, Leen)
-  // 3-alif Madd: 2 types (Aridi, Munfasil)
-  // 4-alif Madd: 5 types (Lazim Harfi Mukhaffaf, Lazim Harfi Mushaqqal,
-  //                        Lazim Kalimi Mukhaffaf, Lazim Kalimi Mushaqqal, Muttasil)
   // -------------------------------------------------------------
   static final QaidaTrackInfo _track4Madd = QaidaTrackInfo(
     id: 'track_4_madd',
@@ -494,244 +581,184 @@ class QaidaCurriculumData {
     description: 'নূরানী ক্বায়দার ১০ প্রকার মাদ্দের সম্পূর্ণ নিয়ম ও সহীহ মাত্রা।',
     colorHex: 0xFF9069CD, // Duo Purple
     icon: Icons.waves_rounded,
-    lessons: [
-      // 1-alif (3 types)
-      QaidaLessonInfo(
-        id: 'madd_1_tabii',
-        trackId: 'track_4_madd',
-        lessonNumber: 1,
-        title: '১. মাদ্দে তাবি’ঈ (স্বাভাবিক মাদ্দ)',
-        subtitle: '১ আলিফ টান · আসল মাদ্দ',
-        arabicDisplay: 'بَا  بِي  بُو',
-        description: 'যবরের বামে খালি আলিফ, পেশের বামে জযমওয়ালা ওয়াও, যেরের বামে জযমওয়ালা ইয়া থাকলে ১ আলিফ টেনে পড়তে হয়।',
-        activities: [
-          QaidaActivity(
-            id: 'm_tabii_intro',
-            type: QaidaActivityType.letterIntro,
-            prompt: 'মাদের হরফ ৩টি: খালি আলিফ, ওয়াও সাকিন ও ইয়া সাকিন',
-            arabicTarget: 'بَا  بِي  بُو',
-            explanation: '১ আলিফ পরিমাণ টেনে স্বাভাবিকভাবে পড়তে হয়।',
-          ),
-          QaidaActivity(
-            id: 'm_tabii_identify',
-            type: QaidaActivityType.ruleInContext,
-            prompt: 'قَالَ শব্দে কোন মাদ্দ রয়েছে?',
-            arabicTarget: 'قَالَ',
-            options: ['মাদ্দে তাবি’ঈ (১ আলিফ)', 'মাদ্দে মুত্তাসিল', 'মাদ্দ নেই'],
-            correctIndex: 0,
-            explanation: 'যবরের পর খালি আলিফ এসেছে, তাই এটি মাদ্দে তাবি’ঈ।',
-          ),
-        ],
-      ),
-      QaidaLessonInfo(
-        id: 'madd_2_badal',
-        trackId: 'track_4_madd',
-        lessonNumber: 2,
-        title: '২. মাদ্দে বাদাল',
-        subtitle: '১ আলিফ টান · হামযার পর মাদ্দ',
-        arabicDisplay: 'ءَامَنَ  إِيمَانٌ  أُوتُوا',
-        description: 'হামযার পর মাদ্দের হরফ আসলে তাকে মাদ্দে বাদাল বলে। ১ আলিফ টানতে হয়।',
-        activities: [
-          QaidaActivity(
-            id: 'm_badal_intro',
-            type: QaidaActivityType.letterIntro,
-            prompt: 'হামযার পরে মাদ্দের হরফ এলে তা মাদ্দে বাদাল',
-            arabicTarget: 'ءَامَنَ',
-            explanation: 'ء এর পর খালি ا এসেছে = আমানা (১ আলিফ টান)।',
-          ),
-          QaidaActivity(
-            id: 'm_badal_rule',
-            type: QaidaActivityType.ruleInContext,
-            prompt: 'إِيمَانٌ শব্দে মাদ্দে বাদাল কত আলিফ টানতে হয়?',
-            arabicTarget: 'إِيمَانٌ',
-            options: ['১ আলিফ', '৩ আলিফ', '৪ আলিফ'],
-            correctIndex: 0,
-            explanation: 'মাদ্দে বাদাল ১ আলিফ টেনে পড়তে হয়।',
-          ),
-        ],
-      ),
-      QaidaLessonInfo(
-        id: 'madd_3_leen',
-        trackId: 'track_4_madd',
-        lessonNumber: 3,
-        title: '৩. মাদ্দে লীন',
-        subtitle: '১ আলিফ নরমভাবে পড়া',
-        arabicDisplay: 'خَوْفٍ  بَيْتٍ',
-        description: 'যবরের বামে জযমওয়ালা ওয়াও বা ইয়া থাকলে লীন হয়। ওয়াকফ ছাড়া ১ আলিফ নরমভাবে পড়ে।',
-        activities: [
-          QaidaActivity(
-            id: 'm_leen_intro',
-            type: QaidaActivityType.letterIntro,
-            prompt: 'যবরের পর وْ বা يْ আসলে নরম করে দ্রুত পড়তে হয়',
-            arabicTarget: 'خَوْفٍ',
-            explanation: 'খাওফিন - নরম সুরে পড়া লীনের হরফ।',
-          ),
-          QaidaActivity(
-            id: 'm_leen_letters',
-            type: QaidaActivityType.identifyLetter,
-            prompt: 'লীনের হরফ কয়টি?',
-            options: ['২টি (وْ এবং يْ)', '৩টি', '৪টি'],
-            correctIndex: 0,
-            explanation: 'যবরের পর সাকিন ওয়াও এবং সাকিন ইয়া — এই ২টি লীনের হরফ।',
-          ),
-        ],
-      ),
-      // 3-alif (2 types)
-      QaidaLessonInfo(
-        id: 'madd_4_aridi',
-        trackId: 'track_4_madd',
-        lessonNumber: 4,
-        title: '৪. মাদ্দে আরিদী',
-        subtitle: '৩ আলিফ টান · ওয়াকফের কারণে সাকিন',
-        arabicDisplay: 'الْعَالَمِينَ  الرَّحِيمِ',
-        description: 'মাদ্দের হরফের পরের হরফে ওয়াকফ করার কারণে সাকিন সৃষ্টি হলে ৩ আলিফ টেনে পড়তে হয়।',
-        activities: [
-          QaidaActivity(
-            id: 'm_aridi_intro',
-            type: QaidaActivityType.letterIntro,
-            prompt: 'আয়াতের শেষে থামলে (ওয়াকফ করলে) আরিদী মাদ্দ হয়',
-            arabicTarget: 'الْعَالَمِينَ',
-            explanation: 'আল-আলামীন... থামার সময় নূন সাকিন হয়ে ৩ আলিফ টানা হয়।',
-          ),
-          QaidaActivity(
-            id: 'm_aridi_check',
-            type: QaidaActivityType.ruleInContext,
-            prompt: 'الرَّحِيمِ -তে থামলে কত আলিফ টানতে হবে?',
-            arabicTarget: 'الرَّحِيمِ',
-            options: ['৩ আলিফ (মাদ্দে আরিদী)', '১ আলিফ', 'টানা নিষেধ'],
-            correctIndex: 0,
-            explanation: 'ওয়াকফ করার কারণে এটি মাদ্দে আরিদী হয়ে ৩ আলিফ দীর্ঘ হয়।',
-          ),
-        ],
-      ),
-      QaidaLessonInfo(
-        id: 'madd_5_munfasil',
-        trackId: 'track_4_madd',
-        lessonNumber: 5,
-        title: '৫. মাদ্দে মুনফাসিল',
-        subtitle: '৩ আলিফ টান · পৃথক শব্দে হামযা',
-        arabicDisplay: 'فِي أَنفُسِكُمْ  قُو أَنفُسَكُمْ',
-        description: 'মাদ্দের হরফের পর পৃথক শব্দে হামযা (ء বা ا) আসলে মাদ্দে মুনফাসিল হয়। ৩ আলিফ টান।',
-        activities: [
-          QaidaActivity(
-            id: 'm_munfasil_intro',
-            type: QaidaActivityType.letterIntro,
-            prompt: 'মাদ্দের হরফের পর পরবর্তী শব্দে হামযা আসলে মাদ্দে মুনফাসিল',
-            arabicTarget: 'فِي أَنفُسِكُمْ',
-            explanation: 'فِي এর শেষে ইয়া মাদ্দ, পরের শব্দে أَنفُসِكُمْ এর শুরুতে হামযা এসেছে।',
-          ),
-          QaidaActivity(
-            id: 'm_munfasil_length',
-            type: QaidaActivityType.identifyLetter,
-            prompt: 'মাদ্দে মুনফাসিল সাধারণত কত আলিফ টানতে হয়?',
-            options: ['৩ আলিফ', '১ আলিফ', '৫ আলিফ'],
-            correctIndex: 0,
-            explanation: 'নূরানী কায়দা অনুসারে মাদ্দে মুনফাসিল ৩ আলিফ টান।',
-          ),
-        ],
-      ),
-      // 4-alif (5 types)
-      QaidaLessonInfo(
-        id: 'madd_6_harfi_mukh',
-        trackId: 'track_4_madd',
-        lessonNumber: 6,
-        title: '৬. মাদ্দে লাযিম হরফী মুখাফফাফ',
-        subtitle: '৪ আলিফ টান · মুকাত্তা’আত হরফে হালকা সাকিন',
-        arabicDisplay: 'ص  ق  ن',
-        description: 'হুরুফে মুকাত্তা’আতের যে হরফের মাদ্দের পর সাকিন থাকে এবং ইদগাম হয় না, তা ৪ আলিফ টানা হয়।',
-        activities: [
-          QaidaActivity(
-            id: 'm_hmukh_intro',
-            type: QaidaActivityType.letterIntro,
-            prompt: 'কুরআনের শুরুতে “নূন”, “ক্বাফ”, “সোয়াদ” ৪ আলিফ টেনে পড়তে হয়',
-            arabicTarget: 'نٓ  ۚ  وَالْقَلَمِ',
-            explanation: 'نٓ = নূওওন (৪ আলিফ লাযিম হরফী মুখাফফাফ)।',
-          ),
-        ],
-      ),
-      QaidaLessonInfo(
-        id: 'madd_7_harfi_mush',
-        trackId: 'track_4_madd',
-        lessonNumber: 7,
-        title: '৭. মাদ্দে লাযিম হরফী মুসাক্কাল',
-        subtitle: '৪ আলিফ টান · মুকাত্তা’আত হরফে ভারী তাশদীদ',
-        arabicDisplay: 'الم  (الـلَّامُ-مِّيم)',
-        description: 'হুরুফে মুকাত্তা’আতের হরফে মাদ্দের পর তাশদীদসহ ইদগাম হলে ৪ আলিফ পূর্ণ টেনে পড়া হয়।',
-        activities: [
-          QaidaActivity(
-            id: 'm_hmush_intro',
-            type: QaidaActivityType.letterIntro,
-            prompt: 'الم-তে “লাম”-এর মাদ্দের পর “মীম”-এ তাশদীদ হয়',
-            arabicTarget: 'الٓمٓ',
-            explanation: 'আলিফ-লাআআআম-মীইইইম (লাম-এ ৪ আলিফ মুসাক্কাল টান)।',
-          ),
-        ],
-      ),
-      QaidaLessonInfo(
-        id: 'madd_8_kalimi_mukh',
-        trackId: 'track_4_madd',
-        lessonNumber: 8,
-        title: '৮. মাদ্দে লাযিম কালিমী মুখাফফাফ',
-        subtitle: '৪ আলিফ টান · শব্দে মাদ্দের পর সাকিন',
-        arabicDisplay: 'ءَآلْآنَ',
-        description: 'একই শব্দের মধ্যে মাদ্দের হরফের পর আসল সাকিন আসলে মাদ্দে লাযিম কালিমী মুখাফফাফ হয়।',
-        activities: [
-          QaidaActivity(
-            id: 'm_kmukh_intro',
-            type: QaidaActivityType.letterIntro,
-            prompt: 'ءَآلْآنَ শব্দে মাদ্দের পর লাম সাকিন (لْ) রয়েছে',
-            arabicTarget: 'ءَآلْآنَ',
-            explanation: 'কুরআনে এটি ৪ আলিফ টেনে স্পষ্ট পড়া হয়।',
-          ),
-        ],
-      ),
-      QaidaLessonInfo(
-        id: 'madd_9_kalimi_mush',
-        trackId: 'track_4_madd',
-        lessonNumber: 9,
-        title: '৯. মাদ্দে লাযিম কালিমী মুসাক্কাল',
-        subtitle: '৪ আলিফ টান · শব্দে মাদ্দের পর তাশদীদ',
-        arabicDisplay: 'الضَّالِّينَ  الْحَاقَّةُ',
-        description: 'শব্দের মধ্যে মাদ্দের হরফের পরে তাশদীদযুক্ত হরফ আসলে ৪ আলিফ পূর্ণ টেনে পড়তে হয়।',
-        activities: [
-          QaidaActivity(
-            id: 'm_kmush_intro',
-            type: QaidaActivityType.letterIntro,
-            prompt: 'সূরা ফাতিহার الضَّالِّينَ শব্দে ৪ আলিফ টেনে পড়তে হয়',
-            arabicTarget: 'وَلَا الضَّالِّينَ',
-            explanation: 'দোয়াদ আলিফ মাদ্দের পর লাম-এ তাশদীদ এসেছে, তাই ৪ আলিফ টান।',
-          ),
-        ],
-      ),
-      QaidaLessonInfo(
-        id: 'madd_10_muttasil',
-        trackId: 'track_4_madd',
-        lessonNumber: 10,
-        title: '১০. মাদ্দে মুত্তাসিল',
-        subtitle: '৪ আলিফ টান · একই শব্দে হামযা',
-        arabicDisplay: 'جَاءَ  سُوءَ  سِيئَتْ',
-        description: 'একই শব্দের ভেতরে মাদ্দের হরফের ঠিক পরেই হামযা আসলে মাদ্দে মুত্তাসিল হয়। ৪ আলিফ টানতে হয়।',
-        activities: [
-          QaidaActivity(
-            id: 'm_muttasil_intro',
-            type: QaidaActivityType.letterIntro,
-            prompt: 'একই শব্দে মাদ্দের সাথে হামযা এলে মাদ্দে মুত্তাসিল',
-            arabicTarget: 'جَاءَ نَصْرُ اللَّهِ',
-            explanation: 'جَاءَ শব্দে আলিফ মাদ্দের পর হামযা একই শব্দে এসেছে = ৪ আলিফ টান।',
-          ),
-          QaidaActivity(
-            id: 'm_muttasil_check',
-            type: QaidaActivityType.ruleInContext,
-            prompt: 'سَمَاءٌ শব্দে কোন মাদ্দ আছে?',
-            arabicTarget: 'سَمَاءٌ',
-            options: ['মাদ্দে মুত্তাসিল (৪ আলিফ)', 'মাদ্দে তাবি’ঈ (১ আলিফ)', 'মাদ্দ নেই'],
-            correctIndex: 0,
-            explanation: 'একই শব্দে হামযা থাকায় এটি মাদ্দে মুত্তাসিল।',
-          ),
-        ],
-      ),
-    ],
+    lessons: _generateTrack4Lessons(),
   );
+
+  static List<QaidaLessonInfo> _generateTrack4Lessons() {
+    final definitions = [
+      {
+        'id': 'madd_1_tabii',
+        'name': '১. মাদ্দে তাবি’ঈ',
+        'sub': '১ আলিফ টান · আসল মাদ্দ',
+        'sym': 'بَا  بِي  بُو',
+        'desc': 'যবরের বামে খালি আলিফ, পেশের বামে জযমওয়ালা ওয়াও এবং যেরের বামে জযমওয়ালা ইয়া আসলে তাকে মাদ্দে তাবি’ঈ বলে। একে ১ আলিফ পরিমাণ টেনে পড়তে হয়।',
+        'letters': ['ا', 'و', 'ي'],
+        'words': ['قَالَ', 'قِيلَ', 'يَقُولُ', 'نُوحِيهَا', 'فِيهَا', 'أُوتِينَا', 'تَجْرِي', 'الَّذِينَ', 'يَعْلَمُونَ', 'كَانُوا'],
+        'contrasts': ['قَلَّ', 'كَتَبَ', 'شَرِبَ', 'دَرَجَ', 'عَلِمَ', 'قَلَمٌ'],
+        'pairs': {'قَالَ': 'قِيلَ', 'يَقُولُ': 'نُوحِيهَا', 'قَلَّ': 'كَتَبَ'},
+        'tiles': [ActivityTile(id: '1', label: '1', arabicLabel: 'قَا'), ActivityTile(id: '2', label: '2', arabicLabel: 'لَ')],
+        'blank': 'قَ___لَ',
+        'blankOpts': ['ا', 'و', 'ي'],
+      },
+      {
+        'id': 'madd_2_badal',
+        'name': '২. মাদ্দে বাদাল',
+        'sub': '১ আলিফ টান · হামযার পর মাদ্দ',
+        'sym': 'ءَامَنَ',
+        'desc': 'হামযার পর মাদ্দের হরফ আসলে তাকে মাদ্দে বাদাল বলে। এটি মূলত দুটি হামযা একত্র হয়ে সৃষ্টি হয় এবং ১ আলিফ পরিমাণ টেনে পড়তে হয়।',
+        'letters': ['ءَا', 'إِي', 'أُو'],
+        'words': ['ءَامَنَ', 'إِيمَانًا', 'أُوتُوا', 'ءَاتَىٰ', 'ءَادَمُ', 'ءَالِهَتُنَا', 'ءَامِنِينَ', 'أُوتِيَ', 'إِيلَافِهِمْ', 'ءَايَاتٍ'],
+        'contrasts': ['أَمَرَ', 'أَكَلَ', 'إِنَّ', 'أَنْعَمْتَ', 'أَحَدٌ', 'أَنْتُمْ'],
+        'pairs': {'ءَامَنَ': 'إِيمَانًا', 'أُوتُوا': 'ءَاتَىٰ', 'أَمَرَ': 'أَكَلَ'},
+        'tiles': [ActivityTile(id: '1', label: '1', arabicLabel: 'ءَا'), ActivityTile(id: '2', label: '2', arabicLabel: 'مَ'), ActivityTile(id: '3', label: '3', arabicLabel: 'نَ')],
+        'blank': '___مَنَ',
+        'blankOpts': ['ءَا', 'أَ', 'إِ'],
+      },
+      {
+        'id': 'madd_3_leen',
+        'name': '৩. মাদ্দে লীন',
+        'sub': '১ আলিফ নরমভাবে পড়া',
+        'sym': 'خَوْفٍ  بَيْتٍ',
+        'desc': 'যবরের বামে জযমওয়ালা ওয়াও বা জযমওয়ালা ইয়া আসলে লীন হয়। ওয়াকফ করলে ১ থেকে ৩ আলিফ নরম সুরে টেনে পড়তে হয়।',
+        'letters': ['وْ', 'يْ'],
+        'words': ['خَوْفٍ', 'بَيْتٍ', 'الصَّيْفِ', 'قُرَيْشٍ', 'عَيْنَيْنِ', 'شَيْءٍ', 'يَوْمِ', 'سَوْءَةَ', 'الْغَيْبِ', 'خَيْرٌ'],
+        'contrasts': ['قَالَ', 'قِيلَ', 'نُوحِيهَا', 'فِيهَا', 'يَقُولُ', 'تَجْرِي'],
+        'pairs': {'خَوْفٍ': 'بَيْتٍ', 'الصَّيْفِ': 'قُرَيْشٍ', 'قَالَ': 'قِيلَ'},
+        'tiles': [ActivityTile(id: '1', label: '1', arabicLabel: 'خَوْ'), ActivityTile(id: '2', label: '2', arabicLabel: 'فٍ')],
+        'blank': 'خَ___فٍ',
+        'blankOpts': ['وْ', 'ا', 'ي'],
+      },
+      {
+        'id': 'madd_4_aridi',
+        'name': '৪. মাদ্দে আরিদী',
+        'sub': '৩ আলিফ টান · ওয়াকফের কারণে সাকিন',
+        'sym': 'الْعَالَمِينَ',
+        'desc': 'মাদ্দের হরফের পরের হরফে ওয়াকফের (থামার) কারণে অস্থায়ী সাকিন তৈরি হলে তাকে মাদ্দে আরিদী বলে। একে ৩ আলিফ পরিমাণ টেনে পড়তে হয়।',
+        'letters': ['ـينَ', 'ـونَ', 'ـيمُ'],
+        'words': ['الْعَالَمِينَ', 'الرَّحِيمِ', 'الدِّينِ', 'نَسْتَعِينُ', 'الْمُسْتَقِيمَ', 'الْمُفْلِحُونَ', 'يَعْلَمُونَ', 'خَالِدُونَ', 'عَظِيمٌ', 'كَرِيمٌ'],
+        'contrasts': ['قَالَ', 'فِيهَا', 'نُوحِيهَا', 'قَلَّ', 'كَتَبَ', 'شَرِبَ'],
+        'pairs': {'الْعَالَمِينَ': 'الرَّحِيمِ', 'الدِّينِ': 'نَسْتَعِينُ', 'قَالَ': 'فِيهَا'},
+        'tiles': [ActivityTile(id: '1', label: '1', arabicLabel: 'الْعَا'), ActivityTile(id: '2', label: '2', arabicLabel: 'لَ'), ActivityTile(id: '3', label: '3', arabicLabel: 'مِينَ')],
+        'blank': 'الْعَالَ___',
+        'blankOpts': ['مِينَ', 'مَ', 'مُ'],
+      },
+      {
+        'id': 'madd_5_munfasil',
+        'name': '৫. মাদ্দে মুনফাসিল',
+        'sub': '৩ আলিফ টান · পৃথক শব্দে হামযা',
+        'sym': 'فِي أَنفُسِكُمْ',
+        'desc': 'মাদ্দের হরফ এক শব্দের শেষে এবং হামযা (ء) পরবর্তী শব্দের শুরুতে আসলে তাকে মাদ্দে মুনফাসিল বলে। একে ৩ আলিফ পরিমাণ টেনে পড়তে হয়।',
+        'letters': ['يَا أَيُّـ', 'فِي أَ', 'قُولُوا آ'],
+        'words': ['فِي أَنفُسِكُمْ', 'يَا أَيُّهَا', 'إِنَّا أَعْطَيْنَاكَ', 'قُولُوا آمَنَّا', 'بِمَا أُنزِلَ', 'إِلَىٰ أَهْلِهِ', 'تُوبُوا إِلَى اللَّهِ', 'إِنَّمَا أَمْرُهُ', 'عَلَىٰ أَنفُسِهِمْ', 'وَمَا أَدْرَاكَ'],
+        'contrasts': ['جَاءَ', 'سُوءَ', 'السَّمَاءِ', 'قَالَ', 'فِيهَا', 'نُوحِيهَا'],
+        'pairs': {'فِي أَنفُسِكُمْ': 'يَا أَيُّهَا', 'إِنَّا أَعْطَيْنَاكَ': 'قُولُوا آمَنَّا', 'جَاءَ': 'سُوءَ'},
+        'tiles': [ActivityTile(id: '1', label: '1', arabicLabel: 'فِي'), ActivityTile(id: '2', label: '2', arabicLabel: 'أَنفُسِكُمْ')],
+        'blank': 'فِي ___نفُسِكُمْ',
+        'blankOpts': ['أَ', 'عَ', 'هَ'],
+      },
+      {
+        'id': 'madd_6_harfi_mukh',
+        'name': '৬. মাদ্দে লাযিম হরফী মুখাফফাফ',
+        'sub': '৪ আলিফ টান · মুকাত্তা’আত হরফে হালকা সাকিন',
+        'sym': 'ص  ق  ن',
+        'desc': 'হুরুফে মুকাত্তা’আতের মধ্যে মাদ্দের হরফের পর এমন সাকিন আসলে যা পরবর্তীতে তাশদীদযুক্ত নয়, তাকে হরফী মুখাফফাফ বলে। ৪ আলিফ টেনে পড়তে হয়।',
+        'letters': ['ص', 'ق', 'ن', 'يس', 'حم'],
+        'words': ['صٓ', 'قٓ', 'نٓ', 'يٰسٓ', 'حٰمٓ', 'طٰسٓ', 'الٓرٰ', 'طٰهٰ', 'الٓمٰرٰ', 'ক্বাফ'],
+        'contrasts': ['الٓمٓ', 'طٰسٓمٓ', 'الٓمٓصٓ', 'جَاءَ', 'قَالَ', 'فِيهَا'],
+        'pairs': {'صٓ': 'قٓ', 'نٓ': 'يٰسٓ', 'الٓمٓ': 'طٰسٓمٓ'},
+        'tiles': [ActivityTile(id: '1', label: '1', arabicLabel: 'صٓ'), ActivityTile(id: '2', label: '2', arabicLabel: 'وَالْقُرْآنِ')],
+        'blank': '___ٓ وَالْقُرْآنِ',
+        'blankOpts': ['ص', 'ب', 'ت'],
+      },
+      {
+        'id': 'madd_7_harfi_mush',
+        'name': '৭. মাদ্দে লাযিম হরফী মুসাক্কাল',
+        'sub': '৪ আলিফ টান · মুকাত্তা’আত হরফে ভারী তাশদীদ',
+        'sym': 'الٓمٓ',
+        'desc': 'হুরুফে মুকাত্তা’আতের মধ্যে মাদ্দের পর ইদগামের কারণে তাশদীদ হলে তাকে হরফী মুসাক্কাল বলে। পূর্ণ ৪ আলিফ ভারী টেনে পড়তে হয়।',
+        'letters': ['الٓمٓ', 'طٰسٓمٓ', 'الٓمٓصٓ'],
+        'words': ['الٓمٓ', 'طٰسٓمٓ', 'الٓمٓصٓ', 'الٓمٓرٰ', 'ক্বাফ তাশদীদ', 'লাম-মীম', 'মুকাত্তা’আত', 'ভারী মাদ্দ', '৪ আলিফ লাযিম', 'তাশদীদযুক্ত'],
+        'contrasts': ['صٓ', 'قٓ', 'نٓ', 'يٰسٓ', 'جَاءَ', 'قَالَ'],
+        'pairs': {'الٓمٓ': 'طٰسٓمٓ', 'الٓمٓصٓ': 'الٓمٓرٰ', 'صٓ': 'قٓ'},
+        'tiles': [ActivityTile(id: '1', label: '1', arabicLabel: 'الٓ'), ActivityTile(id: '2', label: '2', arabicLabel: 'مٓ')],
+        'blank': 'الٓ___ٓ',
+        'blankOpts': ['م', 'ب', 'د'],
+      },
+      {
+        'id': 'madd_8_kalimi_mukh',
+        'name': '৮. মাদ্দে লাযিম কালিমী মুখাফফাফ',
+        'sub': '৪ আলিফ টান · শব্দে মাদ্দের পর আসল সাকিন',
+        'sym': 'ءَآلْآنَ',
+        'desc': 'একই শব্দের ভেতরে মাদ্দের হরফের পর আসল সাকিন (জযম) আসলে তাকে কালিমী মুখাফফাফ বলে। কুরআনে এটি “ءَآلْآنَ” শব্দে রয়েছে এবং ৪ আলিফ টানতে হয়।',
+        'letters': ['ءَآلْ'],
+        'words': ['ءَآلْآنَ', 'ءَآلذَّكَرَيْنِ', 'ءَآللَّهُ', 'ءَآلْآنَ وَقَدْ', 'ءَآلْآنَ عَصَيْتَ', 'কালিমী ১', 'কালিমী ২', 'মুখাফফাফ', 'আসল সাকিন', '৪ আলিফ টান'],
+        'contrasts': ['الضَّالِّينَ', 'الْحَاقَّةُ', 'جَاءَ', 'فِي أَنفُسِكُمْ', 'قَالَ', 'خَوْفٍ'],
+        'pairs': {'ءَآلْآنَ': 'ءَآلذَّكَرَيْنِ', 'ءَآللَّهُ': 'ءَآلْآنَ', 'الضَّالِّينَ': 'الْحَاقَّةُ'},
+        'tiles': [ActivityTile(id: '1', label: '1', arabicLabel: 'ءَآلْ'), ActivityTile(id: '2', label: '2', arabicLabel: 'آنَ')],
+        'blank': '___آنَ',
+        'blankOpts': ['ءَآلْ', 'أَلْ', 'إِلْ'],
+      },
+      {
+        'id': 'madd_9_kalimi_mush',
+        'name': '৯. মাদ্দে লাযিম কালিমী মুসাক্কাল',
+        'sub': '৪ আলিফ টান · শব্দে মাদ্দের পর তাশদীদ',
+        'sym': 'الضَّالِّينَ',
+        'desc': 'একই শব্দের ভেতরে মাদ্দের হরফের পর তাশদীদযুক্ত হরফ আসলে তাকে কালিমী মুসাক্কাল বলে। একে পূর্ণ ৪ আলিফ ভারী সুরে টেনে পড়তে হয়।',
+        'letters': ['ـَّ', 'ـِّ', 'ـُّ'],
+        'words': ['الضَّالِّينَ', 'الْحَاقَّةُ', 'الصَّاخَّةُ', 'الطَّامَّةُ', 'دَابَّةٍ', 'تَأْمُرُونِّي', 'يُحَاجُّونَكَ', 'جَانٌّ', 'حَاجَّهُ', 'صَوَافَّ'],
+        'contrasts': ['جَاءَ', 'فِي أَنفُسِكُمْ', 'قَالَ', 'خَوْفٍ', 'الْعَالَمِينَ', 'ءَامَنَ'],
+        'pairs': {'الضَّالِّينَ': 'الْحَاقَّةُ', 'الصَّاخَّةُ': 'الطَّامَّةُ', 'جَاءَ': 'فِي أَنفُسِكُمْ'},
+        'tiles': [ActivityTile(id: '1', label: '1', arabicLabel: 'الضَّا'), ActivityTile(id: '2', label: '2', arabicLabel: 'لِّينَ')],
+        'blank': 'الضَّা___ِّينَ',
+        'blankOpts': ['ل', 'م', 'ت'],
+      },
+      {
+        'id': 'madd_10_muttasil',
+        'name': '১০. মাদ্দে মুত্তাসিল',
+        'sub': '৪ আলিফ টান · একই শব্দে হামযা',
+        'sym': 'جَاءَ  سُوءَ',
+        'desc': 'একই শব্দের ভেতরে মাদ্দের হরফের ঠিক পরেই হামযা (ء) আসলে তাকে মাদ্দে মুত্তাসিল বলে। একে ওয়াজিবভাবে ৪ আলিফ পরিমাণ টেনে পড়তে হয়।',
+        'letters': ['ـَاءَ', 'ـِيءَ', 'ـُوءَ'],
+        'words': ['جَاءَ', 'سُوءَ', 'السَّمَاءِ', 'هَنِيئًا', 'مَرِيئًا', 'جِيءَ', 'سِيئَتْ', 'أُولَٰئِكَ', 'شَاءَ', 'الصَّاخَّةُ'],
+        'contrasts': ['فِي أَنفُسِكُمْ', 'يَا أَيُّهَا', 'قَالَ', 'خَوْفٍ', 'الْعَالَمِينَ', 'ءَامَنَ'],
+        'pairs': {'جَاءَ': 'سُوءَ', 'السَّمَاءِ': 'هَنِيئًا', 'فِي أَنفُسِكُمْ': 'يَا أَيُّهَا'},
+        'tiles': [ActivityTile(id: '1', label: '1', arabicLabel: 'جَا'), ActivityTile(id: '2', label: '2', arabicLabel: 'ءَ')],
+        'blank': 'جَا___',
+        'blankOpts': ['ءَ', 'عَ', 'هَ'],
+      },
+    ];
+
+    return definitions.map((d) {
+      final words = d['words'] as List<String>;
+      final contrasts = d['contrasts'] as List<String>;
+      final letters = d['letters'] as List<String>;
+      return QaidaLessonInfo(
+        id: d['id'] as String,
+        trackId: 'track_4_madd',
+        lessonNumber: definitions.indexOf(d) + 1,
+        title: d['name'] as String,
+        subtitle: d['sub'] as String,
+        arabicDisplay: d['sym'] as String,
+        description: d['desc'] as String,
+        ruleSummary: d['desc'] as String,
+        ruleLetters: letters,
+        exampleWords: words.take(4).toList(),
+        activities: _buildTajweed10StepLesson(
+          lessonId: d['id'] as String,
+          topicName: d['name'] as String,
+          ruleDescription: d['desc'] as String,
+          practiceWords: words,
+          contrastWords: contrasts,
+          ruleLetters: letters,
+          matchPairs: d['pairs'] as Map<String, String>,
+          arrangeTiles: d['tiles'] as List<ActivityTile>,
+          blankWord: d['blank'] as String,
+          blankOptions: d['blankOpts'] as List<String>,
+          blankCorrectIndex: 0,
+        ),
+      );
+    }).toList();
+  }
 
   // -------------------------------------------------------------
   // TRACK 5: 10 Noon/Meem Sakin & Ghunnah (নূন সাকিন, মীম সাকিন ও গুন্নাহ)
@@ -745,206 +772,184 @@ class QaidaCurriculumData {
     description: 'নূন সাকিন, তানউইন, মীম সাকিন এবং ওয়াজিব গুন্নাহ ও ক্বলক্বলাহর ১০টি মূল নিয়ম।',
     colorHex: 0xFF2B70C9, // Deep Blue
     icon: Icons.record_voice_over_rounded,
-    lessons: [
-      QaidaLessonInfo(
-        id: 'ghunnah_1_wajib',
-        trackId: 'track_5_ghunnah',
-        lessonNumber: 1,
-        title: '১. ওয়াজিব গুন্নাহ',
-        subtitle: 'নূন ও মীম তাশদীদ (نّ ও مّ)',
-        arabicDisplay: 'إِنَّ  عَمَّ  ثُمَّ',
-        description: 'নূন ও মীমের উপর তাশদীদ হলে নাকের বাঁশিতে ১ আলিফ পরিমাণ গুন্নাহ করা ওয়াজিব।',
-        activities: [
-          QaidaActivity(
-            id: 'g_wajib_intro',
-            type: QaidaActivityType.letterIntro,
-            prompt: 'نّ বা مّ দেখলে অবশ্যই ১ আলিফ পরিমাণ গুন্নাহ করতে হবে',
-            arabicTarget: 'إِنَّ اللَّهَ مَعَنَا',
-            explanation: 'ইন্নাল্লাহা — নূনে তাশদীদ থাকায় সুন্দর গুন্নাহ হবে।',
-          ),
-          QaidaActivity(
-            id: 'g_wajib_identify',
-            type: QaidaActivityType.ruleInContext,
-            prompt: 'عَمَّ يَتَسَاءَلُونَ -এ কোন হরফে ওয়াজিব গুন্নাহ?',
-            arabicTarget: 'عَمَّ',
-            options: ['মীম তাশদীদ (مّ)', 'আইন', 'কোনটিতেই নয়'],
-            correctIndex: 0,
-            explanation: 'মীম তাশদীদ হলো ওয়াজিব গুন্নাহর হরফ।',
-          ),
-        ],
-      ),
-      QaidaLessonInfo(
-        id: 'ghunnah_2_izhar',
-        trackId: 'track_5_ghunnah',
-        lessonNumber: 2,
-        title: '২. ইযহার (স্পষ্ট পড়া)',
-        subtitle: 'হলক্বী ৬ হরফ: ء ه ع ح غ خ',
-        arabicDisplay: 'مَنْ ءَامَنَ  مِنْ خَوْفٍ',
-        description: 'নূন সাকিন বা তানউইনের পর হলক্বী ৬টি হরফের যেকোনোটি আসলে গুন্নাহ ছাড়া স্পষ্ট পড়তে হয়।',
-        activities: [
-          QaidaActivity(
-            id: 'g_izhar_intro',
-            type: QaidaActivityType.letterIntro,
-            prompt: 'ইযহারের হরফ ৬টি: হামযা, হা, আইন, হা, গাইন, খা',
-            arabicTarget: 'مَنْ هَدَى',
-            explanation: 'মান্ হাদা — এখানে নূন সাকিন গুন্নাহ ছাড়া স্পষ্ট পড়া হয়।',
-          ),
-        ],
-      ),
-      QaidaLessonInfo(
-        id: 'ghunnah_3_idgham_ghunnah',
-        trackId: 'track_5_ghunnah',
-        lessonNumber: 3,
-        title: '৩. ইদগামে বাগুন্নাহ',
-        subtitle: 'গুন্নাহসহ মেলানো (ي ن م و)',
-        arabicDisplay: 'مَن يَقُولُ  مِن مَّالٍ',
-        description: 'নূন সাকিন বা তানউইনের পর ي ن م و হরফ আসলে গুন্নাহর সাথে মিলিয়ে পড়তে হয়।',
-        activities: [
-          QaidaActivity(
-            id: 'g_idgham_b_intro',
-            type: QaidaActivityType.letterIntro,
-            prompt: 'مَن يَقُولُ = মাইঁইয়াক্বূলু (গুন্নাহসহ মিলিয়ে পড়া)',
-            arabicTarget: 'مَن يَقُولُ',
-            explanation: 'নূন সাকিনের পর ইয়া আসায় ইদগামে বাগুন্নাহ হয়েছে।',
-          ),
-        ],
-      ),
-      QaidaLessonInfo(
-        id: 'ghunnah_4_idgham_bila',
-        trackId: 'track_5_ghunnah',
-        lessonNumber: 4,
-        title: '৪. ইদগামে বেলাগুন্নাহ',
-        subtitle: 'গুন্নাহ ছাড়া মেলানো (ل ও ر)',
-        arabicDisplay: 'مِّن رَّبِّهِمْ  هُدًى لِّلْمُتَّقِينَ',
-        description: 'নূন সাকিন বা তানউইনের পর লাম (ل) বা রা (ر) আসলে গুন্নাহ ছাড়াই মিলিয়ে পড়তে হয়।',
-        activities: [
-          QaidaActivity(
-            id: 'g_idgham_l_intro',
-            type: QaidaActivityType.letterIntro,
-            prompt: 'مِّن رَّبِّهِمْ = মির রাব্বিহিম (গুন্নাহ ছাড়া)',
-            arabicTarget: 'مِّن رَّبِّهِمْ',
-            explanation: 'নূন সাকিনের পর রা আসায় বেলাগুন্নাহ হয়েছে।',
-          ),
-        ],
-      ),
-      QaidaLessonInfo(
-        id: 'ghunnah_5_iqlab',
-        trackId: 'track_5_ghunnah',
-        lessonNumber: 5,
-        title: '৫. ইক্বলাব (পরিবর্তন)',
-        subtitle: 'বা (ب) আসলে মীম (م) দিয়ে পড়া',
-        arabicDisplay: 'مِن بَعْدِ  (مِم بَعْدِ)',
-        description: 'নূন সাকিন বা তানউইনের পর বা (ب) আসলে নূনটি মীম (م)-এ পরিণত হয়ে গুন্নাহসহ পড়া হয়।',
-        activities: [
-          QaidaActivity(
-            id: 'g_iqlab_intro',
-            type: QaidaActivityType.letterIntro,
-            prompt: 'مِن بَعْدِ = মিম্ বা’দি (ছোট م দেখে চিনুন)',
-            arabicTarget: 'مِنۢ بَعْدِ',
-            explanation: 'নূন পরিবর্তিত হয়ে মীম হয়ে যায় এবং গুন্নাহ হয়।',
-          ),
-        ],
-      ),
-      QaidaLessonInfo(
-        id: 'ghunnah_6_ikhfa',
-        trackId: 'track_5_ghunnah',
-        lessonNumber: 6,
-        title: '৬. ইখফা (গোপন করে পড়া)',
-        subtitle: '১৫টি হরফে নাকের বাঁশিতে লুকানো',
-        arabicDisplay: 'أَنتُمْ  مِن قَبْلُ  كُنتُمْ',
-        description: 'নূন সাকিন বা তানউইনের পর ইখফার ১৫টি হরফ আসলে নাকের বাঁশিতে লুকিয়ে গুন্নাহ করা হয়।',
-        activities: [
-          QaidaActivity(
-            id: 'g_ikhfa_intro',
-            type: QaidaActivityType.letterIntro,
-            prompt: 'أَنتُمْ = আংতুম (নাকের বাঁশিতে নূনের ধ্বনি লুকানো)',
-            arabicTarget: 'أَنتُمْ',
-            explanation: 'তা (ت) ইখফার হরফ, তাই এখানে গুন্নাহ লুকানো হয়েছে।',
-          ),
-        ],
-      ),
-      QaidaLessonInfo(
-        id: 'ghunnah_7_meem_ikhfa',
-        trackId: 'track_5_ghunnah',
-        lessonNumber: 7,
-        title: '৭. মীম সাকিন - ইখফায়ে শাফাবী',
-        subtitle: 'মীম সাকিনের পর বা (ب)',
-        arabicDisplay: 'تَرْمِيهِم بِحِجَارَةٍ',
-        description: 'মীম সাকিনের পর বা আসলে ঠোঁট আলতোভাবে মিলিয়ে গুন্নাহর সাথে ইখফা করা হয়।',
-        activities: [
-          QaidaActivity(
-            id: 'g_m_ikhfa_intro',
-            type: QaidaActivityType.letterIntro,
-            prompt: 'تَرْمِيهِم بِحِجَارَةٍ - মীম সাকিনের পর বা এসেছে',
-            arabicTarget: 'تَرْمِيهِم بِحِجَارَةٍ',
-            explanation: 'তারমীহিম্ বিহিজারাহ — গুন্নাহর সাথে পড়া।',
-          ),
-        ],
-      ),
-      QaidaLessonInfo(
-        id: 'ghunnah_8_meem_idgham',
-        trackId: 'track_5_ghunnah',
-        lessonNumber: 8,
-        title: '৮. মীম সাকিন - ইদগামে শাফাবী',
-        subtitle: 'মীম সাকিনের পর মীম (م)',
-        arabicDisplay: 'لَهُم مَّا يَشَاءُونَ',
-        description: 'মীম সাকিনের পর আরেকটি মীম আসলে গুন্নাহসহ উভয় মীম মিলিয়ে তাশদীদ দিয়ে পড়া হয়।',
-        activities: [
-          QaidaActivity(
-            id: 'g_m_idgham_intro',
-            type: QaidaActivityType.letterIntro,
-            prompt: 'لَهُم مَّا = লাহুম্মা (উভয় মীম মিলিয়ে গুন্নাহ)',
-            arabicTarget: 'لَهُم مَّا',
-            explanation: 'মীম সাকিনের পর মীম আসলে ইদগাম হয়।',
-          ),
-        ],
-      ),
-      QaidaLessonInfo(
-        id: 'ghunnah_9_meem_izhar',
-        trackId: 'track_5_ghunnah',
-        lessonNumber: 9,
-        title: '৯. মীম সাকিন - ইযহারে শাফাবী',
-        subtitle: 'বা ও মীম ছাড়া বাকি ২৬ হরফে স্পষ্ট পড়া',
-        arabicDisplay: 'أَلَمْ تَرَ  عَلَيْهِمْ وَلَا',
-        description: 'মীম সাকিনের পর বা এবং মীম ছাড়া যেকোনো হরফ আসলে গুন্নাহ ছাড়া স্পষ্ট পড়তে হয়।',
-        activities: [
-          QaidaActivity(
-            id: 'g_m_izhar_intro',
-            type: QaidaActivityType.letterIntro,
-            prompt: 'أَلَمْ تَرَ = আলাম তারা (স্পষ্ট মীম সাকিন)',
-            arabicTarget: 'أَلَمْ تَرَ',
-            explanation: 'মীম সাকিনের পর তা আসায় স্পষ্ট পড়তে হবে।',
-          ),
-        ],
-      ),
-      QaidaLessonInfo(
-        id: 'ghunnah_10_qalqalah',
-        trackId: 'track_5_ghunnah',
-        lessonNumber: 10,
-        title: '১০. ক্বলক্বলাহ (প্রতিধ্বনি)',
-        subtitle: '৫টি হরফে সাকিন হলে ধাক্কা দিয়ে পড়া',
-        arabicDisplay: 'قُطْبُ جَدٍّ  (ق ط ب ج د)',
-        description: 'ক্বলক্বলার হরফ ৫টি: ক্বাফ, তোয়া, বা, জীম, দাল। এতে জযম হলে প্রতিধ্বনি বা ধাক্কা দিয়ে পড়তে হয়।',
-        activities: [
-          QaidaActivity(
-            id: 'g_qalqalah_intro',
-            type: QaidaActivityType.letterIntro,
-            prompt: 'قُلْ هُوَ اللَّهُ أَحَدْ - শেষে দাল সাকিনে ক্বলক্বলাহ হবে',
-            arabicTarget: 'أَحَدْ ۚ',
-            explanation: 'দাল সাকিন হলে ধাক্কা দিয়ে “আহাদ্ব্” পড়তে হয়।',
-          ),
-          QaidaActivity(
-            id: 'g_qalqalah_letters',
-            type: QaidaActivityType.identifyLetter,
-            prompt: 'ক্বলক্বলার হরফ কয়টি?',
-            options: ['৫টি (ق ط ب ج د)', '৩টি', '৭টি'],
-            correctIndex: 0,
-            explanation: 'ক্বলক্বলার ৫টি হরফ সংক্ষেপে “কুতুবু জাদিন”।',
-          ),
-        ],
-      ),
-    ],
+    lessons: _generateTrack5Lessons(),
   );
+
+  static List<QaidaLessonInfo> _generateTrack5Lessons() {
+    final definitions = [
+      {
+        'id': 'ghunnah_1_wajib',
+        'name': '১. ওয়াজিব গুন্নাহ',
+        'sub': 'নূন ও মীম তাশদীদ · ১ আলিফ গুন্নাহ',
+        'sym': 'إِنَّ  عَمَّ',
+        'desc': 'হরকতযুক্ত হরফের পর নূন (نّ) বা মীম (مّ) এ তাশদীদ থাকলে ওয়াজিবভাবে ১ আলিফ গুন্নাহ করে পড়তে হয়। একে ওয়াজিব গুন্নাহ বলে।',
+        'letters': ['نّ', 'مّ'],
+        'words': ['إِنَّ', 'عَمَّ', 'النَّاسِ', 'ثُمَّ', 'جَنَّاتٍ', 'مِمَّا', 'إِنَّمَا', 'الْجِنَّةِ', 'مُحَمَّدٌ', 'كَأَنَّهُمْ'],
+        'contrasts': ['رَبَّنَا', 'الصَّلَاةَ', 'الَّذِينَ', 'وَالصَّابِرِينَ', 'كُلَّ', 'الرَّحْمَٰنِ'],
+        'pairs': {'إِنَّ': 'النَّاسِ', 'ثُمَّ': 'عَمَّ', 'رَبَّنَا': 'الصَّلَاةَ'},
+        'tiles': [ActivityTile(id: '1', label: '1', arabicLabel: 'إِنَّ'), ActivityTile(id: '2', label: '2', arabicLabel: 'مَا')],
+        'blank': 'إِ___َّ',
+        'blankOpts': ['ن', 'ل', 'ر'],
+      },
+      {
+        'id': 'ghunnah_2_izhar',
+        'name': '২. ইযহার (স্পষ্ট পড়া)',
+        'sub': 'হলক্বী ৬ হরফ · গুন্নাহ ছাড়া স্পষ্ট',
+        'sym': 'مَنْ ءَامَنَ',
+        'desc': 'নূন সাকিন (نْ) বা তানভীন (ً ٍ ٌ)-এর পর হলক্বী ৬ হরফ (ء ه ع ح غ خ) আসলে কোনো গুন্নাহ ছাড়া স্পষ্ট করে পড়তে হয়।',
+        'letters': ['ء', 'ه', 'ع', 'ح', 'غ', 'خ'],
+        'words': ['مَنْ ءَامَنَ', 'عَنْهُ', 'مِنْ حَكِيمٍ', 'أَنْعَمْتَ', 'فَرِيقًا هَدَى', 'مِنْ خَوْفٍ', 'مِنْ عِلْمٍ', 'سَلَامٌ هِيَ', 'عَذَابٌ أَلِيمٌ', 'غَفُورٌ حَلِيمٌ'],
+        'contrasts': ['أَنتُمْ', 'مِن قَبْلُ', 'مَن يَقُولُ', 'مِّن رَّبِّهِمْ', 'مِنۢ بَعْدِ', 'خَيْرًا يَرَهُ'],
+        'pairs': {'مَنْ ءَامَنَ': 'عَنْهُ', 'مِنْ حَكِيمٍ': 'أَنْعَمْتَ', 'أَنتُمْ': 'مِن قَبْلُ'},
+        'tiles': [ActivityTile(id: '1', label: '1', arabicLabel: 'مَنْ'), ActivityTile(id: '2', label: '2', arabicLabel: 'ءَامَنَ')],
+        'blank': 'مِنْ ___َوْفٍ',
+        'blankOpts': ['خ', 'ت', 'ي'],
+      },
+      {
+        'id': 'ghunnah_3_idgham_ghunnah',
+        'name': '৩. ইদগামে বাগুন্নাহ',
+        'sub': 'গুন্নাহসহ মেলানো (ي ن م و)',
+        'sym': 'مَن يَقُولُ',
+        'desc': 'নূন সাকিন বা তানভীনের পর ইদগামে বাগুন্নাহর ৪টি হরফ (ي ن م و - ইয়ানমূ) আসলে মিলিয়ে ১ আলিফ গুন্নাহসহ পড়তে হয়।',
+        'letters': ['ي', 'ن', 'م', 'و'],
+        'words': ['مَن يَقُولُ', 'مِن مَّالٍ', 'مِن وَالٍ', 'مِّن نِّعْمَةٍ', 'خَيْرًا يَرَهُ', 'يَوْمَئِذٍ نَّاعِمَةٌ', 'مِن مَّسَدٍ', 'لَهَبٍ وَتَبَّ', 'أَمْشَاجٍ نَّبْتَلِيهِ', 'وُجُوهٌ يَوْمَئِذٍ'],
+        'contrasts': ['مِّن رَّبِّهِمْ', 'مِن لَّدُنْهُ', 'مَنْ ءَامَنَ', 'عَنْهُ', 'أَنتُمْ', 'مِنۢ بَعْدِ'],
+        'pairs': {'مَن يَقُولُ': 'مِن مَّالٍ', 'مِن وَالٍ': 'مِّن نِّعْمَةٍ', 'مِّن رَّبِّهِمْ': 'مِن لَّدُنْهُ'},
+        'tiles': [ActivityTile(id: '1', label: '1', arabicLabel: 'مَن'), ActivityTile(id: '2', label: '2', arabicLabel: 'يَقُولُ')],
+        'blank': 'مَن ___َقُولُ',
+        'blankOpts': ['ي', 'ل', 'ح'],
+      },
+      {
+        'id': 'ghunnah_4_idgham_bila',
+        'name': '৪. ইদগামে বেলাগুন্নাহ',
+        'sub': 'গুন্নাহ ছাড়া মেলানো (ل ও ر)',
+        'sym': 'مِّن رَّبِّهِمْ',
+        'desc': 'নূন সাকিন বা তানভীনের পর লাম (ل) বা রা (ر) আসলে কোনো গুন্নাহ ছাড়া সরাসরি মিলিয়ে পড়তে হয়।',
+        'letters': ['ل', 'ر'],
+        'words': ['مِّن رَّبِّهِمْ', 'مِن لَّدُنْهُ', 'غَفُورٌ رَّحِيمٌ', 'هُدًى لِّلْمُتَّقِينَ', 'وَيْلٌ لِّكُلِّ', 'رَّحْمَةً مِّن رَّبِّكَ', 'عِيشَةٍ رَّاضِيَةٍ', 'مَالًا لُّبَدًا', 'لَّطِيفًا خَبِيرًا', 'خَيْرٌ لَّكُمْ'],
+        'contrasts': ['مَن يَقُولُ', 'مِن مَّالٍ', 'مَنْ ءَامَنَ', 'عَنْهُ', 'أَنتُمْ', 'مِن قَبْلُ'],
+        'pairs': {'مِّن رَّبِّهِمْ': 'مِن لَّدُنْهُ', 'غَفُورٌ رَّحِيمٌ': 'هُدًى لِّلْمُتَّقِينَ', 'مَن يَقُولُ': 'مِن مَّالٍ'},
+        'tiles': [ActivityTile(id: '1', label: '1', arabicLabel: 'مِّن'), ActivityTile(id: '2', label: '2', arabicLabel: 'رَّبِّهِمْ')],
+        'blank': 'مِّن ___َّبِّهِمْ',
+        'blankOpts': ['ر', 'ي', 'ه'],
+      },
+      {
+        'id': 'ghunnah_5_iqlab',
+        'name': '৫. ইক্বলাব (পরিবর্তন)',
+        'sub': 'বা (ب) আসলে মীম দিয়ে গুন্নাহ',
+        'sym': 'مِنۢ بَعْدِ',
+        'desc': 'নূন সাকিন বা তানভীনের পর একমাত্র হরফ বা (ب) আসলে নূন সাকিনকে ছোট মীম (ۢ) দ্বারা পরিবর্তন করে ১ আলিফ গুন্নাহ করে পড়তে হয়।',
+        'letters': ['ب'],
+        'words': ['مِنۢ بَعْدِ', 'أَنۢبِئْهُم', 'عَلِيمٌۢ بِذَاتِ', 'کِرَامٍۢ بَرَرَةٍ', 'سَمِيعٌۢ بَصِيرٌ', 'أَنۢبَتَتْ', 'ذَنۢبٍ', 'مِنۢ بَيْنِ', 'خَبِيرٌۢ بِمَا', 'مَنۢ بَخِلَ'],
+        'contrasts': ['أَنتُمْ', 'مَنْ ءَامَنَ', 'مَن يَقُولُ', 'مِّن رَّبِّهِمْ', 'عَنْهُ', 'مِن قَبْلُ'],
+        'pairs': {'مِنۢ بَعْدِ': 'أَنۢبِئْهُم', 'عَلِيمٌۢ بِذَاتِ': 'سَمِيعٌۢ بَصِيرٌ', 'مَنْ ءَامَنَ': 'عَنْهُ'},
+        'tiles': [ActivityTile(id: '1', label: '1', arabicLabel: 'مِنۢ'), ActivityTile(id: '2', label: '2', arabicLabel: 'بَعْدِ')],
+        'blank': 'مِنۢ ___َعْدِ',
+        'blankOpts': ['ب', 'ت', 'ي'],
+      },
+      {
+        'id': 'ghunnah_6_ikhfa',
+        'name': '৬. ইখফা (গোপন করে পড়া)',
+        'sub': '১৫টি হরফে নাকের বাঁশিতে লুকানো',
+        'sym': 'أَنتُمْ',
+        'desc': 'নূন সাকিন বা তানভীনের পর ইখফার ১৫টি হরফের (ت ث ج د ذ ز س ش ص ض ط ظ ف ق ك) যেকোনো একটি আসলে নূন বা তানভীনকে নাকের বাঁশিতে লুকিয়ে ১ আলিফ গুন্নাহসহ পড়তে হয়।',
+        'letters': ['ت', 'ث', 'ج', 'د', 'ذ', 'ز', 'س', 'ش', 'ص', 'ض', 'ط', 'ظ', 'ف', 'ق', 'ك'],
+        'words': ['أَنتُمْ', 'مِن قَبْلُ', 'مَن ذَا الَّذِي', 'عَن سَبِيلِهِ', 'كِتَابٌ كَرِيمٌ', 'يَنتَهُوا', 'أَنزَلْنَا', 'مِن طِينٍ', 'إِنسَانٌ', 'مِن فَضْلِهِ'],
+        'contrasts': ['مَنْ ءَامَنَ', 'عَنْهُ', 'مَن يَقُولُ', 'مِّن رَّبِّهِمْ', 'مِنۢ بَعْدِ', 'خَيْرًا يَرَهُ'],
+        'pairs': {'أَنتُمْ': 'مِن قَبْلُ', 'عَن سَبِيلِهِ': 'كِتَابٌ كَرِيمٌ', 'مَنْ ءَامَنَ': 'عَنْهُ'},
+        'tiles': [ActivityTile(id: '1', label: '1', arabicLabel: 'مِن'), ActivityTile(id: '2', label: '2', arabicLabel: 'قَبْلُ')],
+        'blank': 'أَن___ُمْ',
+        'blankOpts': ['ت', 'ع', 'ل'],
+      },
+      {
+        'id': 'ghunnah_7_meem_ikhfa',
+        'name': '৭. মীম সাকিন - ইখফায়ে শাফাবী',
+        'sub': 'মীম সাকিনের পর বা (ب) · ঠোঁট মিলিয়ে গুন্নাহ',
+        'sym': 'تَرْمِيهِم بِحِجَارَةٍ',
+        'desc': 'মীম সাকিন (مْ)-এর পর একমাত্র হরফ বা (ب) আসলে ঠোঁট আলতো মিলিয়ে ১ আলিফ গুন্নাহ সহকারে গোপন করে পড়তে হয়।',
+        'letters': ['ب'],
+        'words': ['تَرْمِيهِم بِحِجَارَةٍ', 'يَعْتَصِم بِاللَّهِ', 'أَنفُسَهُم بِأَنَّ', 'فَاحْكُم بَيْنَهُم', 'إِلَيْكُم بِهَدِيَّةٍ', 'وَهُم بِالْآخِرَةِ', 'عَلَيْهِم بِوَكِيلٍ', 'جِئْتُكُم بِآيَةٍ', 'أَنبَأَهُم بِأَسْمَائِهِمْ', 'رَبُّهُم بِهِمْ'],
+        'contrasts': ['لَهُم مَّثَلًا', 'أَلَمْ تَرَ', 'عَلَيْهِمْ وَلَا', 'أَنْتُمْ', 'عَنْهُمْ', 'أَمْوَالُكُمْ'],
+        'pairs': {'تَرْمِيهِم بِحِجَارَةٍ': 'يَعْتَصِم بِاللَّهِ', 'فَاحْكُم بَيْنَهُم': 'وَهُم بِالْآخِرَةِ', 'أَلَمْ تَرَ': 'عَلَيْهِمْ وَلَا'},
+        'tiles': [ActivityTile(id: '1', label: '1', arabicLabel: 'تَرْمِيهِم'), ActivityTile(id: '2', label: '2', arabicLabel: 'بِحِجَارَةٍ')],
+        'blank': 'تَرْمِيهِم ___ِحِجَارَةٍ',
+        'blankOpts': ['ب', 'م', 'و'],
+      },
+      {
+        'id': 'ghunnah_8_meem_idgham',
+        'name': '৮. মীম সাকিন - ইদগামে শাফাবী',
+        'sub': 'মীম সাকিনের পর মীম (م) · মিলিয়ে গুন্নাহ',
+        'sym': 'لَهُم مَّا',
+        'desc': 'মীম সাকিনের পর আরেকটি মীম (م) আসলে উভয় মীম মিলিয়ে তাশদীদ দিয়ে ১ আলিফ গুন্নাহসহ পড়তে হয়।',
+        'letters': ['م'],
+        'words': ['لَهُم مَّا', 'أَطْعَمَهُم مِّن', 'عَلَيْهِم مُّؤْصَدَةٌ', 'فِي قُلُوبِهِم مَّرَضٌ', 'كُنتُم مُّؤْمِنِينَ', 'أَم مَّنْ', 'خَلَقَكُم مِّن', 'لَّكُم مَّا', 'مِّنْهُم مَّن', 'وَلَكُم مَّا'],
+        'contrasts': ['تَرْمِيهِم بِحِجَارَةٍ', 'أَلَمْ تَرَ', 'عَلَيْهِمْ وَلَا', 'أَنْتُمْ', 'عَنْهُمْ', 'أَمْوَالُكُمْ'],
+        'pairs': {'لَهُم مَّا': 'أَطْعَمَهُم مِّن', 'عَلَيْهِم مُّؤْصَدَةٌ': 'كُنتُم مُّؤْمِنِينَ', 'تَرْمِيهِم بِحِجَارَةٍ': 'يَعْتَصِم بِاللَّهِ'},
+        'tiles': [ActivityTile(id: '1', label: '1', arabicLabel: 'لَهُم'), ActivityTile(id: '2', label: '2', arabicLabel: 'مَّا')],
+        'blank': 'لَهُم ___َّا',
+        'blankOpts': ['م', 'ب', 'ف'],
+      },
+      {
+        'id': 'ghunnah_9_meem_izhar',
+        'name': '৯. মীম সাকিন - ইযহারে শাফাবী',
+        'sub': 'বা ও মীম ছাড়া বাকি ২৬ হরফে স্পষ্ট',
+        'sym': 'أَلَمْ تَرَ',
+        'desc': 'মীম সাকিনের পর বা (ب) ও মীম (م) ছাড়া বাকি ২৬ হরফে কোনো গুন্নাহ ছাড়া মীম সাকিন স্পষ্ট করে পড়তে হয়।',
+        'letters': ['বাকি ২৬ হরফ'],
+        'words': ['أَلَمْ تَرَ', 'هُمْ فِيهَا', 'عَلَيْهِمْ وَلَا', 'أَمْوَالُكُمْ', 'أَنفُسَكُمْ', 'لَعَلَّكُمْ تَتَّقُونَ', 'ذَٰلِكُمْ خَيْرٌ', 'أَلَمْ نَشْرَحْ', 'عَلَيْهِمْ طَيْرًا', 'فَمَهِّلْهُمْ'],
+        'contrasts': ['تَرْمِيهِم بِحِجَارَةٍ', 'لَهُم مَّا', 'أَطْعَمَهُم مِّن', 'إِنَّ', 'عَمَّ', 'أَنتُمْ'],
+        'pairs': {'أَلَمْ تَرَ': 'هُمْ فِيهَا', 'عَلَيْهِمْ وَلَا': 'أَمْوَالُكُمْ', 'تَرْمِيهِم بِحِجَارَةٍ': 'يَعْتَصِم بِاللَّهِ'},
+        'tiles': [ActivityTile(id: '1', label: '1', arabicLabel: 'أَلَمْ'), ActivityTile(id: '2', label: '2', arabicLabel: 'تَرَ')],
+        'blank': 'أَلَمْ ___َرَ',
+        'blankOpts': ['ت', 'ب', 'م'],
+      },
+      {
+        'id': 'ghunnah_10_qalqalah',
+        'name': '১০. ক্বলক্বলাহ (প্রতিধ্বনি)',
+        'sub': '৫টি হরফে সাকিনে ধাক্কা (ق ط ب ج د)',
+        'sym': 'قُطْبُ جَدٍّ',
+        'desc': 'ক্বলক্বলাহর হরফ ৫টি (ق ط ب ج د - ক্বুতবু জাদ)। এই হরফগুলোতে জযম (সাকিন) হলে উচ্চারণে সজোরে ধাক্কা বা প্রতিধ্বনি সৃষ্টি করে পড়তে হয়।',
+        'letters': ['ق', 'ط', 'ب', 'ج', 'د'],
+        'words': ['الْفَلَقِ', 'أَحَدٌ', 'مُحِيطٌ', 'يَجْعَلُونَ', 'يَدْخُلُونَ', 'يَقْطَعُونَ', 'أَطْعَمَهُم', 'سُبْحَانَ', 'أَبْصَارِهِمْ', 'وَتَبَّ'],
+        'contrasts': ['يَسْتَمِعُونَ', 'يَعْلَمُونَ', 'أَنْتُمْ', 'الْحَمْدُ', 'مَنْ', 'إِنَّ'],
+        'pairs': {'الْفَلَقِ': 'أَحَدٌ', 'يَجْعَلُونَ': 'يَدْخُلُونَ', 'يَسْتَمِعُونَ': 'يَعْلَمُونَ'},
+        'tiles': [ActivityTile(id: '1', label: '1', arabicLabel: 'يَجْ'), ActivityTile(id: '2', label: '2', arabicLabel: 'عَلُونَ')],
+        'blank': 'يَ___ْعَلُونَ',
+        'blankOpts': ['ج', 'س', 'ن'],
+      },
+    ];
+
+    return definitions.map((d) {
+      final words = d['words'] as List<String>;
+      final contrasts = d['contrasts'] as List<String>;
+      final letters = d['letters'] as List<String>;
+      return QaidaLessonInfo(
+        id: d['id'] as String,
+        trackId: 'track_5_ghunnah',
+        lessonNumber: definitions.indexOf(d) + 1,
+        title: d['name'] as String,
+        subtitle: d['sub'] as String,
+        arabicDisplay: d['sym'] as String,
+        description: d['desc'] as String,
+        ruleSummary: d['desc'] as String,
+        ruleLetters: letters,
+        exampleWords: words.take(4).toList(),
+        activities: _buildTajweed10StepLesson(
+          lessonId: d['id'] as String,
+          topicName: d['name'] as String,
+          ruleDescription: d['desc'] as String,
+          practiceWords: words,
+          contrastWords: contrasts,
+          ruleLetters: letters,
+          matchPairs: d['pairs'] as Map<String, String>,
+          arrangeTiles: d['tiles'] as List<ActivityTile>,
+          blankWord: d['blank'] as String,
+          blankOptions: d['blankOpts'] as List<String>,
+          blankCorrectIndex: 0,
+        ),
+      );
+    }).toList();
+  }
 
   // -------------------------------------------------------------
   // TRACK 6: 20 Joined Letters (যুক্তাক্ষর পাঠ)
@@ -960,28 +965,29 @@ class QaidaCurriculumData {
     icon: Icons.extension_rounded,
     lessons: List.generate(20, (index) {
       final samples = [
-        {'text': 'لا', 'parts': 'ل + ا', 'name': 'লাম-আলিফ'},
-        {'text': 'با', 'parts': 'ب + ا', 'name': 'বা-আলিফ'},
-        {'text': 'تا', 'parts': 'ت + ا', 'name': 'তা-আলিফ'},
-        {'text': 'ثا', 'parts': 'ث + ا', 'name': 'ছা-আলিফ'},
-        {'text': 'بل', 'parts': 'ب + ل', 'name': 'বা-লাম'},
-        {'text': 'تل', 'parts': 'ت + ل', 'name': 'তা-লাম'},
-        {'text': 'ثل', 'parts': 'ث + ل', 'name': 'ছা-লাম'},
-        {'text': 'بج', 'parts': 'ب + ج', 'name': 'বা-জীম'},
-        {'text': 'تح', 'parts': 'ت + ح', 'name': 'তা-হা'},
-        {'text': 'ثخ', 'parts': 'ث + خ', 'name': 'ছা-খা'},
-        {'text': 'يم', 'parts': 'ي + م', 'name': 'ইয়া-মীম'},
-        {'text': 'نم', 'parts': 'ن + م', 'name': 'নূন-মীম'},
-        {'text': 'تم', 'parts': 'ت + م', 'name': 'তা-মীম'},
-        {'text': 'سم', 'parts': 'س + م', 'name': 'সীন-মীম'},
-        {'text': 'شم', 'parts': 'ش + م', 'name': 'শীন-মীম'},
-        {'text': 'صم', 'parts': 'ص + م', 'name': 'সোয়াদ-মীম'},
-        {'text': 'ضم', 'parts': 'ض + م', 'name': 'দোয়াদ-মীম'},
-        {'text': 'بيت', 'parts': 'ب + ي + ت', 'name': 'বা-ইয়া-তা'},
-        {'text': 'نجم', 'parts': 'ن + ج + م', 'name': 'নূন-জীম-মীম'},
-        {'text': 'شمس', 'parts': 'ش + م + س', 'name': 'শীন-মীম-সীন'},
+        {'text': 'لا', 'parts': 'ل + ا', 'name': 'লাম-আলিফ', 'tiles': ['ل', 'ا']},
+        {'text': 'با', 'parts': 'ب + ا', 'name': 'বা-আলিফ', 'tiles': ['ب', 'ا']},
+        {'text': 'تا', 'parts': 'ت + ا', 'name': 'তা-আলিফ', 'tiles': ['ت', 'ا']},
+        {'text': 'ثا', 'parts': 'ث + ا', 'name': 'ছা-আলিফ', 'tiles': ['ث', 'ا']},
+        {'text': 'بل', 'parts': 'ب + ل', 'name': 'বা-লাম', 'tiles': ['ب', 'ل']},
+        {'text': 'تل', 'parts': 'ت + ل', 'name': 'তা-লাম', 'tiles': ['ت', 'ل']},
+        {'text': 'ثل', 'parts': 'ث + ل', 'name': 'ছা-লাম', 'tiles': ['ث', 'ل']},
+        {'text': 'بج', 'parts': 'ب + ج', 'name': 'বা-জীম', 'tiles': ['ب', 'ج']},
+        {'text': 'تح', 'parts': 'ت + ح', 'name': 'তা-হা', 'tiles': ['ت', 'ح']},
+        {'text': 'ثخ', 'parts': 'ث + خ', 'name': 'ছা-খা', 'tiles': ['ث', 'خ']},
+        {'text': 'يم', 'parts': 'ي + م', 'name': 'ইয়া-মীম', 'tiles': ['ي', 'م']},
+        {'text': 'نم', 'parts': 'ن + م', 'name': 'নূন-মীম', 'tiles': ['ن', 'م']},
+        {'text': 'تم', 'parts': 'ت + م', 'name': 'তা-মীম', 'tiles': ['ت', 'م']},
+        {'text': 'سم', 'parts': 'س + م', 'name': 'সীন-মীম', 'tiles': ['س', 'م']},
+        {'text': 'شم', 'parts': 'ش + م', 'name': 'শীন-মীম', 'tiles': ['ش', 'م']},
+        {'text': 'صم', 'parts': 'ص + م', 'name': 'সোয়াদ-মীম', 'tiles': ['ص', 'م']},
+        {'text': 'ضم', 'parts': 'ض + م', 'name': 'দোয়াদ-মীম', 'tiles': ['ض', 'م']},
+        {'text': 'بيت', 'parts': 'ب + ي + ت', 'name': 'বা-ইয়া-তা', 'tiles': ['ب', 'ي', 'ت']},
+        {'text': 'نجم', 'parts': 'ن + ج + م', 'name': 'নূন-জীম-মীম', 'tiles': ['ن', 'ج', 'م']},
+        {'text': 'شمس', 'parts': 'ش + م + س', 'name': 'শীন-মীম-সীন', 'tiles': ['ش', 'م', 'س']},
       ];
       final item = samples[index % samples.length];
+      final itemTiles = (item['tiles'] as List<String>).map((t) => ActivityTile(id: t, label: t, arabicLabel: t)).toList();
 
       return QaidaLessonInfo(
         id: 'qaida_joined_$index',
@@ -989,216 +995,419 @@ class QaidaCurriculumData {
         lessonNumber: index + 1,
         title: 'যুক্তাক্ষর: ${item['name']}',
         subtitle: '${item['parts']} = ${item['text']}',
-        arabicDisplay: item['text']!,
+        arabicDisplay: item['text'] as String,
         description: 'হরফ সংযুক্ত করে পড়ার অনুশীলন: ${item['parts']}',
-        activities: [
-          QaidaActivity(
-            id: 'j_${index}_intro',
-            type: QaidaActivityType.letterIntro,
-            prompt: 'লক্ষ্য করুন: ${item['parts']} একসাথে যুক্ত হয়ে কী রূপ ধারণ করে',
-            arabicTarget: item['text']!,
-            explanation: '${item['parts']} = ${item['text']}',
-          ),
-          QaidaActivity(
-            id: 'j_${index}_build',
-            type: QaidaActivityType.buildWord,
-            prompt: '“${item['text']}” যুক্তাক্ষরে কোন কোন হরফ রয়েছে?',
-            arabicTarget: item['text']!,
-            options: [item['parts']!, 'বাকি হরফ', 'ভুল বিন্যাস'],
-            correctIndex: 0,
-            explanation: 'সঠিক! এটি গঠিত হয়েছে: ${item['parts']}',
-          ),
-          QaidaActivity(
-            id: 'j_${index}_check',
-            type: QaidaActivityType.lessonCheck,
-            prompt: 'সঠিক যুক্তরূপটি চিনে নাও',
-            arabicTarget: item['text']!,
-            options: [item['text']!, 'بت', 'نت'],
-            correctIndex: 0,
-            explanation: 'আলহামদুলিল্লাহ! আপনি সঠিক যুক্তরূপ চিনেছেন।',
-          ),
-        ],
+        ruleSummary: 'যুক্তাক্ষর পড়ার সময় মূল হরফগুলোকে পৃথকভাবে চিনে সহীহ উচ্চারণে পাঠ করতে হয়।',
+        activities: _buildTajweed10StepLesson(
+          lessonId: 'qaida_joined_$index',
+          topicName: item['name'] as String,
+          ruleDescription: 'হরফ সংযুক্ত করে পড়ার নিয়ম: ${item['parts']}',
+          practiceWords: [item['text'] as String, 'بل', 'تل', 'ثل', 'بج', 'تح', 'ثخ', 'يم', 'نم', 'تم'],
+          contrastWords: ['لا', 'با', 'تا', 'ثا', 'سم', 'شم'],
+          ruleLetters: (item['tiles'] as List<String>),
+          matchPairs: {item['text'] as String: 'بل', 'تل': 'ثل', 'بج': 'تح'},
+          arrangeTiles: itemTiles,
+          blankWord: '${item['text']} = ___',
+          blankOptions: [item['text'] as String, 'ب', 'م'],
+          blankCorrectIndex: 0,
+        ),
       );
     }),
   );
 
   // -------------------------------------------------------------
-  // TRACK 7: 30 Word Reading (শব্দ পাঠ)
+  // TRACK 7: 30 Word Reading Lessons (শব্দ পাঠ)
   // -------------------------------------------------------------
   static final QaidaTrackInfo _track7Words = QaidaTrackInfo(
     id: 'track_7_words',
     trackNumber: 7,
     title: 'শব্দ পাঠ',
-    subtitle: 'কুরআনের পরিচিত শব্দের সহীহ বানান ও পাঠ',
+    subtitle: 'হরকত, সুকুন, তানভীন ও তাশদীদযুক্ত পূর্ণাঙ্গ শব্দ পাঠ',
     arabicTitle: 'قِرَاءَةُ الْكَلِمَاتِ',
-    description: 'হরকত, সুকুন ও মাদ্দ মিলিয়ে সম্পূর্ণ আরবি শব্দ সাবলীলভাবে পড়ার অনুশীলন।',
-    colorHex: 0xFF00CD9C, // Bright Mint
+    description: 'ছোট ও মাঝারি আরবি শব্দ নির্ভুল মাখরাজ ও তাজবীদে পড়ার পূর্ণাঙ্গ অনুশীলন।',
+    colorHex: 0xFF2563EB, // Royal Blue
     icon: Icons.auto_stories_rounded,
     lessons: List.generate(30, (index) {
-      final words = [
-        {'ar': 'كَتَبَ', 'bn': 'কাতাবা', 'desc': '৩টি যবরযুক্ত সহজ শব্দ'},
-        {'ar': 'قَرَأَ', 'bn': 'ক্বারা-আ', 'desc': 'হামযাসহ শব্দ পাঠ'},
-        {'ar': 'عَلِمَ', 'bn': 'আলিমা', 'desc': 'যবর, যের ও যবর'},
-        {'ar': 'سَمِعَ', 'bn': 'সামিআ', 'desc': 'দ্রুত হরকত পড়া'},
-        {'ar': 'خَلَقَ', 'bn': 'খালাক্বা', 'desc': 'ভারী ও হালকা হরফের মিশ্রণ'},
-        {'ar': 'رَزَقَ', 'bn': 'রাঝাক্বা', 'desc': 'অসংযুক্ত হরফ র'},
-        {'ar': 'ذَكَرَ', 'bn': 'যাকারা', 'desc': 'নরম হরফ যাল'},
-        {'ar': 'صَدَقَ', 'bn': 'সাদাক্বা', 'desc': 'সোয়াদ ও ক্বাফ'},
-        {'ar': 'نَصَرَ', 'bn': 'নাসারা', 'desc': 'সহজ শব্দ'},
-        {'ar': 'ضَرَبَ', 'bn': 'দারাবা', 'desc': 'দোয়াদ হরফের রূপ'},
-        {'ar': 'بِسْمِ', 'bn': 'বিসমি', 'desc': 'সুকুনযুক্ত শব্দ'},
-        {'ar': 'الْحَمْدُ', 'bn': 'আল-হামদু', 'desc': 'আলিফ-লাম ও সুকুন'},
-        {'ar': 'رَبِّ', 'bn': 'রাব্বি', 'desc': 'তাশদীদযুক্ত শব্দ'},
-        {'ar': 'مَالِكِ', 'bn': 'মালিকি', 'desc': 'খাড়া যবর ও ১ আলিফ মাদ্দ'},
-        {'ar': 'يَوْمِ', 'bn': 'ইয়াওমি', 'desc': 'মাদ্দে লীনযুক্ত শব্দ'},
-        {'ar': 'الدِّينِ', 'bn': 'আদ-দীনি', 'desc': 'শামসী হরফ ও তাশদীদ'},
-        {'ar': 'إِيَّاكَ', 'bn': 'ইয়্যাকা', 'desc': 'তাশদীদ ও মাদ্দ'},
-        {'ar': 'نَعْبُدُ', 'bn': 'না’বুদু', 'desc': 'আইন সাকিন স্পষ্ট করা'},
-        {'ar': 'نَسْتَعِينُ', 'bn': 'নাসতাঈনু', 'desc': 'সুকুন ও মাদ্দের শব্দ'},
-        {'ar': 'اهْدِنَا', 'bn': 'ইহদিনা', 'desc': 'নরম হা ও সুকুন'},
-        {'ar': 'الصِّرَاطَ', 'bn': 'আস-সিরাতা', 'desc': 'ভারী হরফের মিশ্রণ'},
-        {'ar': 'الْمُسْتَقِيمَ', 'bn': 'আল-মুসতাক্বীম', 'desc': 'লম্বা পরিচিত শব্দ'},
-        {'ar': 'أَنْعَمْتَ', 'bn': 'আন’আমতা', 'desc': 'ইযহার ও আইন সাকিন'},
-        {'ar': 'عَلَيْهِمْ', 'bn': 'আলাইহিম', 'desc': 'লীন ও মীম সাকিন'},
-        {'ar': 'غَيْرِ', 'bn': 'গাইরি', 'desc': 'গাইন ও লীন হরফ'},
-        {'ar': 'الْمَغْضُوبِ', 'bn': 'আল-মাগদূবি', 'desc': 'গাইন ও দোয়াদ সাকিন'},
-        {'ar': 'وَلاَ', 'bn': 'ওয়ালা', 'desc': 'লাম আলিফ মাদ্দ'},
-        {'ar': 'الضَّالِّينَ', 'bn': 'আদ-দ্বাল্লীন', 'desc': '৪ আলিফ লাযিম মাদ্দ'},
-        {'ar': 'سُبْحَانَ', 'bn': 'সুবহানা', 'desc': 'বা সাকিনে ক্বলক্বলাহ'},
-        {'ar': 'قُلْ', 'bn': 'ক্বুল', 'desc': 'পেশ ও সুকুন'},
+      final wordsData = [
+        {'ar': 'دَرَسَ', 'bn': 'দারাসা (পড়ল)', 'tiles': ['دَ', 'رَ', 'سَ'], 'rule': '৩ হরফের জবর'},
+        {'ar': 'كَتَبَ', 'bn': 'কাতাবা (লিখল)', 'tiles': ['كَ', 'تَ', 'بَ'], 'rule': '৩ হরফের জবর'},
+        {'ar': 'جَلَسَ', 'bn': 'জালাসা (বসল)', 'tiles': ['جَ', 'لَ', 'سَ'], 'rule': '৩ হরফের জবর'},
+        {'ar': 'خَلَقَ', 'bn': 'খালাক্বা (সৃষ্টি করল)', 'tiles': ['خَ', 'لَ', 'قَ'], 'rule': '৩ হরফের জবর'},
+        {'ar': 'بَلَغَ', 'bn': 'বালাগা (পৌঁছল)', 'tiles': ['بَ', 'لَ', 'غَ'], 'rule': '৩ হরফের জবর'},
+        {'ar': 'سَمِعَ', 'bn': 'সামিআ (শুনল)', 'tiles': ['سَ', 'مِ', 'عَ'], 'rule': 'যের ও জবর'},
+        {'ar': 'حَمِدَ', 'bn': 'হামিদা (প্রশংসা করল)', 'tiles': ['حَ', 'مِ', 'دَ'], 'rule': 'যের ও জবর'},
+        {'ar': 'فَهِمَ', 'bn': 'ফাহিমা (বুঝল)', 'tiles': ['فَ', 'هِ', 'مَ'], 'rule': 'যের ও জবর'},
+        {'ar': 'عَلِمَ', 'bn': 'আলিমা (জানল)', 'tiles': ['عَ', 'لِ', 'مَ'], 'rule': 'যের ও জবর'},
+        {'ar': 'غَضِبَ', 'bn': 'গাদিবা (রাগ করল)', 'tiles': ['غَ', 'ضِ', 'بَ'], 'rule': 'যের ও জবর'},
+        {'ar': 'كُتِبَ', 'bn': 'কুতিবা (লেখা হলো)', 'tiles': ['كُ', 'تِ', 'بَ'], 'rule': 'পেশ, যের ও জবর'},
+        {'ar': 'جُمِعَ', 'bn': 'জুমিআ (একত্রিত হলো)', 'tiles': ['جُ', 'مِ', 'عَ'], 'rule': 'পেশ, যের ও জবর'},
+        {'ar': 'رُزِقَ', 'bn': 'রুযিক্বা (রিযিক দেওয়া হলো)', 'tiles': ['رُ', 'زِ', 'قَ'], 'rule': 'পেশ, যের ও জবর'},
+        {'ar': 'خُلِقَ', 'bn': 'খুলিক্বা (সৃষ্টি হলো)', 'tiles': ['خُ', 'لِ', 'قَ'], 'rule': 'পেশ, যের ও জবর'},
+        {'ar': 'بُعِثَ', 'bn': 'বুইছা (প্রেরিত হলো)', 'tiles': ['بُ', 'عِ', 'ثَ'], 'rule': 'পেশ, যের ও জবর'},
+        {'ar': 'أَحْمَدُ', 'bn': 'আহমাদু', 'tiles': ['أَحْ', 'مَ', 'دُ'], 'rule': 'সুকুন / জযম'},
+        {'ar': 'يَحْمَدُ', 'bn': 'ইয়াহমাদু', 'tiles': ['يَحْ', 'مَ', 'دُ'], 'rule': 'সুকুন / জযম'},
+        {'ar': 'يَكْتُبُ', 'bn': 'ইয়াক্তুবু', 'tiles': ['يَكْ', 'تُ', 'بُ'], 'rule': 'সুকুন / জযম'},
+        {'ar': 'يَجْلِسُ', 'bn': 'ইয়াজলিসু', 'tiles': ['يَجْ', 'لِ', 'سُ'], 'rule': 'সুকুন / জযম'},
+        {'ar': 'الْحَمْدُ', 'bn': 'আল-হামদু', 'tiles': ['الْ', 'حَمْ', 'دُ'], 'rule': 'সুকুন ও তাশদীদ'},
+        {'ar': 'قَالَ', 'bn': 'ক্ব-লা (মাদ্দে তাবি’ঈ)', 'tiles': ['قَا', 'لَ'], 'rule': 'আলিফ মাদ্দ'},
+        {'ar': 'قِيلَ', 'bn': 'কী-লা (ইয়া মাদ্দ)', 'tiles': ['قِي', 'لَ'], 'rule': 'ইয়া মাদ্দ'},
+        {'ar': 'يَقُولُ', 'bn': 'ইয়াক্বূলু (ওয়াও মাদ্দ)', 'tiles': ['يَ', 'قُو', 'لُ'], 'rule': 'ওয়াও মাদ্দ'},
+        {'ar': 'رَبٌّ', 'bn': 'রাব্বুন (তাশদীদ)', 'tiles': ['رَبْ', 'بٌ'], 'rule': 'তাশদীদ ও তানভীন'},
+        {'ar': 'كُلٌّ', 'bn': 'কুল্লুন', 'tiles': ['كُلْ', 'لٌ'], 'rule': 'তাশদীদ ও তানভীন'},
+        {'ar': 'مُحَمَّدٌ', 'bn': 'মুহাম্মাদুন', 'tiles': ['مُ', 'حَمْ', 'مَ', 'دٌ'], 'rule': 'তাশদীদ ও গুন্নাহ'},
+        {'ar': 'جَنَّةٌ', 'bn': 'জান্নাতুন', 'tiles': ['جَنْ', 'نَ', 'ةٌ'], 'rule': 'ওয়াজিব গুন্নাহ'},
+        {'ar': 'الْقَمَرُ', 'bn': 'আল-ক্বামারু', 'tiles': ['الْ', 'قَ', 'مَ', 'رُ'], 'rule': 'হরফে ক্বামারিয়্যাহ'},
+        {'ar': 'الشَّمْسُ', 'bn': 'আশ-শামসু', 'tiles': ['الشَّ', 'مْ', 'سُ'], 'rule': 'হরফে শামসিয়্যাহ'},
+        {'ar': 'الْقُرْآنُ', 'bn': 'আল-কুরআন', 'tiles': ['الْ', 'قُرْ', 'آنُ'], 'rule': 'পূর্ণাঙ্গ শব্দ'},
       ];
-      final item = words[index % words.length];
+      final item = wordsData[index];
+      final tiles = (item['tiles'] as List<String>)
+          .map((t) => ActivityTile(id: t, label: t, arabicLabel: t))
+          .toList();
+      final target = item['ar'] as String;
+      final others = wordsData
+          .map((w) => w['ar'] as String)
+          .where((w) => w != target)
+          .toList();
 
       return QaidaLessonInfo(
         id: 'qaida_word_$index',
         trackId: 'track_7_words',
         lessonNumber: index + 1,
-        title: 'শব্দ: ${item['ar']}',
-        subtitle: '${item['bn']} (${item['desc']})',
-        arabicDisplay: item['ar']!,
-        description: 'কুরআনের শব্দ “${item['ar']}” সহীহ উচ্চারণে বানান ও পড়া শিখি।',
-        activities: [
-          QaidaActivity(
-            id: 'w_${index}_intro',
-            type: QaidaActivityType.letterIntro,
-            prompt: 'শব্দটি মনোযোগ দিয়ে দেখুন: ${item['ar']}',
-            arabicTarget: item['ar']!,
-            explanation: '${item['ar']} = ${item['bn']}। ${item['desc']}',
-          ),
-          QaidaActivity(
-            id: 'w_${index}_identify',
-            type: QaidaActivityType.identifyLetter,
-            prompt: '“${item['ar']}” শব্দের সঠিক বাংলা উচ্চারণ কোনটি?',
-            arabicTarget: item['ar']!,
-            options: [item['bn']!, 'ভুল রূপ ১', 'ভুল রূপ ২'],
-            correctIndex: 0,
-            explanation: 'মাশাআল্লাহ! সঠিক উচ্চারণ: ${item['bn']}।',
-          ),
-          QaidaActivity(
-            id: 'w_${index}_check',
-            type: QaidaActivityType.lessonCheck,
-            prompt: 'নিচের কোনটি “${item['ar']}”?',
-            arabicTarget: item['ar']!,
-            options: [item['ar']!, 'كَتَبَتْ', 'عَلِمُوا'],
-            correctIndex: 0,
-            explanation: 'চমৎকার! আপনি শব্দটি নিখুঁতভাবে চিহ্নিত করেছেন।',
-          ),
-        ],
+        title: 'শব্দ: $target',
+        subtitle: '${item['bn']} • ${item['rule']}',
+        arabicDisplay: target,
+        description: 'আরবি শব্দ পাঠ ও গঠন অনুশীলন: $target',
+        ruleSummary: 'হরকত, সুকুন ও মাদ্দ বজায় রেখে শব্দ নির্ভুলভাবে পড়া।',
+        activities: _buildTajweed10StepLesson(
+          lessonId: 'qaida_word_$index',
+          topicName: 'শব্দ পাঠ: $target',
+          ruleDescription:
+              '${item['rule']} — হরকত ও সুকুন বজায় রেখে শব্দটি সহীহভাবে পাঠ করতে হয়।',
+          practiceWords: [
+            target,
+            others[0 % others.length],
+            others[1 % others.length],
+            others[2 % others.length],
+            others[3 % others.length],
+            others[4 % others.length],
+            others[5 % others.length],
+            others[6 % others.length],
+            others[7 % others.length],
+            others[8 % others.length],
+          ],
+          contrastWords: [
+            others[9 % others.length],
+            others[10 % others.length],
+            others[11 % others.length],
+            others[12 % others.length],
+            others[13 % others.length],
+          ],
+          ruleLetters: (item['tiles'] as List<String>),
+          matchPairs: {
+            target: item['bn'] as String,
+            others[0 % others.length]: wordsData.firstWhere(
+                (w) => w['ar'] == others[0 % others.length])['bn'] as String,
+            others[1 % others.length]: wordsData.firstWhere(
+                (w) => w['ar'] == others[1 % others.length])['bn'] as String,
+          },
+          arrangeTiles: tiles,
+          blankWord: '$target = ___',
+          blankOptions: [
+            target,
+            others[0 % others.length],
+            others[1 % others.length]
+          ],
+          blankCorrectIndex: 0,
+        ),
       );
     }),
   );
 
   // -------------------------------------------------------------
-  // TRACK 8: 40 Sentence & Continuous Reading (আয়াত ও বাক্য পাঠ)
+  // TRACK 8: 40 Sentence & Ayah Reading Lessons (বাক্য ও ধারাবাহিক পাঠ)
   // -------------------------------------------------------------
   static final QaidaTrackInfo _track8Sentences = QaidaTrackInfo(
     id: 'track_8_sentences',
     trackNumber: 8,
-    title: 'আয়াত ও বাক্য পাঠ',
-    subtitle: 'ধারাবাহিক তিলাওয়াত, ওয়াকফ ও সূরা ফাতিহা',
-    arabicTitle: 'قِرَاءَةُ الآيَاتِ وَالسُّوَرِ',
-    description: 'শেখা সকল নিয়ম ও মাদ্দ প্রয়োগ করে কুরআনের পূর্ণ আয়াত ও বাক্য পাঠ।',
-    colorHex: 0xFFE040FB, // Vibrant Magenta
+    title: 'বাক্য ও আয়াত পাঠ',
+    subtitle: 'ধারাবাহিক বাক্য, ছোট ছোট আয়াত ও ওয়াকফের কায়দা',
+    arabicTitle: 'قِرَاءَةُ الْجُمَلِ وَالْآيَاتِ',
+    description:
+        'সংযুক্ত শব্দমালা, পূর্ণাঙ্গ বাক্য ও ছোট ছোট আয়াত সহীহ তাজবীদে পাঠের চূড়ান্ত প্রস্তুতি।',
+    colorHex: 0xFFD97706, // Warm Amber
     icon: Icons.menu_book_rounded,
     lessons: List.generate(40, (index) {
-      final ayahs = [
-        {'ar': 'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ', 'bn': 'বিসমিল্লাহির রাহমানির রাহীম', 'focus': 'তাসমিয়া'},
-        {'ar': 'الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ', 'bn': 'আলহামদু লিল্লাহি রাব্বিল আলামীন', 'focus': 'সূরা ফাতিহা আয়াত ১'},
-        {'ar': 'الرَّحْمَٰنِ الرَّحِيمِ', 'bn': 'আর-রাহমানির রাহীম', 'focus': 'সূরা ফাতিহা আয়াত ২'},
-        {'ar': 'مَالِكِ يَوْمِ الدِّينِ', 'bn': 'মালিকি ইয়াওমিদ্দীন', 'focus': 'সূরা ফাতিহা আয়াত ৩'},
-        {'ar': 'إِيَّاكَ نَعْبُدُ وَإِيَّاكَ نَسْتَعِينُ', 'bn': 'ইয়্যাকা না’বুদু ওয়া ইয়্যাকা নাসতাঈন', 'focus': 'সূরা ফাতিহা আয়াত ৪'},
-        {'ar': 'اهْدِنَا الصِّرَاطَ الْمُسْتَقِيمَ', 'bn': 'ইহদিনাস সিরাতাল মুসতাক্বীম', 'focus': 'সূরা ফাতিহা আয়াত ৫'},
-        {'ar': 'صِرَاطَ الَّذِينَ أَنْعَمْتَ عَلَيْهِمْ', 'bn': 'সিরাতাল্লাযীনা আন’আমতা আলাইহিম', 'focus': 'সূরা ফাতিহা আয়াত ৬'},
-        {'ar': 'غَيْرِ الْمَغْضُوبِ عَلَيْهِمْ وَلَا الضَّالِّينَ', 'bn': 'গাইরিল মাগদূবি আলাইহিম ওয়ালাদ-দ্বাল্লীন', 'focus': 'সূরা ফাতিহা আয়াত ৭'},
-        {'ar': 'قُلْ هُوَ اللَّهُ أَحَدٌ', 'bn': 'ক্বুল হুয়াল্লাহু আহাদ', 'focus': 'সূরা ইখলাস আয়াত ১'},
-        {'ar': 'اللَّهُ الصَّمَدُ', 'bn': 'আল্লাহুস সামাদ', 'focus': 'সূরা ইখলাস আয়াত ২'},
-        {'ar': 'لَمْ يَلِدْ وَلَمْ يُولَدْ', 'bn': 'লাম ইয়ালিদ ওয়া লাম ইয়ূলাদ', 'focus': 'সূরা ইখলাস আয়াত ৩'},
-        {'ar': 'وَلَمْ يَكُن لَّهُ كُفُوًا أَحَدٌ', 'bn': 'ওয়া লাম ইয়াকুল্লাহু কুফুওয়ান আহাদ', 'focus': 'সূরা ইখলাস আয়াত ৪'},
-        {'ar': 'قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ', 'bn': 'ক্বুল আউযু বিরাব্বিল ফালাক্ব', 'focus': 'সূরা ফালাক্ব আয়াত ১'},
-        {'ar': 'مِن شَرِّ مَا خَلَقَ', 'bn': 'মিন শাররি মা খালাক্ব', 'focus': 'সূরা ফালাক্ব আয়াত ২'},
-        {'ar': 'وَمِن شَرِّ غَاسِقٍ إِذَا وَقَبَ', 'bn': 'ওয়া মিন শাররি গাসিক্বিন ইযা ওয়াক্বাব', 'focus': 'সূরা ফালাক্ব আয়াত ৩'},
-        {'ar': 'وَمِن شَرِّ النَّفَّاثَاتِ فِي الْعُقَدِ', 'bn': 'ওয়া মিন শাররিন নাফ্ফাসাতি ফিল উক্বাফ', 'focus': 'সূরা ফালাক্ব আয়াত ৪'},
-        {'ar': 'وَمِن شَرِّ حَاسِدٍ إِذَا حَسَدَ', 'bn': 'ওয়া মিন শাররি হাসিদিন ইযা হাসাদ', 'focus': 'সূরা ফালাক্ব আয়াত ৫'},
-        {'ar': 'قُلْ أَعُوذُ بِرَبِّ النَّاسِ', 'bn': 'ক্বুল আউযু বিরাব্বিন নাস', 'focus': 'সূরা নাস আয়াত ১'},
-        {'ar': 'مَلِكِ النَّاسِ', 'bn': 'মালিকিন নাস', 'focus': 'সূরা নাস আয়াত ২'},
-        {'ar': 'إِلَٰهِ النَّاسِ', 'bn': 'ইলাহিন নাস', 'focus': 'সূরা নাস আয়াত ৩'},
-        {'ar': 'مِن شَرِّ الْوَسْوَاسِ الْخَنَّاسِ', 'bn': 'মিন শাররিল ওয়াসওয়াসিল খান্নাস', 'focus': 'সূরা নাস আয়াত ৪'},
-        {'ar': 'الَّذِي يُوَسْوِسُ فِي صُدُورِ النَّاسِ', 'bn': 'আল্লাযী ইউওয়াসবিসু ফী সুদূরিন নাস', 'focus': 'সূরা নাস আয়াত ৫'},
-        {'ar': 'مِنَ الْجِنَّةِ وَالنَّاسِ', 'bn': 'মিনাল জিন্নাতি ওয়ান নাস', 'focus': 'সূরা নাস আয়াত ৬'},
-        {'ar': 'إِنَّا أَعْطَيْنَاكَ الْكَوْثَرَ', 'bn': 'ইন্না আ’তাইনা-কাল কাওছার', 'focus': 'সূরা কাওসার আয়াত ১'},
-        {'ar': 'فَصَلِّ لِرَبِّكَ وَانْحَرْ', 'bn': 'ফাসাল্লি লিরাব্বিকা ওয়ানহার', 'focus': 'সূরা কাওসার আয়াত ২'},
-        {'ar': 'إِنَّ شَانِئَكَ هُوَ الْأَبْتَرُ', 'bn': 'ইন্না শানিয়াকা হুয়াল আবতার', 'focus': 'সূরা কাওসার আয়াত ৩'},
-        {'ar': 'إِذَا جَاءَ نَصْرُ اللَّهِ وَالْفَتْحُ', 'bn': 'ইযা জা-আ নাসরুল্লাহি ওয়াল ফাতহ', 'focus': 'সূরা নাসর আয়াত ১'},
-        {'ar': 'وَرَأَيْتَ النَّاسَ يَدْخُلُونَ فِي دِينِ اللَّهِ أَفْوَاجًا', 'bn': 'ওয়া রাইতান নাসা ইয়াদখুলূনা ফী দীনিল্লাহি আফওয়াজা', 'focus': 'সূরা নাসর আয়াত ২'},
-        {'ar': 'فَسَبِّحْ بِحَمْدِ رَبِّكَ وَاسْتَغْفِرْهُ', 'bn': 'ফাসাব্বিহ বিহামদি রাব্বিকা ওয়াসতাগফিরহু', 'focus': 'সূরা নাসর আয়াত ৩'},
-        {'ar': 'إِنَّهُ كَانَ تَوَّابًا', 'bn': 'ইন্নাহু কানা তাউওয়াবা', 'focus': 'সূরা নাসর সমাপনী'},
-        {'ar': 'تَبَّتْ يَدَا أَبِي لَهَبٍ وَتَبَّ', 'bn': 'তাব্বাত ইয়াদা আবী লাহাবিওঁ ওয়াতাব্ব', 'focus': 'সূরা লাহাব আয়াত ১'},
-        {'ar': 'مَا أَغْنَىٰ عَنْهُ مَالُهُ وَمَا كَسَبَ', 'bn': 'মা আগনা আনহু মালুহু ওয়ামা কাসাব', 'focus': 'সূরা লাহাব আয়াত ২'},
-        {'ar': 'سَيَصْلَىٰ نَارًا ذَاتَ لَهَبٍ', 'bn': 'সাইয়াসলা নারান যাতা লাহাব', 'focus': 'সূরা লাহাব আয়াত ৩'},
-        {'ar': 'وَامْرَأَتُهُ حَمَّالَةَ الْحَطَبِ', 'bn': 'ওয়ামরাআতুহু হাম্মা-লাতাল হাতাব', 'focus': 'সূরা লাহাব আয়াত ৪'},
-        {'ar': 'فِي جِيدِهَا حَبْلٌ مِّن مَّسَدٍ', 'bn': 'ফী জীদিহা হাবলুম মিম মাসাদ', 'focus': 'সূরা লাহাব আয়াত ৫'},
-        {'ar': 'لِإِيلَافِ قُرَيْشٍ', 'bn': 'লি ঈলাফি কুরাইশ', 'focus': 'সূরা কুরাইশ আয়াত ১'},
-        {'ar': 'إِيلَافِهِمْ رِحْلَةَ الشِّتَاءِ وَالصَّيْفِ', 'bn': 'ঈলাফিহিম রিহলাতাশ শিতা-ই ওয়াস সাইফ', 'focus': 'সূরা কুরাইশ আয়াত ২'},
-        {'ar': 'فَلْيَعْبُدُوا رَبَّ هَٰذَا الْبَيْتِ', 'bn': 'ফালইয়া’বুদূ রাব্বা হাযাল বাইত', 'focus': 'সূরা কুরাইশ আয়াত ৩'},
-        {'ar': 'الَّذِي أَطْعَمَهُم مِّن جُوعٍ', 'bn': 'আল্লাযী আত’আমাহুম মিন জূ’', 'focus': 'সূরা কুরাইশ আয়াত ৪'},
-        {'ar': 'وَآمَنَهُم مِّنْ خَوْفٍ', 'bn': 'ওয়া আমানাহুম মিন খাওফ', 'focus': 'সূরা কুরাইশ আয়াত ৫'},
+      final sentencesData = [
+        {'ar': 'بِسْمِ اللَّهِ', 'bn': 'বিসমিল্লাহ', 'rule': 'শুরু করার আদব'},
+        {'ar': 'الرَّحْمَٰنِ الرَّحِيمِ', 'bn': 'আর-রহমানির রাহিম', 'rule': 'মাদ্দে আরিদী ও ওয়াকফ'},
+        {'ar': 'الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ', 'bn': 'আলহামদু লিল্লাহি রাব্বিল আলামিন', 'rule': 'সূরা আল-ফাতিহা ১'},
+        {'ar': 'الرَّحْمَٰنِ الرَّحِيمِ', 'bn': 'আর-রহমানির রাহিম', 'rule': 'সূরা আল-ফাতিহা ২'},
+        {'ar': 'مَالِكِ يَوْمِ الدِّينِ', 'bn': 'মালিকি ইয়াওমিদ দিন', 'rule': 'সূরা আল-ফাতিহা ৩'},
+        {'ar': 'إِيَّاكَ نَعْبُدُ', 'bn': 'ইয়্যাকা নাবুদু', 'rule': 'তাশদীদ ও সুকুন'},
+        {'ar': 'وَإِيَّاكَ نَسْتَعِينُ', 'bn': 'ওয়া ইয়্যাকা নাস্তাঈন', 'rule': 'সূরা আল-ফাতিহা ৪'},
+        {'ar': 'اهْدِنَا الصِّرَاطَ الْمُسْتَقِيمَ', 'bn': 'ইহদিনাস সিরাতাল মুস্তাকিম', 'rule': 'মোটা হরফ ও ওয়াকফ'},
+        {'ar': 'صِرَاطَ الَّذِينَ أَنْعَمْتَ عَلَيْهِمْ', 'bn': 'সিরাতাল্লাযিনা আনআমতা আলাইহিম', 'rule': 'ইযহারে হলক্বী'},
+        {'ar': 'غَيْرِ الْمَغْضُوبِ عَلَيْهِمْ', 'bn': 'গাইরিল মাগদুবি আলাইহিম', 'rule': 'মাদ্দে লীন ও গাইন'},
+        {'ar': 'وَلَا الضَّالِّينَ', 'bn': 'ওয়ালাদ দোয়াল্লিন', 'rule': 'মাদ্দে লাযিম মুসাক্কাল'},
+        {'ar': 'قُلْ هُوَ اللَّهُ أَحَدٌ', 'bn': 'কুল হুয়াল্লাহু আহাদ', 'rule': 'সূরা আল-ইখলাস ১'},
+        {'ar': 'اللَّهُ الصَّمَدُ', 'bn': 'আল্লাহুস সামাদ', 'rule': 'সূরা আল-ইখলাস ২'},
+        {'ar': 'لَمْ يَلِدْ وَلَمْ يُولَدْ', 'bn': 'লাম ইয়ালিদ ওয়া লাম ইউলাদ', 'rule': 'ক্বলক্বলাহর নিয়ম'},
+        {'ar': 'وَلَمْ يَكُن لَّهُ كُفُوًا أَحَدٌ', 'bn': 'ওয়া লাম ইয়াকুল্লাহু কুফুওয়ান আহাদ', 'rule': 'ইদগামে বেলাগুন্নাহ'},
+        {'ar': 'قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ', 'bn': 'কুল আউযু বিরাব্বিল ফালাক্ব', 'rule': 'সূরা আল-ফালাক্ব ১'},
+        {'ar': 'مِن شَرِّ مَا خَلَقَ', 'bn': 'মিন শাররি মা খালাক্ব', 'rule': 'ইখফা ও ক্বলক্বলাহ'},
+        {'ar': 'وَمِن شَرِّ غَاسِقٍ إِذَا وَقَبَ', 'bn': 'ওয়া মিন শাররি গাসিক্বিন ইযা ওয়াক্বাব', 'rule': 'সূরা আল-ফালাক্ব ৩'},
+        {'ar': 'وَمِن شَرِّ النَّفَّاثَاتِ فِي الْعُقَدِ', 'bn': 'ওয়া মিন শাররিন নাফ্ফাছাতি ফিল উক্বাদ', 'rule': 'ওয়াজিব গুন্নাহ'},
+        {'ar': 'وَمِن شَرِّ حَاسِدٍ إِذَا حَسَدَ', 'bn': 'ওয়া মিন শাররি হাসিদিন ইযা হাসাদ', 'rule': 'সূরা আল-ফালাক্ব ৫'},
+        {'ar': 'قُلْ أَعُوذُ بِرَبِّ النَّاسِ', 'bn': 'কুল আউযু বিরাব্বিন নাস', 'rule': 'সূরা আন-নাস ১'},
+        {'ar': 'مَلِكِ النَّاسِ', 'bn': 'মালিকিন নাস', 'rule': 'সূরা আন-নাস ২'},
+        {'ar': 'إِلَٰهِ النَّاسِ', 'bn': 'ইলাহিন নাস', 'rule': 'সূরা আন-নাস ৩'},
+        {'ar': 'مِن شَرِّ الْوَسْوَاسِ الْخَنَّاسِ', 'bn': 'মিন শাররিল ওয়াসওয়াসিল খান্নাস', 'rule': 'ইখফা ও ওয়াজিব গুন্নাহ'},
+        {'ar': 'الَّذِي يُوَسْوِسُ فِي صُدُورِ النَّاسِ', 'bn': 'আল্লাযী ইউওয়াসউইসু ফী সুদূরিন নাস', 'rule': 'সূরা আন-নাস ৫'},
+        {'ar': 'مِنَ الْجِنَّةِ وَالنَّاسِ', 'bn': 'মিনাল জিন্নাতি ওয়ান নাস', 'rule': 'সূরা আন-নাস ৬'},
+        {'ar': 'إِنَّا أَعْطَيْنَاكَ الْكَوْثَرَ', 'bn': 'ইন্না আতায়নাকাল কাওছার', 'rule': 'মাদ্দে মুনফাসিল'},
+        {'ar': 'فَصَلِّ لِرَبِّكَ وَانْحَرْ', 'bn': 'ফাসাল্লি লিরাব্বিকা ওয়ানহার', 'rule': 'ইযহার ও তাশদীদ'},
+        {'ar': 'إِنَّ شَانِئَكَ هُوَ الْأَبْتَرُ', 'bn': 'ইন্না শানিয়াকা হুয়াল আবতার', 'rule': 'সূরা আল-কাওছার ৩'},
+        {'ar': 'وَالْعَصْرِ', 'bn': 'ওয়াল আসর', 'rule': 'সূরা আল-আসর ১'},
+        {'ar': 'إِنَّ الْإِنسَانَ لَفِي خُسْرٍ', 'bn': 'ইন্নাল ইনসানা লাফী খুসর', 'rule': 'ইখফা ও গুন্নাহ'},
+        {'ar': 'إِلَّا الَّذِينَ آمَنُوا وَعَمِلُوا الصَّالِحَاتِ', 'bn': 'ইল্লাল্লাযিনা আমানু ওয়া আমিলুস সালিহাত', 'rule': 'সূরা আল-আসর ৩ (অংশ ১)'},
+        {'ar': 'وَتَوَاصَوْا بِالْحَقِّ وَتَوَاصَوْا بِالصَّبْرِ', 'bn': 'ওয়া তাওয়াসাও বিলহাক্বক্বি ওয়া তাওয়াসাও বিসবর', 'rule': 'সূরা আল-আসর ৩ (অংশ ২)'},
+        {'ar': 'أَلَمْ تَرَ كَيْفَ فَعَلَ رَبُّكَ', 'bn': 'আলাম তারা কাইফা ফাআলা রাব্বুকা', 'rule': 'ইযহারে শাফাবী'},
+        {'ar': 'بِأَصْحَابِ الْفِيلِ', 'bn': 'বি আসহাবিল ফিল', 'rule': 'সূরা আল-ফীল ১'},
+        {'ar': 'أَلَمْ يَجْعَلْ كَيْدَهُمْ فِي تَضْلِيلٍ', 'bn': 'আলাম ইয়াজআল কায়দাহুম ফী তাদলীল', 'rule': 'ক্বলক্বলাহ ও ইযহার'},
+        {'ar': 'وَأَرْسَلَ عَلَيْهِمْ طَيْرًا أَبَابِيلَ', 'bn': 'ওয়া আরসালা আলাইহিম তাইরান আবাবিল', 'rule': 'মাদ্দে বদল ও আরিদী'},
+        {'ar': 'تَرْمِيهِم بِحِجَارَةٍ مِّن سِجِّيلٍ', 'bn': 'তারমীহিম বিহিজারাতিম মিন সিজ্জিল', 'rule': 'ইখফায়ে শাফাবী ও ইদগাম'},
+        {'ar': 'فَجَعَلَهُمْ كَعَصْفٍ مَّأْكُولٍ', 'bn': 'ফাজাআলাহুম কা আসফিম মাকূল', 'rule': 'সূরা আল-ফীল ৫'},
+        {'ar': 'إِذَا جَاءَ نَصْرُ اللَّهِ وَالْفَتْحُ', 'bn': 'ইযা জাআ নাসরুল্লাহি ওয়াল ফাতহ', 'rule': 'মাদ্দে মুত্তাসিল ও ওয়াকফ'},
       ];
-      final item = ayahs[index % ayahs.length];
+      final item = sentencesData[index];
+      final target = item['ar'] as String;
+      final others = sentencesData
+          .map((s) => s['ar'] as String)
+          .where((s) => s != target)
+          .toList();
 
       return QaidaLessonInfo(
         id: 'qaida_sentence_$index',
         trackId: 'track_8_sentences',
         lessonNumber: index + 1,
-        title: 'আয়াত পাঠ: ${item['focus']}',
-        subtitle: item['bn']!,
-        arabicDisplay: item['ar']!,
-        description: 'সহীহ মাখরাজ ও তাজবীদের নিয়মানুযায়ী আয়াত পাঠ অনুশীলন।',
-        activities: [
-          QaidaActivity(
-            id: 's_${index}_intro',
-            type: QaidaActivityType.letterIntro,
-            prompt: 'আয়াতটি স্পষ্টভাবে দেখুন এবং তিলাওয়াত করুন',
-            arabicTarget: item['ar']!,
-            explanation: '${item['bn']} (${item['focus']})',
-          ),
-          QaidaActivity(
-            id: 's_${index}_read',
-            type: QaidaActivityType.readWordByWord,
-            prompt: 'আয়াতের শেষ হরফে ওয়াকফ (থামার) নিয়ম লক্ষ্য করুন',
-            arabicTarget: item['ar']!,
-            explanation: 'আয়াতের শেষে থামলে শেষ হরফের হরকত সাকিন হয়ে যায়।',
-          ),
-          QaidaActivity(
-            id: 's_${index}_check',
-            type: QaidaActivityType.lessonCheck,
-            prompt: '“${item['focus']}”-এর সঠিক আয়াত কোনটি?',
-            arabicTarget: item['ar']!,
-            options: [item['ar']!, 'بِسْمِ اللَّهِ', 'الْحَمْدُ لِلَّهِ'],
-            correctIndex: 0,
-            explanation: 'আলহামদুলিল্লাহ! আপনি আয়াতটি সহীহভাবে চিহ্নিত করেছেন।',
-          ),
-        ],
+        title: 'আয়াত: ${item['rule']}',
+        subtitle: item['bn'] as String,
+        arabicDisplay: target,
+        description: 'আয়াত তিলাওয়াত ও ওয়াকফ অনুশীলন: $target',
+        ruleSummary: 'ধারাবাহিক বাক্য পাঠ ও ওয়াকফের সঠিক কায়দা।',
+        activities: _buildTajweed10StepLesson(
+          lessonId: 'qaida_sentence_$index',
+          topicName: item['rule'] as String,
+          ruleDescription:
+              '${item['rule']} — ধারাবাহিক আয়াত পাঠ ও সঠিক ওয়াকফের কায়দা।',
+          practiceWords: [
+            target,
+            others[0 % others.length],
+            others[1 % others.length],
+            others[2 % others.length],
+            others[3 % others.length],
+            others[4 % others.length],
+            others[5 % others.length],
+            others[6 % others.length],
+            others[7 % others.length],
+            others[8 % others.length],
+          ],
+          contrastWords: [
+            others[9 % others.length],
+            others[10 % others.length],
+            others[11 % others.length],
+            others[12 % others.length],
+            others[13 % others.length],
+          ],
+          ruleLetters: ['ا', 'ل', 'م'],
+          matchPairs: {
+            target: item['bn'] as String,
+            others[0 % others.length]: sentencesData.firstWhere(
+                (s) => s['ar'] == others[0 % others.length])['bn'] as String,
+            others[1 % others.length]: sentencesData.firstWhere(
+                (s) => s['ar'] == others[1 % others.length])['bn'] as String,
+          },
+          arrangeTiles: [
+            ActivityTile(
+                id: '1',
+                label: '1',
+                arabicLabel: target.split(' ').first),
+            ActivityTile(
+                id: '2',
+                label: '2',
+                arabicLabel: target.split(' ').length > 1
+                    ? target.split(' ')[1]
+                    : target),
+          ],
+          blankWord: '$target ___',
+          blankOptions: [target, 'آمِينَ', 'صَدَقَ'],
+          blankCorrectIndex: 0,
+        ),
       );
     }),
   );
+
+  // -------------------------------------------------------------
+  // DEDICATED TAJWEED 10-STEP ACTIVITY BUILDER
+  // Uses 10 distinct authentic practice words, genuine contrasting
+  // Tajweed rules (Izhar, Idgham, etc.), and ZERO Bangla in options!
+  // -------------------------------------------------------------
+  static List<QaidaActivity> _buildTajweed10StepLesson({
+    required String lessonId,
+    required String topicName,
+    required String ruleDescription,
+    required List<String> practiceWords,
+    required List<String> contrastWords,
+    required List<String> ruleLetters,
+    required Map<String, String> matchPairs,
+    required List<ActivityTile> arrangeTiles,
+    required String blankWord,
+    required List<String> blankOptions,
+    required int blankCorrectIndex,
+  }) {
+    final p = practiceWords;
+    final c = contrastWords;
+
+    return [
+      // 1. Warm-up / Recall
+      QaidaActivity(
+        id: '${lessonId}_step1_recall',
+        slotNumber: 1,
+        type: QaidaActivityType.warmupRecall,
+        prompt: 'স্মরণ করি: “$topicName”-এর নিয়ম অনুযায়ী কোন শব্দটি পড়া হয়?',
+        arabicTarget: p[0],
+        options: [p[0], c[0], c[1 % c.length]],
+        correctIndex: 0,
+        explanation: 'মাশাআল্লাহ! “${p[0]}” হলো $topicName-এর উদাহরণ।',
+        feedbackCorrect: 'মাশাআল্লাহ! নিয়মটি সঠিকভাবে স্মরণ করতে পেরেছ!',
+        feedbackIncorrect: 'নিয়মটি আবার লক্ষ্য করো — হরফ ও গুন্নাহ খেয়াল করো।',
+        skillId: '${lessonId}_recall',
+      ),
+      // 2. Recognize
+      QaidaActivity(
+        id: '${lessonId}_step2_recognize',
+        slotNumber: 2,
+        type: QaidaActivityType.recognize,
+        prompt: 'আজকের পাঠ “$topicName”: নিচের কোনটি এই নিয়মের সঠিক শব্দ?',
+        arabicTarget: p[1],
+        options: [p[1], c[2 % c.length], c[3 % c.length]],
+        correctIndex: 0,
+        explanation: 'সঠিক! “${p[1]}” শব্দে $topicName কার্যকর হয়েছে।',
+        feedbackCorrect: 'চমৎকার! সঠিক শব্দটি চিনে নিয়েছ!',
+        feedbackIncorrect: 'আবার ভাবো — হরকত ও পরের হরফটি মেলাও।',
+        skillId: '${lessonId}_recognize',
+      ),
+      // 3. Listen & Identify
+      QaidaActivity(
+        id: '${lessonId}_step3_listen',
+        slotNumber: 3,
+        type: QaidaActivityType.listenAndIdentify,
+        prompt: 'উচ্চারণ শুনুন এবং “$topicName”-এর শব্দটি নির্বাচন করুন',
+        arabicTarget: p[2],
+        options: [p[2], c[1 % c.length], c[4 % c.length]],
+        correctIndex: 0,
+        explanation: 'মাশাআল্লাহ! শুনে আপনি সঠিক শব্দটি চিহ্নিত করেছেন।',
+        feedbackCorrect: 'চমৎকার শ্রবণ দক্ষতা! সহীহ উচ্চারণ চিহ্নিত হয়েছে।',
+        feedbackIncorrect: 'উচ্চারণটি আবার মনোযোগ দিয়ে শুনে নির্বাচন করো।',
+        skillId: '${lessonId}_listen',
+      ),
+      // 4. Match Pairs (Pure Arabic)
+      QaidaActivity(
+        id: '${lessonId}_step4_match',
+        slotNumber: 4,
+        type: QaidaActivityType.matchPairs,
+        prompt: 'একই নিয়মভুক্ত শব্দের জোড়া মিলাও',
+        arabicTarget: p[3],
+        pairs: matchPairs,
+        explanation: 'চমৎকার! প্রতিটি জোড়ায় একই তাজবীদ নিয়ম কার্যকর হয়েছে।',
+        feedbackCorrect: 'মাশাআল্লাহ! সব জোড়া সঠিক হয়েছে!',
+        feedbackIncorrect: 'একই বিধানের শব্দগুলো আবার মিলিয়ে দেখো।',
+        skillId: '${lessonId}_match',
+      ),
+      // 5. Differentiate (Odd-One-Out)
+      QaidaActivity(
+        id: '${lessonId}_step5_diff',
+        slotNumber: 5,
+        type: QaidaActivityType.differentiate,
+        prompt: 'পার্থক্য চিহ্নিত করুন: নিচের কোনটি “$topicName”-এর ব্যতিক্রম? (অন্য নিয়ম)',
+        arabicTarget: c[0],
+        options: [c[0], p[4], p[5]],
+        correctIndex: 0,
+        explanation: 'খুব ভালো! “${c[0]}” হলো ভিন্ন নিয়ম, এটি $topicName নয়।',
+        feedbackCorrect: 'অসাধারণ! আপনি সূক্ষ্ম পার্থক্য ধরতে পেরেছেন।',
+        feedbackIncorrect: 'নিয়মটি আবার মনে করে ভিন্ন শব্দটি আলাদা করো।',
+        skillId: '${lessonId}_diff',
+      ),
+      // 6. Build / Arrange (Puzzle Pedestals)
+      QaidaActivity(
+        id: '${lessonId}_step6_arrange',
+        slotNumber: 6,
+        type: QaidaActivityType.buildArrange,
+        prompt: 'হরফ/অংশগুলো ক্রমানুসারে সাজিয়ে শব্দটি গঠন করো: “${p[6]}”',
+        arabicTarget: p[6],
+        tiles: arrangeTiles,
+        explanation: 'সঠিক গঠন ও ক্রম নিশ্চিত করা হয়েছে: “${p[6]}”।',
+        feedbackCorrect: 'মাশাআল্লাহ! সঠিক ক্রমে সাজানো সম্পন্ন হয়েছে!',
+        feedbackIncorrect: 'শুরু থেকে শেষ পর্যন্ত ধারাবাহিকতা আবার মেলাও।',
+        skillId: '${lessonId}_arrange',
+      ),
+      // 7. Fill in the Blank
+      QaidaActivity(
+        id: '${lessonId}_step7_context',
+        slotNumber: 7,
+        type: QaidaActivityType.fillInBlank,
+        prompt: 'শব্দে সঠিক হরফটি বসিয়ে “$topicName” সম্পন্ন করুন',
+        blankSentence: blankWord,
+        blankOptions: blankOptions,
+        blankCorrectIndex: blankCorrectIndex,
+        explanation: 'সঠিক! উপযুক্ত হরফটি বসিয়ে বিধান সম্পন্ন হয়েছে।',
+        feedbackCorrect: 'চমৎকার! প্রয়োগ সঠিক হয়েছে।',
+        feedbackIncorrect: 'এই নিয়মের হরফসমূহ আবার মনে করো।',
+        skillId: '${lessonId}_blank',
+      ),
+      // 8. Apply Rule in Context
+      QaidaActivity(
+        id: '${lessonId}_step8_rule',
+        slotNumber: 8,
+        type: QaidaActivityType.applyRule,
+        prompt: 'নিয়ম প্রয়োগ: নিচের কোন শব্দে “$topicName” কার্যকর হয়েছে?',
+        arabicTarget: p[7],
+        options: [p[7], c[2 % c.length], c[5 % c.length]],
+        correctIndex: 0,
+        explanation: 'নিয়ম: $ruleDescription',
+        feedbackCorrect: 'মাশাআল্লাহ! নিয়ম প্রয়োগ সফল হয়েছে।',
+        feedbackIncorrect: 'নিয়মটি ভালো করে লক্ষ্য করে উত্তর দিন।',
+        skillId: '${lessonId}_rule',
+      ),
+      // 9. Mixed Practice
+      QaidaActivity(
+        id: '${lessonId}_step9_mixed',
+        slotNumber: 9,
+        type: QaidaActivityType.mixedPractice,
+        prompt: 'মিশ্র অনুশীলন: বিভিন্ন নিয়মের শব্দ থেকে “$topicName” আলাদা করুন',
+        arabicTarget: p[8],
+        options: [p[8], c[0], c[3 % c.length]],
+        correctIndex: 0,
+        explanation: 'মাশাআল্লাহ! আপনি মিশ্র শব্দ থেকে সঠিক বিধান চিনেছেন।',
+        feedbackCorrect: 'চমৎকার প্রস্তুতি! মিশ্র যাচাই সফল।',
+        feedbackIncorrect: 'হরকত ও সাকিনের পরের হরফ দেখে বাছুন।',
+        skillId: '${lessonId}_mixed',
+      ),
+      // 10. Lesson Check
+      QaidaActivity(
+        id: '${lessonId}_step10_check',
+        slotNumber: 10,
+        type: QaidaActivityType.lessonCheck,
+        prompt: 'চূড়ান্ত পাঠ যাচাই: “$topicName” এর নির্ভুল উদাহরণটি নিশ্চিত করুন',
+        arabicTarget: p[9],
+        options: [p[9], c[1 % c.length], c[4 % c.length]],
+        correctIndex: 0,
+        explanation: 'অভিনন্দন! আপনি “$topicName” পাঠের ১০টি ধাপ সফলভাবে শেষ করেছেন!',
+        feedbackCorrect: 'অভিনন্দন! ১০/১০ দক্ষতা অর্জিত হয়েছে!',
+        feedbackIncorrect: 'মনোযোগ দিয়ে চূড়ান্ত শব্দটি নির্বাচন করো।',
+        skillId: '${lessonId}_check',
+      ),
+    ];
+  }
 }

@@ -303,16 +303,14 @@ void main() {
     await tester.runAsync(
         () => Future<void>.delayed(const Duration(milliseconds: 100)));
     await tester.pumpAndSettle();
-    expect(find.text('Your learning path'), findsOneWidget);
-    expect(find.text('Tap a step to learn'), findsOneWidget);
+    expect(find.text('Quran'), findsWidgets);
 
     await state.updateLanguage('bn');
     await tester.pumpAndSettle();
     await tester.runAsync(
         () => Future<void>.delayed(const Duration(milliseconds: 100)));
     await tester.pumpAndSettle();
-    expect(find.text('তোমার শেখার পথ'), findsOneWidget);
-    expect(find.text('প্রতিটি নোডে ট্যাপ করে শেখো'), findsOneWidget);
+    expect(find.text('কুরআন'), findsWidgets);
 
     await tester.pumpWidget(_LocalizedTestApp(
         state: state,
@@ -628,7 +626,7 @@ void main() {
     );
   }
 
-  testWidgets('home shows the gamified learning path on a phone',
+  testWidgets('home shows gamified modules and opens Qaida on a phone',
       (tester) async {
     tester.view.physicalSize = const Size(1170, 2532);
     tester.view.devicePixelRatio = 3;
@@ -638,24 +636,15 @@ void main() {
     await tester.pumpWidget(buildHome());
     await tester.pumpAndSettle();
 
-    expect(find.text('তোমার শেখার পথ'), findsOneWidget);
-    expect(find.text('0 / 28'), findsOneWidget);
-    expect(find.text('ক্বায়দা'), findsOneWidget);
-    expect(find.text('কুরআন'), findsOneWidget);
+    expect(find.text('ক্বায়দা'), findsWidgets);
+    expect(find.text('কুরআন'), findsWidgets);
+    expect(find.text('মডিউল'), findsWidgets);
 
-    await tester.tap(find.text('আলিফ').last);
+    // Tapping ক্বায়দা quick pill navigates to the 17-step Qaida map
+    await tester.tap(find.text('ক্বায়দা').first);
     await tester.pumpAndSettle();
-    expect(find.text('“আলিফ” অক্ষরটি শুনে বেছে নাও।'), findsOneWidget);
-    await finishAlifLesson(tester);
-    expect(find.text('শুরুর মাখরাজ নোট'), findsOneWidget);
-    expect(find.text('পরের পাঠ: বা চিনি'), findsOneWidget);
-    await tester.ensureVisible(find.text('পরের পাঠ: বা চিনি'));
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('পরের পাঠ: বা চিনি'));
-    await tester.pumpAndSettle();
-    expect(find.text('“বা” অক্ষরটি শুনে বেছে নাও।'), findsOneWidget);
-    expect(find.text('দুই ঠোঁট মিলিয়ে “বা” বলো; নাক দিয়ে টেনে নয়।'),
-        findsOneWidget);
+
+    expect(find.textContaining('লেভেল ১ · হরফ চেনা'), findsOneWidget);
   });
 
   testWidgets('home lays out on a tablet', (tester) async {
@@ -667,7 +656,7 @@ void main() {
     await tester.pumpWidget(buildHome());
     await tester.pumpAndSettle();
 
-    expect(find.text('তোমার শেখার পথ'), findsOneWidget);
+    expect(find.text('মডিউল'), findsWidgets);
     expect(tester.takeException(), isNull);
   });
 

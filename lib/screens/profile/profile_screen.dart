@@ -6,6 +6,7 @@ import '../../theme/app_theme.dart';
 import '../../utils/app_state.dart';
 import '../../widgets/duolingo_appbar.dart';
 import '../../widgets/vector_icons.dart';
+import '../../widgets/faceless_silhouette.dart';
 import 'login_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -61,11 +62,32 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     borderRadius: BorderRadius.circular(25),
                   ),
                   child: Row(children: [
-                    CircleAvatar(
-                      radius: 31,
-                      backgroundColor: Colors.white.withValues(alpha: .2),
-                      child: const Icon(Icons.child_care_rounded,
-                          color: Colors.white, size: 34),
+                    GestureDetector(
+                      onTap: () => showAvatarCustomizerModal(context),
+                      child: Tooltip(
+                        message: 'অবতার ও রঙ পরিবর্তন করুন',
+                        child: Stack(
+                          children: [
+                            const FacelessSilhouette(
+                              size: 62,
+                              circleBackground: true,
+                              backgroundColor: Colors.white,
+                            ),
+                            Positioned(
+                              right: 0,
+                              bottom: 0,
+                              child: Container(
+                                padding: const EdgeInsets.all(4),
+                                decoration: const BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Color(0xFFFFD54F),
+                                ),
+                                child: const Icon(Icons.edit, size: 12, color: Colors.black87),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                     const SizedBox(width: 14),
                     Expanded(

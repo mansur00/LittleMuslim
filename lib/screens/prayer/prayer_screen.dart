@@ -6,6 +6,8 @@ import '../../theme/app_theme.dart';
 import '../../utils/app_state.dart';
 import '../../widgets/vector_icons.dart';
 import '../../widgets/duolingo_appbar.dart';
+import '../../services/alert_sound_service.dart';
+import '../../services/notification_service.dart';
 import 'prayer_times.dart';
 
 class _PrayerChapter {
@@ -876,6 +878,7 @@ class _PrayerTimesCardState extends State<_PrayerTimesCard>
           _result = result;
           _loading = false;
         });
+        _schedulePrayerAlerts(result);
       }
     } catch (_) {
       if (mounted) {
@@ -898,6 +901,32 @@ class _PrayerTimesCardState extends State<_PrayerTimesCard>
           : _date;
     });
     if (next.location != null) await _load();
+  }
+
+  void _schedulePrayerAlerts(PrayerTimesResult result) {
+    if (!mounted) return;
+    final state = context.read<AppState>();
+    if (!state.prayerAlertsEnabled) return;
+    const prayers = [
+      (0, 'Fajr', 'ফজর', 'الفجر'),
+      (1, 'Dhuhr', 'যোহর', 'الظهر'),
+      (2, 'Asr', 'আসর', 'العصر'),
+      (3, 'Maghrib', 'মাগরিব', 'المغرب'),
+      (4, 'Isha', 'ইশা', 'العشاء'),
+    ];
+    for (final p in prayers) {
+      final time = result.times[p.$2];
+      if (time != null && state.isPrayerAlertEnabled(p.$2)) {
+        NotificationService.instance.schedulePrayerAlert(
+          prayerIndex: p.$1,
+          prayerTime: time,
+          prayerName: p.$3,
+          arabicName: p.$4,
+        );
+      } else {
+        NotificationService.instance.cancelPrayerAlert(p.$1);
+      }
+    }
   }
 
   Future<void> _useDeviceLocation() async {
@@ -1183,6 +1212,75 @@ class _PrayerTimesCardState extends State<_PrayerTimesCard>
                   'Choose a city or use your location to see prayer times.'),
               style: const TextStyle(color: Colors.black54))
         else if (_result != null) ...[
+          // Test Adhan Banner & Play/Stop
+          Container(
+            margin: const EdgeInsets.only(bottom: 12),
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+            decoration: BoxDecoration(
+              color: const Color(0xFFF0FDF4),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: const Color(0xFF86EFAC)),
+            ),
+            child: Row(
+              children: [
+                ValueListenableBuilder<AlertSoundType?>(
+                  valueListenable: AlertSoundService.instance.currentPlayingNotifier,
+                  builder: (context, playingType, _) {
+                    final isPlaying = playingType == AlertSoundType.adhan;
+                    return InkWell(
+                      onTap: () => AlertSoundService.instance.playAdhan(),
+                      borderRadius: BorderRadius.circular(12),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: isPlaying ? const Color(0xFFDC2626) : AppTheme.primaryGreen,
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: (isPlaying ? const Color(0xFFDC2626) : AppTheme.primaryGreen).withValues(alpha: 0.25),
+                              blurRadius: 4,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              isPlaying ? Icons.stop_rounded : Icons.volume_up_rounded,
+                              color: Colors.white,
+                              size: 18,
+                            ),
+                            const SizedBox(width: 6),
+                            Text(
+                              isPlaying ? 'আযান থামান' : 'আযান শুনুন',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 13,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+                const SizedBox(width: 12),
+                const Expanded(
+                  child: LocalizedText(
+                    'ওয়াক্ত হলে ডিভাইসে আযানের অ্যালার্ট বাজবে। ঘণ্টা আইকন ট্যাপ করে ওয়াক্তের অ্যালার্ট অন/অফ করো।',
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: Color(0xFF166534),
+                      height: 1.35,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
           Wrap(spacing: 8, runSpacing: 8, children: [
             for (final prayer in PrayerScreen._prayers)
               _PrayerTimeChip(
@@ -1241,14 +1339,51 @@ class _PrayerTimeChip extends StatelessWidget {
       }[name] ??
       name;
   @override
-  Widget build(BuildContext context) => Container(
-        width: 105,
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 11),
+  Widget build(BuildContext context) {
+    final appState = context.watch<AppState>();
+    final isAlertOn = appState.isPrayerAlertEnabled(_key);
+    final isUpcoming = times[_key] != null && times[_key]!.isAfter(DateTime.now());
+
+    return Container(
+        width: 112,
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
         decoration: BoxDecoration(
-            color: const Color(0xFFF7F7F1),
+            color: isAlertOn ? const Color(0xFFF7FBF6) : const Color(0xFFF7F7F1),
+            border: isAlertOn
+                ? Border.all(color: AppTheme.primaryGreen.withValues(alpha: 0.35), width: 1.2)
+                : Border.all(color: Colors.black.withValues(alpha: 0.05)),
             borderRadius: BorderRadius.circular(15)),
         child: Column(children: [
-          Icon(icon, size: 18, color: AppTheme.secondaryGold),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Icon(icon, size: 18, color: AppTheme.secondaryGold),
+              InkWell(
+                onTap: () {
+                  context.read<AppState>().updatePrayerAlertSettings(
+                        prayerKey: _key,
+                        prayerEnabled: !isAlertOn,
+                      );
+                },
+                borderRadius: BorderRadius.circular(12),
+                child: Tooltip(
+                  message: isAlertOn ? 'আযান বন্ধ করুন' : 'আযান চালু করুন',
+                  child: Padding(
+                    padding: const EdgeInsets.all(2),
+                    child: Icon(
+                      isAlertOn
+                          ? Icons.notifications_active_rounded
+                          : Icons.notifications_off_rounded,
+                      size: 16,
+                      color: isAlertOn
+                          ? AppTheme.primaryGreen
+                          : Colors.black26,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
           const SizedBox(height: 5),
           LocalizedText(name,
               style: const TextStyle(
@@ -1264,12 +1399,13 @@ class _PrayerTimeChip extends StatelessWidget {
               times[_key] == null
                   ? '--:--'
                   : '${times[_key]!.hour.toString().padLeft(2, '0')}:${times[_key]!.minute.toString().padLeft(2, '0')}',
-              style: const TextStyle(
-                  color: Colors.black38,
-                  fontWeight: FontWeight.w700,
-                  fontSize: 12))
+              style: TextStyle(
+                  color: isUpcoming ? AppTheme.primaryGreen : Colors.black45,
+                  fontWeight: FontWeight.w800,
+                  fontSize: 13))
         ]),
       );
+  }
 }
 
 class _StepCard extends StatelessWidget {
