@@ -14,6 +14,7 @@ import '../../utils/app_state.dart';
 import '../../widgets/duolingo_button.dart';
 import '../../widgets/quran_book_mascot.dart';
 import '../../widgets/vector_icons.dart';
+import '../../l10n/app_localizations.dart';
 
 // =============================================================================
 // MAIN ACTIVITY SCREEN (HIGHLY GAMIFIED)
@@ -764,7 +765,7 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
                         children: [
                           const Icon(Icons.menu_book_rounded, color: Color(0xFF2563EB), size: 16),
                           const SizedBox(width: 4),
-                          Text(
+                          LocalizedText(
                             'নিয়ম',
                             style: GoogleFonts.hindSiliguri(
                               fontSize: 12,
@@ -861,7 +862,7 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
                                     const Icon(Icons.stars_rounded,
                                         size: 15, color: Color(0xFF0284C7)),
                                     const SizedBox(width: 5),
-                                    Text(
+                                    LocalizedText(
                                       'ধাপ ${activity.slotNumber}/৭ · ${activity.stepTitle}',
                                       style: GoogleFonts.hindSiliguri(
                                         fontSize: 12,
@@ -902,7 +903,7 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
                                                 : const Color(0xFF0284C7),
                                           ),
                                           const SizedBox(width: 4),
-                                          Text(
+                                          LocalizedText(
                                             'ভয়েস গাইড',
                                             style: GoogleFonts.hindSiliguri(
                                               fontSize: 11,
@@ -945,7 +946,7 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
                           ),
                         ),
                         // Bengali Prompt / Instruction (Options will have ZERO Bengali)
-                        Text(
+                        LocalizedText(
                           activity.prompt,
                           style: GoogleFonts.hindSiliguri(
                             fontSize: 21,
@@ -6034,7 +6035,7 @@ class _RuleGuideIntroCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                    LocalizedText(
                       'নিয়ম জেনে অনুশীলন শুরু করি',
                       style: GoogleFonts.hindSiliguri(
                         fontSize: 16,
@@ -6042,7 +6043,7 @@ class _RuleGuideIntroCard extends StatelessWidget {
                         color: const Color(0xFF92400E),
                       ),
                     ),
-                    Text(
+                    LocalizedText(
                       lesson.title,
                       style: GoogleFonts.hindSiliguri(
                         fontSize: 13,
@@ -6062,7 +6063,7 @@ class _RuleGuideIntroCard extends StatelessWidget {
               color: Colors.white,
               borderRadius: BorderRadius.circular(16),
             ),
-            child: Text(
+            child: LocalizedText(
               ruleText,
               style: GoogleFonts.hindSiliguri(
                 fontSize: 14,
@@ -6074,7 +6075,7 @@ class _RuleGuideIntroCard extends StatelessWidget {
           ),
           if (letters.isNotEmpty) ...[
             const SizedBox(height: 12),
-            Text(
+            LocalizedText(
               'এই নিয়মের হরফসমূহ (${letters.length}টি):',
               style: GoogleFonts.hindSiliguri(
                 fontSize: 12,

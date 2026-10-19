@@ -311,11 +311,37 @@ void main() {
         () => Future<void>.delayed(const Duration(milliseconds: 100)));
     await tester.pumpAndSettle();
     expect(find.text('Quran'), findsWidgets);
+    expect(find.text('My Learning'), findsOneWidget);
+
+    // Switch to My Learning tab
+    await tester.tap(find.text('My Learning'));
+    await tester.pumpAndSettle();
+    expect(find.text('My Learning Dashboard'), findsOneWidget);
+    expect(find.text('Continue reading right from where you left off!'),
+        findsOneWidget);
+    expect(find.text('Current Qaida Lesson'), findsOneWidget);
+    expect(find.text('Step 1: Mufradat'), findsWidgets);
+    expect(find.text('Letter Alif'), findsOneWidget);
+    expect(find.text('Letter: ا'), findsOneWidget);
+    expect(find.text('Holy Quran Recitation', skipOffstage: false),
+        findsOneWidget);
 
     await state.updateLanguage('bn');
     await tester.pumpAndSettle();
     await tester.runAsync(
         () => Future<void>.delayed(const Duration(milliseconds: 100)));
+    await tester.pumpAndSettle();
+    expect(find.text('আমার পড়ার ড্যাশবোর্ড'), findsOneWidget);
+    expect(find.text('যেখান থেকে শেষ করেছিলে, সেখান থেকেই পড়া চালিয়ে যাও!'),
+        findsOneWidget);
+    expect(find.text('চলমান কায়দা পাঠ'), findsOneWidget);
+    expect(find.text('ধাপ ১: মুফরাদাত'), findsWidgets);
+    expect(find.text('আলিফ হরফ'), findsOneWidget);
+    expect(find.text('হরফ: ا'), findsOneWidget);
+    expect(find.text('পবিত্র কুরআন তিলাওয়াত', skipOffstage: false),
+        findsOneWidget);
+
+    await tester.tap(find.text('শেখার পথ'));
     await tester.pumpAndSettle();
     expect(find.text('কুরআন'), findsWidgets);
 

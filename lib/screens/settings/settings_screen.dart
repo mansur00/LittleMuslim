@@ -152,7 +152,7 @@ class SettingsScreen extends StatelessWidget {
                               ('Isha', 'ইশা'),
                             ])
                               FilterChip(
-                                label: Text(entry.$2),
+                                label: LocalizedText(entry.$2),
                                 selected: state.isPrayerAlertEnabled(entry.$1),
                                 onSelected: (selected) {
                                   context
