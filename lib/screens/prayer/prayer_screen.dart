@@ -1257,7 +1257,7 @@ class _PrayerTimesCardState extends State<_PrayerTimesCard>
                               size: 18,
                             ),
                             const SizedBox(width: 6),
-                            Text(
+                            LocalizedText(
                               isPlaying ? 'আযান থামান' : 'আযান শুনুন',
                               style: const TextStyle(
                                 color: Colors.white,

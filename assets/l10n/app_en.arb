@@ -2087,5 +2087,117 @@
   "phase5PrayerSunriseReference": "Sunrise (reference only, not a prayer)",
   "@phase5PrayerSunriseReference": {
     "description": "Sunrise (reference only, not a prayer)"
+  },
+  "accountCreate": "Create account",
+  "@accountCreate": {
+    "description": "অ্যাকাউন্ট তৈরি করো"
+  },
+  "appLanguage": "App language",
+  "@appLanguage": {
+    "description": "অ্যাপের ভাষা"
+  },
+  "backend": "Server system",
+  "@backend": {
+    "description": "সার্ভার ব্যবস্থা"
+  },
+  "bengaliOption": "Bangla",
+  "@bengaliOption": {
+    "description": "বাংলা"
+  },
+  "classSchedule": "Class schedule",
+  "@classSchedule": {
+    "description": "ক্লাসের সময়সূচি"
+  },
+  "classSubscriptions": "Monthly class schedule",
+  "@classSubscriptions": {
+    "description": "মাসিক ক্লাসের পরিকল্পনা"
+  },
+  "cloudSync": "Cloud sync",
+  "@cloudSync": {
+    "description": "অনলাইন সমন্বয়"
+  },
+  "emailPhone": "Email/Phone",
+  "@emailPhone": {
+    "description": "ইমেইল/ফোন"
+  },
+  "englishOption": "English",
+  "@englishOption": {
+    "description": "ইংরেজি"
+  },
+  "enrolledStudent": "Student",
+  "@enrolledStudent": {
+    "description": "শিক্ষার্থী"
+  },
+  "googleMeet": "Google Meet",
+  "@googleMeet": {
+    "description": "গুগল মিট"
+  },
+  "inAppClass": "Live class inside app with teacher",
+  "@inAppClass": {
+    "description": "শিক্ষকের সঙ্গে অ্যাপের ভেতর সরাসরি ক্লাস"
+  },
+  "liveClass": "Live class",
+  "@liveClass": {
+    "description": "সরাসরি ক্লাস"
+  },
+  "liveClasses": "Live classes",
+  "@liveClasses": {
+    "description": "সরাসরি ক্লাসসমূহ"
+  },
+  "login": "Login",
+  "@login": {
+    "description": "লগইন"
+  },
+  "loginPreview": "Login preview",
+  "@loginPreview": {
+    "description": "লগইন পেজের নমুনা"
+  },
+  "notification": "Notification",
+  "@notification": {
+    "description": "নোটিফিকেশন"
+  },
+  "password": "Password",
+  "@password": {
+    "description": "পাসওয়ার্ড"
+  },
+  "payment": "Payment",
+  "@payment": {
+    "description": "পেমেন্ট"
+  },
+  "paymentGateway": "Payment gateway setup pending",
+  "@paymentGateway": {
+    "description": "পেমেন্ট সেবা সংযোগ বাকি"
+  },
+  "phase4Bn16": "LittleMuslim",
+  "@phase4Bn16": {
+    "description": "LittleMuslim"
+  },
+  "preview": "Preview",
+  "@preview": {
+    "description": "নমুনা"
+  },
+  "profile": "Profile",
+  "@profile": {
+    "description": "প্রোফাইল"
+  },
+  "reminderEnglish": "Reminder",
+  "@reminderEnglish": {
+    "description": "রিমাইন্ডার"
+  },
+  "scheduleEnglish": "Class schedule",
+  "@scheduleEnglish": {
+    "description": "ক্লাসের সময়সূচি"
+  },
+  "sunnahSource": "Sunnah.com",
+  "@sunnahSource": {
+    "description": "সুন্নাহ ডটকম"
+  },
+  "wallet": "Mobile wallet",
+  "@wallet": {
+    "description": "মোবাইল ওয়ালেট"
+  },
+  "walletSetup": "bKash / Nagad setup pending",
+  "@walletSetup": {
+    "description": "বিকাশ / নগদ সংযোগ বাকি"
   }
 }

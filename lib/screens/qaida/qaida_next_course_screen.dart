@@ -108,7 +108,9 @@ class _QaidaNextCourseScreenState extends State<QaidaNextCourseScreen> {
 
   @override
   void dispose() {
-    _tts.stop();
+    try {
+      _tts.stop().catchError((_) => null);
+    } catch (_) {}
     super.dispose();
   }
 

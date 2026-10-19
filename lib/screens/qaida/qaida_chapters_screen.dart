@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 import '../../data/nurani_qaida_data.dart';
+import '../../l10n/app_localizations.dart';
 import '../../models/qaida/qaida_models.dart';
 import '../../theme/app_theme.dart';
 import '../../theme/design_system.dart';
@@ -182,7 +183,7 @@ class QaidaChaptersScreen extends StatelessWidget {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    const Text(
+                                    const LocalizedText(
                                       'রিভিশন আইল্যান্ড',
                                       style: TextStyle(
                                         fontSize: 12,
@@ -192,7 +193,7 @@ class QaidaChaptersScreen extends StatelessWidget {
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                     ),
-                                    Text(
+                                    LocalizedText(
                                       state.hasSkillsDueForReview
                                           ? '${state.skillsDueForReview.length}টি হরফ রিভিশন প্রয়োজন'
                                           : 'দুর্বল হরফ অনুশীলন',
@@ -261,7 +262,7 @@ class QaidaChaptersScreen extends StatelessWidget {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text(
+                                    LocalizedText(
                                       'অগ্রগতি প্রতিবেদন',
                                       style: TextStyle(
                                         fontSize: 12,
@@ -271,7 +272,7 @@ class QaidaChaptersScreen extends StatelessWidget {
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                     ),
-                                    Text(
+                                    LocalizedText(
                                       'মাস্টারি ও পারফরম্যান্স',
                                       style: TextStyle(
                                         fontSize: 10,
@@ -342,7 +343,7 @@ class QaidaChaptersScreen extends StatelessWidget {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text(
+                                    LocalizedText(
                                       'সাপ্তাহিক পরীক্ষা',
                                       style: TextStyle(
                                         fontSize: 12,
@@ -352,7 +353,7 @@ class QaidaChaptersScreen extends StatelessWidget {
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                     ),
-                                    Text(
+                                    LocalizedText(
                                       '৮০% পাসে +২৫ XP',
                                       style: TextStyle(
                                         fontSize: 10,
@@ -417,7 +418,7 @@ class QaidaChaptersScreen extends StatelessWidget {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text(
+                                    LocalizedText(
                                       'মাসিক পরীক্ষা',
                                       style: TextStyle(
                                         fontSize: 12,
@@ -427,7 +428,7 @@ class QaidaChaptersScreen extends StatelessWidget {
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                     ),
-                                    Text(
+                                    LocalizedText(
                                       'মেগা রিভিউ +৪০ XP',
                                       style: TextStyle(
                                         fontSize: 10,
@@ -470,7 +471,7 @@ class QaidaChaptersScreen extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
+                            LocalizedText(
                               state.isAdmin
                                   ? 'এডমিন মোড সক্রিয়'
                                   : 'শিক্ষার্থী মোড (ধাপে ধাপে আনলক)',
@@ -480,7 +481,7 @@ class QaidaChaptersScreen extends StatelessWidget {
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            Text(
+                            LocalizedText(
                               state.isAdmin
                                   ? '১৭টি স্টেপ ও সকল পাঠ উন্মুক্ত রয়েছে'
                                   : 'পরীক্ষা করতে অ্যাডমিন মোড চালু করুন',
@@ -577,7 +578,7 @@ class _QaidaHeader extends StatelessWidget {
             color: Colors.white.withValues(alpha: 0.2),
             borderRadius: BorderRadius.circular(12),
           ),
-          child: Text(
+          child: LocalizedText(
             '$completedCount/$totalCount ধাপ',
             style: const TextStyle(
               color: Colors.white,
@@ -715,10 +716,10 @@ class _StepIslandCard extends StatelessWidget {
               : () {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text('ধাপ ${step.stepNumber} (${step.title}) লক করা রয়েছে।'),
+                      content: LocalizedText('ধাপ ${step.stepNumber} (${step.title}) লক করা রয়েছে।'),
                       behavior: SnackBarBehavior.floating,
                       action: SnackBarAction(
-                        label: 'অ্যাডমিন আনলক',
+                        label: context.uiText('অ্যাডমিন আনলক'),
                         textColor: Colors.amber,
                         onPressed: () async {
                           await state.setUserRole('admin');
@@ -766,7 +767,7 @@ class _StepIslandCard extends StatelessWidget {
                             size: 22,
                           ),
                           const SizedBox(height: 1),
-                          Text(
+                          LocalizedText(
                             'ধাপ ${step.stepNumber}',
                             style: TextStyle(
                               fontSize: 9,
@@ -789,7 +790,7 @@ class _StepIslandCard extends StatelessWidget {
                           Row(
                             children: [
                               Expanded(
-                                child: Text(
+                                child: LocalizedText(
                                   step.title,
                                   style: GoogleFonts.hindSiliguri(
                                     fontSize: 16,
@@ -840,9 +841,9 @@ class _StepIslandCard extends StatelessWidget {
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                const Text('🌱', style: TextStyle(fontSize: 11)),
+                                const VectorIcon(type: VectorIconType.plant, size: 14),
                                 const SizedBox(width: 4),
-                                Text(
+                                LocalizedText(
                                   'বাগান পুরস্কার: ${step.gardenPlant}',
                                   style: const TextStyle(
                                     fontSize: 10,
@@ -877,7 +878,7 @@ class _StepIslandCard extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(width: 10),
-                    Text(
+                    LocalizedText(
                       !isUnlocked
                           ? 'লকড (৮০% প্রয়োজন)'
                           : (isCompleted
@@ -938,7 +939,7 @@ class _StepIslandCard extends StatelessWidget {
                                 : const Color(0xFF64748B),
                           ),
                           const SizedBox(width: 6),
-                          Text(
+                          LocalizedText(
                             bossPassed
                                 ? 'স্টেপ বস পাস (৮০%+) ✓'
                                 : 'স্টেপ বস পরীক্ষা দিন (৮০%+)',
@@ -1049,7 +1050,7 @@ class QaidaChapterPath extends StatelessWidget {
           Row(
             children: [
               Expanded(
-                child: Text(
+                child: LocalizedText(
                   'নূরানী ক্বায়দা · ১৭টি ধাপের পাঠ্যক্রম',
                   style: GoogleFonts.hindSiliguri(
                     fontSize: 16,
@@ -1064,7 +1065,7 @@ class QaidaChapterPath extends StatelessWidget {
                   color: AppTheme.primaryGreen.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Text(
+                child: LocalizedText(
                   '$completed/${allSteps.length} ধাপ',
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
@@ -1105,7 +1106,7 @@ class QaidaChapterPath extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 8),
-          const Text(
+          const LocalizedText(
             'হরফ চেনা → সংযোগ → হারাকাত/তানবীন → সুকুন/শাদ্দাহ → তাজবীদ → ওয়াকফ ও তিলাওয়াত',
             style: TextStyle(fontSize: 11, color: Colors.black54),
           ),
@@ -1186,7 +1187,7 @@ class _CompactStepCard extends StatelessWidget {
                   ],
                 ),
                 const Spacer(),
-                Text(
+                LocalizedText(
                   'ধাপ ${step.stepNumber}: ${step.title}',
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -1196,7 +1197,7 @@ class _CompactStepCard extends StatelessWidget {
                     color: locked ? const Color(0xFF94A3B8) : AppTheme.darkText,
                   ),
                 ),
-                Text(
+                LocalizedText(
                   locked ? 'লক করা (৮০% প্রয়োজন)' : '$done/$total পাঠ সম্পন্ন',
                   style: TextStyle(
                     fontSize: 10,

@@ -418,7 +418,9 @@ class _DuasScreenState extends State<DuasScreen> {
   void dispose() {
     _playerCompleteSub?.cancel();
     _audioPlayer?.dispose();
-    _tts.stop();
+    try {
+      _tts.stop().catchError((_) => null);
+    } catch (_) {}
     super.dispose();
   }
 

@@ -232,7 +232,9 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
   void dispose() {
     _waveController.dispose();
     _player?.dispose();
-    _tts.stop();
+    try {
+      _tts.stop().catchError((_) => null);
+    } catch (_) {}
     super.dispose();
   }
 

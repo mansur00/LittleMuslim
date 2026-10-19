@@ -1312,7 +1312,7 @@
   "@liveClass": {
     "description": "live class"
   },
-  "liveClasses": "সরাসরি ক্লাস",
+  "liveClasses": "সরাসরি ক্লাসসমূহ",
   "@liveClasses": {
     "description": "Live classes"
   },

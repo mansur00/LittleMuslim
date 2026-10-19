@@ -426,7 +426,7 @@ class _HomeContinueTab extends StatelessWidget {
                       color: AppTheme.primaryGreen.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    child: Text(
+                    child: LocalizedText(
                       'স্টেপ ${step.stepNumber}: ${step.title}',
                       style: const TextStyle(
                         fontSize: 11.5,
@@ -447,7 +447,7 @@ class _HomeContinueTab extends StatelessWidget {
                         const Icon(Icons.bolt_rounded,
                             size: 14, color: Color(0xFFFF9600)),
                         const SizedBox(width: 3),
-                        Text(
+                        LocalizedText(
                           'পাঠ ${nextLesson.lessonNumber}/${step.lessons.length}',
                           style: const TextStyle(
                             fontSize: 11,
@@ -488,7 +488,7 @@ class _HomeContinueTab extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
+                        LocalizedText(
                           nextLesson.title,
                           style: const TextStyle(
                             fontSize: 16,
@@ -497,7 +497,7 @@ class _HomeContinueTab extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 3),
-                        Text(
+                        LocalizedText(
                           nextLesson.subtitle,
                           style: const TextStyle(
                             fontSize: 12,
@@ -542,7 +542,7 @@ class _HomeContinueTab extends StatelessWidget {
                     children: [
                       Icon(Icons.play_arrow_rounded, color: Colors.white, size: 24),
                       SizedBox(width: 8),
-                      Text(
+                      LocalizedText(
                         'কায়দা পড়া চালিয়ে যাই',
                         style: TextStyle(
                           color: Colors.white,
@@ -579,7 +579,7 @@ class _HomeContinueTab extends StatelessWidget {
                             Icon(Icons.map_rounded, size: 14, color: Color(0xFF2563EB)),
                             SizedBox(width: 5),
                             Flexible(
-                              child: Text(
+                              child: LocalizedText(
                                 '১৭টি ধাপের মানচিত্র',
                                 style: TextStyle(
                                   fontSize: 11.5,
@@ -617,7 +617,7 @@ class _HomeContinueTab extends StatelessWidget {
                             Icon(Icons.insights_rounded, size: 14, color: Color(0xFF9333EA)),
                             SizedBox(width: 5),
                             Flexible(
-                              child: Text(
+                              child: LocalizedText(
                                 'পড়ার রিপোর্ট (হিটম্যাপ)',
                                 style: TextStyle(
                                   fontSize: 11.5,
@@ -777,7 +777,7 @@ class _HomeContinueTab extends StatelessWidget {
                                 ),
                                 const SizedBox(width: 5),
                                 Flexible(
-                                  child: Text(
+                                  child: LocalizedText(
                                     isAdhanPlaying ? 'আযান থামান' : 'আযান শুনুন',
                                     style: const TextStyle(
                                       color: Colors.white,
@@ -829,7 +829,7 @@ class _HomeContinueTab extends StatelessWidget {
                                 ),
                                 const SizedBox(width: 4),
                                 Flexible(
-                                  child: Text(
+                                  child: LocalizedText(
                                     isAlarmPlaying ? 'অ্যালার্ম থামান' : 'পড়ার অ্যালার্ম শুনুন',
                                     style: const TextStyle(
                                       color: Colors.white,
@@ -853,7 +853,7 @@ class _HomeContinueTab extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
+                  LocalizedText(
                     'পড়ার অ্যালার্ম: ${_formatTime(state.learningAlarmTime)}',
                     style: const TextStyle(
                       fontSize: 11.5,
@@ -865,7 +865,7 @@ class _HomeContinueTab extends StatelessWidget {
                     onTap: () => Navigator.of(context).push(
                       MaterialPageRoute<void>(builder: (_) => const PrayerScreen()),
                     ),
-                    child: const Text(
+                    child: const LocalizedText(
                       'নামাজের সময়সূচি ›',
                       style: TextStyle(
                         fontSize: 11.5,
@@ -1186,7 +1186,7 @@ class _ReviewRecommendationCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                    LocalizedText(
                       hasMistakes ? 'ভুল সংশোধন' : 'পুনরায় অনুশীলন',
                       style: TextStyle(
                         fontSize: 13,
@@ -1195,7 +1195,7 @@ class _ReviewRecommendationCard extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 2),
-                    Text(
+                    LocalizedText(
                       message,
                       style: TextStyle(
                         fontSize: 11,
@@ -1214,7 +1214,7 @@ class _ReviewRecommendationCard extends StatelessWidget {
                   color: color,
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: Text(
+                child: LocalizedText(
                   btnLabel,
                   style: const TextStyle(
                     color: Colors.white,
@@ -1275,7 +1275,7 @@ class _ContinueLearningCard extends StatelessWidget {
                   color: const Color(0xFFE8F8D8),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: Text(
+                child: LocalizedText(
                   'চলমান: স্টেপ ${step.stepNumber}: ${step.title}',
                   style: const TextStyle(
                     fontSize: 11,
@@ -1296,7 +1296,7 @@ class _ContinueLearningCard extends StatelessWidget {
                     const Icon(Icons.bolt_rounded,
                         size: 14, color: Color(0xFFFF9600)),
                     const SizedBox(width: 4),
-                    Text(
+                    LocalizedText(
                       'পাঠ ${nextLesson.lessonNumber}/${step.lessons.length}',
                       style: const TextStyle(
                         fontSize: 11,
@@ -1337,7 +1337,7 @@ class _ContinueLearningCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                    LocalizedText(
                       nextLesson.title,
                       style: const TextStyle(
                         fontSize: 16,
@@ -1346,7 +1346,7 @@ class _ContinueLearningCard extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 2),
-                    Text(
+                    LocalizedText(
                       nextLesson.subtitle,
                       style: const TextStyle(
                         fontSize: 12,
@@ -1390,7 +1390,7 @@ class _ContinueLearningCard extends StatelessWidget {
                 children: [
                   Icon(Icons.play_arrow_rounded, color: Colors.white, size: 22),
                   SizedBox(width: 6),
-                  Text(
+                  LocalizedText(
                     'পড়া চালিয়ে যাই',
                     style: TextStyle(
                       color: Colors.white,
@@ -1431,7 +1431,7 @@ class _ContinueLearningCard extends StatelessWidget {
                             size: 13, color: Color(0xFF2563EB)),
                         const SizedBox(width: 4),
                         Flexible(
-                          child: Text(
+                          child: LocalizedText(
                             '১৭টি স্টেপ',
                             style: const TextStyle(
                               fontSize: 11,
@@ -1473,7 +1473,7 @@ class _ContinueLearningCard extends StatelessWidget {
                             size: 13, color: Color(0xFF9333EA)),
                         const SizedBox(width: 4),
                         Flexible(
-                          child: Text(
+                          child: LocalizedText(
                             'শিক্ষক সহায়তা',
                             style: const TextStyle(
                               fontSize: 11,

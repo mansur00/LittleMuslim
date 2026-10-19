@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 import '../../data/nurani_qaida_data.dart';
+import '../../l10n/app_localizations.dart';
 import '../../data/qaida_curriculum_data.dart';
 import '../../models/qaida/qaida_models.dart';
 import '../../theme/app_theme.dart';
@@ -127,7 +128,7 @@ class _QaidaRevisionScreenState extends State<QaidaRevisionScreen> {
                                 color: Colors.white.withValues(alpha: 0.2),
                                 borderRadius: BorderRadius.circular(12),
                               ),
-                              child: const Text(
+                              child: const LocalizedText(
                                 'স্মার্ট রিভিশন ও সংশোধন',
                                 style: TextStyle(
                                   color: Colors.white,
@@ -137,7 +138,7 @@ class _QaidaRevisionScreenState extends State<QaidaRevisionScreen> {
                               ),
                             ),
                             const SizedBox(height: 10),
-                            Text(
+                            LocalizedText(
                               'স্মরণ করি ও ভুল শোধরাই',
                               style: GoogleFonts.hindSiliguri(
                                 fontSize: 20,
@@ -146,7 +147,7 @@ class _QaidaRevisionScreenState extends State<QaidaRevisionScreen> {
                               ),
                             ),
                             const SizedBox(height: 4),
-                            Text(
+                            LocalizedText(
                               'ভুলগুলো বারবার চর্চা করলে তিলাওয়াত খাঁটি ও সুন্দর হয়। চলো আবার চেষ্টা করি!',
                               style: GoogleFonts.hindSiliguri(
                                 fontSize: 13,
@@ -209,7 +210,7 @@ class _QaidaRevisionScreenState extends State<QaidaRevisionScreen> {
                         const Icon(Icons.published_with_changes_rounded,
                             size: 18, color: Color(0xFFEF4444)),
                         const SizedBox(width: 6),
-                        Text(
+                        LocalizedText(
                           'সংশোধন প্রয়োজন এমন পাঠ (${mistakeLessons.length}টি)',
                           style: GoogleFonts.hindSiliguri(
                             fontSize: 16,
@@ -223,7 +224,7 @@ class _QaidaRevisionScreenState extends State<QaidaRevisionScreen> {
                     for (final lesson in mistakeLessons) ...[
                       _RevisionLessonCard(
                         lesson: lesson,
-                        badgeText: 'ভুল সংশোধন',
+                        badgeText: context.uiText('ভুল সংশোধন'),
                         badgeColor: const Color(0xFFEF4444),
                         accentColor: const Color(0xFFEF4444),
                       ),
@@ -234,7 +235,7 @@ class _QaidaRevisionScreenState extends State<QaidaRevisionScreen> {
                   if (completedLessons.isEmpty)
                     _NoCompletedLessonsCard()
                   else ...[
-                    Text(
+                    LocalizedText(
                       'তোমার সম্পন্ন করা পাঠসমূহ (${completedLessons.length}টি)',
                       style: GoogleFonts.hindSiliguri(
                         fontSize: 16,
@@ -246,7 +247,7 @@ class _QaidaRevisionScreenState extends State<QaidaRevisionScreen> {
                     for (final lesson in completedLessons) ...[
                       _RevisionLessonCard(
                         lesson: lesson,
-                        badgeText: 'পুনরাবৃত্তি',
+                        badgeText: context.uiText('পুনরাবৃত্তি'),
                         badgeColor: AppTheme.duoGreen,
                         accentColor: AppTheme.duoGreen,
                       ),
@@ -256,7 +257,7 @@ class _QaidaRevisionScreenState extends State<QaidaRevisionScreen> {
                 ] else ...[
                   // Mixed Smart Queue
                   if (dueLessons.isNotEmpty) ...[
-                    Text(
+                    LocalizedText(
                       'স্মার্ট রিভিশন কিউ (এখন চর্চা আবশ্যক)',
                       style: GoogleFonts.hindSiliguri(
                         fontSize: 16,
@@ -268,7 +269,7 @@ class _QaidaRevisionScreenState extends State<QaidaRevisionScreen> {
                     for (final lesson in dueLessons) ...[
                       _RevisionLessonCard(
                         lesson: lesson,
-                        badgeText: 'রিভিশন বাকি',
+                        badgeText: context.uiText('রিভিশন বাকি'),
                         badgeColor: const Color(0xFFF59E0B),
                         accentColor: const Color(0xFFF59E0B),
                       ),
@@ -278,7 +279,7 @@ class _QaidaRevisionScreenState extends State<QaidaRevisionScreen> {
                   ],
 
                   if (mistakeLessons.isNotEmpty) ...[
-                    Text(
+                    LocalizedText(
                       'ভুল শোধরাই (Mistakes to Fix)',
                       style: GoogleFonts.hindSiliguri(
                         fontSize: 16,
@@ -290,7 +291,7 @@ class _QaidaRevisionScreenState extends State<QaidaRevisionScreen> {
                     for (final lesson in mistakeLessons.take(3)) ...[
                       _RevisionLessonCard(
                         lesson: lesson,
-                        badgeText: 'ভুল হয়েছে',
+                        badgeText: context.uiText('ভুল হয়েছে'),
                         badgeColor: const Color(0xFFEF4444),
                         accentColor: const Color(0xFFEF4444),
                       ),
@@ -299,7 +300,7 @@ class _QaidaRevisionScreenState extends State<QaidaRevisionScreen> {
                     const SizedBox(height: 14),
                   ],
 
-                  Text(
+                  LocalizedText(
                     'প্রস্তাবিত রিভিশন পাঠ',
                     style: GoogleFonts.hindSiliguri(
                       fontSize: 16,
@@ -418,7 +419,7 @@ class _NoMistakesCelebrationCard extends StatelessWidget {
             mood: QuranMascotMood.celebrating,
           ),
           const SizedBox(height: 14),
-          Text(
+          LocalizedText(
             'মাশাআল্লাহ! কোনো ভুল জমা নেই!',
             style: GoogleFonts.hindSiliguri(
               fontSize: 18,
@@ -427,7 +428,7 @@ class _NoMistakesCelebrationCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 6),
-          Text(
+          LocalizedText(
             'তুমি খুব সুন্দর ও মনোযোগ দিয়ে শিখছ। যখনই কোনো ভুল হবে, তা স্বয়ংক্রিয়ভাবে এখানে অনুশীলনের জন্য জমা হবে।',
             textAlign: TextAlign.center,
             style: GoogleFonts.hindSiliguri(
@@ -455,7 +456,7 @@ class _NoCompletedLessonsCard extends StatelessWidget {
         children: [
           const Icon(Icons.school_outlined, size: 50, color: Color(0xFF94A3B8)),
           const SizedBox(height: 12),
-          Text(
+          LocalizedText(
             'এখনো কোনো পাঠ সম্পন্ন হয়নি',
             style: GoogleFonts.hindSiliguri(
               fontSize: 17,
@@ -464,7 +465,7 @@ class _NoCompletedLessonsCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 6),
-          Text(
+          LocalizedText(
             'ক্বায়দা রোডম্যাপ থেকে নতুন পাঠ সম্পন্ন করলেই তা এখানে রিভিশন করার সুবিধা পাবে।',
             textAlign: TextAlign.center,
             style: GoogleFonts.hindSiliguri(
@@ -611,7 +612,7 @@ class _RevisionLessonCard extends StatelessWidget {
                       Icon(Icons.play_arrow_rounded,
                           size: 16, color: Colors.white),
                       SizedBox(width: 4),
-                      Text(
+                      LocalizedText(
                         'চর্চা',
                         style: TextStyle(
                           fontSize: 12,

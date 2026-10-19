@@ -145,6 +145,13 @@ class _LocalizedTestApp extends StatelessWidget {
 }
 
 void main() {
+  setUpAll(() {
+    TestWidgetsFlutterBinding.ensureInitialized();
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(
+            const MethodChannel('flutter_tts'), (call) async => 1);
+  });
+
   testWidgets('Bangla and English catalogs have paired keys and no conflicts',
       (tester) async {
     final contents = await tester.runAsync(() async => Future.wait([

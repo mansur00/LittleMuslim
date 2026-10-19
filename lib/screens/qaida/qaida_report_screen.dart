@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 import '../../data/nurani_qaida_data.dart';
+import '../../l10n/app_localizations.dart';
 import '../../models/qaida/qaida_models.dart';
 import '../../theme/app_theme.dart';
 import '../../theme/design_system.dart';
@@ -105,7 +106,7 @@ class QaidaReportScreen extends StatelessWidget {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
+                                LocalizedText(
                                   state.userName.isNotEmpty
                                       ? state.userName
                                       : 'শিশু শিক্ষার্থী',
@@ -115,7 +116,7 @@ class QaidaReportScreen extends StatelessWidget {
                                     color: Colors.white,
                                   ),
                                 ),
-                                Text(
+                                LocalizedText(
                                   state.isAdmin
                                       ? 'ভূমিকা: অ্যাডমিন পর্যবেক্ষক'
                                       : 'বয়স: ${state.age} বছর · নূরানী ক্বায়দা শিক্ষার্থী',
@@ -151,7 +152,7 @@ class QaidaReportScreen extends StatelessWidget {
                                 const Icon(Icons.bolt_rounded,
                                     color: Color(0xFFFFC800), size: 16),
                                 const SizedBox(width: 4),
-                                Text(
+                                LocalizedText(
                                   '${state.xp} XP অর্জিত',
                                   style: const TextStyle(
                                     color: Colors.white,
@@ -162,7 +163,7 @@ class QaidaReportScreen extends StatelessWidget {
                               ],
                             ),
                           ),
-                          Text(
+                          LocalizedText(
                             '$completedLessonsCount / $totalLessonsCount পাঠ (${(overallProgress * 100).toStringAsFixed(0)}%)',
                             style: const TextStyle(
                               color: Colors.white,
@@ -248,7 +249,7 @@ class QaidaReportScreen extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
+                            LocalizedText(
                               'দক্ষতা ও নির্ভুলতা হার: $avgAccuracy%',
                               style: const TextStyle(
                                 fontSize: 14,
@@ -256,7 +257,7 @@ class QaidaReportScreen extends StatelessWidget {
                                 color: Color(0xFF1E293B),
                               ),
                             ),
-                            Text(
+                            LocalizedText(
                               dueCount > 0
                                   ? '$dueCountটি দক্ষতার রিভিশন অপেক্ষমাণ'
                                   : 'সব পাঠ তাজা রয়েছে',
@@ -289,7 +290,7 @@ class QaidaReportScreen extends StatelessWidget {
                           );
                         },
                         icon: const Icon(Icons.replay_rounded, size: 14),
-                        label: const Text(
+                        label: const LocalizedText(
                           'অনুশীলন',
                           style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
                         ),
@@ -312,7 +313,7 @@ class QaidaReportScreen extends StatelessWidget {
                 const SizedBox(height: 24),
 
                 // Track by Track breakdown
-                Text(
+                LocalizedText(
                   'ট্র্যাকভিত্তিক দক্ষতা বিবরণ',
                   style: GoogleFonts.hindSiliguri(
                     fontSize: 18,
@@ -347,7 +348,7 @@ class QaidaReportScreen extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text(
+                            const LocalizedText(
                               'অভিভাবকদের জন্য নির্দেশনা',
                               style: TextStyle(
                                 fontSize: 14,
@@ -356,7 +357,7 @@ class QaidaReportScreen extends StatelessWidget {
                               ),
                             ),
                             const SizedBox(height: 4),
-                            Text(
+                            LocalizedText(
                               'অ্যাপের ফলাফল শিক্ষার্থীর পরিচিতি ও নিয়মিত অনুশীলনের অগ্রগতি নির্দেশ করে। বিশুদ্ধ মাখরাজ ও পরিপূর্ণ তাজবীদের জন্য অভিজ্ঞ শিক্ষকের সরাসরি তিলাওয়াত শ্রবণ ও যাচাই প্রশংসনীয়।',
                               style: GoogleFonts.hindSiliguri(
                                 fontSize: 13,
@@ -632,7 +633,7 @@ class _WeakLetterHeatmapWidget extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                    LocalizedText(
                       '২৮ হরফ মাখরাজ হিটম্যাপ (Weak Letter List)',
                       style: GoogleFonts.hindSiliguri(
                         fontSize: 15,
@@ -640,7 +641,7 @@ class _WeakLetterHeatmapWidget extends StatelessWidget {
                         color: const Color(0xFF1E293B),
                       ),
                     ),
-                    const Text(
+                    const LocalizedText(
                       'সবুজ = নিখুঁত • কমলা = অনুশীলন দরকার • লাল = দুর্বল হরফ',
                       style: TextStyle(fontSize: 10, color: Color(0xFF64748B)),
                     ),
@@ -720,7 +721,7 @@ class _WeakLetterHeatmapWidget extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(width: 12),
-                          Text(
+                          LocalizedText(
                             '$name হরফ',
                             style: GoogleFonts.hindSiliguri(
                               fontSize: 18,
@@ -733,7 +734,7 @@ class _WeakLetterHeatmapWidget extends StatelessWidget {
                         mainAxisSize: MainAxisSize.min,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
+                          LocalizedText(
                             'মাখরাজ (উচ্চারণস্থল):',
                             style: GoogleFonts.hindSiliguri(
                               fontWeight: FontWeight.bold,
@@ -746,7 +747,7 @@ class _WeakLetterHeatmapWidget extends StatelessWidget {
                             style: GoogleFonts.hindSiliguri(fontSize: 14),
                           ),
                           const SizedBox(height: 12),
-                          Text(
+                          LocalizedText(
                             skill != null
                                 ? 'নির্ভুলতা: ${(skill.accuracy * 100).toInt()}% • ভুল: ${skill.incorrectAttempts} বার'
                                 : 'এখনো অনুশীলন শুরু হয়নি',
@@ -758,7 +759,7 @@ class _WeakLetterHeatmapWidget extends StatelessWidget {
                       actions: [
                         TextButton(
                           onPressed: () => Navigator.of(ctx).pop(),
-                          child: const Text('ঠিক আছে'),
+                          child: const LocalizedText('ঠিক আছে'),
                         ),
                         DSButton(
                           label: 'অনুশীলন করুন',
@@ -872,7 +873,7 @@ class _ExamAuditCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                    LocalizedText(
                       '৩-স্তর বিশিষ্ট পরীক্ষা অডিট (৮০% পাস গেট)',
                       style: GoogleFonts.hindSiliguri(
                         fontSize: 15,
@@ -880,7 +881,7 @@ class _ExamAuditCard extends StatelessWidget {
                         color: const Color(0xFF1E293B),
                       ),
                     ),
-                    const Text(
+                    const LocalizedText(
                       'স্টেপ বস পরীক্ষা, সাপ্তাহিক ও মাসিক মূল্যায়ন রেকর্ড',
                       style: TextStyle(fontSize: 10, color: Color(0xFF64748B)),
                     ),
@@ -1020,7 +1021,7 @@ class _GuardianTeachBackCardState extends State<_GuardianTeachBackCard> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                    LocalizedText(
                       'অভিভাবক চেক-ইন (Teach Back & Family Practice)',
                       style: GoogleFonts.hindSiliguri(
                         fontSize: 15,
@@ -1028,7 +1029,7 @@ class _GuardianTeachBackCardState extends State<_GuardianTeachBackCard> {
                         color: const Color(0xFF166534),
                       ),
                     ),
-                    const Text(
+                    const LocalizedText(
                       'সন্তানের তিলাওয়াত সরাসরি শুনুন ও উৎসাহ দিন (+১৫ XP)',
                       style: TextStyle(fontSize: 11, color: Color(0xFF15803D)),
                     ),
@@ -1038,7 +1039,7 @@ class _GuardianTeachBackCardState extends State<_GuardianTeachBackCard> {
             ],
           ),
           const SizedBox(height: 12),
-          Text(
+          LocalizedText(
             'আজকের পাঠ বা দুর্বল হরফগুলো সন্তানকে আপনার সামনে জোরে উচ্চারণ করতে বলুন। এতে আত্মবিশ্বাস বাড়ে ও ভুল দ্রুত সংশোধন হয়।',
             style: GoogleFonts.hindSiliguri(
               fontSize: 13,
@@ -1057,7 +1058,7 @@ class _GuardianTeachBackCardState extends State<_GuardianTeachBackCard> {
                     widget.state.addXp(15);
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
-                        content: Text(
+                        content: LocalizedText(
                             'মাশাআল্লাহ! বাচ্চার সাথে অভিভাবকের তিলাওয়াত অনুশীলনের জন্য +১৫ XP যোগ হয়েছে!'),
                         backgroundColor: Color(0xFF16A34A),
                       ),
@@ -1088,7 +1089,7 @@ class _GuardianTeachBackCardState extends State<_GuardianTeachBackCard> {
                     size: 18,
                   ),
                   const SizedBox(width: 8),
-                  Text(
+                  LocalizedText(
                     _checkedToday
                         ? 'আজকের তিলাওয়াত শোনা হয়েছে ✓'
                         : 'আজকের তিলাওয়াত শুনেছি (+১৫ XP)',

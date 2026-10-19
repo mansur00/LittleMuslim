@@ -181,7 +181,9 @@ class _QaidaLessonScreenState extends State<QaidaLessonScreen> {
   void dispose() {
     if (_speech.isListening) _speech.cancel();
     _audioPlayer?.dispose();
-    _tts.stop();
+    try {
+      _tts.stop().catchError((_) => null);
+    } catch (_) {}
     super.dispose();
   }
 
