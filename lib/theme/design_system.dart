@@ -244,7 +244,7 @@ class DSButton extends StatefulWidget {
   final Color? textColor;
   final Color? borderColor;
   final double height;
-  final Widget? icon;
+  final dynamic icon; // Widget? or IconData?
   final IconData? iconData;
   final double? width;
   final bool fullWidth;
@@ -322,7 +322,11 @@ class _DSButtonState extends State<DSButton> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             if (widget.icon != null) ...[
-              widget.icon!,
+              if (widget.icon is IconData)
+                Icon(widget.icon as IconData,
+                    color: labelColor, size: widget.fontSize + 4)
+              else if (widget.icon is Widget)
+                widget.icon as Widget,
               const SizedBox(width: DS.s2),
             ] else if (widget.iconData != null) ...[
               Icon(widget.iconData, color: labelColor, size: widget.fontSize + 4),

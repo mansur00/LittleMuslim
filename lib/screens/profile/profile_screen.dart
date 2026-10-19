@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../theme/app_theme.dart';
+import '../../theme/design_system.dart';
 import '../../utils/app_state.dart';
 import '../../widgets/duolingo_appbar.dart';
 import '../../widgets/vector_icons.dart';
@@ -164,7 +165,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       Row(
                         children: [
                           Expanded(
-                            child: OutlinedButton.icon(
+                            child: DSButton(
+                              label: state.isAdmin
+                                  ? 'মূল শিক্ষার্থী মোডে যান'
+                                  : 'অ্যাডমিন মোডে যান (সব আনলক)',
+                              icon: state.isAdmin
+                                  ? Icons.swap_horiz_rounded
+                                  : Icons.lock_open_rounded,
+                              variant: state.isAdmin
+                                  ? DSButtonVariant.gold
+                                  : DSButtonVariant.outline,
                               onPressed: () async {
                                 await state.toggleAdminMode();
                                 if (!context.mounted) return;
@@ -184,23 +194,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     ),
                                   );
                               },
-                              icon: Icon(
-                                state.isAdmin ? Icons.swap_horiz_rounded : Icons.lock_open_rounded,
-                                size: 18,
-                              ),
-                              label: LocalizedText(
-                                state.isAdmin
-                                    ? 'মূল শিক্ষার্থী মোডে যান'
-                                    : 'অ্যাডমিন মোডে যান (সব আনলক)',
-                              ),
-                              style: OutlinedButton.styleFrom(
-                                foregroundColor: state.isAdmin ? const Color(0xFFD97706) : AppTheme.primaryGreen,
-                                side: BorderSide(
-                                  color: state.isAdmin ? const Color(0xFFF59E0B) : AppTheme.primaryGreen,
-                                  width: 1.5,
-                                ),
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-                              ),
                             ),
                           ),
                         ],
@@ -292,20 +285,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ]),
                 ),
                 const SizedBox(height: 12),
-                SizedBox(
-                  height: 48,
-                  child: OutlinedButton.icon(
-                    onPressed: () =>
-                        Navigator.of(context).push(MaterialPageRoute<void>(
-                      builder: (_) => const LoginScreen(),
-                    )),
-                    icon: const Icon(Icons.login_rounded),
-                    label: const LocalizedText('Login / account তৈরি'),
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: AppTheme.primaryGreen,
-                      side: const BorderSide(color: AppTheme.primaryGreen),
-                    ),
-                  ),
+                DSButton(
+                  label: 'Login / account তৈরি',
+                  icon: Icons.login_rounded,
+                  variant: DSButtonVariant.outline,
+                  onPressed: () =>
+                      Navigator.of(context).push(MaterialPageRoute<void>(
+                    builder: (_) => const LoginScreen(),
+                  )),
                 ),
                 const SizedBox(height: 16),
                 Center(

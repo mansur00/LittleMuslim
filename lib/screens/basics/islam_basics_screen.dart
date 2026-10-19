@@ -586,8 +586,8 @@ class _IslamBasicsScreenState extends State<IslamBasicsScreen> {
                             subtitle: 'গল্পে শিখি, কাজে লাগাই',
                             iconType: VectorIconType.book,
                             gradientColors: const [
-                              Color(0xFF0D7377),
-                              Color(0xFF14919B)
+                              Color(0xFF58CC02),
+                              Color(0xFF46A302)
                             ],
                             onBack: () => Navigator.pop(context),
                             trailing: LocalizedText(
@@ -986,7 +986,7 @@ class _IslamBasicsScreenState extends State<IslamBasicsScreen> {
         Duolingo3DButton(
           text: 'অধ্যায় তালিকায় ফিরুন',
           icon: const Icon(Icons.list_rounded),
-          color: const Color(0xFF0D7377),
+          color: AppTheme.primaryGreen,
           onPressed: () => setState(() => _chapterIndex = null),
         ),
         const SizedBox(height: 10),
@@ -1065,7 +1065,7 @@ class _ChapterCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) => DuolingoCard(
       onTap: locked ? null : onTap,
-      accentColor: completed ? AppTheme.primaryGreen : const Color(0xFF0D7377),
+      accentColor: completed ? AppTheme.primaryGreen : AppTheme.primaryDark,
       backgroundColor: locked ? const Color(0xFFF1EEE7) : Colors.white,
       margin: EdgeInsets.zero,
       padding: const EdgeInsets.all(15),

@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import '../../data/nurani_qaida_data.dart';
 import '../../models/qaida/qaida_models.dart';
 import '../../theme/app_theme.dart';
+import '../../theme/design_system.dart';
 import '../../utils/app_state.dart';
 import '../../widgets/duolingo_button.dart';
 import '../../widgets/quran_book_mascot.dart';
@@ -266,73 +267,138 @@ class _QaidaExamScreenState extends State<QaidaExamScreen> {
 
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFC),
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.close_rounded, color: Color(0xFF64748B)),
-          onPressed: () {
-            showDialog(
-              context: context,
-              builder: (ctx) => AlertDialog(
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20)),
-                title: Text('পরীক্ষা থেকে বের হবেন?',
-                    style: GoogleFonts.hindSiliguri(
-                        fontWeight: FontWeight.bold, fontSize: 18)),
-                content: Text(
-                  'এখন বের হলে এই পরীক্ষার অগ্রগতি সংরক্ষিত হবে না।',
-                  style: GoogleFonts.hindSiliguri(fontSize: 14),
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(80),
+        child: SafeArea(
+          child: Container(
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 6),
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              border: Border(
+                  bottom: BorderSide(color: Color(0xFFE2E8F0), width: 1.5)),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Row(
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        showDialog(
+                          context: context,
+                          builder: (ctx) => AlertDialog(
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20)),
+                            title: const Row(
+                              children: [
+                                Icon(Icons.warning_amber_rounded,
+                                    color: Color(0xFFD97706), size: 24),
+                                SizedBox(width: 8),
+                                Expanded(
+                                  child: Text(
+                                    'পরীক্ষা থেকে বের হবেন?',
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 18),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            content: const Text(
+                              'এখন বের হলে এই পরীক্ষার অগ্রগতি সংরক্ষিত হবে না।',
+                              style: TextStyle(fontSize: 14),
+                            ),
+                            actionsPadding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 12),
+                            actions: [
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: DSButton(
+                                      label: 'চালিয়ে যান',
+                                      variant: DSButtonVariant.primary,
+                                      onPressed: () => Navigator.of(ctx).pop(),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 10),
+                                  Expanded(
+                                    child: DSButton(
+                                      label: 'বের হন',
+                                      variant: DSButtonVariant.danger,
+                                      onPressed: () {
+                                        Navigator.of(ctx).pop();
+                                        Navigator.of(context).pop();
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                      child: Container(
+                        width: 38,
+                        height: 38,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                              color: const Color(0xFFE2E8F0), width: 1.5),
+                          boxShadow: const [
+                            BoxShadow(
+                              color: Color(0xFFCBD5E1),
+                              offset: Offset(0, 2.5),
+                              blurRadius: 0,
+                            ),
+                          ],
+                        ),
+                        child: const Icon(Icons.close_rounded,
+                            color: Color(0xFF475569), size: 20),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        children: [
+                          Text(
+                            _examTitle,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: GoogleFonts.hindSiliguri(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: const Color(0xFF0F172A),
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            'প্রশ্ন ${_currentIndex + 1} / ${_questions.length}  (পাস মার্ক ৮০%)',
+                            style: const TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w600,
+                              color: Color(0xFF64748B),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 38),
+                  ],
                 ),
-                actions: [
-                  TextButton(
-                    onPressed: () => Navigator.of(ctx).pop(),
-                    child: const Text('চালিয়ে যান'),
+                const SizedBox(height: 8),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: LinearProgressIndicator(
+                    value: progress,
+                    backgroundColor: const Color(0xFFE2E8F0),
+                    valueColor:
+                        const AlwaysStoppedAnimation<Color>(AppTheme.duoGreen),
+                    minHeight: 6,
                   ),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(ctx).pop();
-                      Navigator.of(context).pop();
-                    },
-                    style: TextButton.styleFrom(
-                        foregroundColor: const Color(0xFFDC2626)),
-                    child: const Text('বের হন'),
-                  ),
-                ],
-              ),
-            );
-          },
-        ),
-        title: Column(
-          children: [
-            Text(
-              _examTitle,
-              style: GoogleFonts.hindSiliguri(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: const Color(0xFF0F172A),
-              ),
+                ),
+              ],
             ),
-            const SizedBox(height: 2),
-            Text(
-              'প্রশ্ন ${_currentIndex + 1} / ${_questions.length}  (পাস মার্ক ৮০%)',
-              style: const TextStyle(
-                fontSize: 11,
-                fontWeight: FontWeight.w600,
-                color: Color(0xFF64748B),
-              ),
-            ),
-          ],
-        ),
-        centerTitle: true,
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(6),
-          child: LinearProgressIndicator(
-            value: progress,
-            backgroundColor: const Color(0xFFE2E8F0),
-            valueColor: const AlwaysStoppedAnimation<Color>(AppTheme.duoGreen),
-            minHeight: 6,
           ),
         ),
       ),

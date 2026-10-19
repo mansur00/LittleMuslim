@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../l10n/app_localizations.dart';
+import '../theme/app_theme.dart';
 import 'faceless_silhouette.dart';
 
 enum MascotMood {
@@ -98,7 +99,7 @@ class MascotSpeechBanner extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 8, vertical: 3),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF0D7377),
+                        color: AppTheme.primaryGreen,
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: LocalizedText(

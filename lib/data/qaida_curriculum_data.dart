@@ -961,7 +961,7 @@ class QaidaCurriculumData {
     subtitle: '২ ও ৩ হরফের সংযুক্ত রূপ ও সংযোগ বিধান',
     arabicTitle: 'الْحُرُوفُ الْمُرَكَّبَةُ',
     description: 'একাধিক হরফ একসাথে জুড়ে কীভাবে শব্দরূপ গঠিত হয় তা ধারাবাহিকভাবে চেনা।',
-    colorHex: 0xFF0D7377, // Deep Teal
+    colorHex: 0xFF10B981, // Emerald Green
     icon: Icons.extension_rounded,
     lessons: List.generate(20, (index) {
       final samples = [

@@ -125,8 +125,8 @@ class _DuasScreenState extends State<DuasScreen> {
       meaning:
           'আমি সাক্ষ্য দিচ্ছি যে আল্লাহ ছাড়া কোনো সত্য ইলাহ নেই, তিনি একক, তাঁর কোনো শরিক নেই; এবং আমি সাক্ষ্য দিচ্ছি মুহাম্মদ ﷺ তাঁর বান্দা ও রাসুল।',
       reference: 'সহিহ মুসলিম ২৩৪',
-      color: Color(0xFFD4F0EC),
-      accent: Color(0xFF0D7377),
+      color: Color(0xFFE8F8D8),
+      accent: Color(0xFF46A302),
     ),
     _DuaEntry(
       id: 'clothes',
@@ -195,8 +195,8 @@ class _DuasScreenState extends State<DuasScreen> {
       meaning:
           'আমি মহান আল্লাহর কাছে, তাঁর সম্মানিত চেহারার উসিলায় এবং তাঁর চিরন্তন কর্তৃত্বের মাধ্যমে বিতাড়িত শয়তান থেকে আশ্রয় চাই। আল্লাহর নামে এবং রাসুলের ওপর দরুদ ও সালাম। হে আল্লাহ, আমার জন্য আপনার রহমতের দরজাগুলো খুলে দিন।',
       reference: 'আবু দাউদ ৪৬৫ ও মুসলিম ৭১৩',
-      color: Color(0xFFD4F0EC),
-      accent: Color(0xFF0D7377),
+      color: Color(0xFFE8F8D8),
+      accent: Color(0xFF46A302),
     ),
     _DuaEntry(
       id: 'mosque_exit',
@@ -207,8 +207,8 @@ class _DuasScreenState extends State<DuasScreen> {
       meaning:
           'আল্লাহর নামে এবং আল্লাহর রাসুলের ওপর দরুদ ও সালাম। হে আল্লাহ, আমি আপনার অনুগ্রহ ও দান প্রার্থনা করছি। হে আল্লাহ, আমাকে বিতাড়িত শয়তানের অনিষ্ট থেকে রক্ষা করুন।',
       reference: 'সহিহ মুসলিম ৭১৩ ও ইবনে মাজাহ ৭৭৩',
-      color: Color(0xFFD4F0EC),
-      accent: Color(0xFF0D7377),
+      color: Color(0xFFE8F8D8),
+      accent: Color(0xFF46A302),
     ),
     _DuaEntry(
       id: 'sleep',
@@ -319,8 +319,8 @@ class _DuasScreenState extends State<DuasScreen> {
       meaning:
           'হে আল্লাহ, আপনিই আমার রব; আপনি ছাড়া কোনো সত্য ইলাহ নেই; আপনি আমাকে সৃষ্টি করেছেন এবং আমি আপনারই বান্দা। আমি সাধ্যমতো আপনার অঙ্গীকার ও প্রতিশ্রুতির ওপর অবিচল আছি। আমি যা করেছি তার অনিষ্ট থেকে আপনার কাছে আশ্রয় চাই। আমার ওপর আপনার যে নেয়ামত রয়েছে তা স্বীকার করছি এবং আমার অপরাধও স্বীকার করছি; অতএব আমাকে ক্ষমা করে দিন, নিশ্চয়ই আপনি ছাড়া গোনাহ ক্ষমা করার কেউ নেই।',
       reference: 'সহিহ বুখারি ৬৩০৬',
-      color: Color(0xFFD4F0EC),
-      accent: Color(0xFF0D7377),
+      color: Color(0xFFE8F8D8),
+      accent: Color(0xFF46A302),
     ),
     _DuaEntry(
       id: 'parents',

@@ -2038,7 +2038,7 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
             ),
             boxShadow: [
               BoxShadow(
-                color: const Color(0xFF0D7377).withValues(alpha: 0.08),
+                color: AppTheme.primaryDark.withValues(alpha: 0.12),
                 offset: const Offset(0, 6),
                 blurRadius: 16,
               ),
@@ -2135,7 +2135,7 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
                     style: const TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
-                      color: Color(0xFF0D7377),
+                      color: AppTheme.primaryGreen,
                     ),
                   ),
                 ],
@@ -2163,19 +2163,19 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
                         padding: const EdgeInsets.symmetric(vertical: 14),
                         decoration: BoxDecoration(
                           color: isSelected
-                              ? const Color(0xFF0D7377)
+                              ? AppTheme.primaryGreen
                               : Colors.white,
                           borderRadius: BorderRadius.circular(16),
                           border: Border.all(
                             color: isSelected
-                                ? const Color(0xFF0A585B)
+                                ? AppTheme.primaryDark
                                 : const Color(0xFFCBD5E1),
                             width: isSelected ? 2.5 : 1.5,
                           ),
                           boxShadow: isSelected
                               ? [
                                   BoxShadow(
-                                    color: const Color(0xFF0D7377)
+                                    color: AppTheme.primaryDark
                                         .withValues(alpha: 0.25),
                                     offset: const Offset(0, 4),
                                     blurRadius: 8,
@@ -2569,7 +2569,7 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
                   ? AppTheme.duoGreen
                   : (_shaddahPressCount == 1
                       ? const Color(0xFFD97706)
-                      : const Color(0xFF0D7377)),
+                      : AppTheme.primaryGreen),
               borderRadius: BorderRadius.circular(20),
               boxShadow: [
                 BoxShadow(
@@ -2577,7 +2577,7 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
                           ? const Color(0xFF15803D)
                           : (_shaddahPressCount == 1
                               ? const Color(0xFFB45309)
-                              : const Color(0xFF096266)))
+                              : AppTheme.primaryDark))
                       .withValues(alpha: 0.6),
                   offset: const Offset(0, 5),
                   blurRadius: 0,
@@ -2921,14 +2921,14 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
                     color: isRead
                         ? AppTheme.duoGreen
                         : (isCurrent
-                            ? const Color(0xFF0D7377)
+                            ? AppTheme.primaryGreen
                             : const Color(0xFFE2E8F0)),
                     width: isCurrent ? 2.5 : (isRead ? 2.0 : 1.2),
                   ),
                   boxShadow: isCurrent
                       ? [
                           BoxShadow(
-                            color: const Color(0xFF0D7377)
+                            color: AppTheme.primaryDark
                                 .withValues(alpha: 0.2),
                             offset: const Offset(0, 4),
                             blurRadius: 10,
@@ -3033,29 +3033,13 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
                 ),
                 textDirection: TextDirection.rtl,
               ),
-              const SizedBox(height: 12),
-              OutlinedButton.icon(
+              DSButton(
                 onPressed: _playActivityAudio,
-                icon: Icon(
-                  _isPlayingAudio
-                      ? Icons.volume_up_rounded
-                      : Icons.volume_down_rounded,
-                  color: const Color(0xFF0D7377),
-                  size: 20,
-                ),
-                label: Text(
-                  'সঠিক উচ্চারণ শুনুন',
-                  style: GoogleFonts.hindSiliguri(
-                    fontSize: 13,
-                    fontWeight: FontWeight.bold,
-                    color: const Color(0xFF0D7377),
-                  ),
-                ),
-                style: OutlinedButton.styleFrom(
-                  side: const BorderSide(color: Color(0xFF0D7377)),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20)),
-                ),
+                icon: _isPlayingAudio
+                    ? Icons.volume_up_rounded
+                    : Icons.volume_down_rounded,
+                label: 'সঠিক উচ্চারণ শুনুন',
+                variant: DSButtonVariant.outline,
               ),
             ],
           ),
@@ -3704,24 +3688,16 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            OutlinedButton.icon(
+            DSButton(
               onPressed: () {
                 setState(() {
                   _tracePoints.clear();
                   _isTraceCompleted = false;
                 });
               },
-              icon: const Icon(Icons.refresh_rounded, size: 18),
-              label: Text(
-                'মুছে আবার আঁকো',
-                style: GoogleFonts.hindSiliguri(fontWeight: FontWeight.bold),
-              ),
-              style: OutlinedButton.styleFrom(
-                foregroundColor: const Color(0xFF64748B),
-                side: const BorderSide(color: Color(0xFFCBD5E1), width: 1.5),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              ),
+              icon: Icons.refresh_rounded,
+              label: 'মুছে আবার আঁকো',
+              variant: DSButtonVariant.outline,
             ),
             const SizedBox(width: 12),
             DSButton(

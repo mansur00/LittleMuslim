@@ -189,8 +189,8 @@ class _QaidaNextCourseScreenState extends State<QaidaNextCourseScreen> {
                           subtitle: 'ধাপ ${_step + 1} · ${exercise.stage}',
                           iconType: VectorIconType.qaida,
                           gradientColors: const [
-                            Color(0xFF0D7377),
-                            Color(0xFF14919B)
+                            Color(0xFF58CC02),
+                            Color(0xFF46A302)
                           ],
                           onBack: () => Navigator.pop(context),
                           trailing: LocalizedText('${_step + 1}/৫',

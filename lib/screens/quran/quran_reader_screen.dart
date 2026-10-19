@@ -7,6 +7,7 @@ import 'package:flutter/rendering.dart' show ScrollDirection;
 import 'package:provider/provider.dart';
 
 import '../../theme/app_theme.dart';
+import '../../theme/design_system.dart';
 import '../../utils/app_state.dart';
 import '../../widgets/duolingo_appbar.dart';
 import 'quran_data.dart';
@@ -542,7 +543,7 @@ class _VerseCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) => DuolingoCard(
         onTap: onPlay,
-        accentColor: isPlaying ? AppTheme.accentCoral : const Color(0xFF0D7377),
+        accentColor: isPlaying ? AppTheme.accentCoral : AppTheme.primaryGreen,
         margin: EdgeInsets.zero,
         padding: const EdgeInsets.fromLTRB(16, 14, 16, 12),
         child:
@@ -632,10 +633,11 @@ class _ReaderLoadError extends StatelessWidget {
         child: Column(children: [
           LocalizedText(message, textAlign: TextAlign.center),
           const SizedBox(height: 10),
-          OutlinedButton.icon(
+          DSButton(
               onPressed: onRetry,
-              icon: const Icon(Icons.refresh_rounded),
-              label: const LocalizedText('আবার চেষ্টা করি')),
+              icon: Icons.refresh_rounded,
+              variant: DSButtonVariant.outline,
+              label: 'আবার চেষ্টা করি'),
         ]),
       );
 }

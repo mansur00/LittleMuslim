@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../theme/app_theme.dart';
+import '../../theme/design_system.dart';
 import '../../utils/app_state.dart';
 import '../../widgets/vector_icons.dart';
 import '../../widgets/duolingo_appbar.dart';
@@ -97,8 +98,8 @@ class _QuranScreenState extends State<QuranScreen> {
                         subtitle: 'শান্ত মনে পড়ো, ভাবো, আর সুন্দর গল্প শোনো।',
                         iconType: VectorIconType.book,
                         gradientColors: const [
-                          Color(0xFF0D7377),
-                          Color(0xFF178D72)
+                          Color(0xFF58CC02),
+                          Color(0xFF46A302)
                         ],
                         onBack: () => Navigator.pop(context),
                       ),
@@ -128,8 +129,8 @@ class _QuranScreenState extends State<QuranScreen> {
                         DuolingoSectionLabel(
                             label: 'সব ১১৪টি সূরা',
                             badgeText: '${_surahs.length}টি',
-                            badgeColor: const Color(0xFFD4F0EC),
-                            badgeTextColor: const Color(0xFF0D7377)),
+                            badgeColor: const Color(0xFFE8F8D8),
+                            badgeTextColor: AppTheme.primaryDark),
                         const SizedBox(height: 12),
                         // Search box
                         Container(
@@ -172,7 +173,7 @@ class _QuranScreenState extends State<QuranScreen> {
                             padding: EdgeInsets.all(28),
                             child: Center(
                                 child: CircularProgressIndicator(
-                                    color: Color(0xFF0D7377))),
+                                    color: AppTheme.primaryGreen)),
                           )
                         else if (_loadError != null)
                           _LoadError(message: _loadError!, onRetry: _loadSurahs)
@@ -219,8 +220,8 @@ class _QuranScreenState extends State<QuranScreen> {
                         DuolingoSectionLabel(
                             label: '৩০টি পারা / জুয',
                             badgeText: '${quranJuzList.length} পারা',
-                            badgeColor: const Color(0xFFD4F0EC),
-                            badgeTextColor: const Color(0xFF0D7377)),
+                            badgeColor: const Color(0xFFE8F8D8),
+                            badgeTextColor: AppTheme.primaryDark),
                         const SizedBox(height: 12),
                         for (final juz in quranJuzList)
                           _JuzCard(
@@ -241,8 +242,8 @@ class _QuranScreenState extends State<QuranScreen> {
                               DuolingoSectionLabel(
                                   label: 'সংরক্ষিত আয়াত',
                                   badgeText: '${bookmarks.length}টি',
-                                  badgeColor: const Color(0xFFD4F0EC),
-                                  badgeTextColor: const Color(0xFF0D7377)),
+                                  badgeColor: const Color(0xFFE8F8D8),
+                                  badgeTextColor: AppTheme.primaryDark),
                               const SizedBox(height: 12),
                               if (bookmarks.isEmpty)
                                 const _BookmarksEmptyCard()
@@ -433,10 +434,11 @@ class _LoadError extends StatelessWidget {
           const SizedBox(height: 8),
           LocalizedText(message, textAlign: TextAlign.center),
           const SizedBox(height: 10),
-          OutlinedButton.icon(
+          DSButton(
               onPressed: onRetry,
-              icon: const Icon(Icons.refresh_rounded),
-              label: const LocalizedText('আবার চেষ্টা করি')),
+              icon: Icons.refresh_rounded,
+              variant: DSButtonVariant.outline,
+              label: 'আবার চেষ্টা করি'),
         ]),
       );
 }
@@ -452,10 +454,11 @@ class _EmptySurahs extends StatelessWidget {
         child: Column(children: [
           const LocalizedText('এখন কোনো সূরা পাওয়া যায়নি।'),
           const SizedBox(height: 10),
-          OutlinedButton.icon(
+          DSButton(
               onPressed: onRetry,
-              icon: const Icon(Icons.refresh_rounded),
-              label: const LocalizedText('আবার চেষ্টা করি')),
+              icon: Icons.refresh_rounded,
+              variant: DSButtonVariant.outline,
+              label: 'আবার চেষ্টা করি'),
         ]),
       );
 }
@@ -490,14 +493,14 @@ class _ContinueReadingCardState extends State<_ContinueReadingCard> {
           padding: const EdgeInsets.all(18),
           decoration: BoxDecoration(
             gradient: const LinearGradient(
-                colors: [Color(0xFF0D7377), Color(0xFF178D72)],
+                colors: [Color(0xFF58CC02), Color(0xFF46A302)],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight),
-            borderRadius: BorderRadius.circular(24),
+            borderRadius: BorderRadius.circular(20),
             boxShadow: [
               BoxShadow(
-                  color: const Color(0xFF0D7377)
-                      .withValues(alpha: _pressed ? 0.1 : 0.3),
+                  color: const Color(0xFF46A302)
+                      .withValues(alpha: _pressed ? 0.1 : 0.35),
                   blurRadius: 0,
                   offset: Offset(0, _pressed ? 0 : 5))
             ],
@@ -591,7 +594,7 @@ class _Tab extends StatelessWidget {
             duration: const Duration(milliseconds: 180),
             padding: const EdgeInsets.symmetric(vertical: 11),
             decoration: BoxDecoration(
-              color: selected ? const Color(0xFF0D7377) : Colors.transparent,
+              color: selected ? AppTheme.primaryGreen : Colors.transparent,
               borderRadius: BorderRadius.circular(14),
             ),
             child: LocalizedText(label,
@@ -638,8 +641,7 @@ class _SurahCardState extends State<_SurahCard> {
             border: Border.all(color: const Color(0xFFE5E7EB), width: 2),
             boxShadow: [
               BoxShadow(
-                  color: const Color(0xFF0D7377)
-                      .withValues(alpha: _pressed ? 0.04 : 0.1),
+                  color: const Color(0xFFE5E5E5),
                   blurRadius: 0,
                   offset: Offset(0, _pressed ? 0 : 3))
             ],
@@ -649,12 +651,12 @@ class _SurahCardState extends State<_SurahCard> {
               width: 40,
               height: 40,
               decoration: BoxDecoration(
-                  color: const Color(0xFFD4F0EC),
+                  color: const Color(0xFFE8F8D8),
                   borderRadius: BorderRadius.circular(13)),
               alignment: Alignment.center,
               child: LocalizedText(widget.number,
                   style: const TextStyle(
-                      color: Color(0xFF0D7377),
+                      color: AppTheme.primaryDark,
                       fontSize: 11,
                       fontWeight: FontWeight.w800)),
             ),
@@ -677,7 +679,7 @@ class _SurahCardState extends State<_SurahCard> {
             LocalizedText(widget.arabicName,
                 textDirection: TextDirection.rtl,
                 style: const TextStyle(
-                    color: Color(0xFF0D7377),
+                    color: AppTheme.primaryGreen,
                     fontSize: 20,
                     fontWeight: FontWeight.w700)),
             const SizedBox(width: 8),
@@ -685,9 +687,9 @@ class _SurahCardState extends State<_SurahCard> {
               width: 28,
               height: 28,
               decoration: const BoxDecoration(
-                  color: Color(0xFFD4F0EC), shape: BoxShape.circle),
+                  color: Color(0xFFE8F8D8), shape: BoxShape.circle),
               child: const Icon(Icons.play_arrow_rounded,
-                  color: Color(0xFF0D7377), size: 16),
+                  color: AppTheme.primaryGreen, size: 16),
             ),
           ]),
         ),
@@ -793,10 +795,11 @@ class _SearchEmptySurahs extends StatelessWidget {
               textAlign: TextAlign.center,
               style: const TextStyle(fontWeight: FontWeight.w700)),
           const SizedBox(height: 12),
-          OutlinedButton.icon(
+          DSButton(
               onPressed: onClear,
-              icon: const Icon(Icons.clear_rounded),
-              label: const LocalizedText('অনুসন্ধান মুছুন')),
+              icon: Icons.clear_rounded,
+              variant: DSButtonVariant.outline,
+              label: 'অনুসন্ধান মুছুন'),
         ]),
       );
 }
@@ -811,7 +814,7 @@ class _BookmarksEmptyCard extends StatelessWidget {
             color: Colors.white, borderRadius: BorderRadius.circular(20)),
         child: const Column(children: [
           Icon(Icons.bookmark_border_rounded,
-              color: Color(0xFF0D7377), size: 38),
+              color: AppTheme.primaryGreen, size: 38),
           SizedBox(height: 10),
           LocalizedText('এখনো কোনো বুকমার্ক নেই',
               style: TextStyle(
@@ -846,14 +849,14 @@ class _JuzCard extends StatelessWidget {
             width: 44,
             height: 44,
             decoration: BoxDecoration(
-              color: const Color(0xFFD4F0EC),
+              color: const Color(0xFFE8F8D8),
               borderRadius: BorderRadius.circular(12),
             ),
             alignment: Alignment.center,
             child: LocalizedText(
               '${juz.number}',
               style: const TextStyle(
-                color: Color(0xFF0D7377),
+                color: AppTheme.primaryDark,
                 fontWeight: FontWeight.w900,
                 fontSize: 16,
               ),
@@ -873,7 +876,7 @@ class _JuzCard extends StatelessWidget {
                 juz.arabicName,
                 textDirection: TextDirection.rtl,
                 style: const TextStyle(
-                  color: Color(0xFF0D7377),
+                  color: AppTheme.primaryGreen,
                   fontWeight: FontWeight.w800,
                   fontSize: 18,
                 ),
@@ -941,7 +944,7 @@ class _BookmarkCard extends StatelessWidget {
           IconButton(
             onPressed: onOpen,
             tooltip: context.uiText('পড়া শুরু করি'),
-            icon: const Icon(Icons.menu_book_rounded, color: Color(0xFF0D7377)),
+            icon: const Icon(Icons.menu_book_rounded, color: AppTheme.primaryGreen),
           ),
           IconButton(
             onPressed: onRemove,

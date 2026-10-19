@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../utils/app_state.dart';
+import '../theme/design_system.dart';
 
 /// Available avatar silhouette types
 enum SilhouetteType {
@@ -326,33 +327,17 @@ class _AvatarCustomizerContentState extends State<_AvatarCustomizerContent> {
             const SizedBox(height: 24),
 
             // Save Button
-            SizedBox(
-              width: double.infinity,
-              height: 48,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: currentColor,
-                  foregroundColor: Colors.white,
-                  elevation: 2,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(14),
-                  ),
-                ),
-                onPressed: () {
-                  context.read<AppState>().updateAvatar(
-                        type: _selectedType,
-                        color: _selectedColor,
-                      );
-                  Navigator.of(context).pop();
-                },
-                child: Text(
-                  isBangla ? 'সংরক্ষণ করুন' : 'Save Avatar',
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
+            DSButton(
+              label: isBangla ? 'সংরক্ষণ করুন' : 'Save Avatar',
+              color: currentColor,
+              fullWidth: true,
+              onPressed: () {
+                context.read<AppState>().updateAvatar(
+                      type: _selectedType,
+                      color: _selectedColor,
+                    );
+                Navigator.of(context).pop();
+              },
             ),
           ],
         ),

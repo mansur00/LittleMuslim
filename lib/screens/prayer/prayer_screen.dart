@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../theme/app_theme.dart';
+import '../../theme/design_system.dart';
 import '../../utils/app_state.dart';
 import '../../widgets/vector_icons.dart';
 import '../../widgets/duolingo_appbar.dart';
@@ -562,18 +563,19 @@ class PrayerScreen extends StatelessWidget {
                 Row(children: [
                   if (activeIndex > 0)
                     Expanded(
-                        child: OutlinedButton.icon(
+                        child: DSButton(
                             onPressed: () {
                               setSheetState(() => activeIndex--);
                               appState.saveSalahStep(activeIndex);
                             },
-                            icon: const Icon(Icons.arrow_back_rounded),
-                            label: const LocalizedText('আগের ধাপ')))
+                            icon: Icons.arrow_back_rounded,
+                            variant: DSButtonVariant.outline,
+                            label: 'আগের ধাপ'))
                   else
                     const Spacer(),
                   const SizedBox(width: 10),
                   Expanded(
-                      child: FilledButton.icon(
+                      child: DSButton(
                           onPressed: () async {
                             if (activeIndex < _steps.length - 1) {
                               setSheetState(() => activeIndex++);
@@ -646,11 +648,9 @@ class PrayerScreen extends StatelessWidget {
                           icon: Icon(activeIndex < _steps.length - 1
                               ? Icons.arrow_forward_rounded
                               : Icons.check_rounded),
-                          label: LocalizedText(activeIndex < _steps.length - 1
+                          label: activeIndex < _steps.length - 1
                               ? 'পরের ধাপ'
-                              : 'পাঠ শেষ করি'),
-                          style: FilledButton.styleFrom(
-                              backgroundColor: AppTheme.primaryGreen))),
+                              : 'পাঠ শেষ করি')),
                 ]),
               ]),
             ),

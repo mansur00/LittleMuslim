@@ -556,7 +556,7 @@ class _QaidaHeader extends StatelessWidget {
         title: 'নূরানী ক্বায়দা',
         subtitle: '১৭টি ধাপের পূর্ণাঙ্গ লার্নিং ম্যাপ',
         iconType: VectorIconType.qaida,
-        gradientColors: const [Color(0xFF0D7377), Color(0xFF14919B)],
+        gradientColors: const [Color(0xFF58CC02), Color(0xFF46A302)],
         onBack: onBack,
         trailing: Container(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
@@ -605,7 +605,7 @@ class _PhaseSectionHeader extends StatelessWidget {
                 width: 24,
                 height: 24,
                 decoration: const BoxDecoration(
-                  color: Color(0xFF0D7377),
+                  color: AppTheme.primaryGreen,
                   shape: BoxShape.circle,
                 ),
                 alignment: Alignment.center,

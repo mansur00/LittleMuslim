@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 
 import '../../theme/app_theme.dart';
+import '../../theme/design_system.dart';
 import '../../utils/app_state.dart';
 import '../../widgets/vector_icons.dart';
 import '../../widgets/vector_mascot.dart';
@@ -353,15 +354,12 @@ class _QaidaLessonScreenState extends State<QaidaLessonScreen> {
       };
 
   Widget _buildListeningChoice() => Column(children: [
-        OutlinedButton.icon(
+        DSButton(
           onPressed: _speakTarget,
-          icon: const Icon(Icons.volume_up_rounded),
-          label: const LocalizedText('শব্দটি শুনি'),
-          style: OutlinedButton.styleFrom(
-              foregroundColor: AppTheme.primaryGreen,
-              minimumSize: const Size.fromHeight(45),
-              side: const BorderSide(color: Color(0xFFB8D8C3)),
-              shape: const StadiumBorder()),
+          icon: Icons.volume_up_rounded,
+          label: 'শব্দটি শুনি',
+          variant: DSButtonVariant.outline,
+          fullWidth: true,
         ),
         const SizedBox(height: 12),
         _letterChoices(widget.options),
@@ -492,24 +490,30 @@ class _QaidaLessonScreenState extends State<QaidaLessonScreen> {
                       'এই ডিভাইসে আরবি voice recognition পাওয়া যায়নি। অভিভাবক শুনে সাহায্য করতে পারেন।',
                   success: false),
               const SizedBox(height: 8),
-              FilledButton.icon(
+              DSButton(
                 onPressed: _confirmSelfPractice,
-                icon: const Icon(Icons.record_voice_over_rounded),
-                label: const LocalizedText('আমি উচ্চারণ করে ফেলেছি'),
+                icon: Icons.record_voice_over_rounded,
+                label: 'আমি উচ্চারণ করে ফেলেছি',
+                variant: DSButtonVariant.primary,
+                fullWidth: true,
               ),
-              const SizedBox(height: 4),
-              OutlinedButton.icon(
+              const SizedBox(height: 8),
+              DSButton(
                 onPressed: _confirmWithGuardian,
-                icon: const Icon(Icons.family_restroom_rounded),
-                label: const LocalizedText('অভিভাবক শুনে নিশ্চিত করবেন'),
+                icon: Icons.family_restroom_rounded,
+                label: 'অভিভাবক শুনে নিশ্চিত করবেন',
+                variant: DSButtonVariant.outline,
+                fullWidth: true,
               ),
             ]),
           if (_speechAvailable && !_stagePassed) ...[
             const SizedBox(height: 8),
-            OutlinedButton.icon(
+            DSButton(
               onPressed: _confirmWithGuardian,
-              icon: const Icon(Icons.family_restroom_rounded),
-              label: const LocalizedText('অভিভাবক শুনে নিশ্চিত করবেন'),
+              icon: Icons.family_restroom_rounded,
+              label: 'অভিভাবক শুনে নিশ্চিত করবেন',
+              variant: DSButtonVariant.outline,
+              fullWidth: true,
             ),
           ],
           const SizedBox(height: 10),
