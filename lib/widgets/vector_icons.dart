@@ -130,7 +130,7 @@ class _VectorIconPainter extends CustomPainter {
   }
 
   void _drawCrescent(Canvas canvas, double s) {
-    final bg = Paint()..color = color ?? const Color(0xFF0D7377);
+    final bg = Paint()..color = color ?? const Color(0xFF58CC02);
     final star = Paint()..color = const Color(0xFFD4A017);
     // Outer circle
     canvas.drawCircle(Offset(s * 0.48, s * 0.5), s * 0.38, bg);
@@ -464,7 +464,7 @@ class _VectorIconPainter extends CustomPainter {
   }
 
   void _drawShield(Canvas canvas, double s) {
-    final body = Paint()..color = color ?? const Color(0xFF0D7377);
+    final body = Paint()..color = color ?? const Color(0xFF58CC02);
     final path = Path()
       ..moveTo(s * 0.50, s * 0.12)
       ..lineTo(s * 0.82, s * 0.28)

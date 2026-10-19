@@ -14,8 +14,8 @@ class Duolingo3DButton extends StatefulWidget {
     this.height = 54,
     this.width,
     this.fontSize = 16,
-    this.borderRadius = 18,
-    this.depth = 5,
+    this.borderRadius = 16, // DS.rLg
+    this.depth = 4, // DS.bevelSm
     this.icon,
     this.trailingIcon,
     this.isLoading = false,
@@ -74,8 +74,8 @@ class Duolingo3DButton extends StatefulWidget {
       text: text,
       onPressed: onPressed,
       color: const Color(0xFFFFC800),
-      shadowColor: const Color(0xFFE6A800),
-      textColor: const Color(0xFF6B4700),
+      shadowColor: const Color(0xFFE5A100),
+      textColor: Colors.white,
       height: height,
       width: width,
       icon: icon,
@@ -83,8 +83,8 @@ class Duolingo3DButton extends StatefulWidget {
     );
   }
 
-  /// Little Muslim deep teal theme button
-  factory Duolingo3DButton.teal({
+  /// Little Muslim brand green theme button
+  factory Duolingo3DButton.brandGreen({
     Key? key,
     required String text,
     required VoidCallback? onPressed,
@@ -97,8 +97,8 @@ class Duolingo3DButton extends StatefulWidget {
       key: key,
       text: text,
       onPressed: onPressed,
-      color: const Color(0xFF0D7377),
-      shadowColor: const Color(0xFF084D4F),
+      color: const Color(0xFF58CC02),
+      shadowColor: const Color(0xFF46A302),
       textColor: Colors.white,
       height: height,
       width: width,
@@ -106,6 +106,25 @@ class Duolingo3DButton extends StatefulWidget {
       trailingIcon: trailingIcon,
     );
   }
+
+  /// Backwards compatible teal alias now routed to brand green
+  factory Duolingo3DButton.teal({
+    Key? key,
+    required String text,
+    required VoidCallback? onPressed,
+    double height = 54,
+    double? width,
+    Widget? icon,
+    Widget? trailingIcon,
+  }) => Duolingo3DButton.brandGreen(
+    key: key,
+    text: text,
+    onPressed: onPressed,
+    height: height,
+    width: width,
+    icon: icon,
+    trailingIcon: trailingIcon,
+  );
 
   @override
   State<Duolingo3DButton> createState() => _Duolingo3DButtonState();
@@ -135,82 +154,70 @@ class _Duolingo3DButtonState extends State<Duolingo3DButton> {
               widget.onPressed?.call();
             },
       onTapCancel: isDisabled ? null : () => setState(() => _isPressed = false),
-      child: SizedBox(
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 60),
+        curve: Curves.easeOutQuad,
         width: widget.width,
-        height: totalHeight,
-        child: Stack(
-          children: [
-            // Bottom 3D shadow layer
-            Positioned(
-              left: 0,
-              right: 0,
-              bottom: 0,
-              height: widget.height,
-              child: Container(
-                decoration: BoxDecoration(
-                  color: effectiveShadowColor,
-                  borderRadius: BorderRadius.circular(widget.borderRadius),
-                ),
-              ),
-            ),
-            // Top face layer that moves down on press
-            AnimatedPositioned(
-              duration: const Duration(milliseconds: 60),
-              curve: Curves.easeOutQuad,
-              left: 0,
-              right: 0,
-              top: _isPressed ? depth : 0,
-              height: widget.height,
-              child: Container(
-                decoration: BoxDecoration(
-                  color: effectiveColor,
-                  borderRadius: BorderRadius.circular(widget.borderRadius),
-                  border: Border.all(
-                    color: Colors.white.withValues(alpha: 0.2),
-                    width: 1.5,
-                  ),
-                ),
-                child: Center(
-                  child: widget.isLoading
-                      ? SizedBox(
-                          width: 22,
-                          height: 22,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2.5,
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                                effectiveTextColor),
-                          ),
-                        )
-                      : Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              if (widget.icon != null) ...[
-                                widget.icon!,
-                                const SizedBox(width: 8),
-                              ],
-                              LocalizedText(
-                                widget.text,
-                                style: TextStyle(
-                                  color: effectiveTextColor,
-                                  fontSize: widget.fontSize,
-                                  fontWeight: FontWeight.w800,
-                                  letterSpacing: 0.2,
-                                ),
-                              ),
-                              if (widget.trailingIcon != null) ...[
-                                const SizedBox(width: 8),
-                                widget.trailingIcon!,
-                              ],
-                            ],
-                          ),
-                        ),
-                ),
-              ),
+        height: widget.height,
+        margin: EdgeInsets.only(
+          top: _isPressed ? depth : 0,
+          bottom: _isPressed ? 0 : depth,
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: 14),
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: effectiveColor,
+          borderRadius: BorderRadius.circular(widget.borderRadius),
+          border: Border.all(
+            color: Colors.white.withValues(alpha: 0.22),
+            width: 1.5,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: effectiveShadowColor,
+              offset: Offset(0, _isPressed ? 0 : depth),
+              blurRadius: 0,
             ),
           ],
+        ),
+        child: Center(
+          child: widget.isLoading
+              ? SizedBox(
+                  width: 22,
+                  height: 22,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2.5,
+                    valueColor:
+                        AlwaysStoppedAnimation<Color>(effectiveTextColor),
+                  ),
+                )
+              : Row(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    if (widget.icon != null) ...[
+                      widget.icon!,
+                      const SizedBox(width: 6),
+                    ],
+                    Flexible(
+                      child: LocalizedText(
+                        widget.text,
+                        style: TextStyle(
+                          color: effectiveTextColor,
+                          fontSize: widget.fontSize,
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: 0.2,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    if (widget.trailingIcon != null) ...[
+                      const SizedBox(width: 6),
+                      widget.trailingIcon!,
+                    ],
+                  ],
+                ),
         ),
       ),
     );

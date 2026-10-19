@@ -105,19 +105,23 @@ class AchievementsScreen extends StatelessWidget {
                         subtitle: 'XP ও ব্যাজ সংগ্রহ দেখো',
                         iconType: VectorIconType.trophy,
                         gradientColors: const [
-                          Color(0xFF0D7377),
-                          Color(0xFF14919B)
+                          Color(0xFFF59E0B),
+                          Color(0xFFD97706)
                         ],
                         onBack: () => Navigator.pop(context),
                         trailing: Container(
                           padding: const EdgeInsets.symmetric(
                               horizontal: 12, vertical: 6),
                           decoration: BoxDecoration(
-                              color: const Color(0xFFFFD66B),
-                              borderRadius: BorderRadius.circular(14)),
+                              color: const Color(0xFFFFFAE5),
+                              borderRadius: BorderRadius.circular(14),
+                              border: Border.all(
+                                color: const Color(0xFFD97706).withValues(alpha: 0.3),
+                                width: 1.5,
+                              )),
                           child: LocalizedText('$xp XP',
                               style: const TextStyle(
-                                  color: Color(0xFF8A6A00),
+                                  color: Color(0xFFB45309),
                                   fontSize: 13,
                                   fontWeight: FontWeight.w900)),
                         ),
@@ -129,16 +133,15 @@ class AchievementsScreen extends StatelessWidget {
                         padding: const EdgeInsets.all(20),
                         decoration: BoxDecoration(
                           color: Colors.white,
-                          borderRadius: BorderRadius.circular(24),
+                          borderRadius: BorderRadius.circular(20), // DS.rXl
                           border: Border.all(
-                              color: const Color(0xFF0D7377)
-                                  .withValues(alpha: 0.2),
+                              color: const Color(0xFFE5E7EB),
                               width: 2),
-                          boxShadow: const [
+                          boxShadow: [
                             BoxShadow(
-                                color: Color(0x1A0D7377),
+                                color: const Color(0xFFD97706).withValues(alpha: 0.12),
                                 blurRadius: 0,
-                                offset: Offset(0, 4))
+                                offset: const Offset(0, 4))
                           ],
                         ),
                         child: Column(
@@ -149,13 +152,13 @@ class AchievementsScreen extends StatelessWidget {
                                   width: 48,
                                   height: 48,
                                   decoration: BoxDecoration(
-                                      color: const Color(0xFFD4F0EC),
+                                      color: const Color(0xFFFEF3C7),
                                       borderRadius: BorderRadius.circular(14)),
                                   child: const Center(
                                       child: VectorIcon(
                                           type: VectorIconType.shield,
                                           size: 26,
-                                          color: Color(0xFF0D7377))),
+                                          color: Color(0xFFD97706))),
                                 ),
                                 const SizedBox(width: 12),
                                 Expanded(

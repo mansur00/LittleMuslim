@@ -31,7 +31,7 @@ class SettingsScreen extends StatelessWidget {
                   title: 'সেটিংস',
                   subtitle: 'শেখার অভিজ্ঞতা নিজের মতো সাজাও',
                   iconType: VectorIconType.shield,
-                  gradientColors: const [Color(0xFF0D7377), Color(0xFF159A8C)],
+                  gradientColors: const [Color(0xFF58CC02), Color(0xFF46A302)],
                   onBack: () => Navigator.pop(context),
                 ),
                 _SettingsSection(
@@ -445,8 +445,15 @@ class SettingsScreen extends StatelessWidget {
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
                     gradient: const LinearGradient(
-                        colors: [Color(0xFF0D7377), Color(0xFF159A8C)]),
-                    borderRadius: BorderRadius.circular(24),
+                        colors: [Color(0xFF58CC02), Color(0xFF46A302)]),
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color(0xFF46A302).withValues(alpha: 0.25),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
                   ),
                   child: const Row(children: [
                     CircleAvatar(

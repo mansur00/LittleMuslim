@@ -51,15 +51,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   title: 'প্রোফাইল ও অ্যাকাউন্ট',
                   subtitle: 'তোমার শেখার পরিচয় ও অগ্রগতি',
                   iconType: VectorIconType.smile,
-                  gradientColors: const [Color(0xFF0D7377), Color(0xFF159A8C)],
+                  gradientColors: const [Color(0xFF58CC02), Color(0xFF46A302)],
                   onBack: () => Navigator.pop(context),
                 ),
                 Container(
                   padding: const EdgeInsets.all(21),
                   decoration: BoxDecoration(
                     gradient: const LinearGradient(
-                        colors: [Color(0xFF0D7377), Color(0xFF159A8C)]),
-                    borderRadius: BorderRadius.circular(25),
+                        colors: [Color(0xFF58CC02), Color(0xFF46A302)]),
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color(0xFF46A302).withValues(alpha: 0.25),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
                   ),
                   child: Row(children: [
                     GestureDetector(

@@ -5,8 +5,11 @@ import 'package:provider/provider.dart';
 import '../../data/nurani_qaida_data.dart';
 import '../../models/qaida/qaida_models.dart';
 import '../../theme/app_theme.dart';
+import '../../theme/design_system.dart';
 import '../../utils/app_state.dart';
+import '../../widgets/duolingo_appbar.dart';
 import '../../widgets/quran_book_mascot.dart';
+import '../../widgets/vector_icons.dart';
 import 'qaida_revision_screen.dart';
 import 'qaida_track_lessons_screen.dart';
 
@@ -54,29 +57,6 @@ class QaidaReportScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFC),
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded,
-              size: 20, color: Color(0xFF1E293B)),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-        title: Text(
-          'শিক্ষার্থী অগ্রগতি প্রতিবেদন',
-          style: GoogleFonts.hindSiliguri(
-            fontWeight: FontWeight.bold,
-            fontSize: 18,
-            color: const Color(0xFF1E293B),
-          ),
-        ),
-        centerTitle: true,
-        bottom: const PreferredSize(
-          preferredSize: Size.fromHeight(1),
-          child: Divider(height: 1, color: Color(0xFFE2E8F0)),
-        ),
-      ),
       body: SafeArea(
         child: Center(
           child: ConstrainedBox(
@@ -84,21 +64,28 @@ class QaidaReportScreen extends StatelessWidget {
             child: ListView(
               padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
               children: [
+                DuolingoHeader(
+                  title: 'শিক্ষার্থী অগ্রগতি প্রতিবেদন',
+                  subtitle: 'নূরানী কায়দা ১৭ ধাপের পূর্ণাঙ্গ মূল্যায়ন ও বিশ্লেষণ',
+                  iconType: VectorIconType.trophy,
+                  gradientColors: const [Color(0xFF58CC02), Color(0xFF46A302)],
+                  onBack: () => Navigator.of(context).pop(),
+                ),
                 // Top overview card with Mascot
                 Container(
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
                     gradient: const LinearGradient(
-                      colors: [Color(0xFF0D7377), Color(0xFF14919B)],
+                      colors: [Color(0xFF58CC02), Color(0xFF46A302)],
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                     ),
-                    borderRadius: BorderRadius.circular(22),
+                    borderRadius: BorderRadius.circular(20), // DS.rXl
                     boxShadow: [
                       BoxShadow(
-                        color: const Color(0xFF0D7377).withValues(alpha: 0.3),
-                        offset: const Offset(0, 6),
-                        blurRadius: 16,
+                        color: const Color(0xFF46A302).withValues(alpha: 0.28),
+                        offset: const Offset(0, 4),
+                        blurRadius: 12,
                       ),
                     ],
                   ),
@@ -207,7 +194,7 @@ class QaidaReportScreen extends StatelessWidget {
                     Expanded(
                       child: _MetricCard(
                         icon: Icons.auto_stories_rounded,
-                        color: const Color(0xFF0D7377),
+                        color: const Color(0xFF58CC02),
                         title: 'পাঠ সম্পন্ন',
                         value: '$completedLessonsCount',
                         subtitle: 'মোট $totalLessonsCount',
@@ -773,7 +760,9 @@ class _WeakLetterHeatmapWidget extends StatelessWidget {
                           onPressed: () => Navigator.of(ctx).pop(),
                           child: const Text('ঠিক আছে'),
                         ),
-                        ElevatedButton(
+                        DSButton(
+                          label: 'অনুশীলন করুন',
+                          height: 42,
                           onPressed: () {
                             Navigator.of(ctx).pop();
                             Navigator.of(context).push(
@@ -782,11 +771,6 @@ class _WeakLetterHeatmapWidget extends StatelessWidget {
                               ),
                             );
                           },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppTheme.duoGreen,
-                            foregroundColor: Colors.white,
-                          ),
-                          child: const Text('অনুশীলন করুন'),
                         ),
                       ],
                     ),
@@ -912,7 +896,7 @@ class _ExamAuditCard extends StatelessWidget {
                 child: _ExamMiniBadge(
                   label: 'স্টেপ বস',
                   value: '$passedBossCount/১৭',
-                  color: const Color(0xFF0D7377),
+                  color: const Color(0xFF58CC02),
                 ),
               ),
               const SizedBox(width: 8),

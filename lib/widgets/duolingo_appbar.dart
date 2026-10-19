@@ -3,35 +3,82 @@ import '../l10n/app_localizations.dart';
 import 'vector_icons.dart';
 
 /// Shared Duolingo-style page header used on every inner screen.
-class DuolingoPageHeader extends StatelessWidget {
-  const DuolingoPageHeader({
+/// Standardized with 3D tactile bevel, bubble accents, and responsive layout.
+class DuolingoHeader extends StatelessWidget {
+  const DuolingoHeader({
     super.key,
     required this.title,
-    required this.subtitle,
-    required this.iconType,
-    required this.gradientColors,
+    this.subtitle,
+    this.iconType,
+    this.iconData,
+    this.customIcon,
+    this.gradientColors = const [Color(0xFF58CC02), Color(0xFF46A302)],
     this.onBack,
     this.trailing,
+    this.margin = const EdgeInsets.only(bottom: 20),
   });
 
   final String title;
-  final String subtitle;
-  final VectorIconType iconType;
+  final String? subtitle;
+  final VectorIconType? iconType;
+  final IconData? iconData;
+  final Widget? customIcon;
   final List<Color> gradientColors;
   final VoidCallback? onBack;
   final Widget? trailing;
+  final EdgeInsets margin;
+
+  /// PreferredSizeWidget adapter for screens using Scaffold(appBar: ...)
+  static PreferredSizeWidget appBar({
+    Key? key,
+    required String title,
+    String? subtitle,
+    VectorIconType? iconType,
+    IconData? iconData,
+    Widget? customIcon,
+    List<Color> gradientColors = const [Color(0xFF58CC02), Color(0xFF46A302)],
+    VoidCallback? onBack,
+    Widget? trailing,
+  }) {
+    final hasSubtitle = subtitle != null && subtitle.trim().isNotEmpty;
+    final barHeight = hasSubtitle ? 125.0 : 100.0;
+    return PreferredSize(
+      key: key,
+      preferredSize: Size.fromHeight(barHeight),
+      child: SafeArea(
+        bottom: false,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 6, 16, 0),
+          child: DuolingoHeader(
+            title: title,
+            subtitle: subtitle,
+            iconType: iconType,
+            iconData: iconData,
+            customIcon: customIcon,
+            gradientColors: gradientColors,
+            onBack: onBack,
+            trailing: trailing,
+            margin: EdgeInsets.zero,
+          ),
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    final shadowColor = HSLColor.fromColor(gradientColors.last)
+    final lastColor = gradientColors.length > 1 ? gradientColors.last : gradientColors.first;
+    final shadowColor = HSLColor.fromColor(lastColor)
         .withLightness(
-          (HSLColor.fromColor(gradientColors.last).lightness - .16)
+          (HSLColor.fromColor(lastColor).lightness - .16)
               .clamp(0.0, 1.0),
         )
         .toColor();
 
+    final hasIcon = customIcon != null || iconData != null || iconType != null;
+
     return Container(
-      margin: const EdgeInsets.only(bottom: 20),
+      margin: margin,
       child: Stack(
         children: [
           Positioned.fill(
@@ -39,46 +86,47 @@ class DuolingoPageHeader extends StatelessWidget {
             child: DecoratedBox(
               decoration: BoxDecoration(
                 color: shadowColor,
-                borderRadius: BorderRadius.circular(28),
+                borderRadius: BorderRadius.circular(24),
               ),
             ),
           ),
           Container(
             margin: const EdgeInsets.only(bottom: 7),
-            padding: const EdgeInsets.fromLTRB(16, 14, 16, 18),
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: gradientColors,
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
-              borderRadius: BorderRadius.circular(28),
+              borderRadius: BorderRadius.circular(24),
               border: Border.all(
-                color: Colors.white.withValues(alpha: .22),
-                width: 1.3,
+                color: Colors.white.withValues(alpha: .24),
+                width: 1.5,
               ),
             ),
             child: Stack(
               clipBehavior: Clip.none,
               children: [
                 Positioned(
-                  right: -26,
-                  top: -28,
+                  right: -24,
+                  top: -24,
                   child: _HeaderBubble(
-                    size: 112,
+                    size: 100,
                     color: Colors.white.withValues(alpha: .10),
                   ),
                 ),
                 Positioned(
-                  right: 44,
-                  bottom: -36,
+                  right: 48,
+                  bottom: -30,
                   child: _HeaderBubble(
-                    size: 76,
+                    size: 68,
                     color: Colors.white.withValues(alpha: .08),
                   ),
                 ),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     Row(
                       children: [
@@ -86,17 +134,28 @@ class DuolingoPageHeader extends StatelessWidget {
                           Semantics(
                             button: true,
                             label: context.uiText('ফিরে যান'),
-                            child: GestureDetector(
-                              onTap: onBack,
-                              child: Container(
-                                width: 38,
-                                height: 38,
-                                decoration: BoxDecoration(
-                                  color: Colors.white.withValues(alpha: 0.25),
-                                  shape: BoxShape.circle,
+                            child: Material(
+                              color: Colors.transparent,
+                              child: InkWell(
+                                onTap: onBack,
+                                borderRadius: BorderRadius.circular(20),
+                                child: Container(
+                                  width: 38,
+                                  height: 38,
+                                  decoration: BoxDecoration(
+                                    color: Colors.white.withValues(alpha: 0.25),
+                                    shape: BoxShape.circle,
+                                    border: Border.all(
+                                      color: Colors.white.withValues(alpha: 0.35),
+                                      width: 1.2,
+                                    ),
+                                  ),
+                                  child: const Icon(
+                                    Icons.arrow_back_rounded,
+                                    color: Colors.white,
+                                    size: 20,
+                                  ),
                                 ),
-                                child: const Icon(Icons.arrow_back_rounded,
-                                    color: Colors.white, size: 20),
                               ),
                             ),
                           ),
@@ -104,56 +163,73 @@ class DuolingoPageHeader extends StatelessWidget {
                         if (trailing != null) trailing!,
                       ],
                     ),
-                    const SizedBox(height: 14),
+                    const SizedBox(height: 10),
                     Row(
                       children: [
-                        Container(
-                          width: 56,
-                          height: 56,
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: [
-                                Colors.white.withValues(alpha: .42),
-                                Colors.white.withValues(alpha: .16),
+                        if (hasIcon) ...[
+                          Container(
+                            width: 52,
+                            height: 52,
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                                colors: [
+                                  Colors.white.withValues(alpha: .45),
+                                  Colors.white.withValues(alpha: .18),
+                                ],
+                              ),
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: Colors.white.withValues(alpha: .40),
+                                width: 1.5,
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: shadowColor.withValues(alpha: .30),
+                                  blurRadius: 0,
+                                  offset: const Offset(0, 3),
+                                ),
                               ],
                             ),
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: Colors.white.withValues(alpha: .38),
+                            child: Center(
+                              child: customIcon ??
+                                  (iconData != null
+                                      ? Icon(iconData, size: 26, color: Colors.white)
+                                      : VectorIcon(
+                                          type: iconType ?? VectorIconType.book,
+                                          size: 28,
+                                          color: Colors.white,
+                                        )),
                             ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: shadowColor.withValues(alpha: .26),
-                                blurRadius: 0,
-                                offset: const Offset(0, 4),
-                              ),
-                            ],
                           ),
-                          child: Center(
-                            child: VectorIcon(
-                                type: iconType, size: 30, color: Colors.white),
-                          ),
-                        ),
-                        const SizedBox(width: 14),
+                          const SizedBox(width: 14),
+                        ],
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
                             children: [
-                              LocalizedText(title,
-                                  style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.w900,
-                                      height: 1.2)),
-                              const SizedBox(height: 3),
-                              LocalizedText(subtitle,
+                              LocalizedText(
+                                title,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 19,
+                                  fontWeight: FontWeight.w900,
+                                  height: 1.2,
+                                ),
+                              ),
+                              if (subtitle != null && subtitle!.trim().isNotEmpty) ...[
+                                const SizedBox(height: 3),
+                                LocalizedText(
+                                  subtitle!,
                                   style: TextStyle(
-                                      color:
-                                          Colors.white.withValues(alpha: 0.85),
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w500)),
+                                    color: Colors.white.withValues(alpha: 0.90),
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
                             ],
                           ),
                         ),
@@ -169,6 +245,10 @@ class DuolingoPageHeader extends StatelessWidget {
     );
   }
 }
+
+/// Unified aliases for DuolingoHeader
+typedef DuolingoPageHeader = DuolingoHeader;
+typedef AppHeader = DuolingoHeader;
 
 class _HeaderBubble extends StatelessWidget {
   const _HeaderBubble({required this.size, required this.color});
@@ -388,7 +468,7 @@ class _DuolingoCardState extends State<DuolingoCard> {
                             .clamp(0.0, 1.0),
                       )
                       .toColor(),
-                  borderRadius: BorderRadius.circular(22),
+                  borderRadius: BorderRadius.circular(20),
                 ),
               ),
             ),
@@ -400,21 +480,21 @@ class _DuolingoCardState extends State<DuolingoCard> {
               child: Container(
                 decoration: BoxDecoration(
                   color: widget.backgroundColor,
-                  borderRadius: BorderRadius.circular(22),
+                  borderRadius: BorderRadius.circular(20),
                   border: Border.all(
-                    color: widget.accentColor.withValues(alpha: .25),
-                    width: 1.5,
+                    color: widget.accentColor.withValues(alpha: .28),
+                    width: 2.0,
                   ),
                   boxShadow: [
                     BoxShadow(
                       color: widget.accentColor.withValues(alpha: .10),
-                      blurRadius: 12,
+                      blurRadius: 10,
                       offset: Offset(0, _pressed ? 1 : 4),
                     ),
                   ],
                 ),
                 child: ClipRRect(
-                  borderRadius: BorderRadius.circular(20),
+                  borderRadius: BorderRadius.circular(18),
                   child: Row(children: [
                     if (widget.showAccentStripe)
                       Container(width: 5, color: widget.accentColor),

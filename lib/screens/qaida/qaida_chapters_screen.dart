@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../../data/nurani_qaida_data.dart';
 import '../../models/qaida/qaida_models.dart';
 import '../../theme/app_theme.dart';
+import '../../theme/design_system.dart';
 import '../../utils/app_state.dart';
 import '../../widgets/duolingo_appbar.dart';
 import '../../widgets/vector_icons.dart';
@@ -484,21 +485,17 @@ class QaidaChaptersScreen extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(width: 8),
-                      ElevatedButton(
+                      DSButton(
+                        label: state.isAdmin ? 'লক মোড' : 'সব আনলক',
+                        height: 38,
+                        fontSize: 12,
+                        borderRadius: 12,
+                        variant: state.isAdmin
+                            ? DSButtonVariant.gold
+                            : DSButtonVariant.primary,
                         onPressed: () async {
                           await state.toggleAdminMode();
                         },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: state.isAdmin ? const Color(0xFFD97706) : AppTheme.duoGreen,
-                          foregroundColor: Colors.white,
-                          elevation: 0,
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                        ),
-                        child: Text(
-                          state.isAdmin ? 'লক মোড' : 'সব আনলক',
-                          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-                        ),
                       ),
                     ],
                   ),

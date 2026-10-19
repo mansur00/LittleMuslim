@@ -66,8 +66,8 @@ class _LiveLearningScreenState extends State<LiveLearningScreen> {
                     subtitle: 'ক্লাসের সময় ও তথ্য দেখো',
                     iconType: VectorIconType.book,
                     gradientColors: const [
-                      Color(0xFF0D7377),
-                      Color(0xFF159A8C)
+                      Color(0xFF58CC02),
+                      Color(0xFF46A302),
                     ],
                     onBack: () => Navigator.pop(context),
                   ),
@@ -76,9 +76,16 @@ class _LiveLearningScreenState extends State<LiveLearningScreen> {
                     padding: EdgeInsets.all(tablet ? 24 : 18),
                     decoration: BoxDecoration(
                       gradient: const LinearGradient(
-                        colors: [Color(0xFF0D7377), Color(0xFF159A8C)],
+                        colors: [Color(0xFF58CC02), Color(0xFF46A302)],
                       ),
-                      borderRadius: BorderRadius.circular(25),
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color(0xFF46A302).withValues(alpha: 0.25),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
                     ),
                     child: const Row(children: [
                       Icon(Icons.video_call_rounded,
@@ -260,7 +267,7 @@ class _LiveClassDetailScreenState extends State<LiveClassDetailScreen> {
               title: 'ক্লাসের বিস্তারিত',
               subtitle: liveClass.title,
               iconType: VectorIconType.book,
-              gradientColors: const [Color(0xFF0D7377), Color(0xFF159A8C)],
+              gradientColors: const [Color(0xFF58CC02), Color(0xFF46A302)],
               onBack: () => Navigator.pop(context),
             ),
             const SizedBox(height: 18),

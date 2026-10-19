@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 
 import '../../models/qaida/qaida_models.dart';
 import '../../theme/app_theme.dart';
+import '../../theme/design_system.dart';
 import '../../utils/app_state.dart';
 import '../../widgets/duolingo_button.dart';
 import '../../widgets/quran_book_mascot.dart';
@@ -3723,24 +3724,18 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
               ),
             ),
             const SizedBox(width: 12),
-            ElevatedButton.icon(
+            DSButton(
               onPressed: () {
                 setState(() {
                   _isTraceCompleted = true;
                 });
               },
-              icon: const Icon(Icons.check_circle_rounded, size: 18),
-              label: Text(
-                _isTraceCompleted ? 'আঁকা সম্পন্ন ✓' : 'সম্পন্ন করেছি',
-                style: GoogleFonts.hindSiliguri(fontWeight: FontWeight.bold),
-              ),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: _isTraceCompleted ? AppTheme.duoGreen : const Color(0xFF0284C7),
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                elevation: 0,
-              ),
+              icon: const Icon(Icons.check_circle_rounded, size: 18, color: Colors.white),
+              label: _isTraceCompleted ? 'আঁকা সম্পন্ন ✓' : 'সম্পন্ন করেছি',
+              height: 44,
+              variant: _isTraceCompleted
+                  ? DSButtonVariant.primary
+                  : DSButtonVariant.blue,
             ),
           ],
         ),

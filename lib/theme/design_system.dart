@@ -203,27 +203,55 @@ class ModuleColors {
 // ─────────────────────────────────────────────────────────────────────────────
 // DS BUTTON — Duolingo 3D press animation
 // ─────────────────────────────────────────────────────────────────────────────
+// DS BUTTON — Duolingo 3D press animation & tactile bevel
+// ─────────────────────────────────────────────────────────────────────────────
+enum DSButtonVariant {
+  primary,
+  secondary,
+  gold,
+  blue,
+  danger,
+  purple,
+  outline,
+}
+
 class DSButton extends StatefulWidget {
   const DSButton({
     super.key,
     required this.label,
     required this.onPressed,
-    this.color = const Color(0xFF58CC02),
-    this.shadowColor = const Color(0xFF46A302),
-    this.textColor = Colors.white,
+    this.variant = DSButtonVariant.primary,
+    this.color,
+    this.shadowColor,
+    this.textColor,
+    this.borderColor,
     this.height = DS.btnMd,
     this.icon,
+    this.iconData,
     this.width,
+    this.fullWidth = false,
+    this.fontSize = DS.textBase,
+    this.borderRadius = DS.rLg, // 16px
+    this.bevel = 4.0,
+    this.child,
   });
 
   final String label;
-  final VoidCallback onPressed;
-  final Color color;
-  final Color shadowColor;
-  final Color textColor;
+  final VoidCallback? onPressed;
+  final DSButtonVariant variant;
+  final Color? color;
+  final Color? shadowColor;
+  final Color? textColor;
+  final Color? borderColor;
   final double height;
   final Widget? icon;
+  final IconData? iconData;
   final double? width;
+  final bool fullWidth;
+  final double fontSize;
+  final double borderRadius;
+  final double bevel;
+  final Widget? child;
 
   @override
   State<DSButton> createState() => _DSButtonState();
@@ -234,62 +262,296 @@ class _DSButtonState extends State<DSButton> {
 
   @override
   Widget build(BuildContext context) {
-    const bevel = DS.bevelMd;
+    final isDisabled = widget.onPressed == null;
+    final bevel = isDisabled ? 2.0 : widget.bevel;
+
+    Color faceColor;
+    Color bevelColor;
+    Color labelColor;
+    Color? outlineBorder;
+
+    if (isDisabled) {
+      faceColor = const Color(0xFFE5E7EB);
+      bevelColor = const Color(0xFFD1D5DB);
+      labelColor = const Color(0xFF9CA3AF);
+    } else {
+      switch (widget.variant) {
+        case DSButtonVariant.primary:
+          faceColor = widget.color ?? const Color(0xFF58CC02);
+          bevelColor = widget.shadowColor ?? const Color(0xFF46A302);
+          labelColor = widget.textColor ?? Colors.white;
+          break;
+        case DSButtonVariant.secondary:
+          faceColor = widget.color ?? Colors.white;
+          bevelColor = widget.shadowColor ?? const Color(0xFFE5E7EB);
+          labelColor = widget.textColor ?? const Color(0xFF3C3C3C);
+          outlineBorder = widget.borderColor ?? const Color(0xFFE5E7EB);
+          break;
+        case DSButtonVariant.gold:
+          faceColor = widget.color ?? const Color(0xFFFFC800);
+          bevelColor = widget.shadowColor ?? const Color(0xFFE5A100);
+          labelColor = widget.textColor ?? Colors.white;
+          break;
+        case DSButtonVariant.blue:
+          faceColor = widget.color ?? const Color(0xFF1CB0F6);
+          bevelColor = widget.shadowColor ?? const Color(0xFF1899D6);
+          labelColor = widget.textColor ?? Colors.white;
+          break;
+        case DSButtonVariant.danger:
+          faceColor = widget.color ?? const Color(0xFFFF4B4B);
+          bevelColor = widget.shadowColor ?? const Color(0xFFEA2B2B);
+          labelColor = widget.textColor ?? Colors.white;
+          break;
+        case DSButtonVariant.purple:
+          faceColor = widget.color ?? const Color(0xFFA855F7);
+          bevelColor = widget.shadowColor ?? const Color(0xFF9333EA);
+          labelColor = widget.textColor ?? Colors.white;
+          break;
+        case DSButtonVariant.outline:
+          faceColor = widget.color ?? Colors.white;
+          bevelColor = widget.shadowColor ?? const Color(0xFFE5E7EB);
+          labelColor = widget.textColor ?? const Color(0xFF58CC02);
+          outlineBorder = widget.borderColor ?? const Color(0xFF58CC02);
+          break;
+      }
+    }
+
+    Widget content = widget.child ??
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            if (widget.icon != null) ...[
+              widget.icon!,
+              const SizedBox(width: DS.s2),
+            ] else if (widget.iconData != null) ...[
+              Icon(widget.iconData, color: labelColor, size: widget.fontSize + 4),
+              const SizedBox(width: DS.s2),
+            ],
+            Flexible(
+              child: LocalizedText(
+                widget.label,
+                style: TextStyle(
+                  color: labelColor,
+                  fontSize: widget.fontSize,
+                  fontWeight: DS.black,
+                  letterSpacing: 0.3,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
+        );
+
     return GestureDetector(
-      onTapDown: (_) => setState(() => _pressed = true),
-      onTapUp: (_) {
-        setState(() => _pressed = false);
-        widget.onPressed();
-      },
-      onTapCancel: () => setState(() => _pressed = false),
-      child: SizedBox(
-        width: widget.width,
-        height: widget.height + bevel,
+      onTapDown: isDisabled ? null : (_) => setState(() => _pressed = true),
+      onTapUp: isDisabled
+          ? null
+          : (_) {
+              setState(() => _pressed = false);
+              widget.onPressed!();
+            },
+      onTapCancel: isDisabled ? null : () => setState(() => _pressed = false),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 60),
+        curve: Curves.easeOut,
+        width: widget.fullWidth ? double.infinity : widget.width,
+        height: widget.height,
+        margin: EdgeInsets.only(
+          top: _pressed ? bevel : 0,
+          bottom: _pressed ? 0 : bevel,
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: 14),
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: faceColor,
+          borderRadius: BorderRadius.circular(widget.borderRadius),
+          border: outlineBorder != null
+              ? Border.all(color: outlineBorder, width: 2.0)
+              : Border.all(
+                  color: Colors.white.withValues(alpha: 0.22),
+                  width: 1.5,
+                ),
+          boxShadow: [
+            BoxShadow(
+              color: bevelColor,
+              offset: Offset(0, _pressed ? 0 : bevel),
+              blurRadius: 0,
+            ),
+          ],
+        ),
+        child: content,
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// DS CARD — Feature Card (DS.rXl 20px + 2px Border + 3D Bevel Shadow)
+// ─────────────────────────────────────────────────────────────────────────────
+class DSCard extends StatefulWidget {
+  const DSCard({
+    super.key,
+    required this.child,
+    this.onTap,
+    this.accentColor = const Color(0xFF58CC02),
+    this.bevelColor,
+    this.backgroundColor = Colors.white,
+    this.borderRadius = DS.rXl, // 20px
+    this.borderWidth = 2.0,
+    this.borderColor,
+    this.bevelDepth = 5.0,
+    this.padding = const EdgeInsets.all(16),
+    this.margin = const EdgeInsets.only(bottom: 14),
+  });
+
+  final Widget child;
+  final VoidCallback? onTap;
+  final Color accentColor;
+  final Color? bevelColor;
+  final Color backgroundColor;
+  final double borderRadius;
+  final double borderWidth;
+  final Color? borderColor;
+  final double bevelDepth;
+  final EdgeInsets padding;
+  final EdgeInsets margin;
+
+  @override
+  State<DSCard> createState() => _DSCardState();
+}
+
+class _DSCardState extends State<DSCard> {
+  bool _pressed = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final effectiveBevelColor = widget.bevelColor ??
+        HSLColor.fromColor(widget.accentColor)
+            .withLightness(
+              (HSLColor.fromColor(widget.accentColor).lightness - .15)
+                  .clamp(0.0, 1.0),
+            )
+            .toColor();
+
+    final effectiveBorderColor = widget.borderColor ??
+        widget.accentColor.withValues(alpha: 0.28);
+
+    return GestureDetector(
+      onTapDown:
+          widget.onTap != null ? (_) => setState(() => _pressed = true) : null,
+      onTapUp: widget.onTap != null
+          ? (_) {
+              setState(() => _pressed = false);
+              widget.onTap!();
+            }
+          : null,
+      onTapCancel:
+          widget.onTap != null ? () => setState(() => _pressed = false) : null,
+      child: Container(
+        margin: widget.margin,
         child: Stack(
           children: [
             Positioned.fill(
-              top: bevel,
-              child: Container(
+              top: widget.bevelDepth,
+              child: DecoratedBox(
                 decoration: BoxDecoration(
-                  color: widget.shadowColor,
-                  borderRadius: BorderRadius.circular(DS.rLg),
+                  color: effectiveBevelColor,
+                  borderRadius: BorderRadius.circular(widget.borderRadius),
                 ),
               ),
             ),
-            AnimatedPositioned(
+            AnimatedPadding(
               duration: const Duration(milliseconds: 80),
               curve: Curves.easeOut,
-              top: _pressed ? bevel : 0,
-              bottom: _pressed ? 0 : bevel,
-              left: 0,
-              right: 0,
+              padding: EdgeInsets.only(
+                top: _pressed ? widget.bevelDepth : 0,
+                bottom: _pressed ? 0 : widget.bevelDepth,
+              ),
               child: Container(
-                alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  color: widget.color,
-                  borderRadius: BorderRadius.circular(DS.rLg),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    if (widget.icon != null) ...[
-                      widget.icon!,
-                      const SizedBox(width: DS.s2),
-                    ],
-                    LocalizedText(
-                      widget.label,
-                      style: TextStyle(
-                        color: widget.textColor,
-                        fontSize: DS.textBase,
-                        fontWeight: DS.black,
-                        letterSpacing: 0.3,
-                      ),
+                  color: widget.backgroundColor,
+                  borderRadius: BorderRadius.circular(widget.borderRadius),
+                  border: Border.all(
+                    color: effectiveBorderColor,
+                    width: widget.borderWidth,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: widget.accentColor.withValues(alpha: 0.08),
+                      blurRadius: 10,
+                      offset: Offset(0, _pressed ? 1 : 4),
                     ),
                   ],
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(
+                      (widget.borderRadius - 2).clamp(0.0, 40.0)),
+                  child: Padding(
+                    padding: widget.padding,
+                    child: widget.child,
+                  ),
                 ),
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// DS LIST TILE CARD — List Item (DS.rLg 16px + 1.5px Border)
+// ─────────────────────────────────────────────────────────────────────────────
+class DSListTileCard extends StatelessWidget {
+  const DSListTileCard({
+    super.key,
+    required this.child,
+    this.onTap,
+    this.borderRadius = DS.rLg, // 16px
+    this.borderWidth = 1.5,
+    this.borderColor = const Color(0xFFE5E7EB),
+    this.backgroundColor = Colors.white,
+    this.padding = const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+    this.margin = const EdgeInsets.only(bottom: 10),
+  });
+
+  final Widget child;
+  final VoidCallback? onTap;
+  final double borderRadius;
+  final double borderWidth;
+  final Color borderColor;
+  final Color backgroundColor;
+  final EdgeInsets padding;
+  final EdgeInsets margin;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: margin,
+      decoration: BoxDecoration(
+        color: backgroundColor,
+        borderRadius: BorderRadius.circular(borderRadius),
+        border: Border.all(color: borderColor, width: borderWidth),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.03),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(borderRadius),
+          onTap: onTap,
+          child: Padding(
+            padding: padding,
+            child: child,
+          ),
         ),
       ),
     );

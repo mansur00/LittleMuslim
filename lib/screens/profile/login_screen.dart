@@ -33,7 +33,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   title: _createAccount ? 'নতুন account' : 'আবার স্বাগতম',
                   subtitle: 'অভিভাবকের account দিয়ে নিরাপদে যুক্ত হও',
                   iconType: VectorIconType.mosque,
-                  gradientColors: const [Color(0xFF0D7377), Color(0xFF159A8C)],
+                  gradientColors: const [Color(0xFF58CC02), Color(0xFF46A302)],
                   onBack: () => Navigator.pop(context),
                 ),
                 LocalizedText(

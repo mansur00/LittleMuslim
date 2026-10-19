@@ -691,18 +691,10 @@ class _QaidaExamScreenState extends State<QaidaExamScreen> {
                   },
                 ),
                 const SizedBox(height: 12),
-                OutlinedButton.icon(
+                Duolingo3DButton.secondary(
+                  text: 'আবার পরীক্ষা দিন',
+                  icon: const Icon(Icons.refresh_rounded, size: 20, color: Color(0xFF374151)),
                   onPressed: _retakeExam,
-                  icon: const Icon(Icons.refresh_rounded, size: 20),
-                  label: Text('আবার পরীক্ষা দিন',
-                      style: GoogleFonts.hindSiliguri(
-                          fontSize: 16, fontWeight: FontWeight.bold)),
-                  style: OutlinedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    side: const BorderSide(color: Color(0xFFCBD5E1), width: 1.5),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16)),
-                  ),
                 ),
               ],
             ],

@@ -7,7 +7,9 @@ import '../../data/qaida_curriculum_data.dart';
 import '../../models/qaida/qaida_models.dart';
 import '../../theme/app_theme.dart';
 import '../../utils/app_state.dart';
+import '../../widgets/duolingo_appbar.dart';
 import '../../widgets/quran_book_mascot.dart';
+import '../../widgets/vector_icons.dart';
 import 'qaida_activity_screen.dart';
 
 /// Screen for Smart Revision and "Fix My Mistakes" (ভুল সংশোধন)
@@ -80,29 +82,6 @@ class _QaidaRevisionScreenState extends State<QaidaRevisionScreen> {
 
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFC),
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded,
-              size: 20, color: Color(0xFF1E293B)),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-        title: Text(
-          'অনুশীলন ও ভুল সংশোধন',
-          style: GoogleFonts.hindSiliguri(
-            fontWeight: FontWeight.bold,
-            fontSize: 18,
-            color: const Color(0xFF1E293B),
-          ),
-        ),
-        centerTitle: true,
-        bottom: const PreferredSize(
-          preferredSize: Size.fromHeight(1),
-          child: Divider(height: 1, color: Color(0xFFE2E8F0)),
-        ),
-      ),
       body: SafeArea(
         child: Center(
           child: ConstrainedBox(
@@ -110,21 +89,28 @@ class _QaidaRevisionScreenState extends State<QaidaRevisionScreen> {
             child: ListView(
               padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
               children: [
+                DuolingoHeader(
+                  title: 'অনুশীলন ও ভুল সংশোধন',
+                  subtitle: 'ভুল হওয়া অক্ষর ও পাঠগুলো আবার অনুশীলন করো',
+                  iconType: VectorIconType.shield,
+                  gradientColors: const [Color(0xFF58CC02), Color(0xFF46A302)],
+                  onBack: () => Navigator.of(context).pop(),
+                ),
                 // Top Banner with Quran Mascot
                 Container(
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
                     gradient: const LinearGradient(
-                      colors: [Color(0xFF4F46E5), Color(0xFF4338CA)],
+                      colors: [Color(0xFF6366F1), Color(0xFF4F46E5)],
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                     ),
-                    borderRadius: BorderRadius.circular(22),
+                    borderRadius: BorderRadius.circular(20), // DS.rXl
                     boxShadow: [
                       BoxShadow(
-                        color: const Color(0xFF4F46E5).withValues(alpha: 0.3),
-                        offset: const Offset(0, 6),
-                        blurRadius: 16,
+                        color: const Color(0xFF4F46E5).withValues(alpha: 0.25),
+                        offset: const Offset(0, 4),
+                        blurRadius: 12,
                       ),
                     ],
                   ),

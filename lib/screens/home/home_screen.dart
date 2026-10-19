@@ -345,15 +345,15 @@ class _HomeContinueTab extends StatelessWidget {
           padding: const EdgeInsets.all(18),
           decoration: BoxDecoration(
             gradient: const LinearGradient(
-              colors: [Color(0xFF0D7377), Color(0xFF14919B)],
+              colors: [Color(0xFF58CC02), Color(0xFF46A302)],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
-            borderRadius: BorderRadius.circular(24),
+            borderRadius: BorderRadius.circular(20), // DS.rXl
             boxShadow: [
               BoxShadow(
-                color: const Color(0xFF0D7377).withValues(alpha: 0.25),
-                blurRadius: 12,
+                color: const Color(0xFF46A302).withValues(alpha: 0.28),
+                blurRadius: 10,
                 offset: const Offset(0, 4),
               ),
             ],
@@ -1268,7 +1268,7 @@ class _ContinueLearningCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF0D7377).withValues(alpha: 0.12),
+                  color: const Color(0xFFE8F8D8),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Text(
@@ -1276,7 +1276,7 @@ class _ContinueLearningCard extends StatelessWidget {
                   style: const TextStyle(
                     fontSize: 11,
                     fontWeight: FontWeight.bold,
-                    color: Color(0xFF0D7377),
+                    color: Color(0xFF2D6A00),
                   ),
                 ),
               ),
@@ -1655,11 +1655,11 @@ class _TeacherLearningBanner extends StatelessWidget {
           padding: EdgeInsets.all(isTablet ? 20 : 16),
           decoration: BoxDecoration(
             gradient: const LinearGradient(
-              colors: [Color(0xFF0D7377), Color(0xFF159A8C)],
+              colors: [Color(0xFF58CC02), Color(0xFF46A302)],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
-            borderRadius: BorderRadius.circular(24),
+            borderRadius: BorderRadius.circular(20), // DS.rXl
             boxShadow: [
               BoxShadow(
                 color: AppTheme.primaryGreen.withValues(alpha: .22),
@@ -1733,60 +1733,63 @@ class _DuolingoBottomNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: isTablet ? 40 : 16,
-        vertical: 10,
-      ),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        border: const Border(
-          top: BorderSide(color: Color(0xFFE5E7EB), width: 1.5),
+    return SafeArea(
+      top: false,
+      child: Container(
+        padding: EdgeInsets.symmetric(
+          horizontal: isTablet ? 36 : 12,
+          vertical: 8,
         ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 12,
-            offset: const Offset(0, -4),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          border: const Border(
+            top: BorderSide(color: Color(0xFFE5E7EB), width: 1.5),
           ),
-        ],
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          Expanded(
-            child: _NavBarItem(
-              navType: Real3DNavType.path,
-              label: 'শেখার পথ',
-              isSelected: currentIndex == 0,
-              onTap: () => onTap(0),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.04),
+              blurRadius: 10,
+              offset: const Offset(0, -3),
             ),
-          ),
-          Expanded(
-            child: _NavBarItem(
-              navType: Real3DNavType.modules,
-              label: 'আমার পড়া',
-              isSelected: currentIndex == 1,
-              onTap: () => onTap(1),
+          ],
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            Expanded(
+              child: _NavBarItem(
+                navType: Real3DNavType.path,
+                label: 'শেখার পথ',
+                isSelected: currentIndex == 0,
+                onTap: () => onTap(0),
+              ),
             ),
-          ),
-          Expanded(
-            child: _NavBarItem(
-              navType: Real3DNavType.missions,
-              label: 'মিশন',
-              isSelected: currentIndex == 2,
-              onTap: () => onTap(2),
+            Expanded(
+              child: _NavBarItem(
+                navType: Real3DNavType.modules,
+                label: 'আমার পড়া',
+                isSelected: currentIndex == 1,
+                onTap: () => onTap(1),
+              ),
             ),
-          ),
-          Expanded(
-            child: _NavBarItem(
-              navType: Real3DNavType.achievements,
-              label: 'অর্জন',
-              isSelected: currentIndex == 3,
-              onTap: () => onTap(3),
+            Expanded(
+              child: _NavBarItem(
+                navType: Real3DNavType.missions,
+                label: 'মিশন',
+                isSelected: currentIndex == 2,
+                onTap: () => onTap(2),
+              ),
             ),
-          ),
-        ],
+            Expanded(
+              child: _NavBarItem(
+                navType: Real3DNavType.achievements,
+                label: 'অর্জন',
+                isSelected: currentIndex == 3,
+                onTap: () => onTap(3),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -1811,22 +1814,37 @@ class _NavBarItem extends StatelessWidget {
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+        duration: const Duration(milliseconds: 180),
+        curve: Curves.easeOut,
+        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
         decoration: BoxDecoration(
           color: isSelected ? const Color(0xFFE8F8D8) : Colors.transparent,
           borderRadius: BorderRadius.circular(16),
           border: isSelected
-              ? Border.all(color: const Color(0xFF58CC02).withValues(alpha: 0.4), width: 1.5)
-              : null,
+              ? Border.all(
+                  color: const Color(0xFF58CC02).withValues(alpha: 0.45),
+                  width: 1.5,
+                )
+              : Border.all(color: Colors.transparent, width: 1.5),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Real3DNavIcon(
-              type: navType,
-              size: isSelected ? 30 : 26,
-              isSelected: isSelected,
+            SizedBox(
+              height: 28,
+              width: 28,
+              child: AnimatedScale(
+                scale: isSelected ? 1.08 : 1.0,
+                duration: const Duration(milliseconds: 180),
+                curve: Curves.easeOut,
+                child: Center(
+                  child: Real3DNavIcon(
+                    type: navType,
+                    size: 26,
+                    isSelected: isSelected,
+                  ),
+                ),
+              ),
             ),
             const SizedBox(height: 3),
             LocalizedText(
@@ -1834,8 +1852,12 @@ class _NavBarItem extends StatelessWidget {
               style: TextStyle(
                 fontSize: 11,
                 fontWeight: isSelected ? FontWeight.w900 : FontWeight.w700,
-                color: isSelected ? const Color(0xFF2D6A00) : const Color(0xFF9CA3AF),
+                color: isSelected
+                    ? const Color(0xFF2D6A00)
+                    : const Color(0xFF9CA3AF),
               ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
           ],
         ),

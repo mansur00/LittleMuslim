@@ -6,7 +6,9 @@ import 'package:provider/provider.dart';
 import '../../models/qaida/qaida_models.dart';
 import '../../theme/app_theme.dart';
 import '../../utils/app_state.dart';
+import '../../widgets/duolingo_appbar.dart';
 import '../../widgets/quran_book_mascot.dart';
+import '../../widgets/vector_icons.dart';
 import 'qaida_activity_screen.dart';
 
 enum TrackViewMode { roadmap, list }
@@ -78,59 +80,36 @@ class _QaidaTrackLessonsScreenState extends State<QaidaTrackLessonsScreen>
         : 0.0;
     final currentIndex = _findCurrentLessonIndex(state);
 
-    return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFC),
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded,
-              size: 20, color: Color(0xFF1E293B)),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-        title: Text(
-          track.title,
-          style: GoogleFonts.hindSiliguri(
-            fontWeight: FontWeight.bold,
-            fontSize: 18,
-            color: const Color(0xFF1E293B),
-          ),
-        ),
-        centerTitle: true,
-        actions: [
-          // View Mode Switcher
-          Container(
-            margin: const EdgeInsets.only(right: 12),
-            decoration: BoxDecoration(
-              color: const Color(0xFFF1F5F9),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                _ViewModeButton(
-                  icon: Icons.alt_route_rounded,
-                  label: 'ম্যাপ',
-                  isSelected: _viewMode == TrackViewMode.roadmap,
-                  onTap: () =>
-                      setState(() => _viewMode = TrackViewMode.roadmap),
-                ),
-                _ViewModeButton(
-                  icon: Icons.list_alt_rounded,
-                  label: 'তালিকা',
-                  isSelected: _viewMode == TrackViewMode.list,
-                  onTap: () => setState(() => _viewMode = TrackViewMode.list),
-                ),
-              ],
-            ),
-          ),
-        ],
-        bottom: const PreferredSize(
-          preferredSize: Size.fromHeight(1),
-          child: Divider(height: 1, color: Color(0xFFE2E8F0)),
+    final modeSwitcher = Container(
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.25),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.35),
+          width: 1.2,
         ),
       ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _ViewModeButton(
+            icon: Icons.alt_route_rounded,
+            label: 'ম্যাপ',
+            isSelected: _viewMode == TrackViewMode.roadmap,
+            onTap: () => setState(() => _viewMode = TrackViewMode.roadmap),
+          ),
+          _ViewModeButton(
+            icon: Icons.list_alt_rounded,
+            label: 'তালিকা',
+            isSelected: _viewMode == TrackViewMode.list,
+            onTap: () => setState(() => _viewMode = TrackViewMode.list),
+          ),
+        ],
+      ),
+    );
+
+    return Scaffold(
+      backgroundColor: const Color(0xFFF8FAFC),
       body: SafeArea(
         child: Center(
           child: ConstrainedBox(
@@ -138,6 +117,14 @@ class _QaidaTrackLessonsScreenState extends State<QaidaTrackLessonsScreen>
             child: ListView(
               padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
               children: [
+                DuolingoHeader(
+                  title: track.title,
+                  subtitle: 'ধাপ ${track.trackNumber} · মোট ${track.totalLessons}টি পাঠ',
+                  iconType: VectorIconType.book,
+                  gradientColors: const [Color(0xFF58CC02), Color(0xFF46A302)],
+                  onBack: () => Navigator.of(context).pop(),
+                  trailing: modeSwitcher,
+                ),
                 // ── Track Banner Header with Respectful Quran Mascot ──
                 Container(
                   padding: const EdgeInsets.all(20),
@@ -150,7 +137,7 @@ class _QaidaTrackLessonsScreenState extends State<QaidaTrackLessonsScreen>
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                     ),
-                    borderRadius: BorderRadius.circular(24),
+                    borderRadius: BorderRadius.circular(20), // DS.rXl
                     boxShadow: [
                       BoxShadow(
                         color: track.color.withValues(alpha: 0.3),
