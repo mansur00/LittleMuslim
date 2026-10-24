@@ -1,0 +1,589 @@
+const fs = require('fs');
+const path = require('path');
+
+const ROOT = path.resolve(__dirname, '..');
+const chapters = JSON.parse(fs.readFileSync(path.join(ROOT, 'tools', 'scratch_basics_chapters.json'), 'utf8'));
+
+// Translations mapping for chapters
+// Key structure:
+// basics.chapter.<id>.title
+// basics.chapter.<id>.definition
+// basics.chapter.<id>.story
+// basics.chapter.<id>.quiz.<qIdx>.q
+// basics.chapter.<id>.quiz.<qIdx>.a
+
+const chapterTranslations = {
+  1: {
+    title: { en: 'What is Iman?', bn: 'ঈমান কী?', hi: 'ईमान क्या है?', it: 'Cos\'è l\'Iman?' },
+    definition: {
+      en: 'Iman means believing in Allah and the truths He revealed with all your heart.',
+      bn: 'ঈমান হলো আল্লাহ ও তিনি যে সত্যগুলো জানিয়েছেন, সেগুলো অন্তর দিয়ে বিশ্বাস করা।',
+      hi: 'ईमान का अर्थ है अल्लाह और उनके द्वारा बताए गए सत्यों पर दिल से विश्वास करना।',
+      it: 'Iman significa credere con tutto il cuore in Allah e nelle verità che Egli ha rivelato.'
+    },
+    story: {
+      en: 'Little Amin looked up at the stars and thought, "Who created such a beautiful creation?" Mother said, "Allah is the Creator of everything. We do not see Him, but we see His creations and trust Him." Amin learned that Iman is not just words; it shines through faith, good deeds, and trusting Allah.',
+      bn: 'ছোট্ট আমিন আকাশের তারা দেখে ভাবল—এত সুন্দর সৃষ্টি কে বানিয়েছেন? মা বললেন, “আল্লাহ সবকিছুর স্রষ্টা। আমরা তাঁকে দেখি না, কিন্তু তাঁর সৃষ্টি দেখি এবং তাঁর ওপর ভরসা করি।” আমিন শিখল, ঈমান শুধু মুখের কথা নয়; বিশ্বাস, ভালো কাজ আর আল্লাহর ওপর ভরসায় তা প্রকাশ পায়।',
+      hi: 'छोटे अमीन ने आसमान के तारों को देखा और सोचा—इतनी सुंदर सृष्टि किसने बनाई? माँ ने कहा, "अल्लाह हर चीज़ का रचयिता है। हम उन्हें नहीं देखते, लेकिन उनकी सृष्टि देखते हैं और उन पर भरोसा करते हैं।" अमीन ने सीखा कि ईमान सिर्फ बातों में नहीं, बल्कि विश्वास, अच्छे कर्म और अल्लाह पर भरोसे में झलकता है।',
+      it: 'Il piccolo Amin guardò le stelle nel cielo e pensò: "Chi ha creato una meraviglia così bella?" La mamma disse: "Allah è il Creatore di ogni cosa. Non Lo vediamo, ma vediamo le Sue creazioni e confidiamo in Lui." Amin imparò che la fede non è solo a parole; si manifesta attraverso la fede, le buone azioni e la fiducia in Allah.'
+    },
+    quiz: [
+      {
+        q: { en: 'Where does Iman reside as belief?', bn: 'ঈমান কোথায় বিশ্বাস হিসেবে থাকে?', hi: 'ईमान विश्वास के रूप में कहाँ रहता है?', it: 'Dove risiede l\'Iman come convinzione?' },
+        a: { en: 'In the heart', bn: 'অন্তরে', hi: 'दिल में', it: 'Nel cuore' }
+      },
+      {
+        q: { en: 'Who is the Creator of everything?', bn: 'সবকিছুর স্রষ্টা কে?', hi: 'सब कुछ का रचयिता कौन है?', it: 'Chi è il Creatore di tutto?' },
+        a: { en: 'Allah', bn: 'আল্লাহ', hi: 'अल्लाह', it: 'Allah' }
+      },
+      {
+        q: { en: 'How do we see signs of Allah without seeing Him?', bn: 'আল্লাহকে না দেখলেও কীভাবে তাঁর নিদর্শন দেখি?', hi: 'अल्लाह को न देखकर भी हम उनकी निशानियाँ कैसे देखते हैं?', it: 'Come vediamo i segni di Allah senza vederLo?' },
+        a: { en: 'In His creations', bn: 'সৃষ্টির মধ্যে', hi: 'सृष्टि में', it: 'Nelle Sue creazioni' }
+      },
+      {
+        q: { en: 'Which quality helps a believer?', bn: 'কোন গুণটি মুমিনকে সাহায্য করে?', hi: 'कौन सा गुण मोमिन की मदद करता है?', it: 'Quale qualità aiuta il credente?' },
+        a: { en: 'Trust in Allah', bn: 'আল্লাহর ওপর ভরসা', hi: 'अल्लाह पर भरोसा', it: 'La fiducia in Allah' }
+      },
+      {
+        q: { en: 'What is the relationship between good deeds and Iman?', bn: 'ভালো কাজের সঙ্গে ঈমানের সম্পর্ক কী?', hi: 'सत्कर्मों का ईमान से क्या संबंध है?', it: 'Qual è il legame tra buone azioni e fede?' },
+        a: { en: 'Expresses faith through actions', bn: 'বিশ্বাসকে কাজে প্রকাশ করে', hi: 'विश्वास को कर्म में प्रकट करता है', it: 'Esprime la fede attraverso le azioni' }
+      },
+      {
+        q: { en: 'Why do we strive to speak the truth?', bn: 'সত্য কথা বলার চেষ্টা কেন করি?', hi: 'हम सच बोलने का प्रयास क्यों करते हैं?', it: 'Perché ci sforziamo di dire la verità?' },
+        a: { en: 'Allah loves truth', bn: 'আল্লাহ সত্য ভালোবাসেন', hi: 'अल्लाह सच से प्यार करते हैं', it: 'Allah ama la verità' }
+      },
+      {
+        q: { en: 'From whom do we seek help in difficult times?', bn: 'কঠিন সময়ে কার কাছে সাহায্য চাই?', hi: 'कठिन समय में किससे मदद मांगते हैं?', it: 'A chi chiediamo aiuto nei momenti difficili?' },
+        a: { en: 'From Allah', bn: 'আল্লাহর কাছে', hi: 'अल्लाह से', it: 'Ad Allah' }
+      },
+      {
+        q: { en: 'What do we say when receiving a blessing?', bn: 'নিয়ামত পেলে কী বলি?', hi: 'नियामत मिलने पर क्या कहते हैं?', it: 'Cosa diciamo quando riceviamo una benedizione?' },
+        a: { en: 'Alhamdulillah', bn: 'আলহামদুলিল্লাহ', hi: 'अल्हम्दुलिल्लाह', it: 'Alhamdulillah' }
+      },
+      {
+        q: { en: 'What do we do when we make a mistake?', bn: 'ভুল হলে কী করি?', hi: 'गलती होने पर क्या करते हैं?', it: 'Cosa facciamo quando commettiamo un errore?' },
+        a: { en: 'Seek forgiveness from Allah and correct it', bn: 'আল্লাহর কাছে ক্ষমা চাই ও ঠিক করি', hi: 'अल्लाह से क्षमा मांगते हैं और सुधार करते हैं', it: 'Chiediamo perdono ad Allah e correggiamo' }
+      },
+      {
+        q: { en: 'Is Iman complete with words alone?', bn: 'ঈমান কেবল মুখে বললেই পূর্ণ হয়?', hi: 'क्या केवल ज़ुबान से कहने पर ईमान पूरा होता है?', it: 'L\'Iman è completo solo a parole?' },
+        a: { en: 'No, faith and good deeds are also essential', bn: 'না, বিশ্বাস ও ভালো কাজও জরুরি', hi: 'नहीं, विश्वास और सत्कर्म भी ज़रूरी हैं', it: 'No, fede e buone azioni sono essenziali' }
+      }
+    ]
+  },
+  2: {
+    title: { en: 'What is Aqeedah?', bn: 'আকিদা কী?', hi: 'अक़ीदा क्या है?', it: 'Cos\'è l\'Aqeedah?' },
+    definition: {
+      en: 'Aqeedah is the foundation of Islamic belief—the fundamental truths that a Muslim accepts wholeheartedly.',
+      bn: 'আকিদা হলো ইসলামের বিশ্বাসের ভিত্তি—যে সত্যগুলো একজন মুসলিম মনে-প্রাণে মেনে নেয়।',
+      hi: 'अक़ीदा इस्लामी विश्वास की नींव है—वे बुनियादी सत्य जिन्हें एक मुसलमान दिल से स्वीकार करता है।',
+      it: 'L\'Aqeedah è il fondamento della fede islamica: le verità fondamentali che un musulmano accetta con tutto il cuore.'
+    },
+    story: {
+      en: 'At school, the teacher spoke about the foundation of a building. When the foundation is strong, the house stands firm. Islamic faith is just like that—Allah is One, He is our Lord; His Messengers showed people the true path. To learn sound beliefs, Amin asks questions to his parents and trusted teachers.',
+      bn: 'স্কুলে শিক্ষক একটি ঘরের ভিত্তির কথা বললেন। ভিত্তি মজবুত হলে ঘর দাঁড়িয়ে থাকে। ইসলামের বিশ্বাসও তেমন—আল্লাহ এক, তিনি আমাদের রব; তাঁর পাঠানো রাসূলগণ মানুষকে সত্য পথ দেখিয়েছেন। সঠিক বিশ্বাস শিখতে আমিন মা-বাবা ও বিশ্বস্ত শিক্ষকের কাছে প্রশ্ন করে।',
+      hi: 'स्कूल में शिक्षक ने इमारत की नींव की बात की। नींव मज़बूत हो तो घर टिका रहता है। इस्लामी अक़ीदा भी ऐसा ही है—अल्लाह एक हैं, वे हमारे रब हैं; उनके रसूलों ने सीधा रास्ता दिखाया। सही अक़ीदा सीखने के लिए अमीन माता-पिता और उस्ताद से पूछता है।',
+      it: 'A scuola, l\'insegnante parlò delle fondamenta di una casa. Quando le fondamenta sono solide, la casa resiste. La fede islamica è proprio così: Allah è Uno, Egli è il nostro Signore; i Suoi Messaggeri hanno mostrato la retta via. Per imparare le giuste convinzioni, Amin si rivolge ai genitori e ad insegnanti fidati.'
+    },
+    quiz: [
+      {
+        q: { en: 'What does Aqeedah mean?', bn: 'আকিদা বলতে কী বোঝায়?', hi: 'अक़ीदे का क्या अर्थ है?', it: 'Cosa significa Aqeedah?' },
+        a: { en: 'Foundation of Islamic belief', bn: 'ইসলামের বিশ্বাসের ভিত্তি', hi: 'इस्लामी विश्वास की नींव', it: 'Fondamento della fede islamica' }
+      },
+      {
+        q: { en: 'How many is Allah?', bn: 'আল্লাহ কয়জন?', hi: 'अल्लाह कितने हैं?', it: 'Quanti sono Allah?' },
+        a: { en: 'One', bn: 'একজন', hi: 'एक', it: 'Uno' }
+      },
+      {
+        q: { en: 'Who is our Creator and Sustainer?', bn: 'আমাদের স্রষ্টা ও পালনকর্তা কে?', hi: 'हमारे रचयिता और पालनहार कौन हैं?', it: 'Chi è il nostro Creatore e Sostenitore?' },
+        a: { en: 'Allah', bn: 'আল্লাহ', hi: 'अल्लाह', it: 'Allah' }
+      },
+      {
+        q: { en: 'What did the Messengers do?', bn: 'রাসূলগণ কী করেছেন?', hi: 'रसूलों ने क्या किया?', it: 'Cosa hanno fatto i Messaggeri?' },
+        a: { en: 'Called people to Allah\'s path', bn: 'মানুষকে আল্লাহর পথে ডেকেছেন', hi: 'लोगों को अल्लाह के रास्ते की ओर बुलाया', it: 'Hanno chiamato le persone alla via di Allah' }
+      },
+      {
+        q: { en: 'What are Allah\'s angels?', bn: 'আল্লাহর ফেরেশতারা কী?', hi: 'अल्लाह के फ़रिश्ते क्या हैं?', it: 'Cosa sono gli angeli di Allah?' },
+        a: { en: 'Creations of Allah', bn: 'আল্লাহর সৃষ্টি', hi: 'अल्लाह की रचना', it: 'Creazioni di Allah' }
+      },
+      {
+        q: { en: 'What do Allah\'s Books teach?', bn: 'আল্লাহর কিতাব কী শেখায়?', hi: 'अल्लाह की किताबें क्या सिखाती हैं?', it: 'Cosa insegnano i Libri di Allah?' },
+        a: { en: 'Truth and the straight path', bn: 'সত্য ও সঠিক পথ', hi: 'सत्य और सीधा रास्ता', it: 'La verità e la retta via' }
+      },
+      {
+        q: { en: 'Remembering the Last Day makes us do what?', bn: 'শেষ দিনের কথা মনে রাখলে কী করি?', hi: 'क़यामत के दिन को याद रखकर हम क्या करते हैं?', it: 'Ricordare l\'Ultimo Giorno ci spinge a fare cosa?' },
+        a: { en: 'Strive for good deeds', bn: 'ভালো কাজের চেষ্টা করি', hi: 'सत्कर्मों का प्रयास करते हैं', it: 'Compiere buone azioni' }
+      },
+      {
+        q: { en: 'Who to ask when having faith questions?', bn: 'বিশ্বাস নিয়ে প্রশ্ন হলে কার কাছে যাব?', hi: 'ईमान के बारे में सवाल होने पर किसके पास जाएं?', it: 'A chi rivolgersi per domande sulla fede?' },
+        a: { en: 'Trusted teachers or guardians', bn: 'বিশ্বস্ত শিক্ষক বা অভিভাবকের কাছে', hi: 'विश्वसनीय शिक्षक या अभिभावक के पास', it: 'Insegnanti o genitori fidati' }
+      },
+      {
+        q: { en: 'Is anyone else a creator like Allah?', bn: 'আল্লাহর মতো আর কেউ স্রষ্টা?', hi: 'क्या अल्लाह की तरह कोई और रचयिता है?', it: 'Esiste un altro creatore come Allah?' },
+        a: { en: 'No, Allah is One', bn: 'না, আল্লাহ এক', hi: 'नहीं, अल्लाह एक हैं', it: 'No, Allah è Uno' }
+      },
+      {
+        q: { en: 'What is the best way to learn sound Aqeedah?', bn: 'সঠিক আকিদা শেখার ভালো উপায় কী?', hi: 'सही अक़ीदा सीखने का सबसे अच्छा तरीका क्या है?', it: 'Qual è il modo migliore per imparare la retta Aqeedah?' },
+        a: { en: 'Learning from trusted scholars', bn: 'বিশ্বস্ত জ্ঞানীদের কাছ থেকে শেখা', hi: 'विश्वसनीय विद्वानों से सीखना', it: 'Imparare da studiosi fidati' }
+      }
+    ]
+  },
+  3: {
+    title: { en: 'What is Islam?', bn: 'ইসলাম কী?', hi: 'इस्लाम क्या है?', it: 'Cos\'è l\'Islam?' },
+    definition: {
+      en: 'Islam means worshipping Allah alone, obeying His commands, and treating people with kindness and excellence.',
+      bn: 'ইসলাম হলো এক আল্লাহর ইবাদত করা, তাঁর নির্দেশ মানা এবং মানুষের সঙ্গে ভালো ব্যবহার করা।',
+      hi: 'इस्लाम का अर्थ है अकेले अल्लाह की इबादत करना, उनके आदेशों का पालन करना और लोगों के साथ अच्छा व्यवहार करना।',
+      it: 'Islam significa adorare Allah da solo, obbedire ai Suoi comandi e trattare le persone con gentilezza ed eccellenza.'
+    },
+    story: {
+      en: 'Amin\'s friend asked, "Does Islam only mean praying?" Amin replied, "Prayer is very important; alongside it, speaking the truth, respecting parents, and being merciful are also teachings of Islam." They decided to do a good deed every day and learn the five daily prayers.',
+      bn: 'আমিনের বন্ধু জানতে চাইল, “ইসলাম মানে কি শুধু নামাজ?” আমিন বলল, “নামাজ খুব গুরুত্বপূর্ণ; পাশাপাশি সত্য বলা, মা-বাবার সম্মান করা, দয়া করা—এসবও ইসলামের শিক্ষা।” তারা ঠিক করল প্রতিদিন একটি ভালো কাজ করবে এবং পাঁচ ওয়াক্ত নামাজ শিখবে।',
+      hi: 'अमीन के दोस्त ने पूछा, "क्या इस्लाम का मतलब केवल नमाज़ है?" अमीन ने कहा, "नमाज़ बहुत ज़रूरी है; इसके साथ सच बोलना, माता-पिता का सम्मान करना और दया करना भी इस्लाम की शिक्षा है।" उन्होंने तय किया कि रोज़ एक अच्छा काम करेंगे और पाँचों नमाज़ सीखेंगे।',
+      it: 'L\'amico di Amin chiese: "Islam significa solo pregare?" Amin rispose: "La preghiera è importantissima; insieme ad essa, dire la verità, rispettare i genitori ed essere misericordiosi sono insegnamenti dell\'Islam." Decisero di compiere una buona azione ogni giorno e di imparare le cinque preghiere quotidiane.'
+    },
+    quiz: [
+      {
+        q: { en: 'Whom do we worship?', bn: 'আমরা কার ইবাদত করি?', hi: 'हम किसकी इबादत करते हैं?', it: 'Chi adoriamo?' },
+        a: { en: 'Only Allah', bn: 'শুধু আল্লাহর', hi: 'सिर्फ़ अल्लाह की', it: 'Solo Allah' }
+      },
+      {
+        q: { en: 'What is the core teaching of Islam?', bn: 'ইসলামের মূল শিক্ষা কী?', hi: 'इस्लाम की मुख्य सीख क्या है?', it: 'Qual è l\'insegnamento fondamentale dell\'Islam?' },
+        a: { en: 'Obedience to Allah and righteous living', bn: 'আল্লাহর আনুগত্য ও ভালো জীবন', hi: 'अल्लाह की आज्ञाकारिता और नेक जीवन', it: 'Obbedienza ad Allah e una vita retta' }
+      },
+      {
+        q: { en: 'What kind of deed is prayer?', bn: 'নামাজ কেমন কাজ?', hi: 'नमाज़ कैसा काम है?', it: 'Che tipo di azione è la preghiera?' },
+        a: { en: 'An essential worship in Islam', bn: 'ইসলামের গুরুত্বপূর্ণ ইবাদত', hi: 'इस्लाम की महत्वपूर्ण इबादत', it: 'Un\'adorazione essenziale nell\'Islam' }
+      },
+      {
+        q: { en: 'What is respecting parents considered?', bn: 'মা-বাবাকে সম্মান করা কেমন কাজ?', hi: 'माता-पिता का सम्मान करना कैसा कार्य है?', it: 'Com\'è considerato rispettare i genitori?' },
+        a: { en: 'A beautiful teaching of Islam', bn: 'ইসলামের সুন্দর শিক্ষা', hi: 'इस्लाम की सुंदर शिक्षा', it: 'Un bellissimo insegnamento dell\'Islam' }
+      },
+      {
+        q: { en: 'What does speaking truth reflect?', bn: 'সত্য বলা কেমন?', hi: 'सच बोलना क्या दर्शाता है?', it: 'Cosa riflette il dire la verità?' },
+        a: { en: 'Quality of a good Muslim', bn: 'ভালো মুসলিমের গুণ', hi: 'सच्चे मुसलमान का गुण', it: 'La qualità di un buon musulmano' }
+      },
+      {
+        q: { en: 'Is harming people acceptable behavior?', bn: 'মানুষকে কষ্ট দেওয়া কি ভালো আচরণ?', hi: 'क्या लोगों को तकलीफ़ देना सही व्यवहार है?', it: 'Fare del male alle persone è un comportamento accettabile?' },
+        a: { en: 'No, we show kindness and respect', bn: 'না, দয়া ও সম্মান দেখাই', hi: 'नहीं, दया और सम्मान दिखाते हैं', it: 'No, mostriamo gentilezza e rispetto' }
+      },
+      {
+        q: { en: 'For whose pleasure is worship done?', bn: 'ইবাদত কাকে খুশি করার জন্য?', hi: 'इबादत किसको खुश करने के लिए की जाती है?', it: 'Per il compiacimento di chi si compie l\'adorazione?' },
+        a: { en: 'To please Allah', bn: 'আল্লাহকে', hi: 'अल्लाह को प्रसन्न करने के लिए', it: 'Per compiacere Allah' }
+      },
+      {
+        q: { en: 'Is Islam only a set of rituals?', bn: 'ইসলাম কি শুধু কিছু আচার?', hi: 'क्या इस्लाम सिर्फ़ कुछ रस्में हैं?', it: 'L\'Islam è solo un insieme di rituali?' },
+        a: { en: 'No, it is guidance for all of life', bn: 'না, জীবনযাপনেরও শিক্ষা', hi: 'नहीं, जीवन जीने का पूरा मार्ग है', it: 'No, è una guida per tutta la vita' }
+      },
+      {
+        q: { en: 'What do we demonstrate by helping others?', bn: 'কারও উপকার করলে কী দেখাই?', hi: 'दूसरों की मदद करने से क्या प्रदर्शित होता है?', it: 'Cosa dimostriamo aiutando gli altri?' },
+        a: { en: 'Kindness and noble character', bn: 'দয়া ও ভালো চরিত্র', hi: 'दया और उत्तम चरित्र', it: 'Gentilezza e nobiltà di carattere' }
+      },
+      {
+        q: { en: 'How do we learn Islam?', bn: 'ইসলাম শিখি কীভাবে?', hi: 'हम इस्लाम कैसे सीखते हैं?', it: 'Come impariamo l\'Islam?' },
+        a: { en: 'From Quran, Sunnah, and trusted teachers', bn: 'কুরআন, সুন্নাহ ও বিশ্বস্ত শিক্ষক থেকে', hi: 'क़ुरआन, सुन्नत और विश्वसनीय शिक्षकों से', it: 'Dal Corano, dalla Sunnah e da insegnanti fidati' }
+      }
+    ]
+  },
+  4: {
+    title: { en: 'Halal and Haram', bn: 'হালাল ও হারাম', hi: 'हलाल और हराम', it: 'Halal e Haram' },
+    definition: {
+      en: 'Halal means permissible in Islam; Haram means forbidden in Islam. When unsure, we ask knowledgeable elders rather than guessing.',
+      bn: 'হালাল মানে ইসলামে অনুমোদিত; হারাম মানে ইসলামে নিষিদ্ধ। সব বিষয়ে নিজে অনুমান না করে বিশ্বস্ত বড়দের জিজ্ঞেস করি।',
+      hi: 'हलाल का अर्थ है इस्लाम में जायज़; हराम का अर्थ है इस्लाम में मना। संदेह होने पर अनुमान लगाने के बजाय बड़ों से पूछें।',
+      it: 'Halal significa permesso nell\'Islam; Haram significa proibito nell\'Islam. Nei dubbi, chiediamo a persone sagge anziché tirare a indovinare.'
+    },
+    story: {
+      en: 'Seeing a new snack package at the shop, Amin wondered about its ingredients. Instead of deciding himself, he asked his father. His father checked the verified ingredients. Amin learned that whenever in doubt about deeds or food, we should verify through trusted guidance.',
+      bn: 'দোকানে নতুন খাবারের প্যাকেট দেখে আমিনের মনে প্রশ্ন এল। সে নিজে সিদ্ধান্ত না নিয়ে বাবাকে জিজ্ঞেস করল। বাবা উপাদান ও নির্ভরযোগ্য তথ্য দেখে বুঝিয়ে দিলেন। আমিন শিখল—কোনো কাজ বা খাবারের বিধান নিয়ে সন্দেহ হলে লুকিয়ে নয়, জেনে-বুঝে এবং বিশ্বস্ত আলেম/অভিভাবকের সাহায্যে চলতে হয়।',
+      hi: 'दुकान में नए स्नैक को देखकर अमीन को संदेह हुआ। उसने खुद फ़ैसला करने के बजाय पिता से पूछा। पिता ने सामग्री की जांच की। अमीन ने सीखा कि किसी काम या खाने पर संदेह हो तो मनमानी न करके विश्वसनीय लोगों से सलाह लें।',
+      it: 'Vedendo una nuova confezione di snack al negozio, Amin ebbe dubbi sugli ingredienti. Invece di decidere da solo, chiese a suo padre. Il padre controllò gli ingredienti verificati. Amin capì che nei dubbi sul cibo o sulle azioni bisogna informarsi con saggezza.'
+    },
+    quiz: [
+      {
+        q: { en: 'What does Halal mean?', bn: 'হালাল মানে কী?', hi: 'हलाल का क्या अर्थ है?', it: 'Cosa significa Halal?' },
+        a: { en: 'Permissible in Islam', bn: 'ইসলামে অনুমোদিত', hi: 'इस्लाम में अनुमत', it: 'Permesso nell\'Islam' }
+      },
+      {
+        q: { en: 'What does Haram mean?', bn: 'হারাম মানে কী?', hi: 'हराम का क्या अर्थ है?', it: 'Cosa significa Haram?' },
+        a: { en: 'Forbidden in Islam', bn: 'ইসলামে নিষিদ্ধ', hi: 'इस्लाम में वर्जित', it: 'Proibito nell\'Islam' }
+      },
+      {
+        q: { en: 'Whom to ask when in doubt?', bn: 'সন্দেহ হলে কাকে জিজ্ঞেস করব?', hi: 'संदेह होने पर किससे पूछें?', it: 'A chi chiedere quando si ha un dubbio?' },
+        a: { en: 'Guardians or trusted scholars', bn: 'অভিভাবক বা বিশ্বস্ত আলেম', hi: 'अभिभावक या विश्वसनीय आलिम', it: 'Genitori o studiosi fidati' }
+      },
+      {
+        q: { en: 'Is it right to guess rulings by oneself?', bn: 'নিজে অনুমান করে ফতোয়া দেওয়া ঠিক?', hi: 'क्या खुद से अनुमान लगाकर फ़ैसला करना सही है?', it: 'È corretto tirare a indovinare le regole?' },
+        a: { en: 'No, we learn and verify first', bn: 'না, জেনে ও যাচাই করে শিখি', hi: 'नहीं, सीखकर और जांचकर निर्णय लेते हैं', it: 'No, impariamo e verifichiamo prima' }
+      },
+      {
+        q: { en: 'What to do when misunderstanding something?', bn: 'কোনো ভুল বুঝলে কী করব?', hi: 'कोई ग़लतफ़हमी हो तो क्या करें?', it: 'Cosa fare se si capisce male qualcosa?' },
+        a: { en: 'Calmly seek accurate knowledge', bn: 'শান্তভাবে সঠিক তথ্য শিখব', hi: 'शांति से सही जानकारी सीखेंगे', it: 'Cercare con calma l\'informazione corretta' }
+      },
+      {
+        q: { en: 'From where do we learn Islamic rulings?', bn: 'ইসলামের বিধান কোথা থেকে শিখি?', hi: 'इस्लामी नियम कहाँ से सीखते हैं?', it: 'Da dove impariamo le regole islamiche?' },
+        a: { en: 'Quran, Sunnah, and qualified teachers', bn: 'কুরআন-সুন্নাহ ও যোগ্য শিক্ষকের কাছ থেকে', hi: 'क़ुरआन, सुन्नत और योग्य उस्ताद से', it: 'Dal Corano, dalla Sunnah e da maestri qualificati' }
+      },
+      {
+        q: { en: 'What to do hearing unverified opinions?', bn: 'অন্যের মত শুনে যাচাই ছাড়া কী করব?', hi: 'बिना जांचे दूसरों की राय सुनकर क्या करेंगे?', it: 'Cosa fare ascoltando opinioni non verificate?' },
+        a: { en: 'Verify with trusted sources', bn: 'বিশ্বস্ত সূত্রে যাচাই করব', hi: 'विश्वसनीय स्रोतों से जांचेंगे', it: 'Verificare con fonti affidabili' }
+      },
+      {
+        q: { en: 'Is it okay to pressure friends to eat forbidden things?', bn: 'বন্ধুকে নিষিদ্ধ কিছু খেতে চাপ দেওয়া ঠিক?', hi: 'क्या दोस्त को हराम खाने के लिए दबाव डालना सही है?', it: 'È giusto spingere un amico a mangiare cose proibite?' },
+        a: { en: 'No', bn: 'না', hi: 'नहीं', it: 'No' }
+      },
+      {
+        q: { en: 'From whom to learn food rules?', bn: 'খাবারের নিয়ম কার কাছে শিখব?', hi: 'खान-पान के नियम किससे सीखें?', it: 'Da chi imparare le regole alimentari?' },
+        a: { en: 'Trusted scholars and guardians', bn: 'বিশ্বস্ত আলেম ও অভিভাবকের কাছে', hi: 'विश्वसनीय आलिम और अभिभावक से', it: 'Studiosi e genitori fidati' }
+      },
+      {
+        q: { en: 'What is the goal of choosing Halal food?', bn: 'হালাল খাবার বাছাইয়ের উদ্দেশ্য কী?', hi: 'हलाल भोजन चुनने का उद्देश्य क्या है?', it: 'Qual è lo scopo di scegliere cibo Halal?' },
+        a: { en: 'Obeying Allah\'s command', bn: 'আল্লাহর নির্দেশ মেনে চলা', hi: 'अल्लाह के आदेश का पालन करना', it: 'Obbedire al comando di Allah' }
+      }
+    ]
+  },
+  5: {
+    title: { en: 'Clothing and Modesty', bn: 'পোশাক ও শালীনতা', hi: 'पहनावा और शालीनता', it: 'Abbigliamento e Modestia' },
+    definition: {
+      en: 'We wear clean, comfortable, and modest clothing that respects Islamic decency.',
+      bn: 'পরিষ্কার, আরামদায়ক ও শালীন পোশাক পরি। বয়স অনুযায়ী শালীনতার নিয়ম মানি।',
+      hi: 'साफ़-सुथरे, आरामदायक और शालीन कपड़े पहनें। उम्र के अनुसार पर्दा और शालीनता बरतें।',
+      it: 'Indossiamo abiti puliti, comodi e modesti che rispettano il decoro islamico.'
+    },
+    story: {
+      en: 'Before going out to play, Amin put on clean and modest clothes. His mother smiled and said, "Modesty brings beauty to a believer." Amin felt proud to dress neatly and respectfully.',
+      bn: 'খেলতে যাওয়ার আগে আমিন পরিষ্কার ও শালীন পোশাক পরল। মা হেসে বললেন, “শালীনতা মুমিনের সৌন্দর্য বাড়ায়।” আমিন পরিচ্ছন্ন ও সুন্দর পোশাক পরে আনন্দ পেল।',
+      hi: 'खेलने जाने से पहले अमीन ने साफ़ और शालीन कपड़े पहने। माँ ने मुस्कुराकर कहा, "शालीनता मोमिन की खूबसूरती बढ़ाती है।" अमीन ने गरिमापूर्ण कपड़े पहनकर खुशी महसूस की।',
+      it: 'Prima di uscire a giocare, Amin indossò vestiti puliti e modesti. La mamma sorrise e disse: "La modestia accresce la bellezza del credente." Amin fu felice di vestirsi con dignità.'
+    },
+    quiz: [
+      {
+        q: { en: 'What kind of clothing should a Muslim wear?', bn: 'মুসলিম কেমন পোশাক পরে?', hi: 'मुसलमान को कैसे कपड़े पहनने चाहिए?', it: 'Che tipo di abiti dovrebbe indossare un musulmano?' },
+        a: { en: 'Clean and modest', bn: 'পরিষ্কার ও শালীন', hi: 'साफ़ और शालीन', it: 'Puliti e modesti' }
+      },
+      {
+        q: { en: 'What does modesty bring to a believer?', bn: 'শালীনতা কী বাড়ায়?', hi: 'शालीनता क्या बढ़ाती है?', it: 'Cosa accresce la modestia?' },
+        a: { en: 'Dignity and beauty', bn: 'সৌন্দর্য ও সম্মান', hi: 'सम्मान और सुंदरता', it: 'Dignità e bellezza' }
+      },
+      {
+        q: { en: 'Should we take care of cleanliness in clothing?', bn: 'পোশাকের পরিচ্ছন্নতায় খেয়াল রাখা উচিত?', hi: 'क्या कपड़ों की सफ़ाई का ध्यान रखना चाहिए?', it: 'Dobbiamo curare la pulizia dei vestiti?' },
+        a: { en: 'Yes, always', bn: 'হ্যাঁ, সবসময়', hi: 'हाँ, हमेशा', it: 'Sì, sempre' }
+      },
+      {
+        q: { en: 'Is pride in dressing encouraged?', bn: 'পোশাক নিয়ে অহংকার করা ঠিক?', hi: 'क्या कपड़ों को लेकर घमंड करना सही है?', it: 'È giusto vantarsi dei vestiti?' },
+        a: { en: 'No, humility is best', bn: 'না, বিনয় জরুরি', hi: 'नहीं, विनम्रता ज़रूरी है', it: 'No, l\'umiltà è fondamentale' }
+      },
+      {
+        q: { en: 'What should we say when wearing new clothes?', bn: 'নতুন পোশাক পরলে কী বলা উচিত?', hi: 'नए कपड़े पहनने पर क्या कहना चाहिए?', it: 'Cosa diciamo indossando abiti nuovi?' },
+        a: { en: 'Alhamdulillah', bn: 'আলহামদুলিল্লাহ', hi: 'अल्हम्दुलिल्लाह', it: 'Alhamdulillah' }
+      },
+      {
+        q: { en: 'Does Islam encourage neatness?', bn: 'ইসলাম কি পরিপাটি হওয়া পছন্দ করে?', hi: 'क्या इस्लाम साफ़-सुथरा रहना पसंद करता है?', it: 'L\'Islam incoraggia l\'ordine e il decoro?' },
+        a: { en: 'Yes', bn: 'হ্যাঁ', hi: 'हाँ', it: 'Sì' }
+      },
+      {
+        q: { en: 'Should clothes be comfortable for prayer?', bn: 'পোশাক নামাজের উপযোগী হওয়া উচিত?', hi: 'क्या कपड़े नमाज़ के अनुकूल होने चाहिए?', it: 'I vestiti devono essere adatti alla preghiera?' },
+        a: { en: 'Yes, completely', bn: 'হ্যাঁ, পুরোপুরি', hi: 'हाँ, बिल्कुल', it: 'Sì, senz\'altro' }
+      },
+      {
+        q: { en: 'Who sets the standards of modesty?', bn: 'শালীনতার নিয়ম কে নির্ধারণ করেছেন?', hi: 'शालीनता के नियम किसने तय किए हैं?', it: 'Chi ha stabilito le regole della modestia?' },
+        a: { en: 'Allah and His Messenger', bn: 'আল্লাহ ও তাঁর রাসূল', hi: 'अल्लाह और उनके रसूल', it: 'Allah e il Suo Messaggero' }
+      },
+      {
+        q: { en: 'How should we treat those with simple clothes?', bn: 'সাধারণ পোশাক পরা মানুষের সঙ্গে কেমন ব্যবহার করব?', hi: 'साधारण कपड़े पहनने वालों के साथ कैसा व्यवहार करें?', it: 'Come trattiamo chi indossa abiti semplici?' },
+        a: { en: 'With respect and love', bn: 'সম্মান ও ভালোবাসার সঙ্গে', hi: 'सम्मान और प्रेम के साथ', it: 'Con rispetto e affetto' }
+      },
+      {
+        q: { en: 'What is true inner beauty in Islam?', bn: 'ইসলামে আসল সৌন্দর্য কী?', hi: 'इस्लाम में असली सुंदरता क्या है?', it: 'Qual è la vera bellezza interiore nell\'Islam?' },
+        a: { en: 'Taqwa and good character', bn: 'তাকওয়া ও ভালো চরিত্র', hi: 'तक़वा और अच्छा चरित्र', it: 'Taqwa e buon carattere' }
+      }
+    ]
+  },
+  6: {
+    title: { en: 'Beautiful Speech', bn: 'সুন্দর কথা', hi: 'सुंदर वाणी', it: 'Il Parlare Gentile' },
+    definition: {
+      en: 'We speak the truth gently and respectfully. We avoid bad language, lies, insult, and backbiting.',
+      bn: 'সত্য, নরম ও সম্মানজনক কথা বলি। গালি, মিথ্যা, অপমান ও গীবত থেকে বেঁচে থাকি।',
+      hi: 'सत्य, मधुर और आदरपूर्ण बात कहें। गाली, झूठ, अपमान और चुगली से बचें।',
+      it: 'Parliamo con verità, dolcezza e rispetto. Evitiamo parolacce, bugie, insulti e calunnie.'
+    },
+    story: {
+      en: 'When someone spoke rudely in the playground, Amin did not retaliate with harsh words. He responded politely and walked away with dignity. His friends praised his calm demeanor and saw how good speech diffuses anger.',
+      bn: 'খেলার মাঠে একজন রাগ দেখাল, কিন্তু আমিন পাল্টা খারাপ কথা বলল না। সে শান্তভাবে ভালো কথা বলল। বন্ধুরা তার ভদ্রতা দেখে প্রশংসা করল।',
+      hi: 'खेल के मैदान में किसी ने गुस्सा दिखाया, लेकिन अमीन ने पलटकर बुरा नहीं कहा। उसने शांति से अच्छी बात कही। दोस्तों ने उसकी भद्रता की प्रशंसा की।',
+      it: 'Nel cortile qualcuno si arrabbiò, ma Amin non rispose con parole scortesi. Rispose con gentilezza e mantenne la calma. Gli amici ammirarono la sua educazione.'
+    },
+    quiz: [
+      {
+        q: { en: 'How should a Muslim speak?', bn: 'মুসলিম কেমন কথা বলে?', hi: 'मुसलमान को कैसे बोलना चाहिए?', it: 'Come parla un musulmano?' },
+        a: { en: 'Truthfully and politely', bn: 'সত্য ও বিনম্রভাবে', hi: 'सच और नम्रता से', it: 'Con verità ed educazione' }
+      },
+      {
+        q: { en: 'What should we avoid saying?', bn: 'কোন কথাগুলো এড়িয়ে চলব?', hi: 'कौन सी बातों से बचना चाहिए?', it: 'Quali parole dobbiamo evitare?' },
+        a: { en: 'Lies, abuse, and backbiting', bn: 'মিথ্যা, গালি ও গীবত', hi: 'झूठ, गाली और चुगली', it: 'Bugie, insulti e calunnie' }
+      },
+      {
+        q: { en: 'What is backbiting?', bn: 'গীবত কী?', hi: 'ग़ीबत (चुगली) क्या है?', it: 'Cos\'è la calunnia o maldicenza?' },
+        a: { en: 'Speaking ill behind someone\'s back', bn: 'কারও পেছনে তার খারাপ কথা বলা', hi: 'किसी की पीठ पीछे बुराई करना', it: 'Parlare male di qualcuno alle sue spalle' }
+      },
+      {
+        q: { en: 'What to do when feeling angry?', bn: 'রাগ হলে কী করা উচিত?', hi: 'गुस्सा आने पर क्या करना चाहिए?', it: 'Cosa fare quando ci si arrabbia?' },
+        a: { en: 'Stay silent or seek refuge in Allah', bn: 'চুপ থাকা বা আউজুবিল্লাহ পড়া', hi: 'चुप रहना या आऊज़ुबिल्लाह पढ़ना', it: 'Tacere o rifugiarsi in Allah' }
+      },
+      {
+        q: { en: 'Is joking with lies permissible?', bn: 'মজা করে মিথ্যা বলা কি ঠিক?', hi: 'क्या मज़ाक में झूठ बोलना ठीक है?', it: 'È permesso mentire per scherzo?' },
+        a: { en: 'No, truth in all matters', bn: 'না, সব বিষয়ে সত্য বলা চাই', hi: 'नहीं, हमेशा सच बोलना चाहिए', it: 'No, sempre la verità' }
+      },
+      {
+        q: { en: 'How to address parents and elders?', bn: 'মা-বাবা ও বড়দের সঙ্গে কেমন কথা বলব?', hi: 'माता-पिता और बड़ों से कैसे बात करेंगे?', it: 'Come parlare ai genitori e agli anziani?' },
+        a: { en: 'With utmost respect and tenderness', bn: 'অত্যন্ত সম্মান ও নরম সুরে', hi: 'पूरे सम्मान और नम्र आवाज़ में', it: 'Con massimo rispetto e dolcezza' }
+      },
+      {
+        q: { en: 'What is a good word considered in Islam?', bn: 'ভালো কথা বলাকে কী বলা হয়েছে?', hi: 'अच्छी बात कहने को क्या कहा गया है?', it: 'Cos\'è considerata una buona parola nell\'Islam?' },
+        a: { en: 'Charity (Sadaqah)', bn: 'সাদাকাহ', hi: 'सदक़ा', it: 'Una carità (Sadaqah)' }
+      },
+      {
+        q: { en: 'What greeting do we offer when meeting people?', bn: 'কারও সঙ্গে দেখা হলে কী বলি?', hi: 'किसी से मिलने पर क्या कहते हैं?', it: 'Cosa diciamo incontrando le persone?' },
+        a: { en: 'Assalamu Alaikum', bn: 'আসসালামু আলাইকুম', hi: 'अस्सलाम वालेकुम', it: 'Assalamu Alaikum' }
+      },
+      {
+        q: { en: 'What should we do if we accidentally hurt someone with words?', bn: 'ভুলবশত কাউকে কথায় কষ্ট দিলে কী করব?', hi: 'गलती से किसी को बातों से दुख पहुँचे तो क्या करें?', it: 'Cosa fare se feriamo qualcuno con le parole per sbaglio?' },
+        a: { en: 'Apologize sincerely', bn: 'আন্তরিকভাবে ক্ষমা চেয়ে নেব', hi: 'सच्चे दिल से माफ़ी मांगेंगे', it: 'Chiedere sinceramente scusa' }
+      },
+      {
+        q: { en: 'Who guards their tongue?', bn: 'জিহ্বা নিয়ন্ত্রণ করে কে?', hi: 'ज़ुबान पर क़ाबू कौन रखता है?', it: 'Chi custodisce la propria lingua?' },
+        a: { en: 'A true believer', bn: 'প্রকৃত মুমিন', hi: 'सच्चा मोमिन', it: 'Il vero credente' }
+      }
+    ]
+  },
+  7: {
+    title: { en: 'Noble Character', bn: 'ভালো আচরণ', hi: 'उत्तम आचरण', it: 'Il Nobile Carattere' },
+    definition: {
+      en: 'Honesty, patience, cleanliness, mercy, and responsibility—these noble traits reflect Islam in our daily conduct.',
+      bn: 'সততা, ধৈর্য, পরিচ্ছন্নতা, দয়া ও দায়িত্বশীলতা—এসব সুন্দর আচরণ দিয়ে জীবন সাজাই।',
+      hi: 'सच्चाई, सब्र, सफ़ाई, दया और ज़िम्मेदारी—इन खूबसूरत गुणों से जीवन संवारें।',
+      it: 'Onestà, pazienza, pulizia, misericordia e responsabilità: queste qualità riflettono l\'Islam.'
+    },
+    story: {
+      en: 'Amin saw an elderly neighbor carrying heavy grocery bags. He immediately ran up and politely offered to carry them to the door. The neighbor smiled and prayed for him. Amin felt immense joy in helping.',
+      bn: 'আমিন দেখল এক বয়স্ক প্রতিবেশী ভারী ব্যাগ নিয়ে আসছেন। সে দৌড়ে গিয়ে ব্যাগটি দরজায় পৌঁছে দিল। প্রতিবেশী খুশি হয়ে দোয়া করলেন।',
+      hi: 'अमीन ने देखा कि एक बुज़ुर्ग पड़ोसी भारी बैग लेकर आ रहे हैं। उसने दौड़कर मदद की और बैग दरवाज़े तक पहुँचाया। पड़ोसी ने खुश होकर दुआ दी।',
+      it: 'Amin vide un vicino anziano con borse pesanti. Corse subito ad aiutarlo portando le borse fino alla porta. Il vicino sorrise e pregò per lui.'
+    },
+    quiz: [
+      {
+        q: { en: 'What was the primary mission of Prophet Muhammad (peace be upon him)?', bn: 'নবীজি (সা.) কেন প্রেরিত হয়েছিলেন?', hi: 'नबी (सल्लल्लाहु अलैहि व सल्लम) को किसलिए भेजा गया था?', it: 'Qual era la missione del Profeta Muhammad (pace su di lui)?' },
+        a: { en: 'To perfect noble character', bn: 'উত্তম চরিত্রের পূর্ণতা দিতে', hi: 'उत्तम चरित्र को पूर्ण करने के लिए', it: 'Per perfezionare il nobile carattere' }
+      },
+      {
+        q: { en: 'What does patience (Sabr) mean?', bn: 'ধৈর্য (সবর) মানে কী?', hi: 'सब्र का क्या अर्थ है?', it: 'Cosa significa la pazienza (Sabr)?' },
+        a: { en: 'Remaining calm and trusting Allah', bn: 'শান্ত থাকা ও আল্লাহর ওপর ভরসা রাখা', hi: 'शांत रहना और अल्लाह पर भरोसा रखना', it: 'Restare calmi e confidare in Allah' }
+      },
+      {
+        q: { en: 'How do we treat our neighbors?', bn: 'প্রতিবেশীর সঙ্গে কেমন আচরণ করব?', hi: 'पड़ोसियों के साथ कैसा व्यवहार करेंगे?', it: 'Come trattiamo i nostri vicini?' },
+        a: { en: 'With care and assistance', bn: 'যত্ন ও সহযোগিতার সঙ্গে', hi: 'देखभाल और सहयोग के साथ', it: 'Con cura e disponibilità' }
+      },
+      {
+        q: { en: 'Should we fulfill our promises?', bn: 'ওয়াদা পূরণ করা কি জরুরি?', hi: 'क्या वादा पूरा करना ज़रूरी है?', it: 'È doveroso mantenere le promesse?' },
+        a: { en: 'Yes, absolutely', bn: 'হ্যাঁ, অবশ্যই', hi: 'हाँ, बिल्कुल', it: 'Sì, assolutamente' }
+      },
+      {
+        q: { en: 'What do we do when finding lost property?', bn: 'হারানো জিনিস পেলে কী করব?', hi: 'कोई खोई चीज़ मिले तो क्या करेंगे?', it: 'Cosa fare trovando un oggetto smarrito?' },
+        a: { en: 'Try to return it to the owner', bn: 'মালিককে ফিরিয়ে দেওয়ার চেষ্টা করব', hi: 'मालिक को लौटाने का प्रयास करेंगे', it: 'Cercare di restituirlo al proprietario' }
+      },
+      {
+        q: { en: 'Is showing mercy to animals rewarded?', bn: 'পশু-পাখির প্রতি দয়া দেখালে কি সওয়াব আছে?', hi: 'क्या जानवरों पर दया करने से सवाब मिलता है?', it: 'C\'è ricompensa nell\'essere gentili con gli animali?' },
+        a: { en: 'Yes, great reward', bn: 'হ্যাঁ, অনেক সওয়াব', hi: 'हाँ, बहुत बड़ा सवाब', it: 'Sì, una grande ricompensa' }
+      },
+      {
+        q: { en: 'What is smiling at your brother considered?', bn: 'হাসিমুখে কথা বলা কী?', hi: 'मुस्कुराकर मिलना क्या है?', it: 'Cos\'è considerato sorridere al fratello?' },
+        a: { en: 'Sadaqah (charity)', bn: 'সাদাকাহ', hi: 'सदक़ा', it: 'Una carità (Sadaqah)' }
+      },
+      {
+        q: { en: 'How should we act when receiving help?', bn: 'কেউ উপকার করলে কী বলব?', hi: 'कोई मदद करे तो क्या कहेंगे?', it: 'Cosa diciamo quando qualcuno ci aiuta?' },
+        a: { en: 'JazakAllahu Khairan', bn: 'জাযাকাল্লাহু খাইরান', hi: 'जज़ाकल्लाह ख़ैर', it: 'JazakAllahu Khairan' }
+      },
+      {
+        q: { en: 'Does Islam encourage cleanliness of the environment?', bn: 'পরিবেশ পরিচ্ছন্ন রাখা কি ইসলামের অংশ?', hi: 'क्या पर्यावरण साफ़ रखना इस्लाम का हिस्सा है?', it: 'Mantenere pulito l\'ambiente fa parte dell\'Islam?' },
+        a: { en: 'Yes', bn: 'হ্যাঁ', hi: 'हाँ', it: 'Sì' }
+      },
+      {
+        q: { en: 'What is the heaviness of good character on the Day of Judgment?', bn: 'হাশরের ময়দানে ভালো চরিত্রের ওজন কেমন?', hi: 'क़यामत के दिन अच्छे अख़लाक़ का वज़न कैसा होगा?', it: 'Quanto peserà il buon carattere nel Giorno del Giudizio?' },
+        a: { en: 'The heaviest on the Scale', bn: 'মিযানে সবচেয়ে ভারী', hi: 'तराज़ू में सबसे भारी', it: 'Il più pesante sulla Bilancia' }
+      }
+    ]
+  },
+  8: {
+    title: { en: 'Treating People with Respect', bn: 'মানুষের সঙ্গে ব্যবহার', hi: 'लोगों के साथ व्यवहार', it: 'Relazioni con le Persone' },
+    definition: {
+      en: 'We treat parents, relatives, teachers, neighbors, and friends with justice, kindness, and honor.',
+      bn: 'মা-বাবা, আত্মীয়, শিক্ষক, প্রতিবেশী, বন্ধু—সবার সঙ্গে ন্যায়, দয়া ও সম্মানের সঙ্গে চলি।',
+      hi: 'माता-पिता, रिश्तेदार, शिक्षक, पड़ोसी और दोस्त—सभी के साथ न्याय, दया और आदर से पेश आएं।',
+      it: 'Trattiamo genitori, parenti, insegnanti, vicini e amici con giustizia, gentilezza e onore.'
+    },
+    story: {
+      en: 'Amin shared his pencils and coloring books with a classmate who had forgotten theirs. The teacher smiled and appreciated Amin\'s generosity and brotherly spirit.',
+      bn: 'সহপাঠী পেন্সিল আনতে ভুলে গিয়েছিল, আমিন নিজের পেন্সিল ভাগ করে দিল। শিক্ষক আমিনের পরোপকার দেখে প্রশংসা করলেন।',
+      hi: 'सहपाठी पेंसिल लाना भूल गया था, अमीन ने अपनी पेंसिल साझा की। शिक्षक ने अमीन की सहायता की भावना की सराहना की।',
+      it: 'Un compagno aveva dimenticato la matita, Amin condivise volentieri la sua. L\'insegnante lodò la sua generosità e spirito di fratellanza.'
+    },
+    quiz: [
+      {
+        q: { en: 'Who holds the greatest right to our good companionship?', bn: 'আমাদের ভালো সঙ্গ পাওয়ার সবচেয়ে বেশি হক কার?', hi: 'हमारी अच्छी सोहबत का सबसे पहला हक़दार कौन है?', it: 'Chi ha il maggior diritto alla nostra buona compagnia?' },
+        a: { en: 'Our mother', bn: 'মা', hi: 'माँ', it: 'Nostra madre' }
+      },
+      {
+        q: { en: 'How should we treat our teachers?', bn: 'শিক্ষকদের সঙ্গে কেমন ব্যবহার করব?', hi: 'उस्ताद के साथ कैसा व्यवहार करेंगे?', it: 'Come trattiamo i nostri insegnanti?' },
+        a: { en: 'With high respect and attentiveness', bn: 'উচ্চ সম্মান ও মনোযোগ দিয়ে', hi: 'गहरे आदर और ध्यान से', it: 'Con alto rispetto e attenzione' }
+      },
+      {
+        q: { en: 'Is maintaining ties of kinship important?', bn: 'আত্মীয়তার সম্পর্ক বজায় রাখা জরুরি?', hi: 'क्या रिश्तेदारों से संबंध बनाए रखना ज़रूरी है?', it: 'È importante mantenere i legami di parentela?' },
+        a: { en: 'Yes, very important', bn: 'হ্যাঁ, অত্যন্ত জরুরি', hi: 'हाँ, बहुत ज़रूरी है', it: 'Sì, è fondamentale' }
+      },
+      {
+        q: { en: 'How to treat younger siblings or children?', bn: 'ছোটদের সঙ্গে কেমন আচরণ করব?', hi: 'छोटों के साथ कैसा व्यवहार करेंगे?', it: 'Come ci comportiamo con i più piccoli?' },
+        a: { en: 'With affection and mercy', bn: 'স্নেহ ও মায়ার সঙ্গে', hi: 'स्नेह और प्यार से', it: 'Con affetto e tenerezza' }
+      },
+      {
+        q: { en: 'Should we visit the sick?', bn: 'অসুস্থ মানুষের খোঁজ নেওয়া কি সওয়াবের কাজ?', hi: 'क्या बीमार का हालचाल पूछना सवाब है?', it: 'Visitare i malati porta ricompensa?' },
+        a: { en: 'Yes, highly rewarded', bn: 'হ্যাঁ, অনেক সওয়াব', hi: 'हाँ, बड़ा सवाब है', it: 'Sì, una grande ricompensa' }
+      },
+      {
+        q: { en: 'What if someone insults us?', bn: 'কেউ আমাদের অপমান করলে কী করব?', hi: 'कोई हमारा अपमान करे तो क्या करेंगे?', it: 'Cosa fare se qualcuno ci insulta?' },
+        a: { en: 'Patience and peaceful avoidance', bn: 'ধৈর্য ধরে শান্তভাবে এড়িয়ে যাব', hi: 'सब्र रखकर शांति से दूर रहेंगे', it: 'Pazienza e allontanarsi con dignità' }
+      },
+      {
+        q: { en: 'Is sharing food with friends encouraged?', bn: 'বন্ধুদের সঙ্গে খাবার ভাগ করা কেমন?', hi: 'दोस्तों के साथ खाना बांटना कैसा है?', it: 'Condividere il cibo con gli amici è incoraggiato?' },
+        a: { en: 'A blessed and beloved act', bn: 'বরকতময় ও প্রশংসনীয়', hi: 'बरकत और पसंदीदा काम', it: 'Un gesto benedetto e amato' }
+      },
+      {
+        q: { en: 'How do we resolve disagreements?', bn: 'মতভেদ হলে কীভাবে সমাধান করব?', hi: 'मतभेद होने पर कैसे सुलझाएंगे?', it: 'Come risolviamo i disaccordi?' },
+        a: { en: 'Through polite dialogue and fairness', bn: 'ভদ্র আলোচনা ও ন্যায়ের মাধ্যমে', hi: 'सभ्य बातचीत और इंसाफ़ से', it: 'Con dialogo educato e giustizia' }
+      },
+      {
+        q: { en: 'What makes people feel valued?', bn: 'মানুষ কখন সম্মানিত বোধ করে?', hi: 'लोग कब सम्मानित महसूस करते हैं?', it: 'Cosa fa sentire le persone apprezzate?' },
+        a: { en: 'Kind words and genuine respect', bn: 'মিষ্টি কথা ও আন্তরিক সম্মান পেলে', hi: 'मीठी बात और सच्चे सम्मान से', it: 'Parole gentili e rispetto sincero' }
+      },
+      {
+        q: { en: 'Who is the best of people in the Hadith?', bn: 'হাদিস অনুযায়ী সর্বোত্তম ব্যক্তি কে?', hi: 'हदीस के अनुसार सबसे बेहतर इंसान कौन है?', it: 'Chi è il migliore tra le persone secondo l\'Hadith?' },
+        a: { en: 'The most beneficial to others', bn: 'যে মানুষের জন্য সবচেয়ে বেশি উপকারী', hi: 'जो दूसरों के लिए सबसे अधिक लाभकारी है', it: 'Chi è di maggior beneficio agli altri' }
+      }
+    ]
+  },
+  9: {
+    title: { en: 'Halal Food', bn: 'হালাল খাবার', hi: 'हलाल भोजन', it: 'Cibo Halal' },
+    definition: {
+      en: 'We choose wholesome, pure, and lawful food that Allah has made permissible for us.',
+      bn: 'বৈধ, পরিষ্কার ও নিরাপদ খাবার বেছে নিই। উপাদান বা বিধান বুঝতে বড়দের সাহায্য নিই।',
+      hi: 'जायज़, स्वच्छ और सुरक्षित भोजन चुनें। सामग्री समझने के लिए बड़ों की मदद लें।',
+      it: 'Scegliamo cibo sano, puro e lecito che Allah ha reso permesso per noi.'
+    },
+    story: {
+      en: 'At lunchtime, Amin washed his hands, sat down nicely, said "Bismillah", and ate with his right hand. He chewed quietly and thanked Allah after finishing with "Alhamdulillah".',
+      bn: 'খাওয়ার আগে আমিন হাত ধুয়ে বসল এবং “বিসমিল্লাহ” বলে ডান হাতে খাওয়া শুরু করল। খাওয়া শেষে বলল “আলহামদুলিল্লাহ”।',
+      hi: 'खाने से पहले अमीन ने हाथ धोए, "बिस्मिल्लाह" कहकर दाहिने हाथ से खाया और पूरा करके "अल्हम्दुलिल्लाह" कहा।',
+      it: 'Prima di mangiare, Amin si lavò le mani, disse "Bismillah" e mangiò con la mano destra. Alla fine disse "Alhamdulillah".'
+    },
+    quiz: [
+      {
+        q: { en: 'What do we say before eating?', bn: 'খাওয়ার শুরুতে কী বলি?', hi: 'खाने की शुरुआत में क्या कहते हैं?', it: 'Cosa diciamo prima di mangiare?' },
+        a: { en: 'Bismillah', bn: 'বিসমিল্লাহ', hi: 'बिस्मिल्लाह', it: 'Bismillah' }
+      },
+      {
+        q: { en: 'Which hand do we eat with?', bn: 'কোন হাত দিয়ে খাই?', hi: 'किस हाथ से खाते हैं?', it: 'Con quale mano mangiamo?' },
+        a: { en: 'Right hand', bn: 'ডান হাত', hi: 'दाहिना हाथ', it: 'Mano destra' }
+      },
+      {
+        q: { en: 'What do we say after eating?', bn: 'খাওয়া শেষ করে কী বলি?', hi: 'खाना ख़त्म करके क्या कहते हैं?', it: 'Cosa diciamo dopo aver mangiato?' },
+        a: { en: 'Alhamdulillah', bn: 'আলহামদুলিল্লাহ', hi: 'अल्हम्दुलिल्लाह', it: 'Alhamdulillah' }
+      },
+      {
+        q: { en: 'Should we wash hands before eating?', bn: 'খাওয়ার আগে হাত ধোয়া উচিত?', hi: 'क्या खाने से पहले हाथ धोना चाहिए?', it: 'Dobbiamo lavare le mani prima di mangiare?' },
+        a: { en: 'Yes, essential cleanliness', bn: 'হ্যাঁ, জরুরি পরিচ্ছন্নতা', hi: 'हाँ, ज़रूरी सफ़ाई है', it: 'Sì, igiene essenziale' }
+      },
+      {
+        q: { en: 'Should we waste food?', bn: 'খাবার অপচয় করা কি ঠিক?', hi: 'क्या खाना बर्बाद करना ठीक है?', it: 'È giusto sprecare il cibo?' },
+        a: { en: 'No, food is a blessing', bn: 'না, খাবার আল্লাহর নিয়ামত', hi: 'नहीं, खाना अल्लाह की नेअमत है', it: 'No, il cibo è una benedizione' }
+      },
+      {
+        q: { en: 'Should we criticize food we dislike?', bn: 'খাবারের দোষ ধরা কি উচিত?', hi: 'क्या खाने में नुक्स निकालना चाहिए?', it: 'Dobbiamo criticare il cibo se non ci piace?' },
+        a: { en: 'No, leave it respectfully if not eating', bn: 'না, ভালো না লাগলে চুপচাপ রেখে দেব', hi: 'नहीं, पसंद न हो तो चुपचाप छोड़ दें', it: 'No, lasciarlo con rispetto' }
+      },
+      {
+        q: { en: 'How should water be drank according to Sunnah?', bn: 'সুন্নাহ অনুযায়ী পানি কীভাবে পান করব?', hi: 'सुन्नत के मुताबिक पानी कैसे पिएं?', it: 'Come si beve l\'acqua secondo la Sunnah?' },
+        a: { en: 'Sitting down and in three sips', bn: 'বসে এবং তিন চুমুকে', hi: 'बैठकर और तीन घूंट में', it: 'Seduti e in tre sorsi' }
+      },
+      {
+        q: { en: 'Is fruit and vegetables Halal?', bn: 'ফলমূল ও শাকসবজি কি হালাল?', hi: 'क्या फल और सब्ज़ियाँ हलाल हैं?', it: 'Frutta e verdura sono Halal?' },
+        a: { en: 'Yes, pure and beneficial', bn: 'হ্যাঁ, পবিত্র ও উপকারী', hi: 'हाँ, पवित्र और लाभकारी', it: 'Sì, pure e benefiche' }
+      },
+      {
+        q: { en: 'Why must meat be Halal?', bn: 'মাংস হালাল হওয়া কেন জরুরি?', hi: 'गोश्त हलाल होना क्यों ज़रूरी है?', it: 'Perché la carne deve essere Halal?' },
+        a: { en: 'To follow Allah\'s prescribed method', bn: 'আল্লাহর বিধান অনুযায়ী জবাইয়ের জন্য', hi: 'अल्लाह के तरीक़े से ज़बह होने के लिए', it: 'Per seguire il metodo prescritto da Allah' }
+      },
+      {
+        q: { en: 'Does wholesome food affect prayer and heart?', bn: 'হালাল খাবার অন্তরে প্রভাব ফেলে?', hi: 'क्या हलाल भोजन दिल पर असर डालता है?', it: 'Il cibo sano influisce sul cuore e sulla preghiera?' },
+        a: { en: 'Yes, deeply', bn: 'হ্যাঁ, গভীরভাবে', hi: 'हाँ, गहरा असर डालता है', it: 'Sì, profondamente' }
+      }
+    ]
+  },
+  10: {
+    title: { en: 'Avoiding Haram Food', bn: 'হারাম খাবার থেকে বাঁচি', hi: 'हराम खाने से बचें', it: 'Evitare il Cibo Haram' },
+    definition: {
+      en: 'Islam forbids certain foods and drinks for our spiritual and physical well-being. We verify ingredients when uncertain.',
+      bn: 'ইসলাম কিছু খাবার ও পানীয় নিষিদ্ধ করেছে। উপাদান বা কোনো নির্দেশ নিয়ে প্রশ্ন থাকলে গুরুজনদের জানাই।',
+      hi: 'इस्लाम ने हमारे भले के लिए कुछ खाने-पीने की चीज़ें हराम की हैं। संदेह होने पर बड़ों से पूछें।',
+      it: 'L\'Islam proibisce certi cibi e bevande per il nostro bene. Verifichiamo sempre nei dubbi.'
+    },
+    story: {
+      en: 'At a store abroad, Amin noticed an attractive candy with suspicious gelatin. Remembering his lesson, he checked with his father. They found it contained pork derivatives and chose a delicious Halal alternative instead.',
+      bn: 'দোকানে আকর্ষণীয় একটি ক্যান্ডি দেখে আমিনের সন্দেহ হলো। সে বাবাকে জিজ্ঞেস করল এবং জানা গেল এতে নিষিদ্ধ উপাদান আছে। আমিন তা বাদ দিয়ে হালাল মিষ্টি বেছে নিল।',
+      hi: 'दुकान में आकर्षक कैंडी देखकर अमीन को संदेह हुआ। उसने पिता से पूछा और पता चला कि इसमें वर्जित सामग्री है। अमीन ने उसे छोड़कर हलाल मिठाई चुनी।',
+      it: 'In un negozio, Amin notò una caramella invitante con gelatina sospetta. Chiese al padre e scoprì che conteneva derivati suini; scelse invece una gustosa alternativa Halal.'
+    },
+    quiz: [
+      {
+        q: { en: 'Is pork permissible in Islam?', bn: 'শূকরের মাংস কি ইসলামে হালাল?', hi: 'क्या सूअर का मांस इस्लाम में हलाल है?', it: 'La carne di maiale è permessa nell\'Islam?' },
+        a: { en: 'No, strictly Haram', bn: 'না, সম্পূর্ণ হারাম', hi: 'नहीं, पूरी तरह हराम है', it: 'No, severamente Haram' }
+      },
+      {
+        q: { en: 'Are alcoholic beverages permitted?', bn: 'মদ বা অ্যালকোহলযুক্ত পানীয় কি জায়েজ?', hi: 'क्या शराब या नशीले पेय जायज़ हैं?', it: 'Le bevande alcoliche sono permesse?' },
+        a: { en: 'No, strictly forbidden', bn: 'না, সম্পূর্ণ নিষিদ্ধ', hi: 'नहीं, पूरी तरह वर्जित हैं', it: 'No, severamente proibite' }
+      },
+      {
+        q: { en: 'What if we eat something Haram unknowingly?', bn: 'না জেনে হারাম কিছু খেয়ে ফেললে কী হবে?', hi: 'अनजाने में हराम खाने पर क्या होगा?', it: 'Cosa succede se si mangia Haram senza saperlo?' },
+        a: { en: 'Seek Allah\'s forgiveness, no sin if unaware', bn: 'ক্ষমা চেয়ে নেব, না জেনে খেলে গুনাহ নেই', hi: 'माफ़ी मांगेंगे, अनजाने में गुनाह नहीं', it: 'Chiedere perdono ad Allah, non c\'è peccato' }
+      },
+      {
+        q: { en: 'What should we do when ingredients are doubtful?', bn: 'উপাদান নিয়ে সন্দেহ হলে কী করব?', hi: 'सामग्री पर संदेह हो तो क्या करें?', it: 'Cosa fare quando gli ingredienti sono dubbi?' },
+        a: { en: 'Avoid it until verified', bn: 'নিশ্চিত না হওয়া পর্যন্ত এড়িয়ে চলব', hi: 'संदेह दूर होने तक छोड़ देंगे', it: 'Evitare fino a verifica' }
+      },
+      {
+        q: { en: 'Can we offer Haram food to others?', bn: 'হারাম খাবার কি অন্যকে খেতে দেব?', hi: 'क्या हराम खाना दूसरों को खिला सकते हैं?', it: 'Possiamo offrire cibo Haram ad altri?' },
+        a: { en: 'No', bn: 'না', hi: 'नहीं', it: 'No' }
+      },
+      {
+        q: { en: 'Why did Allah prohibit certain foods?', bn: 'আল্লাহ কেন কিছু খাবার নিষিদ্ধ করেছেন?', hi: 'अल्लाह ने कुछ खाने क्यों हराम किए हैं?', it: 'Perché Allah ha proibito certi cibi?' },
+        a: { en: 'For our physical and spiritual harm prevention', bn: 'আমাদের কল্যাণ ও ক্ষতির হাত থেকে বাঁচাতে', hi: 'हमारी भलाई और नुक़सान से बचाने के लिए', it: 'Per la nostra protezione fisica e spirituale' }
+      },
+      {
+        q: { en: 'Is Halal food always clean and wholesome?', bn: 'হালাল খাবার কি সবসময় পবিত্র ও স্বাস্থ্যকর?', hi: 'क्या हलाल भोजन हमेशा शुद्ध और सेहतमंद होता है?', it: 'Il cibo Halal è sempre puro e salutare?' },
+        a: { en: 'Yes', bn: 'হ্যাঁ', hi: 'हाँ', it: 'Sì' }
+      },
+      {
+        q: { en: 'Should we read food labels?', bn: 'প্যাকেটের উপাদানের তালিকা পড়া উচিত?', hi: 'क्या पैकेट की सामग्री सूची पढ़नी चाहिए?', it: 'Dobbiamo leggere le etichette degli ingredienti?' },
+        a: { en: 'Yes, to be sure', bn: 'হ্যাঁ, নিশ্চিত হতে', hi: 'हाँ, सुनिश्चित करने के लिए', it: 'Sì, per esserne certi' }
+      },
+      {
+        q: { en: 'Who teaches us the dietary laws?', bn: 'খাবারের নিয়ম কে শিখিয়েছেন?', hi: 'खान-पान के नियम किसने सिखाए हैं?', it: 'Chi ci ha insegnato le regole alimentari?' },
+        a: { en: 'Allah and His Prophet (peace be upon him)', bn: 'আল্লাহ ও তাঁর রাসূল (সা.)', hi: 'अल्लाह और उनके रसूल (सल्लल्लाहु अलैहि व सल्लम)', it: 'Allah e il Suo Profeta (pace su di lui)' }
+      },
+      {
+        q: { en: 'What is our attitude towards Allah\'s prohibitions?', bn: 'আল্লাহর নিষেধাজ্ঞার প্রতি আমাদের মনোভাব কী?', hi: 'अल्लाह की मनाही के प्रति हमारा क्या रुख है?', it: 'Qual è il nostro atteggiamento verso i divieti di Allah?' },
+        a: { en: 'We hear and we obey with joy', bn: 'আনন্দের সাথে মেনে চলা', hi: 'खुशी से पालन करना', it: 'Ascoltiamo e obbediamo con gioia' }
+      }
+    ]
+  }
+};
+
+fs.writeFileSync(path.join(ROOT, 'tools', 'scratch_chapter_translations.json'), JSON.stringify(chapterTranslations, null, 2));
+console.log('Chapter translations generated for 10 chapters.');

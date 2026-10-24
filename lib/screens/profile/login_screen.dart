@@ -30,14 +30,18 @@ class _LoginScreenState extends State<LoginScreen> {
               padding: EdgeInsets.all(tablet ? 32 : 22),
               children: [
                 DuolingoPageHeader(
-                  title: _createAccount ? 'নতুন account' : 'আবার স্বাগতম',
-                  subtitle: 'অভিভাবকের account দিয়ে নিরাপদে যুক্ত হও',
+                  title: _createAccount
+                      ? context.t('login.new_account')
+                      : context.t('login.welcome_back'),
+                  subtitle: context.t('login.subtitle'),
                   iconType: VectorIconType.mosque,
                   gradientColors: const [Color(0xFF58CC02), Color(0xFF46A302)],
                   onBack: () => Navigator.pop(context),
                 ),
-                LocalizedText(
-                  _createAccount ? 'নতুন account তৈরি করো' : 'আবার স্বাগতম',
+                Text(
+                  _createAccount
+                      ? context.t('login.create_account_title')
+                      : context.t('login.welcome_back'),
                   textAlign: TextAlign.center,
                   style: const TextStyle(
                       color: AppTheme.darkText,
@@ -45,10 +49,10 @@ class _LoginScreenState extends State<LoginScreen> {
                       fontWeight: FontWeight.w900),
                 ),
                 const SizedBox(height: 7),
-                const LocalizedText(
-                    'অভিভাবকের email দিয়ে শিক্ষার্থীর profile সংযুক্ত করো',
+                Text(
+                    context.t('login.parent_email_hint'),
                     textAlign: TextAlign.center,
-                    style: TextStyle(
+                    style: const TextStyle(
                         color: Colors.black54, fontSize: 13, height: 1.5)),
                 const SizedBox(height: 24),
                 DuolingoCard(
@@ -59,14 +63,14 @@ class _LoginScreenState extends State<LoginScreen> {
                     TextField(
                       keyboardType: TextInputType.emailAddress,
                       decoration: InputDecoration(
-                          labelText: context.uiText('অভিভাবকের email'),
+                          labelText: context.t('login.parent_email_label'),
                           prefixIcon: const Icon(Icons.email_outlined)),
                     ),
                     const SizedBox(height: 13),
                     TextField(
                       obscureText: _hidePassword,
                       decoration: InputDecoration(
-                        labelText: context.uiText('Password'),
+                        labelText: context.t('login.password_label'),
                         prefixIcon: const Icon(Icons.lock_outline_rounded),
                         suffixIcon: IconButton(
                           onPressed: () =>
@@ -83,19 +87,21 @@ class _LoginScreenState extends State<LoginScreen> {
                       child: Duolingo3DButton(
                         onPressed: () =>
                             ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                              content: LocalizedText(
-                                  'Login service এখনো যুক্ত হয়নি; কোনো password সংরক্ষণ করা হয়নি।')),
+                          SnackBar(
+                              content: Text(
+                                  context.t('login.service_unavailable_snack'))),
                         ),
-                        text: _createAccount ? 'Account তৈরি করো' : 'Login',
+                        text: _createAccount
+                            ? context.t('login.create_account_button')
+                            : context.t('login.login_button'),
                       ),
                     ),
                     TextButton(
                       onPressed: () =>
                           setState(() => _createAccount = !_createAccount),
-                      child: LocalizedText(_createAccount
-                          ? 'আগে থেকেই account আছে? Login'
-                          : 'নতুন account তৈরি করো'),
+                      child: Text(_createAccount
+                          ? context.t('login.already_have_account')
+                          : context.t('login.need_new_account')),
                     ),
                   ]),
                 ),
@@ -105,10 +111,10 @@ class _LoginScreenState extends State<LoginScreen> {
                   decoration: BoxDecoration(
                       color: const Color(0xFFFFF0D1),
                       borderRadius: BorderRadius.circular(16)),
-                  child: const LocalizedText(
-                    'এটি login page-এর preview। নিরাপদ account চালুর জন্য authentication backend, email verification ও password recovery যুক্ত করতে হবে।',
+                  child: Text(
+                    context.t('login.preview_notice'),
                     textAlign: TextAlign.center,
-                    style: TextStyle(
+                    style: const TextStyle(
                         color: Color(0xFF795A16), fontSize: 11, height: 1.5),
                   ),
                 ),

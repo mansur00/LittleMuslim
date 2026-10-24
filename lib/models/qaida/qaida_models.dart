@@ -108,17 +108,20 @@ class ScoringPolicy {
 class ActivityTile {
   const ActivityTile({
     required this.id,
-    required this.label,
+    String? labelKey,
+    String? label,
     this.arabicLabel,
     this.audioAsset,
     this.groupKey, // used in Sort activities
-  });
+  }) : labelKey = labelKey ?? label ?? id;
 
   final String id;
-  final String label;
+  final String labelKey;
   final String? arabicLabel;
   final String? audioAsset;
   final String? groupKey;
+
+  String get label => labelKey;
 }
 
 // ---------------------------------------------------------------------------
@@ -132,18 +135,20 @@ class QaidaActivity {
     required this.id,
     required this.slotNumber, // 1 to 10
     required this.type,
-    required this.prompt,
-    this.instructionsBn,
-    this.instructionsEn,
+    String? promptKey,
+    String? prompt,
     this.arabicTarget,
     this.arabicSnippet,
     this.audioAsset,
     this.options = const [],
     this.correctIndex = 0,
     this.acceptedAnswers = const [],
-    this.explanation,
-    this.feedbackCorrect,
-    this.feedbackIncorrect,
+    String? explanationKey,
+    String? explanation,
+    String? feedbackCorrectKey,
+    String? feedbackCorrect,
+    String? feedbackIncorrectKey,
+    String? feedbackIncorrect,
     this.pairs,
     this.tiles = const [],
     this.sortingCategories,
@@ -153,12 +158,15 @@ class QaidaActivity {
     this.sequenceItems,
     this.puzzlePieces,
     this.soundOptions,
-    this.makhrajInfo,
-    this.transliteration,
+    String? makhrajInfoKey,
+    String? makhrajInfo,
+    String? transliterationKey,
+    String? transliteration,
     this.skillId,
     this.skillIds = const [],
     this.learningObjectiveIds = const [],
-    this.hint,
+    String? hintKey,
+    String? hint,
     this.difficulty = QaidaActivityDifficulty.medium,
     this.visualAssetReference,
     this.rtlRequired = false,
@@ -168,17 +176,24 @@ class QaidaActivity {
     this.contentSource,
     this.teacherReviewStatus = ContentReviewStatus.pending,
     this.contentVersion = '1.0',
-  });
+    String? instructionsBn,
+    String? instructionsEn,
+  })  : promptKey = promptKey ?? prompt ?? '',
+        explanationKey = explanationKey ?? explanation,
+        feedbackCorrectKey = feedbackCorrectKey ?? feedbackCorrect,
+        feedbackIncorrectKey = feedbackIncorrectKey ?? feedbackIncorrect,
+        makhrajInfoKey = makhrajInfoKey ?? makhrajInfo,
+        transliterationKey = transliterationKey ?? transliteration,
+        hintKey = hintKey ?? hint;
 
   // Core identity
   final String id;
   final int slotNumber;
   final QaidaActivityType type;
 
-  // Instructions
-  final String prompt;
-  final String? instructionsBn;
-  final String? instructionsEn;
+  // Translation keys for instructions and feedback
+  final String promptKey;
+  String get prompt => promptKey;
 
   // Arabic content
   final String? arabicTarget;
@@ -194,10 +209,15 @@ class QaidaActivity {
   final int correctIndex;
   final List<String> acceptedAnswers;
 
-  // Feedback
-  final String? explanation;
-  final String? feedbackCorrect;
-  final String? feedbackIncorrect;
+  // Feedback keys
+  final String? explanationKey;
+  String? get explanation => explanationKey;
+
+  final String? feedbackCorrectKey;
+  String? get feedbackCorrect => feedbackCorrectKey;
+
+  final String? feedbackIncorrectKey;
+  String? get feedbackIncorrect => feedbackIncorrectKey;
 
   // Match Pairs: Map<left, right>
   final Map<String, String>? pairs;
@@ -218,9 +238,12 @@ class QaidaActivity {
   final List<String>? puzzlePieces;
   final Map<String, String>? soundOptions;
 
-  // Makhraj / Transliteration
-  final String? makhrajInfo;
-  final String? transliteration;
+  // Makhraj / Transliteration keys
+  final String? makhrajInfoKey;
+  String? get makhrajInfo => makhrajInfoKey;
+
+  final String? transliterationKey;
+  String? get transliteration => transliterationKey;
 
   // Skill tracking
   final String? skillId;
@@ -228,7 +251,8 @@ class QaidaActivity {
   final List<String> learningObjectiveIds;
 
   // Pedagogy
-  final String? hint;
+  final String? hintKey;
+  String? get hint => hintKey;
   final QaidaActivityDifficulty difficulty;
 
   // Timing & Scoring
@@ -245,39 +269,8 @@ class QaidaActivity {
   // Computed helpers
   // ---------------------------------------------------------------------------
 
-  String get stepTitle => switch (type) {
-        QaidaActivityType.warmupRecall => 'স্মরণ করি',
-        QaidaActivityType.recognize => 'চিনে নিই',
-        QaidaActivityType.listenAndIdentify => 'শুনে বাছি',
-        QaidaActivityType.matchPairs => 'জোড়া মিলাই',
-        QaidaActivityType.differentiate => 'পার্থক্য করি',
-        QaidaActivityType.buildArrange => 'ক্রম সাজাই',
-        QaidaActivityType.fillInBlank => 'শূন্য পূরণ',
-        QaidaActivityType.sortGroups => 'দলে ভাগ করি',
-        QaidaActivityType.memoryMatch => 'মিল খুঁজি',
-        QaidaActivityType.readInContext => 'প্রয়োগ দেখি',
-        QaidaActivityType.applyRule => 'নিয়ম খাটাই',
-        QaidaActivityType.mixedPractice => 'মিশ্র অনুশীলন',
-        QaidaActivityType.lessonCheck => 'পাঠ যাচাই',
-        QaidaActivityType.checkpointExam => 'চেকপয়েন্ট পরীক্ষা',
-        QaidaActivityType.trackFinalExam => 'ট্র্যাক ফাইনাল',
-        QaidaActivityType.voiceRepeat => 'শুনে বলি',
-        QaidaActivityType.speedReading => 'দ্রুত পাঠ',
-        QaidaActivityType.harakatSlider => 'হরকত স্লাইড',
-        QaidaActivityType.maddStretch => 'মাদ্দ টানি',
-        QaidaActivityType.shaddahPress => 'তাশদীদ চাপি',
-        QaidaActivityType.spotTheMistake => 'ব্যতিক্রম খুঁজি',
-        QaidaActivityType.whichRule => 'নিয়ম খুঁজি',
-        QaidaActivityType.ghunnahMeter => 'গুন্নাহ মিটার',
-        QaidaActivityType.bossChallenge => 'বস চ্যালেঞ্জ',
-        QaidaActivityType.drawTrace => 'হাত ঘোরাই',
-        QaidaActivityType.oddOneOut => 'আলাদা খুঁজি',
-        QaidaActivityType.catchLetters => 'হরফ ধরি',
-        QaidaActivityType.sequenceOrder => 'ধারাবাহিক সাজাই',
-        QaidaActivityType.puzzleBuilder => 'ধাঁধা মিলাই',
-        QaidaActivityType.singAlongGap => 'সুর মিলিয়ে পূরণ',
-        QaidaActivityType.soundCompare => 'শব্দ তুলনা',
-      };
+  String get stepTitleKey => 'qaida.activity_type.${type.name}';
+  String get stepTitle => stepTitleKey;
 
   bool get hasPairs => pairs != null && pairs!.isNotEmpty;
   bool get hasTiles => tiles.isNotEmpty;
@@ -300,14 +293,19 @@ class QaidaLessonInfo {
     required this.id,
     required this.trackId,
     required this.lessonNumber,
-    required this.title,
-    required this.subtitle,
+    String? titleKey,
+    String? title,
+    String? subtitleKey,
+    String? subtitle,
     required this.arabicDisplay,
-    required this.description,
+    String? descriptionKey,
+    String? description,
     this.titleEn,
-    this.ruleSummary,
+    String? ruleSummaryKey,
+    String? ruleSummary,
     this.audioAsset,
-    this.makhraj,
+    String? makhrajKey,
+    String? makhraj,
     this.prerequisiteSkillIds = const [],
     this.sourceReference,
     this.isCheckpoint = false,
@@ -318,20 +316,40 @@ class QaidaLessonInfo {
     this.ruleLetters = const [],
     this.exampleWords = const [],
     required this.activities,
-  }) : assert(activities.length >= 7 || isCheckpoint || isTrackFinal || isReviewNode,
+  })  : titleKey = titleKey ?? title ?? '',
+        subtitleKey = subtitleKey ?? subtitle ?? '',
+        descriptionKey = descriptionKey ?? description ?? '',
+        ruleSummaryKey = ruleSummaryKey ?? ruleSummary,
+        makhrajKey = makhrajKey ?? makhraj,
+        assert(activities.length >= 7 || isCheckpoint || isTrackFinal || isReviewNode,
             'Standard lessons must have at least 7 activities');
 
   final String id;
   final String trackId;
   final int lessonNumber;
-  final String title;
+
+  // Stable translation keys
+  final String titleKey;
+  String get title => titleKey;
+
   final String? titleEn;
-  final String subtitle;
+
+  final String subtitleKey;
+  String get subtitle => subtitleKey;
+
   final String arabicDisplay;
-  final String description;
-  final String? ruleSummary;
+
+  final String descriptionKey;
+  String get description => descriptionKey;
+
+  final String? ruleSummaryKey;
+  String? get ruleSummary => ruleSummaryKey;
+
   final String? audioAsset;
-  final String? makhraj;
+
+  final String? makhrajKey;
+  String? get makhraj => makhrajKey;
+
   final List<String> prerequisiteSkillIds;
   final String? sourceReference;
   final bool isCheckpoint;
@@ -365,23 +383,37 @@ class QaidaTrackInfo {
   const QaidaTrackInfo({
     required this.id,
     required this.trackNumber,
-    required this.title,
-    required this.subtitle,
+    String? titleKey,
+    String? title,
+    String? subtitleKey,
+    String? subtitle,
     required this.arabicTitle,
-    required this.description,
+    String? descriptionKey,
+    String? description,
     required this.colorHex,
     required this.icon,
     required this.lessons,
     this.prerequisiteTrackIds = const [],
     this.contentReviewStatus = ContentReviewStatus.pending,
-  });
+  })  : titleKey = titleKey ?? title ?? '',
+        subtitleKey = subtitleKey ?? subtitle ?? '',
+        descriptionKey = descriptionKey ?? description ?? '';
 
   final String id;
   final int trackNumber;
-  final String title;
-  final String subtitle;
+
+  // Stable translation keys
+  final String titleKey;
+  String get title => titleKey;
+
+  final String subtitleKey;
+  String get subtitle => subtitleKey;
+
   final String arabicTitle;
-  final String description;
+
+  final String descriptionKey;
+  String get description => descriptionKey;
+
   final int colorHex;
   final IconData icon;
   final List<QaidaLessonInfo> lessons;
@@ -401,28 +433,48 @@ class NuraniStepInfo {
   const NuraniStepInfo({
     required this.stepNumber,
     required this.id,
-    required this.title,
-    required this.titleEn,
+    String? titleKey,
+    String? title,
+    String? titleEn,
     required this.arabicTitle,
-    required this.description,
+    String? descriptionKey,
+    String? description,
     required this.phaseNumber,
-    required this.phaseName,
+    String? phaseNameKey,
+    String? phaseName,
     required this.lessons,
-    required this.gardenPlant,
+    String? gardenPlantKey,
+    String? gardenPlant,
     required this.colorHex,
     required this.icon,
-  });
+  })  : titleKey = titleKey ?? title ?? '',
+        descriptionKey = descriptionKey ?? description ?? '',
+        phaseNameKey = phaseNameKey ?? phaseName ?? '',
+        gardenPlantKey = gardenPlantKey ?? gardenPlant ?? '';
 
   final int stepNumber;
   final String id;
-  final String title;
-  final String titleEn;
+
+  // Stable translation keys
+  final String titleKey;
+  String get title => titleKey;
+  String get titleEn => titleKey;
+
   final String arabicTitle;
-  final String description;
+
+  final String descriptionKey;
+  String get description => descriptionKey;
+
   final int phaseNumber;
-  final String phaseName;
+
+  final String phaseNameKey;
+  String get phaseName => phaseNameKey;
+
   final List<QaidaLessonInfo> lessons;
-  final String gardenPlant; // e.g. 'Olive Tree', 'Date Palm', 'Jasmine Flower', 'Golden Lantern'
+
+  final String gardenPlantKey;
+  String get gardenPlant => gardenPlantKey;
+
   final int colorHex;
   final IconData icon;
 
@@ -432,10 +484,10 @@ class NuraniStepInfo {
   QaidaTrackInfo toTrackInfo() => QaidaTrackInfo(
         id: id,
         trackNumber: stepNumber,
-        title: title,
-        subtitle: description,
+        titleKey: titleKey,
+        subtitleKey: descriptionKey,
         arabicTitle: arabicTitle,
-        description: description,
+        descriptionKey: descriptionKey,
         colorHex: colorHex,
         icon: icon,
         lessons: lessons,

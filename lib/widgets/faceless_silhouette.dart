@@ -1,3 +1,4 @@
+import '../l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../utils/app_state.dart';
@@ -180,8 +181,6 @@ class _AvatarCustomizerContentState extends State<_AvatarCustomizerContent> {
   @override
   Widget build(BuildContext context) {
     final currentColor = Color(_selectedColor);
-    final isBangla =
-        context.watch<AppState>().selectedLanguage == 'bn';
 
     return SafeArea(
       child: Padding(
@@ -202,7 +201,7 @@ class _AvatarCustomizerContentState extends State<_AvatarCustomizerContent> {
 
             // Title
             Text(
-              isBangla ? 'অবতার ও রঙ নির্বাচন' : 'Choose Avatar & Color',
+              context.t('avatar.modal_title'),
               style: const TextStyle(
                 fontSize: 19,
                 fontWeight: FontWeight.bold,
@@ -211,9 +210,7 @@ class _AvatarCustomizerContentState extends State<_AvatarCustomizerContent> {
             ),
             const SizedBox(height: 4),
             Text(
-              isBangla
-                  ? 'তোমার পছন্দের টুপি বা হিজাব ও প্রিয় রঙ বেছে নাও'
-                  : 'Pick Topi or Hijab and your favorite color',
+              context.t('avatar.modal_subtitle'),
               style: TextStyle(
                 fontSize: 13,
                 color: Colors.grey.shade600,
@@ -255,7 +252,7 @@ class _AvatarCustomizerContentState extends State<_AvatarCustomizerContent> {
               children: [
                 Expanded(
                   child: _AvatarTypeButton(
-                    title: isBangla ? 'টুপি (Topi)' : 'Topi (Boy)',
+                    title: context.t('avatar.topi_boy'),
                     icon: Icons.person_rounded,
                     isSelected: _selectedType == 'topi',
                     color: currentColor,
@@ -265,7 +262,7 @@ class _AvatarCustomizerContentState extends State<_AvatarCustomizerContent> {
                 const SizedBox(width: 12),
                 Expanded(
                   child: _AvatarTypeButton(
-                    title: isBangla ? 'হিজাব (Hijab)' : 'Hijab (Girl)',
+                    title: context.t('avatar.hijab_girl'),
                     icon: Icons.face_3_rounded,
                     isSelected: _selectedType == 'hijab',
                     color: currentColor,
@@ -280,7 +277,7 @@ class _AvatarCustomizerContentState extends State<_AvatarCustomizerContent> {
             Align(
               alignment: Alignment.centerLeft,
               child: Text(
-                isBangla ? 'প্রিয় রঙ বাছুন:' : 'Select Color:',
+                context.t('avatar.select_color'),
                 style: const TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
@@ -328,7 +325,7 @@ class _AvatarCustomizerContentState extends State<_AvatarCustomizerContent> {
 
             // Save Button
             DSButton(
-              label: isBangla ? 'সংরক্ষণ করুন' : 'Save Avatar',
+              label: context.t('avatar.save_avatar'),
               color: currentColor,
               fullWidth: true,
               onPressed: () {

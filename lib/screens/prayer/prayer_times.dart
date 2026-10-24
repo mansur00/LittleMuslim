@@ -35,7 +35,7 @@ class PrayerLocationSelection {
   final String? timeZoneId;
 
   String get displayName =>
-      kind == PrayerLocationKind.city ? '$city, $country' : 'Device location';
+      kind == PrayerLocationKind.city ? '$city, $country' : 'prayer.device_location';
 
   PrayerLocationSelection withTimeZone(String timeZone) =>
       kind == PrayerLocationKind.city

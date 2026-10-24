@@ -49,8 +49,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
               padding: EdgeInsets.all(tablet ? 32 : 18),
               children: [
                 DuolingoPageHeader(
-                  title: 'প্রোফাইল ও অ্যাকাউন্ট',
-                  subtitle: 'তোমার শেখার পরিচয় ও অগ্রগতি',
+                  title: context.t('profile.title'),
+                  subtitle: context.t('profile.subtitle'),
                   iconType: VectorIconType.smile,
                   gradientColors: const [Color(0xFF58CC02), Color(0xFF46A302)],
                   onBack: () => Navigator.pop(context),
@@ -73,7 +73,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     GestureDetector(
                       onTap: () => showAvatarCustomizerModal(context),
                       child: Tooltip(
-                        message: 'অবতার ও রঙ পরিবর্তন করুন',
+                        message: context.t('avatar.customize_tooltip'),
                         child: Stack(
                           children: [
                             const FacelessSilhouette(
@@ -102,16 +102,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                          LocalizedText(
+                          Text(
                               state.userName.isEmpty
-                                  ? 'শিক্ষার্থী'
+                                  ? context.t('profile.default_learner')
                                   : state.userName,
                               style: const TextStyle(
                                   color: Colors.white,
                                   fontSize: 20,
                                   fontWeight: FontWeight.w900)),
-                          LocalizedText(
-                              'শেখার স্ট্রিক ${state.streakDays} দিন · ${state.xp} XP',
+                          Text(
+                              context.t('profile.streak_xp', params: {
+                                'streak': '${state.streakDays}',
+                                'xp': '${state.xp}',
+                              }),
                               style: const TextStyle(
                                   color: Colors.white70, fontSize: 12)),
                         ])),
@@ -140,20 +143,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                LocalizedText(
+                                Text(
                                   state.isAdmin
-                                      ? 'অ্যাডমিন মোড (সব আনলক)'
-                                      : 'মূল শিক্ষার্থী মোড',
+                                      ? context.t('profile.admin_mode_title')
+                                      : context.t('profile.learner_mode_title'),
                                   style: TextStyle(
                                     fontWeight: FontWeight.w900,
                                     fontSize: 15,
                                     color: state.isAdmin ? const Color(0xFFB45309) : AppTheme.darkText,
                                   ),
                                 ),
-                                LocalizedText(
+                                Text(
                                   state.isAdmin
-                                      ? 'সব লেসন, ক্বায়দা, কুইজ ও ধাপ ১০০% আনলক আছে'
-                                      : 'স্বাভাবিক নিয়মে ক্রমান্বয়ে লেসন আনলক হবে',
+                                      ? context.t('profile.admin_mode_desc')
+                                      : context.t('profile.learner_mode_desc'),
                                   style: const TextStyle(color: Colors.black54, fontSize: 11),
                                 ),
                               ],
@@ -167,8 +170,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           Expanded(
                             child: DSButton(
                               label: state.isAdmin
-                                  ? 'মূল শিক্ষার্থী মোডে যান'
-                                  : 'অ্যাডমিন মোডে যান (সব আনলক)',
+                                  ? context.t('profile.switch_to_learner')
+                                  : context.t('profile.switch_to_admin'),
                               icon: state.isAdmin
                                   ? Icons.swap_horiz_rounded
                                   : Icons.lock_open_rounded,
@@ -182,10 +185,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   ..hideCurrentSnackBar()
                                   ..showSnackBar(
                                     SnackBar(
-                                      content: LocalizedText(
+                                      content: Text(
                                         state.isAdmin
-                                            ? 'অ্যাডমিন মোড চালু: সব ধাপ আনলক!'
-                                            : 'শিক্ষার্থী মোড চালু: স্বাভাবিক লক নিয়ম সক্রিয়!',
+                                            ? context.t('profile.admin_enabled_snack')
+                                            : context.t('profile.learner_enabled_snack'),
                                       ),
                                       behavior: SnackBarBehavior.floating,
                                       backgroundColor: state.isAdmin
@@ -209,8 +212,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const LocalizedText('শিক্ষার্থীর তথ্য',
-                            style: TextStyle(
+                        Text(context.t('profile.learner_info'),
+                            style: const TextStyle(
                                 color: AppTheme.darkText,
                                 fontSize: 16,
                                 fontWeight: FontWeight.w900)),
@@ -219,19 +222,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           controller: _nameController,
                           textCapitalization: TextCapitalization.words,
                           decoration: InputDecoration(
-                              labelText: context.uiText('নাম'),
+                              labelText: context.t('profile.name_label'),
                               prefixIcon: const Icon(Icons.person_outline_rounded)),
                         ),
                         const SizedBox(height: 13),
                         DropdownButtonFormField<int>(
                           initialValue: _age,
                           decoration: InputDecoration(
-                              labelText: context.uiText('বয়স'),
+                              labelText: context.t('profile.age_label'),
                               prefixIcon: const Icon(Icons.cake_outlined)),
                           items: [
                             for (var age = 6; age <= 14; age++)
                               DropdownMenuItem(
-                                  value: age, child: LocalizedText('$age বছর'))
+                                  value: age,
+                                  child: Text(context.t('profile.age_years', params: {'age': '$age'})))
                           ],
                           onChanged: (value) {
                             if (value != null) setState(() => _age = value);
@@ -247,12 +251,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   name: _nameController.text, age: _age);
                               if (!context.mounted) return;
                               ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                      content: LocalizedText(
-                                          'প্রোফাইল সংরক্ষণ হয়েছে')));
+                                  SnackBar(
+                                      content: Text(
+                                          context.t('profile.saved_snack'))));
                             },
                             icon: const Icon(Icons.check_rounded),
-                            label: const LocalizedText('প্রোফাইল সংরক্ষণ করুন'),
+                            label: Text(context.t('profile.save_button')),
                             style: FilledButton.styleFrom(
                                 backgroundColor: AppTheme.primaryGreen),
                           ),
@@ -260,25 +264,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ]),
                 ),
                 const SizedBox(height: 14),
-                const DuolingoCard(
-                  accentColor: Color(0xFF58CC02),
+                DuolingoCard(
+                  accentColor: const Color(0xFF58CC02),
                   margin: EdgeInsets.zero,
-                  padding: EdgeInsets.all(17),
+                  padding: const EdgeInsets.all(17),
                   child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Row(children: [
-                          Icon(Icons.verified_user_rounded,
+                          const Icon(Icons.verified_user_rounded,
                               color: AppTheme.primaryGreen),
-                          SizedBox(width: 9),
-                          LocalizedText('Account login ও sync',
-                              style: TextStyle(
+                          const SizedBox(width: 9),
+                          Text(context.t('profile.login_sync_title'),
+                              style: const TextStyle(
                                   fontWeight: FontWeight.w900, fontSize: 15))
                         ]),
-                        SizedBox(height: 8),
-                        LocalizedText(
-                            'এই profile ও শেখার অগ্রগতি এখন এই ডিভাইসে সেভ হয়। Email/phone login, একাধিক device-এ sync ও password recovery চালু করতে authentication backend সংযোগ প্রয়োজন।',
-                            style: TextStyle(
+                        const SizedBox(height: 8),
+                        Text(
+                            context.t('profile.login_sync_desc'),
+                            style: const TextStyle(
                                 color: Colors.black54,
                                 fontSize: 12,
                                 height: 1.55)),
@@ -286,7 +290,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
                 const SizedBox(height: 12),
                 DSButton(
-                  label: 'Login / account তৈরি',
+                  label: context.t('profile.login_action'),
                   icon: Icons.login_rounded,
                   variant: DSButtonVariant.outline,
                   onPressed: () =>
@@ -303,9 +307,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       Navigator.of(context).popUntil((route) => route.isFirst);
                     },
                     icon: const Icon(Icons.refresh_rounded, size: 16, color: Colors.black45),
-                    label: const LocalizedText(
-                      'অনবোর্ডিং আবার দেখুন / রিসেট করুন',
-                      style: TextStyle(fontSize: 12, color: Colors.black54),
+                    label: Text(
+                      context.t('profile.reset_onboarding'),
+                      style: const TextStyle(fontSize: 12, color: Colors.black54),
                     ),
                   ),
                 ),

@@ -31,7 +31,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       if (appState.draftName.trim().isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: const LocalizedText('তোমার নাম লিখো প্লিজ'),
+            content: Text(context.t('onboarding.enter_name_warning')),
             backgroundColor: AppTheme.accentCoral,
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -91,8 +91,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         curve: Curves.easeInOut,
                       );
                     },
-                    child: LocalizedText(
-                      'Skip',
+                    child: Text(
+                      context.t('common.skip'),
                       style: TextStyle(
                         color: AppTheme.primaryGreen.withValues(alpha: 0.7),
                         fontSize: isTablet ? 16 : 14,
@@ -163,7 +163,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       children: [
                         Expanded(
                           child: DSButton(
-                            label: 'পেছনে',
+                            label: context.t('nav.back'),
                             color: Colors.white,
                             shadowColor: const Color(0xFFD1D5DB),
                             textColor: DS.textSecondary,
@@ -175,7 +175,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         Expanded(
                           flex: 2,
                           child: DSButton(
-                            label: 'পরবর্তী',
+                            label: context.t('nav.next'),
                             color: DS.green500,
                             shadowColor: DS.green600,
                             textColor: Colors.white,

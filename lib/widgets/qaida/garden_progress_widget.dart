@@ -1,8 +1,9 @@
+import '../../core/core.dart';
+import '../../l10n/app_localizations.dart';
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
-/// Islamic Garden Progress Widget (ইসলামিক বাগান)
+/// Islamic Garden Progress Widget
 /// As per the master design plan:
 /// - "Lesson-er sathe sathe ekta bagan boro hoy"
 /// - No animal/human mascot: instead, plants, flowers, trees, and lanterns grow
@@ -119,8 +120,11 @@ class _IslamicGardenWidgetState extends State<IslamicGardenWidget>
                             color: Color(0xFF78C943), size: 16),
                         const SizedBox(width: 4),
                         Text(
-                          'Step ${widget.currentStepNumber}, Lesson ${widget.currentLessonNumber}',
-                          style: GoogleFonts.hindSiliguri(
+                          context.t('qaida.garden_step_lesson', params: {
+                            'step': context.formatDigits('${widget.currentStepNumber}'),
+                            'lesson': context.formatDigits('${widget.currentLessonNumber}'),
+                          }),
+                          style: AppFonts.getTextStyle(context, 
                             fontSize: 12,
                             fontWeight: FontWeight.bold,
                             color: const Color(0xFF27352D),
@@ -153,8 +157,9 @@ class _IslamicGardenWidgetState extends State<IslamicGardenWidget>
                             color: Color(0xFF27352D), size: 16),
                         const SizedBox(width: 4),
                         Text(
-                          '${widget.totalStars} স্টার',
-                          style: GoogleFonts.hindSiliguri(
+                          context.t('garden.total_stars',
+                              params: {'stars': widget.totalStars}),
+                          style: AppFonts.getTextStyle(context, 
                             fontSize: 12,
                             fontWeight: FontWeight.bold,
                             color: const Color(0xFF27352D),
@@ -186,10 +191,10 @@ class _IslamicGardenWidgetState extends State<IslamicGardenWidget>
                           children: [
                             Flexible(
                               child: Text(
-                                'আমার নূরানী বাগান',
+                                context.t('garden.title'),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
-                                style: GoogleFonts.hindSiliguri(
+                                style: AppFonts.getTextStyle(context, 
                                   fontSize: 14,
                                   fontWeight: FontWeight.bold,
                                   color: const Color(0xFF27352D),
@@ -198,7 +203,10 @@ class _IslamicGardenWidgetState extends State<IslamicGardenWidget>
                             ),
                             const SizedBox(width: 8),
                             Text(
-                              '${widget.completedStepsCount}/${widget.totalStepsCount} ধাপ',
+                              context.t('garden.steps_ratio', params: {
+                                'completed': widget.completedStepsCount,
+                                'total': widget.totalStepsCount,
+                              }),
                               style: const TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w600,
@@ -286,10 +294,10 @@ class _GardenPainter extends CustomPainter {
     _drawDistantMinaret(canvas, Offset(w * 0.82, h * 0.52));
 
     // 5. Draw Plants & Trees based on completed steps:
-    // Step 1: Date Palm (খেজুর গাছ)
+    // Step 1: Date Palm
     _drawDatePalm(canvas, Offset(w * 0.16, h * 0.72), isGrown: completedSteps >= 1);
 
-    // Step 2: Olive Tree (যাইতুন গাছ)
+    // Step 2: Olive Tree
     _drawOliveTree(canvas, Offset(w * 0.36, h * 0.70), isGrown: completedSteps >= 2);
 
     // Step 3 & 4: Jasmine & Rose Flowers

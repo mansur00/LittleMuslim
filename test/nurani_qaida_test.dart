@@ -50,13 +50,13 @@ void main() {
       // Verify Alif (1st letter) has tailored properties
       final alif = step1.lessons.first;
       expect(alif.arabicDisplay, 'ا');
-      expect(alif.makhraj?.contains('জাওফ') ?? false, true);
+      expect(alif.makhraj?.contains('alif') ?? false, true);
       expect(alif.exampleWords.contains('أَكَلَ'), true);
 
       // Verify Ba (2nd letter) has tailored properties
       final ba = step1.lessons[1];
       expect(ba.arabicDisplay, 'ب');
-      expect(ba.makhraj?.contains('ঠোঁট') ?? false, true);
+      expect(ba.makhraj?.contains('ba') ?? false, true);
       expect(ba.exampleWords.contains('بَيْتٌ'), true);
 
       // Verify option placement is not fixed to index 0 across activities
@@ -84,7 +84,7 @@ void main() {
 
     test('Step 17 (Tilawat) covers full Ayah recitation', () {
       final step17 = NuraniQaidaData.getStepByNumber(17)!;
-      expect(step17.title, 'পূর্ণাঙ্গ তিলাওয়াত');
+      expect(step17.title, 'qaida.step.17.title');
       expect(step17.lessons.isNotEmpty, true);
     });
 

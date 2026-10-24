@@ -16,16 +16,25 @@ import '../../widgets/duolingo_appbar.dart';
 class _DuaEntry {
   const _DuaEntry({
     required this.id,
-    required this.title,
     required this.category,
     required this.arabic,
-    required this.meaning,
-    required this.reference,
     required this.color,
     required this.accent,
   });
-  final String id, title, category, arabic, meaning, reference;
+  final String id, category, arabic;
   final Color color, accent;
+
+  String getLocalizedTitle(BuildContext context) =>
+      context.t('duas.item.$id.title');
+
+  String getLocalizedMeaning(BuildContext context) =>
+      context.t('duas.item.$id.meaning');
+
+  String getLocalizedReference(BuildContext context) =>
+      context.t('duas.item.$id.reference');
+
+  String getLocalizedCategory(BuildContext context) =>
+      _DuasScreenState.getCategoryLabel(context, category);
 }
 
 class DuasScreen extends StatefulWidget {
@@ -37,300 +46,237 @@ class DuasScreen extends StatefulWidget {
 
 class _DuasScreenState extends State<DuasScreen> {
   static const _categories = [
-    'সব',
-    'পছন্দের',
-    'সকাল ও সন্ধ্যা',
-    'দৈনন্দিন',
-    'ঘুম',
-    'সফর',
-    'বিশেষ'
+    'all',
+    'favorites',
+    'morning_evening',
+    'daily',
+    'sleep',
+    'travel',
+    'special'
   ];
+
+  static String getCategoryLabel(BuildContext context, String category) {
+    switch (category) {
+      case 'all':
+      return context.t('duas.category.all');
+      case 'favorites':
+      return context.t('duas.category.favorites');
+      case 'morning_evening':
+      return context.t('duas.category.morning_evening');
+      case 'daily':
+      return context.t('duas.category.daily');
+      case 'sleep':
+      return context.t('duas.category.sleep');
+      case 'travel':
+      return context.t('duas.category.travel');
+      case 'special':
+      return context.t('duas.category.special');
+      default:
+        return category;
+    }
+  }
+
+  static List<String> getCategoryLabels(BuildContext context) => [
+        context.t('duas.category.all'),
+        context.t('duas.category.favorites'),
+        context.t('duas.category.morning_evening'),
+        context.t('duas.category.daily'),
+        context.t('duas.category.sleep'),
+        context.t('duas.category.travel'),
+        context.t('duas.category.special'),
+      ];
   static const _duas = [
     _DuaEntry(
       id: 'wake',
-      title: 'ঘুম থেকে উঠলে',
-      category: 'সকাল ও সন্ধ্যা',
+      category: 'morning_evening',
       arabic:
           'الْحَمْدُ لِلَّهِ الَّذِي أَحْيَانَا بَعْدَ مَا أَمَاتَنَا، وَإِلَيْهِ النُّشُورُ',
-      meaning:
-          'সব প্রশংসা আল্লাহর, যিনি ঘুমের পর আমাদের জীবিত করেছেন; আর তাঁর কাছেই পুনরুত্থান।',
-      reference: 'সহিহ বুখারি ৬৩২৪',
       color: Color(0xFFFFF6D0),
       accent: Color(0xFFD4A017),
     ),
     _DuaEntry(
       id: 'morning_protection',
-      title: 'সকালের দোয়া (সুরক্ষা)',
-      category: 'সকাল ও সন্ধ্যা',
+      category: 'morning_evening',
       arabic:
           'بِسْمِ اللَّهِ الَّذِي لَا يَضُرُّ مَعَ اسْمِهِ شَيْءٌ فِي الْأَرْضِ وَلَا فِي السَّمَاءِ وَهُوَ السَّمِيعُ الْعَلِيمُ',
-      meaning:
-          'আল্লাহর নামে, যার নামের সাথে আসমান ও জমিনে কোনো কিছু ক্ষতি করতে পারে না; আর তিনি সর্বশ্রোতা, সর্বজ্ঞানী।',
-      reference: 'আবু দাউদ ৫০৮৮',
       color: Color(0xFFFFF6D0),
       accent: Color(0xFFD4A017),
     ),
     _DuaEntry(
       id: 'evening_adhkar',
-      title: 'সন্ধ্যার দোয়া',
-      category: 'সকাল ও সন্ধ্যা',
+      category: 'morning_evening',
       arabic:
           'اللَّهُمَّ بِكَ أَصْبَحْنَا، وَبِكَ أَمْسَيْنَا، وَبِكَ نَحْيَا، وَبِكَ نَمُوتُ وَإِلَيْكَ النُّشُورُ',
-      meaning:
-          'হে আল্লাহ, আপনার অনুগ্রহে আমরা সকালে উপনীত হয়েছি এবং আপনার অনুগ্রহে সন্ধ্যায় উপনীত হয়েছি। আপনার নামেই আমরা বাঁচি, আপনার নামেই মরি; আর আপনার কাছেই পুনরুত্থান।',
-      reference: 'তিরমিজি ৩৩৯১',
       color: Color(0xFFFFF0DB),
       accent: Color(0xFFE8913A),
     ),
     _DuaEntry(
       id: 'morning_sabah',
-      title: 'সকালের দোয়া ও শুকরিয়া',
-      category: 'সকাল ও সন্ধ্যা',
+      category: 'morning_evening',
       arabic:
-          'أَصْبَحْنَا وَأَصْبَحَ الْمُلْكُ لِلَّهِ وَالْحَمْدُ لِلَّهِ، لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ، رَبِّ أَسْأَلُكَ خَيْرَ مَا فِي هَذَا الْيَوْمِ وَخَيْرَ مَا بَعْدَهُ، وَأَعُوذُ بِكَ مِنْ شَرِّ مَا فِي هَذَا الْيَوْمِ وَশَرِّ مَا بَعْدَهُ، رَبِّ أَعُوذُ بِكَ مِنَ الْكَسَلِ، وَسُوءِ الْكِبَرِ، رَبِّ أَعُوذُ بِكَ مِنْ عَذَابٍ فِي النَّارِ وَعَذَابٍ فِي الْقَبْرِ',
-      meaning:
-          'আমরা সকালে উপনীত হয়েছি এবং সকল রাজত্ব আল্লাহরই, সকল প্রশংসা আল্লাহর। আল্লাহ ছাড়া কোনো সত্য ইলাহ নেই, তিনি একক, তাঁর কোনো শরিক নেই। রাজত্ব একমাত্র তাঁরই, প্রশংসাও তাঁরই এবং তিনি সবকিছুর ওপর সর্বশক্তিমান। হে আমার রব, এ দিনে ও এর পরবর্তী সময়ে যা কল্যাণ আছে তা প্রার্থনা করছি; আর এ দিনে ও এর পরবর্তী সময়ের অকল্যাণ থেকে আপনার আশ্রয় চাই। হে আমার রব, অলসতা ও বার্ধক্যের খারাপ অবস্থা থেকে আপনার আশ্রয় চাই; আর জাহান্নামের শাস্তি ও কবরের আজাব থেকে আপনার আশ্রয় চাই।',
-      reference: 'সহিহ মুসলিম ২৭২৩',
+          'أَصْبَحْنَا وَأَصْبَحَ الْمُلْكُ لِلَّهِ وَالْحَمْدُ لِلَّهِ، لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ، رَبِّ أَسْأَلُكَ خَيْرَ مَا فِي هَذَا الْيَوْمِ وَخَيْرَ مَا بَعْدَهُ، وَأَعُوذُ بِكَ مِنْ شَرِّ مَا فِي هَذَا الْيَوْمِ وَشَرِّ مَا بَعْدَهُ، رَبِّ أَعُوذُ بِكَ مِنَ الْكَسَلِ، وَسُوءِ الْكِبَرِ، رَبِّ أَعُوذُ بِكَ مِنْ عَذَابٍ فِي النَّارِ وَعَذَابٍ فِي الْقَبْرِ',
       color: Color(0xFFFFF6D0),
       accent: Color(0xFFD4A017),
     ),
     _DuaEntry(
       id: 'food',
-      title: 'খাবার শুরু করার আগে',
-      category: 'দৈনন্দিন',
+      category: 'daily',
       arabic: 'بِسْمِ اللَّهِ',
-      meaning: 'আল্লাহর নামে (শুরু করছি)।',
-      reference: 'সহিহ বুখারি ৫৩৭৬',
       color: Color(0xFFE8F8D8),
       accent: Color(0xFF58A700),
     ),
     _DuaEntry(
       id: 'food_after',
-      title: 'খাবার শেষ করার পর',
-      category: 'দৈনন্দিন',
+      category: 'daily',
       arabic:
           'الْحَمْدُ لِلَّهِ الَّذِي أَطْعَمَنَا وَسَقَانَا، وَكَفَانَا، وَآوَانَا، فَكَمْ مِمَّنْ لَا كَافِيَ لَهُ وَلَا مُؤْوِيَ',
-      meaning:
-          'সকল প্রশংসা আল্লাহর, যিনি আমাদের আহার করিয়েছেন, পান করিয়েছেন, আমাদের জন্য যথেষ্ট হয়েছেন এবং আশ্রয় দিয়েছেন। অথচ কত মানুষ রয়েছে যাদের কোনো অভিভাবক ও আশ্রয়দাতা নেই।',
-      reference: 'সহিহ মুসলিম ২৭১৫',
       color: Color(0xFFE8F8D8),
       accent: Color(0xFF58A700),
     ),
     _DuaEntry(
       id: 'wudu_after',
-      title: 'অজু শেষ করার পর',
-      category: 'দৈনন্দিন',
+      category: 'daily',
       arabic:
           'أَشْهَدُ أَنْ لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، وَأَشْهَدُ أَنَّ مُحَمَّدًا عَبْدُهُ وَرَسُولُهُ',
-      meaning:
-          'আমি সাক্ষ্য দিচ্ছি যে আল্লাহ ছাড়া কোনো সত্য ইলাহ নেই, তিনি একক, তাঁর কোনো শরিক নেই; এবং আমি সাক্ষ্য দিচ্ছি মুহাম্মদ ﷺ তাঁর বান্দা ও রাসুল।',
-      reference: 'সহিহ মুসলিম ২৩৪',
       color: Color(0xFFE8F8D8),
       accent: Color(0xFF46A302),
     ),
     _DuaEntry(
       id: 'clothes',
-      title: 'নতুন পোশাক পরিধানের সময়',
-      category: 'দৈনন্দিন',
+      category: 'daily',
       arabic:
           'الْحَمْدُ لِلَّهِ الَّذِي كَسَانِي هَذَا الثَّوْبَ وَرَزَقَنِيهِ مِنْ غَيْرِ حَوْلٍ مِنِّي وَلَا قُوَّةٍ',
-      meaning:
-          'সকল প্রশংসা আল্লাহর যিনি আমাকে এ পোশাক পরিয়েছেন এবং আমার কোনো শক্তি ও উপায় ছাড়াই এটি দান করেছেন।',
-      reference: 'আবু দাউদ ৪০২৩',
       color: Color(0xFFFFF0DB),
       accent: Color(0xFFE8913A),
     ),
     _DuaEntry(
       id: 'restroom',
-      title: 'শৌচাগারে প্রবেশের আগে',
-      category: 'দৈনন্দিন',
+      category: 'daily',
       arabic:
           'بِسْمِ اللَّهِ، اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنَ الْخُبُثِ وَالْخَبَائِثِ',
-      meaning:
-          'আল্লাহর নামে; হে আল্লাহ, আমি আপনার কাছে অপবিত্র পুরুষ ও নারী জিন-শয়তান থেকে আশ্রয় চাই।',
-      reference: 'সহিহ বুখারি ১৪২',
       color: Color(0xFFE8F8D8),
       accent: Color(0xFF58A700),
     ),
     _DuaEntry(
       id: 'restroom_exit',
-      title: 'শৌচাগার থেকে বের হলে',
-      category: 'দৈনন্দিন',
+      category: 'daily',
       arabic: 'غُفْرَانَكَ',
-      meaning: 'হে আল্লাহ, আমি আপনার ক্ষমা প্রার্থনা করছি।',
-      reference: 'তিরমিজি ৭',
       color: Color(0xFFE8F8D8),
       accent: Color(0xFF58A700),
     ),
     _DuaEntry(
       id: 'leave_home',
-      title: 'ঘর থেকে বের হওয়ার সময়',
-      category: 'দৈনন্দিন',
+      category: 'daily',
       arabic:
           'بِسْمِ اللَّهِ، تَوَكَّلْتُ عَلَى اللَّهِ، وَلَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللَّهِ',
-      meaning:
-          'আল্লাহর নামে; আল্লাহর ওপরই ভরসা করলাম। আর আল্লাহর সাহায্য ছাড়া কোনো উপায় ও শক্তি নেই।',
-      reference: 'আবু দাউদ ৫০৯৫',
       color: Color(0xFFFFF0DB),
       accent: Color(0xFFE8913A),
     ),
     _DuaEntry(
       id: 'enter_home',
-      title: 'ঘরে প্রবেশের সময়',
-      category: 'দৈনন্দিন',
+      category: 'daily',
       arabic:
           'بِسْمِ اللَّهِ وَلَجْنَا، وَبِسْمِ اللَّهِ خَرَجْنَا، وَعَلَى رَبِّنَا تَوَكَّلْنَا',
-      meaning:
-          'আল্লাহর নামে আমরা প্রবেশ করলাম, আল্লাহর নামেই বের হয়েছিলাম, আর আমাদের রব আল্লাহর ওপরই আমরা ভরসা করলাম।',
-      reference: 'আবু দাউদ ৫০৯৬',
       color: Color(0xFFFFF0DB),
       accent: Color(0xFFE8913A),
     ),
     _DuaEntry(
       id: 'mosque_enter',
-      title: 'মসজিদে প্রবেশের সময়',
-      category: 'দৈনন্দিন',
+      category: 'daily',
       arabic:
           'أَعُوذُ بِاللَّهِ الْعَظِيمِ، وَبِوَجْهِهِ الْكَرِيمِ، وَسُلْطَانِهِ الْقَدِيمِ، مِنَ الشَّيْطَانِ الرَّجِيمِ، بِسْمِ اللَّهِ، وَالصَّلَاةُ وَالسَّلَّامُ عَلَى رَسُولِ اللَّهِ، اللَّهُمَّ افْتَحْ لِي أَبْوَابَ رَحْمَتِكَ',
-      meaning:
-          'আমি মহান আল্লাহর কাছে, তাঁর সম্মানিত চেহারার উসিলায় এবং তাঁর চিরন্তন কর্তৃত্বের মাধ্যমে বিতাড়িত শয়তান থেকে আশ্রয় চাই। আল্লাহর নামে এবং রাসুলের ওপর দরুদ ও সালাম। হে আল্লাহ, আমার জন্য আপনার রহমতের দরজাগুলো খুলে দিন।',
-      reference: 'আবু দাউদ ৪৬৫ ও মুসলিম ৭১৩',
       color: Color(0xFFE8F8D8),
       accent: Color(0xFF46A302),
     ),
     _DuaEntry(
       id: 'mosque_exit',
-      title: 'মসজিদ থেকে বের হওয়ার সময়',
-      category: 'দৈনন্দিন',
+      category: 'daily',
       arabic:
           'بِسْمِ اللَّهِ، وَالصَّلَاةُ وَالسَّلَّامُ عَلَى رَسُولِ اللَّهِ، اللَّهُمَّ إِنِّي أَسْأَلُكَ مِنْ فَضْلِكَ، اللَّهُمَّ اعْصِمْنِي مِنَ الشَّيْطَانِ الرَّجِيمِ',
-      meaning:
-          'আল্লাহর নামে এবং আল্লাহর রাসুলের ওপর দরুদ ও সালাম। হে আল্লাহ, আমি আপনার অনুগ্রহ ও দান প্রার্থনা করছি। হে আল্লাহ, আমাকে বিতাড়িত শয়তানের অনিষ্ট থেকে রক্ষা করুন।',
-      reference: 'সহিহ মুসলিম ৭১৩ ও ইবনে মাজাহ ৭৭৩',
       color: Color(0xFFE8F8D8),
       accent: Color(0xFF46A302),
     ),
     _DuaEntry(
       id: 'sleep',
-      title: 'ঘুমাতে যাওয়ার সময়',
-      category: 'ঘুম',
+      category: 'sleep',
       arabic: 'بِاسْمِكَ اللَّهُمَّ أَمُوتُ وَأَحْيَا',
-      meaning: 'হে আল্লাহ, আপনার নামেই আমি মৃত্যুবরণ করি এবং জীবিত হই।',
-      reference: 'সহিহ বুখারি ৬৩২৪',
       color: Color(0xFFF3E8FF),
       accent: Color(0xFF9B6BC9),
     ),
     _DuaEntry(
       id: 'sleep_ayatul_kursi',
-      title: 'ঘুমের আগে আয়াতুল কুরসি',
-      category: 'ঘুম',
+      category: 'sleep',
       arabic:
           'اللَّهُ لَا إِلَٰهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ ۚ لَا تَأْخُذُهُ سِنَةٌ وَلَا نَوْمٌ ۚ لَهُ مَا فِي السَّمَاوَاتِ وَمَا فِي الْأَرْضِ ۗ مَنْ ذَا الَّذِي يَشْفَعُ عِنْدَهُ إِلَّا بِإِذْنِهِ ۚ يَعْلَمُ مَا بَيْنَ أَيْدِيهِمْ وَمَا خَلْفَهُمْ ۖ وَلَا يُحِيطُونَ بِشَيْءٍ مِنْ عِلْمِهِ إِلَّا بِمَا شَاءَ ۚ وَسِعَ كُرْسِيُّهُ السَّمَاوَاتِ وَالْأَرْضَ ۖ وَلَا يَئُودُهُ حِفْظُهُمَا ۚ وَهُوَ الْعَلِيُّ الْعَظِيمُ',
-      meaning:
-          'আল্লাহ—তিনি ছাড়া কোনো সত্য ইলাহ নেই; তিনি চিরজীবন্ত, সবকিছুর ধারক। তন্দ্রা বা ঘুম তাঁকে স্পর্শ করে না। আসমান ও জমিনে যা কিছু আছে সব তাঁরই। কে সে, যে তাঁর অনুমতি ছাড়া তাঁর কাছে সুপারিশ করবে? তাদের সামনে ও পেছনে যা কিছু আছে তা তিনি জানেন। আর তাঁর ইচ্ছানুযায়ী যতটুকু তিনি ইচ্ছা করেন তা ছাড়া তাঁর জ্ঞানের কোনো কিছুই তারা পরিবেষ্টন করতে পারে না। তাঁর কুরসি আসমান ও জমিনকে পরিবেষ্টন করে আছে, আর এ দুটোর রক্ষণাবেক্ষণ তাঁকে বিন্দুমাত্র ক্লান্ত করে না। তিনি সর্বোচ্চ, মহান।',
-      reference: 'সুরা আল-বাকারা ২:২৫৫',
       color: Color(0xFFF3E8FF),
       accent: Color(0xFF9B6BC9),
     ),
     _DuaEntry(
       id: 'nightmare',
-      title: 'দুঃস্বপ্ন বা ঘুমের ভয়ে',
-      category: 'ঘুম',
+      category: 'sleep',
       arabic:
           'أَعُوذُ بِكَلِمَاتِ اللَّهِ التَّامَّاتِ مِنْ غَضَبِهِ وَعِقَابِهِ، وَشَرِّ عِبَادِهِ، وَمِنْ هَمَزَاتِ الشَّيَاطِينِ وَأَنْ يَحْضُرُونِ',
-      meaning:
-          'আমি আল্লাহর পরিপূর্ণ বাণীসমূহের মাধ্যমে আশ্রয় চাই তাঁর ক্রোধ ও শাস্তি থেকে, তাঁর বান্দাদের অনিষ্ট থেকে এবং শয়তানদের প্ররোচনা ও আমার কাছে তাদের উপস্থিতি থেকে।',
-      reference: 'আবু দাউদ ৩৮৯৩',
       color: Color(0xFFF3E8FF),
       accent: Color(0xFF9B6BC9),
     ),
     _DuaEntry(
       id: 'travel',
-      title: 'সফরে বের হওয়ার সময়',
-      category: 'সফর',
+      category: 'travel',
       arabic:
           'بِسْمِ اللَّهِ وَالْحَمْدُ لِلَّهِ، سُبْحَانَ الَّذِي سَخَّرَ لَنَا هَذَا وَمَا كُنَّا لَهُ مُقْرِنِينَ، وَإِنَّا إِلَى رَبِّنَا لَمُنْقَلِبُونَ، الْحَمْدُ لِلَّهِ، الْحَمْدُ لِلَّهِ، الْحَمْدُ لِلَّهِ، اللَّهُ أَكْبَرُ، اللَّهُ أَكْبَرُ، اللَّهُ أَكْبَرُ، سُبْحَانَكَ اللَّهُمَّ إِنِّي ظَلَمْتُ نَفْسِي فَاغْفِرْ لِي، فَإِنَّهُ لَا يَغْفِرُ الذُّنُوبَ إِلَّا أَنْتَ',
-      meaning:
-          'আল্লাহর নামে এবং সকল প্রশংসা আল্লাহর। পবিত্র তিনি যিনি এটি আমাদের বশীভূত করে দিয়েছেন, অথচ আমরা একে নিয়ন্ত্রণ করতে সক্ষম ছিলাম না; আর নিশ্চয়ই আমরা আমাদের রবের কাছে ফিরে যাব। সকল প্রশংসা আল্লাহর (৩ বার), আল্লাহ সর্বশ্রেষ্ঠ (৩ বার)। হে আল্লাহ, আপনি পবিত্র! নিশ্চয়ই আমি নিজের প্রতি অন্যায় করেছি, তাই আমাকে ক্ষমা করে দিন; কারণ আপনি ছাড়া গোনাহ ক্ষমা করার কেউ নেই।',
-      reference: 'আবু দাউদ ২৬০২',
       color: Color(0xFFDCEBFF),
       accent: Color(0xFF3B82C4),
     ),
     _DuaEntry(
       id: 'travel_return',
-      title: 'সফর থেকে ফেরার পর',
-      category: 'সফর',
+      category: 'travel',
       arabic:
           'اللَّهُ أَكْبَرُ، اللَّهُ أَكْبَرُ، اللَّهُ أَكْبَرُ، سُبْحَانَ الَّذِي سَخَّرَ لَنَا هَذَا وَمَا كُنَّا لَهُ مُقْرِنِينَ، وَإِنَّا إِلَى رَبِّنَا لَمُنْقَلِبُونَ، اللَّهُمَّ إِنَّا نَسْأَلُكَ فِي سَفَرِنَا هَذَا الْبِرَّ وَالتَّقْوَى، وَمِنَ الْعَمَلِ مَا تَرْضَى، اللَّهُمَّ هَوِّنْ عَلَيْنَا سَفَرَنَا هَذَا وَاطْوِ عَنَّا بُعْدَهُ، اللَّهُمَّ أَنْتَ الصَّاحِبُ فِي السَّفَرِ، وَالْخَلِيفَةُ فِي الْأَهْلِ، اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنْ وَعْثَاءِ السَّفَرِ، وَكَآبَةِ الْمَنْظَرِ، وَسُوءِ الْمُنْقَلَبِ فِي الْمَالِ وَالْأَهْلِ، آيِبُونَ تَائِبُونَ عَابِدُونَ لِرَبِّنَا حَامِدُونَ',
-      meaning:
-          'আল্লাহ সর্বশ্রেষ্ঠ (৩ বার)। পবিত্র তিনি যিনি এটিকে আমাদের অধীন করে দিয়েছেন, অথচ আমরা একে বশীভূত করতে সক্ষম ছিলাম না; আর নিশ্চয়ই আমরা আমাদের রবের কাছেই ফিরে যাব। হে আল্লাহ, আমরা আমাদের এ সফরে আপনার কাছে নেক কাজ ও তাকওয়া চাই এবং এমন আমল চাই যা আপনি পছন্দ করেন। হে আল্লাহ, আমাদের জন্য এ সফর সহজ করে দিন এবং এর দূরত্ব কমিয়ে দিন। হে আল্লাহ, আপনিই সফরে আমাদের সঙ্গী এবং পরিবার-পরিজনের অভিভাবক। হে আল্লাহ, আমি আপনার কাছে আশ্রয় চাই সফরের কষ্ট-ক্লান্তি থেকে, দুঃখজনক দৃশ্য থেকে এবং সম্পদ ও পরিবারের অশুভ পরিণতি থেকে। আমরা ফিরে এসেছি, তাওবাকারী, ইবাদতকারী এবং আমাদের রবের প্রশংসাকারী হয়ে।',
-      reference: 'সহিহ মুসলিম ১৩৪২',
       color: Color(0xFFDCEBFF),
       accent: Color(0xFF3B82C4),
     ),
     _DuaEntry(
       id: 'rain',
-      title: 'বৃষ্টি বর্ষণের সময়',
-      category: 'দৈনন্দিন',
+      category: 'daily',
       arabic: 'اللَّهُمَّ صَيِّبًا نَافِعًا',
-      meaning: 'হে আল্লাহ, এটিকে উপকারী ও বরকতময় বৃষ্টিপাত করুন।',
-      reference: 'সহিহ বুখারি ১০৩২',
       color: Color(0xFFDCEBFF),
       accent: Color(0xFF3B82C4),
     ),
     _DuaEntry(
       id: 'sneeze',
-      title: 'হাঁচি দিলে',
-      category: 'দৈনন্দিন',
+      category: 'daily',
       arabic: 'الْحَمْدُ لِلَّهِ',
-      meaning: 'আলহামদুলিল্লাহ—সকল প্রশংসা মহান আল্লাহর জন্য।',
-      reference: 'সহিহ বুখারি ৬২২৪',
       color: Color(0xFFE8F8D8),
       accent: Color(0xFF58A700),
     ),
     _DuaEntry(
       id: 'sneeze_response',
-      title: 'হাঁচির জবাব দেওয়া',
-      category: 'দৈনন্দিন',
+      category: 'daily',
       arabic: 'يَرْحَمُكَ اللَّهُ',
-      meaning: 'আল্লাহ তোমার ওপর রহম ও অনুগ্রহ বর্ষণ করুন।',
-      reference: 'সহিহ বুখারি ৬২২৪',
       color: Color(0xFFE8F8D8),
       accent: Color(0xFF58A700),
     ),
     _DuaEntry(
       id: 'anxiety',
-      title: 'দুশ্চিন্তায় পড়লে',
-      category: 'বিশেষ',
+      category: 'special',
       arabic:
           'حَسْبِيَ اللَّهُ لَا إِلَهَ إِلَّا هُوَ عَلَيْهِ تَوَكَّلْتُ وَهُوَ رَبُّ الْعَرْشِ الْعَظِيمِ',
-      meaning:
-          'আল্লাহই আমার জন্য যথেষ্ট; তিনি ছাড়া কোনো সত্য ইলাহ নেই; আমি তাঁর ওপরই ভরসা করলাম, আর তিনি মহান আরশের অধিপতি।',
-      reference: 'আবু দাউদ ৫০৮১',
       color: Color(0xFFFFEBCF),
       accent: Color(0xFFE8913A),
     ),
     _DuaEntry(
       id: 'forgiveness',
-      title: 'ক্ষমা চাওয়ার শ্রেষ্ঠ দোয়া (সাইয়্যিদুল ইস্তিগফার)',
-      category: 'বিশেষ',
+      category: 'special',
       arabic:
           'اللَّهُمَّ أَنْتَ رَبِّي لَا إِلَهَ إِلَّا أَنْتَ، خَلَقْتَنِي وَأَنَا عَبْدُكَ، وَأَنَا عَلَى عَهْدِكَ وَوَعْدِكَ مَا اسْتَطَعْتُ، أَعُوذُ بِكَ مِنْ شَرِّ مَا صَنَعْتُ، أَبُوءُ لَكَ بِنِعْمَتِكَ عَلَيَّ، وَأَبُوءُ بِذَنْبِي فَاغْفِرْ لِي فَإِنَّهُ لَا يَغْفِرُ الذُّنُوبَ إِلَّا أَنْتَ',
-      meaning:
-          'হে আল্লাহ, আপনিই আমার রব; আপনি ছাড়া কোনো সত্য ইলাহ নেই; আপনি আমাকে সৃষ্টি করেছেন এবং আমি আপনারই বান্দা। আমি সাধ্যমতো আপনার অঙ্গীকার ও প্রতিশ্রুতির ওপর অবিচল আছি। আমি যা করেছি তার অনিষ্ট থেকে আপনার কাছে আশ্রয় চাই। আমার ওপর আপনার যে নেয়ামত রয়েছে তা স্বীকার করছি এবং আমার অপরাধও স্বীকার করছি; অতএব আমাকে ক্ষমা করে দিন, নিশ্চয়ই আপনি ছাড়া গোনাহ ক্ষমা করার কেউ নেই।',
-      reference: 'সহিহ বুখারি ৬৩০৬',
       color: Color(0xFFE8F8D8),
       accent: Color(0xFF46A302),
     ),
     _DuaEntry(
       id: 'parents',
-      title: 'পিতা-মাতার জন্য দোয়া',
-      category: 'বিশেষ',
+      category: 'special',
       arabic:
           'وَاخْفِضْ لَهُمَا جَنَاحَ الذُّلِّ مِنَ الرَّحْمَةِ وَقُلْ رَبِّ ارْحَمْهُمَا كَمَا رَبَّيَانِي صَغِيرًا',
-      meaning:
-          'আর তাঁদের উভয়ের জন্য ভালোবাসার সাথে বিনম্রতার ডানা নত করে দাও এবং বলো: হে আমার রব, তাঁদের প্রতি রহম করুন, যেমন তাঁরা শৈশবে আমাকে স্নেহ-মমতায় লালন-পালন করেছেন।',
-      reference: 'সুরা আল-ইসরা ১৭:২৪',
       color: Color(0xFFFFF6D0),
       accent: Color(0xFFD4A017),
     ),
@@ -406,8 +352,8 @@ class _DuasScreenState extends State<DuasScreen> {
         setState(() => _playingDuaId = null);
         ScaffoldMessenger.of(context)
           ..hideCurrentSnackBar()
-          ..showSnackBar(const SnackBar(
-            content: LocalizedText('এই ডিভাইসে আরবি অডিও পাওয়া যায়নি।'),
+          ..showSnackBar(SnackBar(
+            content: Text(context.t('duas.audio_unavailable')),
             behavior: SnackBarBehavior.floating,
           ));
       }
@@ -431,8 +377,8 @@ class _DuasScreenState extends State<DuasScreen> {
     final selectedCategory = _categories[_selectedCategory];
     final filtered = _duas
         .where((dua) =>
-            selectedCategory == 'সব' ||
-            (selectedCategory == 'পছন্দের'
+            selectedCategory == 'all' ||
+            (selectedCategory == 'favorites'
                 ? appState.isDuaFavorite(dua.id)
                 : dua.category == selectedCategory))
         .toList();
@@ -453,8 +399,8 @@ class _DuasScreenState extends State<DuasScreen> {
                     delegate: SliverChildListDelegate([
                       // ── Duolingo Header ──
                       DuolingoPageHeader(
-                        title: 'মাসনুন দোয়া',
-                        subtitle: 'ছোট ছোট দোয়া, প্রতিদিন',
+                        title: context.t('duas.header_title'),
+                        subtitle: context.t('duas.header_subtitle'),
                         customIcon: Image.asset(
                           'assets/images/badge_dua_3d.png',
                           width: 36,
@@ -489,19 +435,19 @@ class _DuasScreenState extends State<DuasScreen> {
                             ),
                           ),
                           const SizedBox(width: 12),
-                          const Expanded(
+                          Expanded(
                             child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  LocalizedText('আজকের ছোট্ট অভ্যাস',
-                                      style: TextStyle(
+                                  Text(context.t('duas.habit_title'),
+                                      style: const TextStyle(
                                           color: AppTheme.darkText,
                                           fontWeight: FontWeight.w800,
                                           fontSize: 13)),
-                                  SizedBox(height: 2),
-                                  LocalizedText(
-                                      'একটি দোয়া শেখো, অর্থটাও জেনে নাও।',
-                                      style: TextStyle(
+                                  const SizedBox(height: 2),
+                                  Text(
+                                      context.t('duas.habit_desc'),
+                                      style: const TextStyle(
                                           color: Color(0xFF6B5B7A),
                                           fontSize: 12,
                                           fontWeight: FontWeight.w500)),
@@ -512,7 +458,7 @@ class _DuasScreenState extends State<DuasScreen> {
 
                       // ── Category pills ──
                       DuolingoCategoryBar(
-                        categories: _categories,
+                        categories: getCategoryLabels(context),
                         selected: _selectedCategory,
                         onSelect: (i) => setState(() => _selectedCategory = i),
                         activeColor: const Color(0xFF9B6BC9),
@@ -521,11 +467,11 @@ class _DuasScreenState extends State<DuasScreen> {
 
                       // ── Dua cards ──
                       if (filtered.isEmpty)
-                        const Padding(
-                          padding: EdgeInsets.symmetric(vertical: 36),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 36),
                           child: Center(
-                              child: LocalizedText(
-                                  'এখনো কোনো পছন্দের দোয়া নেই।')),
+                              child: Text(
+                                  context.t('duas.empty_favorites'))),
                         ),
                       for (final dua in filtered)
                         _DuaCard(
@@ -540,9 +486,9 @@ class _DuasScreenState extends State<DuasScreen> {
                             ScaffoldMessenger.of(context)
                               ..hideCurrentSnackBar()
                               ..showSnackBar(SnackBar(
-                                content: LocalizedText(wasFavorite
-                                    ? 'পছন্দ থেকে সরানো হয়েছে।'
-                                    : 'পছন্দে রাখা হয়েছে।'),
+                                content: Text(context.t(wasFavorite
+                                    ? 'duas.favorite_removed'
+                                    : 'duas.favorite_added')),
                                 behavior: SnackBarBehavior.floating,
                               ));
                           },
@@ -550,8 +496,8 @@ class _DuasScreenState extends State<DuasScreen> {
                         ),
 
                       const SizedBox(height: 12),
-                      LocalizedText(
-                        'আরবি পাঠ ও হাদিস নম্বর Sunnah.com-এ উল্লেখিত রেফারেন্সের সঙ্গে মিলিয়ে দেওয়া হয়েছে।',
+                      Text(
+                        context.t('duas.disclaimer'),
                         textAlign: TextAlign.center,
                         style: TextStyle(
                             color: AppTheme.darkText.withValues(alpha: 0.4),
@@ -573,8 +519,8 @@ class _DuasScreenState extends State<DuasScreen> {
     Clipboard.setData(ClipboardData(text: arabic));
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
-      ..showSnackBar(const SnackBar(
-          content: LocalizedText('দোয়াটি কপি হয়েছে।'),
+      ..showSnackBar(SnackBar(
+          content: Text(context.t('duas.copied')),
           behavior: SnackBarBehavior.floating));
   }
 }
@@ -638,12 +584,12 @@ class _DuaCardState extends State<_DuaCard> {
                 child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      LocalizedText(dua.title,
+                      Text(dua.getLocalizedTitle(context),
                           style: const TextStyle(
                               color: AppTheme.darkText,
                               fontWeight: FontWeight.w800,
                               fontSize: 14)),
-                      LocalizedText(dua.category,
+                      Text(dua.getLocalizedCategory(context),
                           style: TextStyle(
                               color: AppTheme.darkText.withValues(alpha: 0.45),
                               fontSize: 11,
@@ -652,8 +598,8 @@ class _DuaCardState extends State<_DuaCard> {
               ),
               IconButton(
                 onPressed: widget.onFavorite,
-                tooltip: context.uiText(
-                    widget.isFavorite ? 'পছন্দ থেকে সরাও' : 'পছন্দে রাখো'),
+                tooltip: context.t(
+                    widget.isFavorite ? 'duas.tooltip.favorite_remove' : 'duas.tooltip.favorite_add'),
                 icon: Icon(
                   widget.isFavorite
                       ? Icons.bookmark_rounded
@@ -678,7 +624,7 @@ class _DuaCardState extends State<_DuaCard> {
                 ),
                 borderRadius: BorderRadius.circular(18),
               ),
-              child: LocalizedText(
+              child: Text(
                 dua.arabic,
                 textDirection: TextDirection.rtl,
                 textAlign: TextAlign.center,
@@ -700,8 +646,8 @@ class _DuaCardState extends State<_DuaCard> {
               child: Row(children: [
                 Expanded(
                   child: AnimatedCrossFade(
-                    firstChild: LocalizedText(
-                      dua.meaning,
+                    firstChild: Text(
+                      dua.getLocalizedMeaning(context),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
@@ -709,8 +655,8 @@ class _DuaCardState extends State<_DuaCard> {
                           fontSize: 13,
                           fontWeight: FontWeight.w500),
                     ),
-                    secondChild: LocalizedText(
-                      dua.meaning,
+                    secondChild: Text(
+                      dua.getLocalizedMeaning(context),
                       style: const TextStyle(
                           color: AppTheme.darkText,
                           fontSize: 13,
@@ -741,7 +687,7 @@ class _DuaCardState extends State<_DuaCard> {
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                 decoration: BoxDecoration(
                     color: dua.color, borderRadius: BorderRadius.circular(8)),
-                child: LocalizedText(dua.reference,
+                child: Text(dua.getLocalizedReference(context),
                     style: TextStyle(
                         color: dua.accent,
                         fontSize: 10,
@@ -774,8 +720,8 @@ class _DuaCardState extends State<_DuaCard> {
                             : widget.dua.accent,
                       ),
                       const SizedBox(width: 4),
-                      LocalizedText(
-                        widget.isPlaying ? 'থামাই' : 'উচ্চারণ শুনি',
+                      Text(
+                        context.t(widget.isPlaying ? 'duas.audio_stop' : 'duas.audio_listen'),
                         style: TextStyle(
                             color: widget.isPlaying
                                 ? Colors.white
@@ -790,13 +736,13 @@ class _DuaCardState extends State<_DuaCard> {
               const SizedBox(width: 6),
               IconButton(
                   onPressed: () => _openDetail(context),
-                  tooltip: context.uiText('দোয়াটি অনুশীলন করি'),
+                  tooltip: context.t('duas.tooltip.practice'),
                   icon: Icon(Icons.touch_app_rounded,
                       color: dua.accent, size: 20)),
               const SizedBox(width: 4),
               IconButton(
                   onPressed: widget.onCopy,
-                  tooltip: context.uiText('কপি করো'),
+                  tooltip: context.t('duas.tooltip.copy'),
                   icon: const Icon(Icons.copy_rounded,
                       color: Colors.black45, size: 18),
                   padding: EdgeInsets.zero,
@@ -889,8 +835,8 @@ class _DuaDetailSheetState extends State<_DuaDetailSheet> {
                       color: dua.color,
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    child: LocalizedText(
-                      dua.category,
+                    child: Text(
+                      dua.getLocalizedCategory(context),
                       style: TextStyle(
                           color: dua.accent,
                           fontSize: 12,
@@ -900,9 +846,9 @@ class _DuaDetailSheetState extends State<_DuaDetailSheet> {
                   const Spacer(),
                   IconButton(
                     onPressed: widget.onFavorite,
-                    tooltip: context.uiText(widget.isFavorite
-                        ? 'পছন্দ থেকে সরাও'
-                        : 'পছন্দে রাখো'),
+                    tooltip: context.t(widget.isFavorite
+                        ? 'duas.tooltip.favorite_remove'
+                        : 'duas.tooltip.favorite_add'),
                     icon: Icon(
                       widget.isFavorite
                           ? Icons.bookmark_rounded
@@ -912,14 +858,14 @@ class _DuaDetailSheetState extends State<_DuaDetailSheet> {
                   ),
                   IconButton(
                     onPressed: widget.onCopy,
-                    tooltip: context.uiText('কপি করো'),
+                    tooltip: context.t('duas.tooltip.copy'),
                     icon: const Icon(Icons.copy_rounded, color: Colors.black45),
                   ),
                 ],
               ),
               const SizedBox(height: 10),
-              LocalizedText(
-                dua.title,
+              Text(
+                dua.getLocalizedTitle(context),
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                   fontSize: 20,
@@ -940,7 +886,7 @@ class _DuaDetailSheetState extends State<_DuaDetailSheet> {
                   border: Border.all(
                       color: dua.accent.withValues(alpha: 0.3), width: 1.5),
                 ),
-                child: LocalizedText(
+                child: Text(
                   dua.arabic,
                   textDirection: TextDirection.rtl,
                   textAlign: TextAlign.center,
@@ -962,8 +908,8 @@ class _DuaDetailSheetState extends State<_DuaDetailSheet> {
                       : Icons.volume_up_rounded,
                   size: 22,
                 ),
-                label: LocalizedText(
-                  widget.isPlaying ? 'উচ্চারণ থামাই' : 'বিশুদ্ধ উচ্চারণ শুনি',
+                label: Text(
+                  context.t(widget.isPlaying ? 'duas.detail.audio_stop' : 'duas.detail.audio_listen'),
                   style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 14),
                 ),
                 style: FilledButton.styleFrom(
@@ -986,17 +932,17 @@ class _DuaDetailSheetState extends State<_DuaDetailSheet> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const LocalizedText(
-                      'অর্থ:',
-                      style: TextStyle(
+                    Text(
+                      context.t('duas.detail.meaning_label'),
+                      style: const TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w800,
                         color: AppTheme.darkText,
                       ),
                     ),
                     const SizedBox(height: 4),
-                    LocalizedText(
-                      dua.meaning,
+                    Text(
+                      dua.getLocalizedMeaning(context),
                       style: const TextStyle(
                         fontSize: 15,
                         height: 1.6,
@@ -1012,8 +958,8 @@ class _DuaDetailSheetState extends State<_DuaDetailSheet> {
                         color: dua.color,
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      child: LocalizedText(
-                        'সূত্র: ${dua.reference}',
+                      child: Text(
+                        context.t('duas.detail.source', params: {'reference': dua.getLocalizedReference(context)}),
                         style: TextStyle(
                           color: dua.accent,
                           fontSize: 11,
@@ -1038,9 +984,9 @@ class _DuaDetailSheetState extends State<_DuaDetailSheet> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const LocalizedText(
-                          'দোয়া অনুশীলনের লক্ষ্য',
-                          style: TextStyle(
+                        Text(
+                          context.t('duas.practice.goal_title'),
+                          style: const TextStyle(
                             fontWeight: FontWeight.w800,
                             fontSize: 13,
                             color: AppTheme.darkText,
@@ -1066,8 +1012,8 @@ class _DuaDetailSheetState extends State<_DuaDetailSheet> {
                                           : const Color(0xFFF3F4F6),
                                       borderRadius: BorderRadius.circular(8),
                                     ),
-                                    child: LocalizedText(
-                                      '$t',
+                                    child: Text(
+                                      context.formatDigits('$t'),
                                       style: TextStyle(
                                         fontSize: 12,
                                         fontWeight: FontWeight.w800,
@@ -1125,10 +1071,10 @@ class _DuaDetailSheetState extends State<_DuaDetailSheet> {
                               size: 28,
                             ),
                             const SizedBox(height: 6),
-                            LocalizedText(
+                            Text(
                               isDone
-                                  ? 'মাশাআল্লাহ! লক্ষ্য পূর্ণ হয়েছে ($_target/$_target)'
-                                  : 'পড়েছি: $_counter / $_target বার',
+                                  ? context.t('duas.practice.done', params: {'target': context.formatDigits('$_target')})
+                                  : context.t('duas.practice.progress', params: {'count': context.formatDigits('$_counter'), 'target': context.formatDigits('$_target')}),
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.w900,
@@ -1143,7 +1089,7 @@ class _DuaDetailSheetState extends State<_DuaDetailSheet> {
                       TextButton.icon(
                         onPressed: () => setState(() => _counter = 0),
                         icon: const Icon(Icons.refresh_rounded, size: 16),
-                        label: const LocalizedText('কাউন্টার রিসেট করি'),
+                        label: Text(context.t('duas.practice.reset')),
                         style: TextButton.styleFrom(
                             foregroundColor: Colors.black45),
                       ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../core/core.dart';
 
 class AppTheme {
   // Brand Duolingo Gamification Palette
@@ -41,6 +42,16 @@ class AppTheme {
       fontWeight: fontWeight,
       color: color ?? darkText,
       height: height ?? 1.8,
+      fontFamilyFallback: AppFonts.globalFallbacks,
+    );
+  }
+
+  /// Builds a language-specific [ThemeData] with optimal typography and global glyph fallbacks.
+  static ThemeData getThemeForLanguage(String langCode) {
+    final textTheme = AppFonts.getTextThemeForLang(langCode);
+    return lightTheme.copyWith(
+      textTheme: textTheme,
+      primaryTextTheme: textTheme,
     );
   }
 
@@ -87,36 +98,7 @@ class AppTheme {
           borderSide: const BorderSide(color: duoGreen, width: 2),
         ),
       ),
-      textTheme: GoogleFonts.poppinsTextTheme().copyWith(
-        displayLarge: GoogleFonts.poppins(
-          fontSize: 32,
-          fontWeight: FontWeight.bold,
-          color: darkText,
-        ),
-        displayMedium: GoogleFonts.poppins(
-          fontSize: 26,
-          fontWeight: FontWeight.w700,
-          color: darkText,
-        ),
-        headlineMedium: GoogleFonts.poppins(
-          fontSize: 22,
-          fontWeight: FontWeight.w600,
-          color: darkText,
-        ),
-        titleLarge: GoogleFonts.poppins(
-          fontSize: 18,
-          fontWeight: FontWeight.w600,
-          color: darkText,
-        ),
-        bodyLarge: GoogleFonts.poppins(
-          fontSize: 16,
-          color: darkText,
-        ),
-        bodyMedium: GoogleFonts.poppins(
-          fontSize: 14,
-          color: darkText.withValues(alpha: 0.85),
-        ),
-      ),
+      textTheme: AppFonts.getTextThemeForLang('en'),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: duoGreen,
@@ -127,7 +109,8 @@ class AppTheme {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16), // DS.rLg
           ),
-          textStyle: GoogleFonts.poppins(
+          textStyle: AppFonts.getTextStyleForLang(
+            'en',
             fontSize: 16,
             fontWeight: FontWeight.w700,
           ),
@@ -175,12 +158,14 @@ class AppTheme {
           borderRadius: BorderRadius.circular(20), // DS.rXl
           side: const BorderSide(color: duoBorder, width: 2.0),
         ),
-        titleTextStyle: GoogleFonts.poppins(
+        titleTextStyle: AppFonts.getTextStyleForLang(
+          'en',
           color: darkText,
           fontSize: 19,
           fontWeight: FontWeight.w900,
         ),
-        contentTextStyle: GoogleFonts.poppins(
+        contentTextStyle: AppFonts.getTextStyleForLang(
+          'en',
           color: darkText.withValues(alpha: .78),
           fontSize: 13,
           height: 1.5,
@@ -200,7 +185,8 @@ class AppTheme {
       snackBarTheme: SnackBarThemeData(
         behavior: SnackBarBehavior.floating,
         backgroundColor: const Color(0xFF1A3C34),
-        contentTextStyle: GoogleFonts.poppins(
+        contentTextStyle: AppFonts.getTextStyleForLang(
+          'en',
           color: white,
           fontWeight: FontWeight.w700,
         ),
@@ -215,7 +201,8 @@ class AppTheme {
         backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
-        titleTextStyle: GoogleFonts.poppins(
+        titleTextStyle: AppFonts.getTextStyleForLang(
+          'en',
           fontSize: 20,
           fontWeight: FontWeight.w600,
           color: darkText,

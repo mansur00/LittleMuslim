@@ -51,8 +51,8 @@ class WelcomePage extends StatelessWidget {
                   color: Color(0xFFFFC800),
                 ),
                 const SizedBox(width: 8),
-                LocalizedText(
-                  'আসসালামু আলাইকুম! চলো শুরু করি',
+                Text(
+                  context.t('onboarding.greeting_start'),
                   style: TextStyle(
                     fontSize: isTablet ? 16 : 14,
                     fontWeight: DS.black,
@@ -104,7 +104,7 @@ class WelcomePage extends StatelessWidget {
 
           SizedBox(height: isTablet ? 28 : 20),
 
-          LocalizedText(
+          Text(
             'LittleMuslim',
             style: TextStyle(
               fontSize: isTablet ? 38 : 30,
@@ -119,8 +119,8 @@ class WelcomePage extends StatelessWidget {
 
           const SizedBox(height: 6),
 
-          LocalizedText(
-            'কুরআন শেখো · মজার সাথে · ইসলাম জানো',
+          Text(
+            context.t('onboarding.tagline'),
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: isTablet ? 16 : 14,
@@ -142,35 +142,35 @@ class WelcomePage extends StatelessWidget {
             children: [
               _FeatureChip(
                 type: VectorIconType.book,
-                label: 'কুরআন',
+                label: context.t('nav.quran'),
                 color: DS.orange500,
                 bg: DS.orange100,
                 isTablet: isTablet,
               ),
               _FeatureChip(
                 type: VectorIconType.qaida,
-                label: 'ক্বায়দা',
+                label: context.t('nav.qaida'),
                 color: DS.green500,
                 bg: DS.green100,
                 isTablet: isTablet,
               ),
               _FeatureChip(
                 type: VectorIconType.mosque,
-                label: 'নামাজ',
+                label: context.t('nav.prayer'),
                 color: DS.blue500,
                 bg: DS.blue100,
                 isTablet: isTablet,
               ),
               _FeatureChip(
                 type: VectorIconType.dua,
-                label: 'দোয়া',
+                label: context.t('nav.dua'),
                 color: DS.purple500,
                 bg: DS.purple100,
                 isTablet: isTablet,
               ),
               _FeatureChip(
                 type: VectorIconType.scroll,
-                label: 'সীরাত',
+                label: context.t('nav.seerah'),
                 color: DS.pink500,
                 bg: DS.pink100,
                 isTablet: isTablet,
@@ -185,7 +185,7 @@ class WelcomePage extends StatelessWidget {
 
           // 3D Duolingo button
           DSButton(
-            label: 'শুরু করি',
+            label: context.t('onboarding.get_started_btn'),
             width: double.infinity,
             height: isTablet ? DS.btnLg : DS.btnMd,
             color: DS.green500,
@@ -204,9 +204,9 @@ class WelcomePage extends StatelessWidget {
               await context.read<AppState>().quickAdminEnter();
             },
             icon: const Icon(Icons.admin_panel_settings_rounded, size: 18, color: DS.orange600),
-            label: const LocalizedText(
-              'অ্যাডমিন মোড (সব আনলক দিয়ে শুরু)',
-              style: TextStyle(
+            label: Text(
+              context.t('onboarding.admin_quick_entry'),
+              style: const TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w800,
                 color: DS.orange600,
@@ -274,7 +274,7 @@ class _FeatureChip extends StatelessWidget {
         children: [
           VectorIcon(type: type, size: isTablet ? 20 : 17, color: color),
           const SizedBox(width: 6),
-          LocalizedText(
+          Text(
             label,
             style: TextStyle(
               fontSize: isTablet ? 13 : 12,

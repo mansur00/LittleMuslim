@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
+import '../core/core.dart';
 import '../models/qaida/qaida_models.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -223,7 +224,10 @@ class AppState extends ChangeNotifier {
     _hasCompletedOnboarding = prefs.getBool('onboarding_done') ?? false;
     _userName = prefs.getString('user_name') ?? '';
     _age = prefs.getInt('user_age') ?? 8;
-    _selectedLanguage = prefs.getString('language') == 'en' ? 'en' : 'bn';
+    final rawLang = prefs.getString('language') ?? 'bn';
+    _selectedLanguage = _validLang(rawLang);
+    final initialLang = AppLanguages.byCode(_selectedLanguage);
+    setHtmlLangAndDir(_selectedLanguage, initialLang?.dirString ?? 'ltr');
     _userRole = prefs.getString('user_role') ?? 'child';
     draftRole = _userRole;
     _avatarType = prefs.getString('avatar_type') ?? 'topi';
@@ -689,7 +693,7 @@ class AppState extends ChangeNotifier {
   }
 
   void updateDraftLanguage(String lang) {
-    draftLanguage = lang == 'en' ? 'en' : 'bn';
+    draftLanguage = _validLang(lang);
     notifyListeners();
   }
 
@@ -734,27 +738,32 @@ class AppState extends ChangeNotifier {
   }
 
   Future<void> quickAdminEnter() async {
-    draftName = 'অ্যাডমিন (Admin)';
+    draftName = 'Admin';
     draftAge = 10;
     draftRole = 'admin';
     await completeOnboarding(role: 'admin');
   }
 
   Future<void> updateLanguage(String language) async {
-    final nextLanguage = language == 'en' ? 'en' : 'bn';
+    final nextLanguage = _validLang(language);
     if (_selectedLanguage == nextLanguage) return;
     _selectedLanguage = nextLanguage;
+    final targetLang = AppLanguages.byCode(nextLanguage);
+    setHtmlLangAndDir(nextLanguage, targetLang?.dirString ?? 'ltr');
     notifyListeners();
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('language', nextLanguage);
   }
 
+  /// Returns a validated language code; falls back to default if unknown.
+  static String _validLang(String? lang) => AppLanguages.validate(lang);
+
   Future<void> completeOnboarding({String? role}) async {
     final name = draftName.isNotEmpty
         ? draftName
-        : (role == 'admin' || draftRole == 'admin' ? 'অ্যাডমিন (Admin)' : 'Young Muslim');
+        : (role == 'admin' || draftRole == 'admin' ? 'Admin' : '');
     final age = draftAge;
-    final language = draftLanguage == 'en' ? 'en' : 'bn';
+    final language = _validLang(draftLanguage);
     final roleToSave = role ?? (draftRole == 'admin' ? 'admin' : 'child');
 
     _avatarType = draftAvatarType;

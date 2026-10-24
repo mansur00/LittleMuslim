@@ -1,3 +1,4 @@
+import '../../core/core.dart';
 import 'dart:async';
 import 'dart:math' as math;
 
@@ -144,13 +145,7 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
     } catch (_) {}
   }
 
-  String _toBn(int n) {
-    const bn = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
-    return n.toString().split('').map((c) {
-      final digit = int.tryParse(c);
-      return digit != null ? bn[digit] : c;
-    }).join('');
-  }
+  String _toBn(int n) => context.formatNumber(n);
 
   void _initActivityState() {
     final a = _currentActivity;
@@ -166,7 +161,7 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
     // Build/Arrange
     if (a.hasTiles) {
       _arrangeTiles = List.from(a.tiles)..shuffle(math.Random());
-      _arrangeSlots = List.filled(a.tiles.length, null);
+      _arrangeSlots = List.filled(a.tiles.length, null, growable: true);
     }
 
     // Memory Match
@@ -213,19 +208,19 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
     if (a.hasSequence) {
       final items = List<String>.from(a.sequenceItems!);
       _availableSequenceTiles = List<String>.from(items)..shuffle(math.Random());
-      _sequenceSlots = List.filled(items.length, null);
+      _sequenceSlots = List.filled(items.length, null, growable: true);
     } else {
-      _availableSequenceTiles.clear();
-      _sequenceSlots.clear();
+      _availableSequenceTiles = [];
+      _sequenceSlots = [];
     }
 
     if (a.hasPuzzle) {
       final pieces = List<String>.from(a.puzzlePieces!);
       _availablePuzzlePieces = List<String>.from(pieces)..shuffle(math.Random());
-      _puzzleSlots = List.filled(pieces.length, null);
+      _puzzleSlots = List.filled(pieces.length, null, growable: true);
     } else {
-      _availablePuzzlePieces.clear();
-      _puzzleSlots.clear();
+      _availablePuzzlePieces = [];
+      _puzzleSlots = [];
     }
   }
 
@@ -560,7 +555,7 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
                           children: [
                             Text(
                               lesson.title,
-                              style: GoogleFonts.hindSiliguri(
+                              style: AppFonts.getTextStyle(context, 
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
                                 color: const Color(0xFF0F172A),
@@ -568,7 +563,7 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
                             ),
                             Text(
                               lesson.subtitle,
-                              style: GoogleFonts.hindSiliguri(
+                              style: AppFonts.getTextStyle(context, 
                                 fontSize: 13,
                                 color: const Color(0xFF64748B),
                               ),
@@ -595,8 +590,8 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
                                 color: Color(0xFFF59E0B), size: 18),
                             const SizedBox(width: 6),
                             Text(
-                              'মূল নিয়ম ও কানুন:',
-                              style: GoogleFonts.hindSiliguri(
+                              context.t('qaida.activity.rules.core_rules'),
+                              style: AppFonts.getTextStyle(context, 
                                 fontSize: 14,
                                 fontWeight: FontWeight.bold,
                                 color: const Color(0xFF1E293B),
@@ -607,7 +602,7 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
                         const SizedBox(height: 8),
                         Text(
                           ruleText,
-                          style: GoogleFonts.hindSiliguri(
+                          style: AppFonts.getTextStyle(context, 
                             fontSize: 15,
                             color: const Color(0xFF334155),
                             height: 1.45,
@@ -620,8 +615,10 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
                   if (letters.isNotEmpty) ...[
                     const SizedBox(height: 16),
                     Text(
-                      'এই নিয়মের হরফসমূহ (${letters.length}টি):',
-                      style: GoogleFonts.hindSiliguri(
+                      context.t('qaida.activity.rules.letters_count', params: {
+                        'count': context.formatDigits('${letters.length}'),
+                      }),
+                      style: AppFonts.getTextStyle(context, 
                         fontSize: 13,
                         fontWeight: FontWeight.bold,
                         color: const Color(0xFF475569),
@@ -657,8 +654,8 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
                   if (examples.isNotEmpty) ...[
                     const SizedBox(height: 16),
                     Text(
-                      'আদর্শ উদাহরণ শব্দসমূহ:',
-                      style: GoogleFonts.hindSiliguri(
+                      context.t('qaida.activity.rules.standard_examples'),
+                      style: AppFonts.getTextStyle(context, 
                         fontSize: 13,
                         fontWeight: FontWeight.bold,
                         color: const Color(0xFF475569),
@@ -693,7 +690,7 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
                   ],
                   const SizedBox(height: 24),
                   Duolingo3DButton(
-                    text: 'বুঝেছি, অনুশীলন করি ➔',
+                    text: context.t('qaida.activity.rules.understood_btn'),
                     color: AppTheme.duoGreen,
                     onPressed: () => Navigator.of(ctx).pop(),
                   ),
@@ -765,9 +762,9 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
                         children: [
                           const Icon(Icons.menu_book_rounded, color: Color(0xFF2563EB), size: 16),
                           const SizedBox(width: 4),
-                          LocalizedText(
-                            'নিয়ম',
-                            style: GoogleFonts.hindSiliguri(
+                          Text(
+                            context.t('qaida.activity.rules.badge'),
+                            style: AppFonts.getTextStyle(context, 
                               fontSize: 12,
                               fontWeight: FontWeight.bold,
                               color: const Color(0xFF1D4ED8),
@@ -837,40 +834,48 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 14, vertical: 5),
-                                decoration: BoxDecoration(
-                                  gradient: const LinearGradient(
-                                    colors: [
-                                      Color(0xFFE0F2FE),
-                                      Color(0xFFBAE6FD)
+                              Flexible(
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 14, vertical: 5),
+                                  decoration: BoxDecoration(
+                                    gradient: const LinearGradient(
+                                      colors: [
+                                        Color(0xFFE0F2FE),
+                                        Color(0xFFBAE6FD)
+                                      ],
+                                    ),
+                                    borderRadius: BorderRadius.circular(20),
+                                    boxShadow: const [
+                                      BoxShadow(
+                                        color: Color(0x10000000),
+                                        offset: Offset(0, 2),
+                                        blurRadius: 4,
+                                      ),
                                     ],
                                   ),
-                                  borderRadius: BorderRadius.circular(20),
-                                  boxShadow: const [
-                                    BoxShadow(
-                                      color: Color(0x10000000),
-                                      offset: Offset(0, 2),
-                                      blurRadius: 4,
-                                    ),
-                                  ],
-                                ),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    const Icon(Icons.stars_rounded,
-                                        size: 15, color: Color(0xFF0284C7)),
-                                    const SizedBox(width: 5),
-                                    LocalizedText(
-                                      'ধাপ ${activity.slotNumber}/৭ · ${activity.stepTitle}',
-                                      style: GoogleFonts.hindSiliguri(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w700,
-                                        color: const Color(0xFF0369A1),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      const Icon(Icons.stars_rounded,
+                                          size: 15, color: Color(0xFF0284C7)),
+                                      const SizedBox(width: 5),
+                                      Flexible(
+                                        child: Text(
+                                          context.t('qaida.activity.header.step_indicator', params: {
+                                            'slot': context.formatDigits('${activity.slotNumber}'),
+                                            'title': context.uiText(activity.stepTitle),
+                                          }),
+                                          overflow: TextOverflow.ellipsis,
+                                          style: AppFonts.getTextStyle(context, 
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w700,
+                                            color: const Color(0xFF0369A1),
+                                          ),
+                                        ),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
                               ),
                               Row(
@@ -903,9 +908,9 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
                                                 : const Color(0xFF0284C7),
                                           ),
                                           const SizedBox(width: 4),
-                                          LocalizedText(
-                                            'ভয়েস গাইড',
-                                            style: GoogleFonts.hindSiliguri(
+                                          Text(
+                                            context.t('qaida.activity.header.voice_guide'),
+                                            style: AppFonts.getTextStyle(context, 
                                               fontSize: 11,
                                               fontWeight: FontWeight.bold,
                                               color: _isSpeakingVoiceGuide
@@ -928,8 +933,8 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
                                       });
                                     },
                                     tooltip: _quietMode
-                                        ? 'নীরব মোড সক্রিয়'
-                                        : 'নীরব মোড বন্ধ',
+                                        ? context.t('qaida.activity.header.quiet_mode_on')
+                                        : context.t('qaida.activity.header.quiet_mode_off'),
                                     icon: Icon(
                                       _quietMode
                                           ? Icons.volume_off_rounded
@@ -948,7 +953,7 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
                         // Bengali Prompt / Instruction (Options will have ZERO Bengali)
                         LocalizedText(
                           activity.prompt,
-                          style: GoogleFonts.hindSiliguri(
+                          style: AppFonts.getTextStyle(context, 
                             fontSize: 21,
                             fontWeight: FontWeight.w800,
                             color: const Color(0xFF1E293B),
@@ -1216,8 +1221,8 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
                                       const Icon(Icons.refresh_rounded,
                                           color: Colors.white, size: 18),
                                       const SizedBox(width: 8),
-                                      Text('মিলছে না, আবার ভাবো!',
-                                          style: GoogleFonts.hindSiliguri(
+                                      Text(context.t('qaida.activity.common.does_not_match'),
+                                          style: AppFonts.getTextStyle(context, 
                                               fontWeight: FontWeight.bold)),
                                     ],
                                   ),
@@ -1354,8 +1359,8 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
         ),
         const SizedBox(height: 24),
         Text(
-          'নিচ থেকে টেনে বা ট্যাপ করে বসাও:',
-          style: GoogleFonts.hindSiliguri(
+          context.t('qaida.activity.common.drag_or_tap_instruction'),
+          style: AppFonts.getTextStyle(context, 
             fontSize: 13,
             color: const Color(0xFF64748B),
             fontWeight: FontWeight.w600,
@@ -1450,9 +1455,9 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
                     const SizedBox(width: 6),
                     Flexible(
                       child: Text(
-                        'হরফগুলো টেনে নিচের ঘরে রাখো (অথবা ট্যাপ করো):',
+                        context.t('qaida.activity.common.drag_letters_box'),
                         textAlign: TextAlign.center,
-                        style: GoogleFonts.hindSiliguri(
+                        style: AppFonts.getTextStyle(context, 
                           fontSize: 13,
                           color: const Color(0xFF475569),
                           fontWeight: FontWeight.w700,
@@ -1594,8 +1599,8 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
                           ),
                           const SizedBox(width: 8),
                           Text(
-                            groupName,
-                            style: GoogleFonts.hindSiliguri(
+                            context.uiText(groupName),
+                            style: AppFonts.getTextStyle(context, 
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
                               color: const Color(0xFF15803D),
@@ -1612,8 +1617,10 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: Text(
-                              '${_toBn(sortedInGroup.length)} টি রাখা হয়েছে',
-                              style: GoogleFonts.hindSiliguri(
+                              context.t('qaida.activity.common.items_placed', params: {
+                                'count': context.formatDigits('${sortedInGroup.length}'),
+                              }),
+                              style: AppFonts.getTextStyle(context, 
                                 fontSize: 12,
                                 fontWeight: FontWeight.bold,
                                 color: sortedInGroup.isNotEmpty
@@ -1649,8 +1656,8 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
                                       : const Color(0xFF94A3B8)),
                               const SizedBox(width: 6),
                               Text(
-                                'এখানে ড্র্যাগ করো অথবা ট্যাপ করো',
-                                style: GoogleFonts.hindSiliguri(
+                                context.t('qaida.activity.common.drag_here_or_tap'),
+                                style: AppFonts.getTextStyle(context, 
                                   fontSize: 13,
                                   color: isHovered
                                       ? const Color(0xFF15803D)
@@ -1722,7 +1729,7 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
           Padding(
             padding: const EdgeInsets.only(top: 8),
             child: Duolingo3DButton(
-              text: 'যাচাই করুন',
+              text: context.t('qaida.activity.common.verify'),
               color: AppTheme.duoGreen,
               onPressed: _checkAnswer,
             ),
@@ -1840,8 +1847,8 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
         ),
         const SizedBox(height: 24),
         // Candy Tiles pool with Draggable + Tap fallback
-        Text('নিচ থেকে টেনে বা ট্যাপ করে সাজাও:',
-            style: GoogleFonts.hindSiliguri(
+        Text(context.t('qaida.activity.common.drag_or_tap_sort'),
+            style: AppFonts.getTextStyle(context, 
                 fontSize: 14,
                 color: const Color(0xFF64748B),
                 fontWeight: FontWeight.w700),
@@ -1901,7 +1908,7 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
           Padding(
             padding: const EdgeInsets.only(top: 20),
             child: Duolingo3DButton(
-              text: 'যাচাই করুন',
+              text: context.t('qaida.activity.common.verify'),
               color: AppTheme.duoGreen,
               onPressed: _checkAnswer,
             ),
@@ -1939,8 +1946,8 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  'মাশাআল্লাহ! সব জোড়া মিলে গেছে!',
-                  style: GoogleFonts.hindSiliguri(
+                  context.t('qaida.activity.common.all_pairs_matched'),
+                  style: AppFonts.getTextStyle(context, 
                     fontSize: 17,
                     fontWeight: FontWeight.bold,
                     color: const Color(0xFF16A34A),
@@ -2035,9 +2042,9 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
     final baseLetter = rawTarget.isNotEmpty ? rawTarget[0] : 'ب';
 
     final harakatOptions = [
-      {'mark': ' َ', 'name': 'যবর', 'symbol': 'ـَ', 'display': '$baseLetterَ', 'sound': 'আ'},
-      {'mark': ' ِ', 'name': 'যের', 'symbol': 'ـِ', 'display': '$baseLetterِ', 'sound': 'ই'},
-      {'mark': ' ُ', 'name': 'পেশ', 'symbol': 'ـُ', 'display': '$baseLetterُ', 'sound': 'উ'},
+      {'mark': ' َ', 'name': context.t('qaida.activity.harakat.zabar'), 'symbol': 'ـَ', 'display': '$baseLetterَ', 'sound': context.t('qaida.activity.harakat.sound_aa')},
+      {'mark': ' ِ', 'name': context.t('qaida.activity.harakat.zer'), 'symbol': 'ـِ', 'display': '$baseLetterِ', 'sound': context.t('qaida.activity.harakat.sound_ee')},
+      {'mark': ' ُ', 'name': context.t('qaida.activity.harakat.pesh'), 'symbol': 'ـُ', 'display': '$baseLetterُ', 'sound': context.t('qaida.activity.harakat.sound_oo')},
     ];
 
     final currentHarakat = harakatOptions[_sliderHarakatIndex.clamp(0, 2)];
@@ -2095,8 +2102,11 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(
-                      'উচ্চারণ: ${currentHarakat['name']} (${currentHarakat['sound']}-কার)',
-                      style: GoogleFonts.hindSiliguri(
+                      context.t('qaida.activity.harakat.pronunciation', params: {
+                        'name': '${currentHarakat['name']}',
+                        'sound': '${currentHarakat['sound']}',
+                      }),
+                      style: AppFonts.getTextStyle(context, 
                         fontSize: 13,
                         fontWeight: FontWeight.bold,
                         color: const Color(0xFF475569),
@@ -2143,9 +2153,9 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
-                    'স্লাইড বা ট্যাপ করে সঠিক হরকত বেছে নাও:',
-                    style: TextStyle(
+                  Text(
+                    context.t('qaida.activity.harakat.slide_select_instruction'),
+                    style: const TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
                       color: Color(0xFF64748B),
@@ -2220,7 +2230,7 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
                             const SizedBox(height: 4),
                             Text(
                               item['name']!,
-                              style: GoogleFonts.hindSiliguri(
+                              style: AppFonts.getTextStyle(context, 
                                 fontSize: 13,
                                 fontWeight: FontWeight.bold,
                                 color: isSelected
@@ -2242,7 +2252,7 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
     );
   }
 
-  // ── 2. MADD STRETCH (বার টেনে লম্বা করা) ─────────────────────────────────────
+  // ── 2. MADD STRETCH ─────────────────────────────────────
 
   Widget _buildMaddStretch(QaidaActivity activity) {
     final text = activity.arabicTarget?.isNotEmpty == true
@@ -2250,10 +2260,10 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
         : (activity.arabicSnippet ?? 'مَا');
 
     final stretchLabels = [
-      {'count': 1, 'name': '১ আলিফ (স্বাভাবিক)', 'harakat': '২ হরকত', 'color': const Color(0xFF10B981)},
-      {'count': 2, 'name': '২ আলিফ (মাঝারি)', 'harakat': '৩-৪ হরকত', 'color': const Color(0xFF0D9488)},
-      {'count': 3, 'name': '৩ আলিফ (দীর্ঘ)', 'harakat': '৫ হরকত', 'color': const Color(0xFFF59E0B)},
-      {'count': 4, 'name': '৪ আলিফ (সর্বোচ্চ দীর্ঘ)', 'harakat': '৬ হরকত', 'color': const Color(0xFFEF4444)},
+      {'count': 1, 'name': context.t('qaida.activity.madd.alif_1_full'), 'harakat': context.t('qaida.activity.madd.harakat_2'), 'color': const Color(0xFF10B981)},
+      {'count': 2, 'name': context.t('qaida.activity.madd.alif_2_full'), 'harakat': context.t('qaida.activity.madd.harakat_3_4'), 'color': const Color(0xFF0D9488)},
+      {'count': 3, 'name': context.t('qaida.activity.madd.alif_3_full'), 'harakat': context.t('qaida.activity.madd.harakat_5'), 'color': const Color(0xFFF59E0B)},
+      {'count': 4, 'name': context.t('qaida.activity.madd.alif_4_full'), 'harakat': context.t('qaida.activity.madd.harakat_6'), 'color': const Color(0xFFEF4444)},
     ];
 
     final currentLevel = stretchLabels[(_maddStretchCount - 1).clamp(0, 3)];
@@ -2323,8 +2333,11 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
               ),
               const SizedBox(height: 10),
               Text(
-                'টান: ${currentLevel['name']} · ${currentLevel['harakat']}',
-                style: GoogleFonts.hindSiliguri(
+                context.t('qaida.activity.madd.stretch_info', params: {
+                  'name': '${currentLevel['name']}',
+                  'harakat': '${currentLevel['harakat']}',
+                }),
+                style: AppFonts.getTextStyle(context, 
                   fontSize: 13,
                   fontWeight: FontWeight.bold,
                   color: currentLevel['color'] as Color,
@@ -2346,13 +2359,13 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Row(
+              Row(
                 children: [
-                  Icon(Icons.tune_rounded, size: 16, color: Color(0xFFB45309)),
-                  SizedBox(width: 6),
+                  const Icon(Icons.tune_rounded, size: 16, color: Color(0xFFB45309)),
+                  const SizedBox(width: 6),
                   Text(
-                    'মাদ্দ স্ট্রেচ কন্ট্রোলার: টেনে আওয়াজ লম্বা করো',
-                    style: TextStyle(
+                    context.t('qaida.activity.madd.controller_instruction'),
+                    style: const TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
                       color: Color(0xFF92400E),
@@ -2386,17 +2399,17 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
                         },
                 ),
               ),
-              const Row(
+              Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('১ আলিফ',
-                      style: TextStyle(fontSize: 11, color: Color(0xFF64748B))),
-                  Text('২ আলিফ',
-                      style: TextStyle(fontSize: 11, color: Color(0xFF64748B))),
-                  Text('৩ আলিফ',
-                      style: TextStyle(fontSize: 11, color: Color(0xFF64748B))),
-                  Text('৪ আলিফ (দীর্ঘ)',
-                      style: TextStyle(
+                  Text(context.t('qaida.activity.madd.alif_1'),
+                      style: const TextStyle(fontSize: 11, color: Color(0xFF64748B))),
+                  Text(context.t('qaida.activity.madd.alif_2'),
+                      style: const TextStyle(fontSize: 11, color: Color(0xFF64748B))),
+                  Text(context.t('qaida.activity.madd.alif_3'),
+                      style: const TextStyle(fontSize: 11, color: Color(0xFF64748B))),
+                  Text(context.t('qaida.activity.madd.alif_4'),
+                      style: const TextStyle(
                           fontSize: 11,
                           fontWeight: FontWeight.bold,
                           color: Color(0xFFB45309))),
@@ -2409,7 +2422,7 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
     );
   }
 
-  // ── 3. SHADDAH PRESS (দুইবার চাপ দেওয়া) ──────────────────────────────────────
+  // ── 3. SHADDAH PRESS ──────────────────────────────────────
 
   Widget _buildShaddahPress(QaidaActivity activity) {
     final text = activity.arabicTarget?.isNotEmpty == true
@@ -2459,9 +2472,9 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
                   color: const Color(0xFFFEF3C7),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Text(
-                  'তাশদীদ = ১ বার সাকিন + ১ বার হরকত (দ্বিগুণ ওজন)',
-                  style: TextStyle(
+                child: Text(
+                  context.t('qaida.activity.shaddah.rule_formula'),
+                  style: const TextStyle(
                     fontSize: 11,
                     fontWeight: FontWeight.bold,
                     color: Color(0xFF92400E),
@@ -2506,7 +2519,7 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
                     ),
                     const SizedBox(width: 6),
                     Text(
-                      '১ম চাপ (সাকিন)',
+                      context.t('qaida.activity.shaddah.first_press'),
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
@@ -2550,7 +2563,7 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
                     ),
                     const SizedBox(width: 6),
                     Text(
-                      '২য় চাপ (হরকত)',
+                      context.t('qaida.activity.shaddah.second_press'),
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
@@ -2620,11 +2633,11 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
                 const SizedBox(width: 10),
                 Text(
                   _shaddahPressCount >= 2
-                      ? 'দ্বিগুণ চাপ সম্পন্ন! মাশাল্লাহ!'
+                      ? context.t('qaida.activity.shaddah.double_press_complete')
                       : (_shaddahPressCount == 1
-                          ? 'আরেকবার চাপ দাও! (২য় চাপ)'
-                          : 'শক্ত করে চাপ দাও (১ম চাপ)'),
-                  style: GoogleFonts.hindSiliguri(
+                          ? context.t('qaida.activity.shaddah.press_again_second')
+                          : context.t('qaida.activity.shaddah.press_hard_first')),
+                  style: AppFonts.getTextStyle(context, 
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
@@ -2638,7 +2651,7 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
     );
   }
 
-  // ── 4. VOICE REPEAT & ECHO MODE (সেলফ-কম্পেয়ার) ─────────────────────────────
+  // ── 4. VOICE REPEAT & ECHO MODE ─────────────────────────────
 
   Widget _buildVoiceRepeat(QaidaActivity activity) {
     final text = activity.arabicTarget?.isNotEmpty == true
@@ -2677,8 +2690,8 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
               ),
               const SizedBox(height: 6),
               Text(
-                'ইকো মোড: উস্তাদের কন্ঠে শুনো, তারপর নিজেই বলো',
-                style: GoogleFonts.hindSiliguri(
+                context.t('qaida.activity.echo.title'),
+                style: AppFonts.getTextStyle(context, 
                   fontSize: 12,
                   color: const Color(0xFF64748B),
                 ),
@@ -2712,9 +2725,9 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
                       color: Color(0xFF16A34A), size: 22),
                 ),
                 const SizedBox(width: 12),
-                const Text(
-                  '১. উস্তাদের তিলাওয়াত শুনুন',
-                  style: TextStyle(
+                Text(
+                  context.t('qaida.activity.echo.listen_teacher'),
+                  style: const TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
                     color: Color(0xFF15803D),
@@ -2779,10 +2792,10 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
                 const SizedBox(width: 10),
                 Text(
                   _isRecordingVoice
-                      ? 'রেকর্ড হচ্ছে... বলুন!'
+                      ? context.t('qaida.activity.echo.recording_speak')
                       : (_hasRecordedVoice
-                          ? '২. আপনার পাঠ রেকর্ড হয়েছে! 🎧'
-                          : '২. মাইক্রোফোনে ট্যাপ করে বলুন'),
+                          ? context.t('qaida.activity.echo.recorded_success')
+                          : context.t('qaida.activity.echo.tap_to_speak')),
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
@@ -2810,9 +2823,9 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
             ),
             child: Column(
               children: [
-                const Text(
-                  'উস্তাদের সাথে মিলিয়ে দেখো। কেমন হলো?',
-                  style: TextStyle(
+                Text(
+                  context.t('qaida.activity.echo.compare_prompt'),
+                  style: const TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.bold,
                     color: Color(0xFF7E22CE),
@@ -2823,7 +2836,7 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
                   children: [
                     Expanded(
                       child: Duolingo3DButton(
-                        text: 'আবার বলি',
+                        text: context.t('qaida.activity.echo.say_again'),
                         color: const Color(0xFFF1F5F9),
                         shadowColor: const Color(0xFFCBD5E1),
                         textColor: const Color(0xFF475569),
@@ -2837,7 +2850,7 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
                     const SizedBox(width: 10),
                     Expanded(
                       child: Duolingo3DButton(
-                        text: 'মিলে গেছে! ✓',
+                        text: context.t('qaida.activity.echo.matched_check'),
                         color: AppTheme.duoGreen,
                         shadowColor: const Color(0xFF46A302),
                         textColor: Colors.white,
@@ -2856,7 +2869,7 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
     );
   }
 
-  // ── 5. SPEED READING RACE (গতি ও বিশুদ্ধতা) ───────────────────────────────────
+  // ── 5. SPEED READING RACE ───────────────────────────────────
 
   Widget _buildSpeedReading(QaidaActivity activity) {
     final List<String> tiles = activity.options.isNotEmpty
@@ -2884,8 +2897,8 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
-                  'ক্রমান্বয়ে প্রতিটি হরফ মুখে জোরে পড়ো এবং ট্যাপ করো:',
-                  style: GoogleFonts.hindSiliguri(
+                  context.t('qaida.activity.reading.read_aloud_tap'),
+                  style: AppFonts.getTextStyle(context, 
                     fontSize: 13,
                     fontWeight: FontWeight.bold,
                     color: const Color(0xFF15803D),
@@ -2990,7 +3003,7 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
     );
   }
 
-  // ── 6. SPOT THE MISTAKE (ভুলটি খুঁজে বের করো) ──────────────────────────────
+  // ── 6. SPOT THE MISTAKE ──────────────────────────────
 
   Widget _buildSpotTheMistake(QaidaActivity activity) {
     final target = activity.arabicSnippet ?? activity.arabicTarget ?? '';
@@ -3014,8 +3027,8 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
-                  'ভুলটি শনাক্ত করো: নিচের শব্দে কোনটি তাজবীদ বা হরকতের নিয়মের বিপরীত?',
-                  style: GoogleFonts.hindSiliguri(
+                  context.t('qaida.activity.reading.spot_mistake'),
+                  style: AppFonts.getTextStyle(context, 
                     fontSize: 13,
                     fontWeight: FontWeight.bold,
                     color: const Color(0xFF92400E),
@@ -3059,7 +3072,7 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
                 icon: _isPlayingAudio
                     ? Icons.volume_up_rounded
                     : Icons.volume_down_rounded,
-                label: 'সঠিক উচ্চারণ শুনুন',
+                label: context.t('qaida.activity.reading.listen_correct_audio'),
                 variant: DSButtonVariant.outline,
               ),
             ],
@@ -3070,8 +3083,8 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
         // Options to choose the mistaken part or rule
         if (options.isNotEmpty) ...[
           Text(
-            'কোথায় ভুল রয়েছে?',
-            style: GoogleFonts.hindSiliguri(
+            context.t('qaida.activity.reading.where_is_mistake'),
+            style: AppFonts.getTextStyle(context, 
               fontSize: 14,
               fontWeight: FontWeight.w700,
               color: const Color(0xFF475569),
@@ -3148,7 +3161,7 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
                       Expanded(
                         child: Text(
                           opt,
-                          style: GoogleFonts.hindSiliguri(
+                          style: AppFonts.getTextStyle(context, 
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
                             color: const Color(0xFF1E293B),
@@ -3169,7 +3182,7 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
     );
   }
 
-  // ── 7. WHICH RULE? / RULE DISCOVERY (কোন তাজবীদ নিয়ম?) ──────────────────────
+  // ── 7. WHICH RULE? / RULE DISCOVERY ──────────────────────
 
   Widget _buildWhichRule(QaidaActivity activity) {
     final target = activity.arabicSnippet ?? activity.arabicTarget ?? '';
@@ -3193,8 +3206,8 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
               const SizedBox(width: 10),
               Expanded(
                 child: Text(
-                  'তাজবীদ নিয়ম আবিষ্কার করো: হরকত ও সংলগ্ন হরফ লক্ষ্য করে বিধান চিহ্নিত করো',
-                  style: GoogleFonts.hindSiliguri(
+                  context.t('qaida.activity.reading.discover_rule'),
+                  style: AppFonts.getTextStyle(context, 
                     fontSize: 13,
                     fontWeight: FontWeight.bold,
                     color: const Color(0xFF1E40AF),
@@ -3238,7 +3251,7 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
               Text(
                 activity.prompt,
                 textAlign: TextAlign.center,
-                style: GoogleFonts.hindSiliguri(
+                style: AppFonts.getTextStyle(context, 
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
                   color: const Color(0xFF64748B),
@@ -3317,7 +3330,7 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
                     const SizedBox(width: 8),
                     Text(
                       opt,
-                      style: GoogleFonts.hindSiliguri(
+                      style: AppFonts.getTextStyle(context, 
                         fontSize: 15,
                         fontWeight: FontWeight.bold,
                         color: isSelected
@@ -3335,7 +3348,7 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
     );
   }
 
-  // ── 8. GHUNNAH METER (ওয়াজিব গুন্নাহ মিটার) ───────────────────────────────
+  // ── 8. GHUNNAH METER ───────────────────────────────
 
   void _startGhunnahHold() {
     final isWidgetTest =
@@ -3402,8 +3415,8 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
               const SizedBox(width: 10),
               Expanded(
                 child: Text(
-                  'নাকের বাঁশিতে শব্দ ধরে রেখে গুন্নাহ সম্পূর্ণ করুন (১.৫–২ আলিফ)',
-                  style: GoogleFonts.hindSiliguri(
+                  context.t('qaida.activity.reading.ghunnah_instruction'),
+                  style: AppFonts.getTextStyle(context, 
                     fontSize: 13,
                     fontWeight: FontWeight.bold,
                     color: const Color(0xFF065F46),
@@ -3455,11 +3468,11 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
               const SizedBox(height: 8),
               Text(
                 _ghunnahCompleted
-                    ? 'মাশাআল্লাহ! গুন্নাহ সফলভাবে সম্পন্ন হয়েছে ✓'
+                    ? context.t('qaida.activity.reading.ghunnah_success')
                     : (_ghunnahHolding
-                        ? 'গুন্নাহ চলছে... ধরে রাখুন...'
-                        : 'নিচে চেপে ধরে রাখুন'),
-                style: GoogleFonts.hindSiliguri(
+                        ? context.t('qaida.activity.reading.ghunnah_holding')
+                        : context.t('qaida.activity.reading.ghunnah_hold_below')),
+                style: AppFonts.getTextStyle(context, 
                   fontSize: 14,
                   fontWeight: FontWeight.bold,
                   color: _ghunnahCompleted
@@ -3568,11 +3581,11 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
                 const SizedBox(width: 10),
                 Text(
                   _ghunnahCompleted
-                      ? 'সম্পন্ন হয়েছে!'
+                      ? context.t('qaida.activity.reading.ghunnah_completed')
                       : (_ghunnahHolding
-                          ? 'ধরে রাখুন...'
-                          : 'চেপে ধরে গুন্নাহ করুন'),
-                  style: GoogleFonts.hindSiliguri(
+                          ? context.t('qaida.activity.reading.ghunnah_keep_holding')
+                          : context.t('qaida.activity.reading.ghunnah_press_to_do')),
+                  style: AppFonts.getTextStyle(context, 
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
@@ -3639,8 +3652,8 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
                       const Icon(Icons.touch_app_rounded, size: 14, color: Color(0xFF0284C7)),
                       const SizedBox(width: 4),
                       Text(
-                        'আঙুল দিয়ে হরফটির ওপর আঁকো',
-                        style: GoogleFonts.hindSiliguri(
+                        context.t('qaida.activity.games.trace_instruction'),
+                        style: AppFonts.getTextStyle(context, 
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
                           color: const Color(0xFF0284C7),
@@ -3694,8 +3707,8 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
                 const Icon(Icons.stars_rounded, color: Color(0xFF16A34A), size: 18),
                 const SizedBox(width: 6),
                 Text(
-                  'মাশাআল্লাহ! হরফ আঁকা সম্পন্ন হয়েছে!',
-                  style: GoogleFonts.hindSiliguri(
+                  context.t('qaida.activity.games.trace_success'),
+                  style: AppFonts.getTextStyle(context, 
                     fontSize: 13,
                     fontWeight: FontWeight.bold,
                     color: const Color(0xFF15803D),
@@ -3717,7 +3730,7 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
                 });
               },
               icon: Icons.refresh_rounded,
-              label: 'মুছে আবার আঁকো',
+              label: context.t('qaida.activity.games.erase_and_redraw'),
               variant: DSButtonVariant.outline,
             ),
             const SizedBox(width: 12),
@@ -3728,7 +3741,9 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
                 });
               },
               icon: const Icon(Icons.check_circle_rounded, size: 18, color: Colors.white),
-              label: _isTraceCompleted ? 'আঁকা সম্পন্ন ✓' : 'সম্পন্ন করেছি',
+              label: _isTraceCompleted
+                  ? context.t('qaida.activity.games.drawing_complete')
+                  : context.t('qaida.activity.games.completed_action'),
               height: 44,
               variant: _isTraceCompleted
                   ? DSButtonVariant.primary
@@ -3759,8 +3774,8 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
-                  'ব্যতিক্রম হরফটি খুঁজুন: নিচের হরফগুলোর মধ্যে কোনটি ভিন্ন দলের স্পর্শ করে নির্বাচন করুন',
-                  style: GoogleFonts.hindSiliguri(
+                  context.t('qaida.activity.games.odd_one_out'),
+                  style: AppFonts.getTextStyle(context, 
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
                     color: const Color(0xFF1E40AF),
@@ -3844,16 +3859,16 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'হরফ সংগ্রহ করো:',
-                        style: GoogleFonts.hindSiliguri(
+                        context.t('qaida.activity.games.collect_letters'),
+                        style: AppFonts.getTextStyle(context, 
                           fontSize: 12,
                           color: const Color(0xFF92400E),
                           fontWeight: FontWeight.w600,
                         ),
                       ),
                       Text(
-                        '${_toBn(_caughtLettersCount)} / ৩ টি ধরা হয়েছে',
-                        style: GoogleFonts.hindSiliguri(
+                        context.t('qaida.activity.games.caught_counter', params: {'count': '${_toBn(_caughtLettersCount)}'}),
+                        style: AppFonts.getTextStyle(context, 
                           fontSize: 16,
                           color: const Color(0xFF78350F),
                           fontWeight: FontWeight.bold,
@@ -3872,8 +3887,8 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
                 child: Row(
                   children: [
                     Text(
-                      'লক্ষ্য: ',
-                      style: GoogleFonts.hindSiliguri(
+                      context.t('qaida.activity.games.target_label'),
+                      style: AppFonts.getTextStyle(context, 
                         color: Colors.white,
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
@@ -3926,8 +3941,8 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             content: Text(
-                              'এটি $letter, লক্ষ্য হরফ “$target” স্পর্শ করো!',
-                              style: GoogleFonts.hindSiliguri(fontWeight: FontWeight.bold),
+                              context.t('qaida.activity.games.catch_target_hint', params: {'letter': letter, 'target': target}),
+                              style: AppFonts.getTextStyle(context, fontWeight: FontWeight.bold),
                             ),
                             duration: const Duration(milliseconds: 700),
                             backgroundColor: const Color(0xFFF59E0B),
@@ -3981,8 +3996,8 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Text(
-          'সঠিক ক্রমানুসারে সাজাও (টেনে বা স্পর্শ করে):',
-          style: GoogleFonts.hindSiliguri(
+          context.t('qaida.activity.games.sort_order_instruction'),
+          style: AppFonts.getTextStyle(context, 
             fontSize: 15,
             fontWeight: FontWeight.bold,
             color: const Color(0xFF475569),
@@ -4064,8 +4079,8 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
         ),
         const SizedBox(height: 24),
         Text(
-          'নিচের হরফ/শব্দগুলো টেনে বা স্পর্শ করে খালি ঘরে বসাও:',
-          style: GoogleFonts.hindSiliguri(
+          context.t('qaida.activity.games.fill_empty_slots'),
+          style: AppFonts.getTextStyle(context, 
             fontSize: 13,
             color: const Color(0xFF64748B),
           ),
@@ -4197,8 +4212,8 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
                   const Text('🧩', style: TextStyle(fontSize: 18)),
                   const SizedBox(width: 8),
                   Text(
-                    'পাজল ফ্রেম: টুকরোগুলো টেনে বা ট্যাপ করে বসাও',
-                    style: GoogleFonts.hindSiliguri(
+                    context.t('qaida.activity.games.puzzle_frame'),
+                    style: AppFonts.getTextStyle(context, 
                       fontSize: 13,
                       fontWeight: FontWeight.bold,
                       color: const Color(0xFF6D28D9),
@@ -4280,7 +4295,7 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
               ),
               const SizedBox(height: 8),
               Text(
-                'পূর্ণ শব্দ: ${_puzzleSlots.whereType<String>().join('')}',
+                context.t('qaida.activity.games.full_word', params: {'word': _puzzleSlots.whereType<String>().join('')}),
                 style: TextStyle(
                   fontFamily: AppTheme.arabicFontFamily,
                   fontSize: 26,
@@ -4423,8 +4438,8 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
                   const Text('🎵', style: TextStyle(fontSize: 20)),
                   const SizedBox(width: 8),
                   Text(
-                    'সুরে সুরে তিলাওয়াত শুনুন ও শূন্যস্থানে বসান (টেনে বা ট্যাপ করে):',
-                    style: GoogleFonts.hindSiliguri(
+                    context.t('qaida.activity.games.listen_fill_gaps'),
+                    style: AppFonts.getTextStyle(context, 
                       fontSize: 14,
                       fontWeight: FontWeight.bold,
                       color: const Color(0xFF047857),
@@ -4551,7 +4566,7 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
   Widget _buildSoundCompare(QaidaActivity activity) {
     final List<String> sounds = activity.hasSoundOptions
         ? activity.soundOptions!.keys.toList()
-        : (activity.options.isNotEmpty ? activity.options : <String>['উচ্চারণ A', 'উচ্চারণ B']);
+        : (activity.options.isNotEmpty ? activity.options : <String>[context.t('qaida.activity.games.pronunciation_a'), context.t('qaida.activity.games.pronunciation_b')]);
 
     return Column(
       children: [
@@ -4569,8 +4584,8 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
               const SizedBox(width: 8),
               Flexible(
                 child: Text(
-                  'উভয় উচ্চারণ শুনুন এবং সঠিকটি নির্বাচন করুন:',
-                  style: GoogleFonts.hindSiliguri(
+                  context.t('qaida.activity.games.listen_both_choose'),
+                  style: AppFonts.getTextStyle(context, 
                     fontSize: 13,
                     fontWeight: FontWeight.bold,
                     color: const Color(0xFF166534),
@@ -4633,8 +4648,8 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
                         ),
                         const SizedBox(height: 12),
                         Text(
-                          isA ? 'শব্দ ক' : 'শব্দ খ',
-                          style: GoogleFonts.hindSiliguri(
+                          isA ? context.t('qaida.activity.games.word_a') : context.t('qaida.activity.games.word_b'),
+                          style: AppFonts.getTextStyle(context, 
                             fontSize: 13,
                             fontWeight: FontWeight.bold,
                             color: const Color(0xFF64748B),
@@ -4693,8 +4708,8 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
               ),
               const SizedBox(width: 10),
               Text(
-                'বস চ্যালেঞ্জ (ধাপের চূড়ান্ত পরীক্ষা)',
-                style: GoogleFonts.hindSiliguri(
+                context.t('qaida.activity.completion.boss_challenge_title'),
+                style: AppFonts.getTextStyle(context, 
                   fontSize: 16,
                   fontWeight: FontWeight.w800,
                   color: const Color(0xFF92400E),
@@ -4715,8 +4730,8 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
               border: Border.all(color: const Color(0xFFE2E8F0)),
             ),
             child: Text(
-              'উস্তাদের সাথে বিশুদ্ধ তিলাওয়াত যাচাই সম্পন্ন করো।',
-              style: GoogleFonts.hindSiliguri(
+              context.t('qaida.activity.completion.boss_challenge_sub'),
+              style: AppFonts.getTextStyle(context, 
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
                 color: const Color(0xFF334155),
@@ -4781,7 +4796,7 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
         child: SafeArea(
           top: false,
           child: Duolingo3DButton(
-            text: 'যাচাই করুন',
+            text: context.t('qaida.activity.common.verify'),
             color: canCheck ? AppTheme.duoGreen : const Color(0xFFE5E7EB),
             shadowColor: canCheck
                 ? const Color(0xFF46A302)
@@ -4801,8 +4816,8 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
     final Color btnColor =
         isSuccess ? AppTheme.duoGreen : const Color(0xFFF59E0B);
     final String title = isSuccess
-        ? (activity.feedbackCorrect ?? 'মাশাআল্লাহ! চমৎকার!')
-        : (activity.feedbackIncorrect ?? 'মনোযোগ দিয়ে আবার ভাবি');
+        ? (activity.feedbackCorrect ?? context.t('qaida.activity.common.great_job'))
+        : (activity.feedbackIncorrect ?? context.t('qaida.activity.common.think_carefully'));
     final String? feedback = activity.explanation ?? widget.lesson.description;
 
     return Container(
@@ -4836,7 +4851,7 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
                 Expanded(
                   child: Text(
                     title,
-                    style: GoogleFonts.hindSiliguri(
+                    style: AppFonts.getTextStyle(context, 
                       fontSize: 19,
                       fontWeight: FontWeight.w800,
                       color: textColor,
@@ -4856,25 +4871,25 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
                               const Icon(Icons.lightbulb_rounded,
                                   color: Color(0xFFF59E0B)),
                               const SizedBox(width: 8),
-                              Text('সহায়তা',
-                                  style: GoogleFonts.hindSiliguri(
+                              Text(context.t('qaida.activity.common.help'),
+                                  style: AppFonts.getTextStyle(context, 
                                       fontWeight: FontWeight.bold)),
                             ],
                           ),
                           content: Text(activity.hint!,
-                              style: GoogleFonts.hindSiliguri(fontSize: 16)),
+                              style: AppFonts.getTextStyle(context, fontSize: 16)),
                           actions: [
                             TextButton(
                               onPressed: () => Navigator.of(context).pop(),
-                              child: const Text('ঠিক আছে'),
+                              child: Text(context.t('qaida.activity.common.ok')),
                             ),
                           ],
                         ),
                       );
                     },
                     icon: const Icon(Icons.lightbulb_outline_rounded, size: 18),
-                    label: Text('ইঙ্গিত',
-                        style: GoogleFonts.hindSiliguri(
+                    label: Text(context.t('qaida.activity.common.hint'),
+                        style: AppFonts.getTextStyle(context, 
                             fontWeight: FontWeight.bold)),
                     style: TextButton.styleFrom(foregroundColor: textColor),
                   ),
@@ -4884,7 +4899,7 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
               const SizedBox(height: 8),
               Text(
                 feedback,
-                style: GoogleFonts.hindSiliguri(
+                style: AppFonts.getTextStyle(context, 
                   fontSize: 14,
                   color: textColor.withOpacity(0.92),
                   fontWeight: FontWeight.w600,
@@ -4894,7 +4909,9 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
             ],
             const SizedBox(height: 16),
             Duolingo3DButton(
-              text: isSuccess ? 'পরবর্তী ধাপ ➔' : 'আবার চেষ্টা করি ↻',
+              text: isSuccess
+                  ? context.t('qaida.activity.common.next_step')
+                  : context.t('qaida.activity.common.try_again'),
               color: btnColor,
               onPressed: isSuccess ? _nextActivity : _retryActivity,
             ),
@@ -4951,11 +4968,11 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
                     const SizedBox(height: 20),
                     Text(
                       widget.lesson.isTrackFinal
-                          ? 'আলহামদুলিল্লাহ! ট্র্যাক বিজয়ী!'
+                          ? context.t('qaida.activity.completion.track_champion')
                           : (widget.lesson.isCheckpoint
-                              ? 'চেকপয়েন্ট পরীক্ষায় উত্তীর্ণ!'
-                              : 'মাশাআল্লাহ! অসাধারণ!'),
-                      style: GoogleFonts.hindSiliguri(
+                              ? context.t('qaida.activity.completion.checkpoint_passed')
+                              : context.t('qaida.activity.completion.awesome')),
+                      style: AppFonts.getTextStyle(context, 
                         fontSize: 28,
                         fontWeight: FontWeight.w800,
                         color: const Color(0xFF0F172A),
@@ -4964,8 +4981,8 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      '"${widget.lesson.title}" পাঠ সম্পন্ন হয়েছে!',
-                      style: GoogleFonts.hindSiliguri(
+                      context.t('qaida.activity.completion.lesson_complete_title', params: {'title': widget.lesson.title}),
+                      style: AppFonts.getTextStyle(context, 
                         fontSize: 16,
                         color: const Color(0xFF64748B),
                         fontWeight: FontWeight.w600,
@@ -4981,13 +4998,18 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
                         _RewardPill(
                           icon: Icons.bolt_rounded,
                           color: const Color(0xFFFF9600),
-                          text: '+$xpEarned XP',
+                          text: context.t('qaida.activity.xp_plus', params: {
+                            'xp': context.formatDigits('$xpEarned'),
+                          }),
                         ),
                         const SizedBox(width: 12),
                         _RewardPill(
                           icon: Icons.stars_rounded,
                           color: const Color(0xFF16A34A),
-                          text: '$_totalCorrect/${widget.lesson.activities.length} সঠিক',
+                          text: context.t('qaida.activity.completion.score_correct', params: {
+                            'correct': '$_totalCorrect',
+                            'total': '${widget.lesson.activities.length}',
+                          }),
                         ),
                       ],
                     ),
@@ -4997,7 +5019,7 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
                     const Spacer(),
                     if (next != null) ...[
                       Duolingo3DButton(
-                        text: 'পরবর্তী পাঠ: ${next.title}',
+                        text: context.t('qaida.activity.completion.next_lesson', params: {'title': next.title}),
                         color: AppTheme.duoGreen,
                         onPressed: () {
                           Navigator.of(context).pushReplacement(
@@ -5012,7 +5034,7 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
                       const SizedBox(height: 12),
                     ],
                     Duolingo3DButton(
-                      text: 'অধ্যায় তালিকায় ফিরুন',
+                      text: context.t('qaida.activity.completion.return_chapters'),
                       color: const Color(0xFFF1F5F9),
                       shadowColor: const Color(0xFFCBD5E1),
                       textColor: const Color(0xFF334155),
@@ -5120,7 +5142,9 @@ class _GamifiedComboBadge extends StatelessWidget {
           const Real3DTopBarIcon(type: Real3DTopType.flame, size: 16),
           const SizedBox(width: 4),
           Text(
-            '$combo Combo!',
+            context.t('qaida.activity.combo', params: {
+              'count': context.formatDigits('$combo'),
+            }),
             style: const TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w900,
@@ -5233,7 +5257,7 @@ class _GamifiedOptionCardState extends State<_GamifiedOptionCard> {
                   FittedBox(
                     fit: BoxFit.scaleDown,
                     child: Text(
-                      widget.text,
+                      context.uiText(widget.text),
                       style: TextStyle(
                         fontFamily:
                             isArabic ? AppTheme.arabicFontFamily : null,
@@ -5260,7 +5284,7 @@ class _GamifiedOptionCardState extends State<_GamifiedOptionCard> {
                   const SizedBox(width: 16),
                   Expanded(
                     child: Text(
-                      widget.text,
+                      context.uiText(widget.text),
                       style: TextStyle(
                         fontFamily:
                             isArabic ? AppTheme.arabicFontFamily : null,
@@ -5429,8 +5453,10 @@ class _ArabicTargetCard extends StatelessWidget {
                       ),
                       const SizedBox(width: 8),
                       Text(
-                        isPlayingAudio ? 'বাজছে...' : 'উচ্চারণ শুনুন',
-                        style: GoogleFonts.hindSiliguri(
+                        isPlayingAudio
+                            ? context.t('qaida.activity.skills.playing')
+                            : context.t('qaida.activity.skills.listen_pronounce'),
+                        style: AppFonts.getTextStyle(context, 
                           fontSize: 13,
                           fontWeight: FontWeight.bold,
                           color: const Color(0xFF0369A1),
@@ -5452,8 +5478,8 @@ class _ArabicTargetCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Text(
-                'মাখরাজ: $makhraj',
-                style: GoogleFonts.hindSiliguri(
+                context.t('qaida.activity.skills.makhraj_label', params: {'makhraj': makhraj}),
+                style: AppFonts.getTextStyle(context, 
                   fontSize: 12,
                   color: const Color(0xFF64748B),
                   fontWeight: FontWeight.w600,
@@ -5877,8 +5903,8 @@ class _SkillSummaryRow extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('দক্ষতার অগ্রগতি:',
-              style: GoogleFonts.hindSiliguri(
+          Text(context.t('qaida.activity.skills.progress_title'),
+              style: AppFonts.getTextStyle(context, 
                   fontSize: 12,
                   fontWeight: FontWeight.bold,
                   color: const Color(0xFF64748B))),
@@ -5896,12 +5922,12 @@ class _SkillSummaryRow extends StatelessWidget {
                   Expanded(
                     child: Text(
                       sid,
-                      style: GoogleFonts.hindSiliguri(
+                      style: AppFonts.getTextStyle(context, 
                           fontSize: 12, color: const Color(0xFF334155)),
                     ),
                   ),
                   Text(
-                    _masteryLabel(mastery),
+                    _masteryLabel(context, mastery),
                     style: TextStyle(
                         fontSize: 11,
                         fontWeight: FontWeight.bold,
@@ -5938,14 +5964,14 @@ class _SkillSummaryRow extends StatelessWidget {
         _ => const Color(0xFF94A3B8),
       };
 
-  String _masteryLabel(SkillMasteryState s) => switch (s) {
-        SkillMasteryState.masteryDemonstrated => 'আয়ত্ত',
-        SkillMasteryState.masteryDeveloping => 'উন্নতি হচ্ছে',
-        SkillMasteryState.lessonCheckPassed => 'পাঠ যাচাই পাস',
-        SkillMasteryState.lessonCompleted => 'পাঠ সম্পন্ন',
-        SkillMasteryState.practiceCompleted => 'অনুশীলন শেষ',
-        SkillMasteryState.inProgress => 'চলছে',
-        _ => 'শুরু হয়নি',
+  String _masteryLabel(BuildContext context, SkillMasteryState s) => switch (s) {
+        SkillMasteryState.masteryDemonstrated => context.t('qaida.activity.skills.mastered'),
+        SkillMasteryState.masteryDeveloping => context.t('qaida.activity.skills.developing'),
+        SkillMasteryState.lessonCheckPassed => context.t('qaida.activity.skills.check_passed'),
+        SkillMasteryState.lessonCompleted => context.t('qaida.activity.skills.completed'),
+        SkillMasteryState.practiceCompleted => context.t('qaida.activity.skills.practice_done'),
+        SkillMasteryState.inProgress => context.t('qaida.activity.skills.in_progress'),
+        _ => context.t('qaida.activity.skills.not_started'),
       };
 }
 
@@ -6035,9 +6061,9 @@ class _RuleGuideIntroCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    LocalizedText(
-                      'নিয়ম জেনে অনুশীলন শুরু করি',
-                      style: GoogleFonts.hindSiliguri(
+                    Text(
+                      context.t('qaida.activity.rules.learn_and_start'),
+                      style: AppFonts.getTextStyle(context, 
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                         color: const Color(0xFF92400E),
@@ -6045,7 +6071,7 @@ class _RuleGuideIntroCard extends StatelessWidget {
                     ),
                     LocalizedText(
                       lesson.title,
-                      style: GoogleFonts.hindSiliguri(
+                      style: AppFonts.getTextStyle(context, 
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
                         color: const Color(0xFFB45309),
@@ -6065,7 +6091,7 @@ class _RuleGuideIntroCard extends StatelessWidget {
             ),
             child: LocalizedText(
               ruleText,
-              style: GoogleFonts.hindSiliguri(
+              style: AppFonts.getTextStyle(context, 
                 fontSize: 14,
                 color: const Color(0xFF334155),
                 height: 1.45,
@@ -6075,9 +6101,9 @@ class _RuleGuideIntroCard extends StatelessWidget {
           ),
           if (letters.isNotEmpty) ...[
             const SizedBox(height: 12),
-            LocalizedText(
-              'এই নিয়মের হরফসমূহ (${letters.length}টি):',
-              style: GoogleFonts.hindSiliguri(
+            Text(
+              context.t('qaida.activity.rules.letters_count', params: {'count': '${letters.length}'}),
+              style: AppFonts.getTextStyle(context, 
                 fontSize: 12,
                 fontWeight: FontWeight.bold,
                 color: const Color(0xFF92400E),
@@ -6111,7 +6137,7 @@ class _RuleGuideIntroCard extends StatelessWidget {
           ],
           const SizedBox(height: 14),
           Duolingo3DButton(
-            text: 'বুঝেছি, অনুশীলন শুরু করি ➔',
+            text: context.t('qaida.activity.rules.start_understood_btn'),
             color: const Color(0xFFF59E0B),
             shadowColor: const Color(0xFFD97706),
             onPressed: onDismiss,

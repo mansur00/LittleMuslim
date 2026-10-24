@@ -3,6 +3,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'core/core.dart';
 import 'theme/app_theme.dart';
 import 'screens/onboarding/onboarding_screen.dart';
 import 'screens/home/home_screen.dart';
@@ -12,6 +13,7 @@ import 'services/notification_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await AppFormatters.initialize();
   await NotificationService.instance.initialize();
 
   // Portrait + Landscape support (phone & tablet friendly)
@@ -33,8 +35,11 @@ void main() async {
   }
 
   runApp(
-    ChangeNotifierProvider(
-      create: (_) => AppState()..loadFromPrefs(),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => LanguageProvider()..initialize()),
+        ChangeNotifierProvider(create: (_) => AppState()..loadFromPrefs()),
+      ],
       child: const LittleMuslimApp(),
     ),
   );
@@ -50,11 +55,11 @@ class LittleMuslimApp extends StatelessWidget {
             ? appState.selectedLanguage
             : appState.draftLanguage);
     return MaterialApp(
-      title: 'LittleMuslim',
+      title: AppConfig.appName,
       debugShowCheckedModeBanner: false,
-      theme: AppTheme.lightTheme,
-      locale: Locale(language == 'en' ? 'en' : 'bn'),
-      supportedLocales: const [Locale('bn'), Locale('en')],
+      theme: AppTheme.getThemeForLanguage(language),
+      locale: Locale(language),
+      supportedLocales: AppLanguages.supportedLocales,
       localizationsDelegates: const [
         AppLocalizationsDelegate(),
         GlobalMaterialLocalizations.delegate,

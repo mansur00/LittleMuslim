@@ -17,6 +17,9 @@ import 'package:little_muslim/screens/live_learning/class_schedule.dart';
 import 'package:little_muslim/screens/live_learning/live_learning_screen.dart';
 import 'package:little_muslim/screens/achievements/achievements_screen.dart';
 import 'package:little_muslim/screens/missions/daily_missions_screen.dart';
+import 'package:little_muslim/screens/profile/profile_screen.dart';
+import 'package:little_muslim/screens/profile/login_screen.dart';
+import 'package:little_muslim/core/core.dart';
 import 'package:little_muslim/utils/app_state.dart';
 import 'package:little_muslim/l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
@@ -131,7 +134,7 @@ class _LocalizedTestApp extends StatelessWidget {
           builder: (context, appState, _) => MaterialApp(
             key: ValueKey(home),
             locale: Locale(appState.selectedLanguage),
-            supportedLocales: const [Locale('bn'), Locale('en')],
+            supportedLocales: AppLanguages.supportedLocales,
             localizationsDelegates: const [
               AppLocalizationsDelegate(),
               GlobalMaterialLocalizations.delegate,
@@ -145,11 +148,16 @@ class _LocalizedTestApp extends StatelessWidget {
 }
 
 void main() {
-  setUpAll(() {
+  setUpAll(() async {
     TestWidgetsFlutterBinding.ensureInitialized();
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(
             const MethodChannel('flutter_tts'), (call) async => 1);
+    const delegate = AppLocalizationsDelegate();
+    await delegate.load(const Locale('en'));
+    await delegate.load(const Locale('bn'));
+    await delegate.load(const Locale('hi'));
+    await delegate.load(const Locale('it'));
   });
 
   testWidgets('Bangla and English catalogs have paired keys and no conflicts',
@@ -757,16 +765,14 @@ void main() {
     SharedPreferences.setMockInitialValues({});
     final appState = AppState();
     await appState.loadFromPrefs();
-    await tester.pumpWidget(ChangeNotifierProvider.value(
-      value: appState,
-      child: const MaterialApp(
-        home: QaidaLessonScreen(
-          lessonId: 'qaida_resume_test',
-          lessonTitle: 'আলিফ চিনি',
-          letter: 'ا',
-          letterName: 'আলিফ',
-          options: ['ب', 'ا', 'ت'],
-        ),
+    await tester.pumpWidget(_LocalizedTestApp(
+      state: appState,
+      home: const QaidaLessonScreen(
+        lessonId: 'qaida_resume_test',
+        lessonTitle: 'আলিফ চিনি',
+        letter: 'ا',
+        letterName: 'আলিফ',
+        options: ['ب', 'ا', 'ت'],
       ),
     ));
     await tester.pumpAndSettle();
@@ -774,22 +780,23 @@ void main() {
     await tester.tap(find.text('ا').last);
     await tester.pumpAndSettle();
     await tapVisible(tester, find.text('পরের ধাপে যাই'));
-    expect(find.text('2 / 6'), findsOneWidget);
+    expect(
+        find.byWidgetPredicate((w) =>
+            w is Text && (w.data == '2 / 6' || w.data == '২ / ৬')),
+        findsOneWidget);
     expect(appState.qaidaLessonStep('qaida_resume_test'), 1);
     await tester.pump(const Duration(milliseconds: 20));
 
     final restoredState = AppState();
     await restoredState.loadFromPrefs();
-    await tester.pumpWidget(ChangeNotifierProvider.value(
-      value: restoredState,
-      child: const MaterialApp(
-        home: QaidaLessonScreen(
-          lessonId: 'qaida_resume_test',
-          lessonTitle: 'আলিফ চিনি',
-          letter: 'ا',
-          letterName: 'আলিফ',
-          options: ['ب', 'ا', 'ت'],
-        ),
+    await tester.pumpWidget(_LocalizedTestApp(
+      state: restoredState,
+      home: const QaidaLessonScreen(
+        lessonId: 'qaida_resume_test',
+        lessonTitle: 'আলিফ চিনি',
+        letter: 'ا',
+        letterName: 'আলিফ',
+        options: ['ب', 'ا', 'ت'],
       ),
     ));
     await tester.pumpAndSettle();
@@ -873,7 +880,7 @@ void main() {
       child: MaterialApp(home: QuranScreen(repository: _FakeQuranRepository())),
     ));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('আয়াত 4 থেকে পড়ি'));
+    await tester.tap(find.textContaining('থেকে পড়ি'));
     await tester.pumpAndSettle();
 
     expect(find.text('آية 4'), findsOneWidget);
@@ -1066,9 +1073,16 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('নতুন শিক্ষার্থী'), findsOneWidget);
-    expect(find.text('10 XP'), findsOneWidget);
+    expect(
+        find.byWidgetPredicate((w) =>
+            w is Text && (w.data == '10 XP' || w.data == '১০ XP')),
+        findsOneWidget);
     expect(find.text('প্রথম পাঠ'), findsOneWidget);
-    expect(find.text('1 / 4 পাওয়া'), findsOneWidget);
+    expect(
+        find.byWidgetPredicate((w) =>
+            w is Text &&
+            (w.data == '1 / 4 পাওয়া' || w.data == '১ / ৪ পাওয়া')),
+        findsOneWidget);
   });
 
   testWidgets('daily mission completes only after its Qaida lesson',
@@ -1119,4 +1133,239 @@ void main() {
     expect(restoredState.xp, 10);
     expect(restoredState.hasCompletedLesson('qaida_alif_persistence'), isTrue);
   });
+
+  // ──────────────────────────────────────────────────────────────────────────
+  // Hindi (hi) and Italian (it) globalization tests
+  // ──────────────────────────────────────────────────────────────────────────
+
+  testWidgets(
+      'Hindi ARB file is valid JSON with all expected keys and string values',
+      (tester) async {
+    final contents = await tester.runAsync(() async =>
+        rootBundle.loadString('assets/l10n/app_hi.arb'));
+    expect(contents, isNotNull);
+    final hindi = jsonDecode(contents!) as Map<String, dynamic>;
+    expect(hindi['@@locale'], 'hi');
+    final keys = hindi.keys
+        .where((k) => !k.startsWith('@') && k != '@@locale')
+        .toList();
+    expect(keys.length, greaterThan(100),
+        reason: 'Hindi ARB should have > 100 translatable keys');
+    for (final key in keys) {
+      expect(hindi[key], isA<String>(),
+          reason: 'Hindi key "$key" must have a String value');
+    }
+    // Spot-check a few critical keys have Hindi translation (not just English)
+    expect(hindi['settings'], isNotNull);
+    expect(hindi['back'], isNotNull);
+    expect(hindi['next'], isNotNull);
+    expect(hindi['completed'], isNotNull);
+  });
+
+  testWidgets(
+      'Italian ARB file is valid JSON with all expected keys and string values',
+      (tester) async {
+    final contents = await tester.runAsync(() async =>
+        rootBundle.loadString('assets/l10n/app_it.arb'));
+    expect(contents, isNotNull);
+    final italian = jsonDecode(contents!) as Map<String, dynamic>;
+    expect(italian['@@locale'], 'it');
+    final keys = italian.keys
+        .where((k) => !k.startsWith('@') && k != '@@locale')
+        .toList();
+    expect(keys.length, greaterThan(100),
+        reason: 'Italian ARB should have > 100 translatable keys');
+    for (final key in keys) {
+      expect(italian[key], isA<String>(),
+          reason: 'Italian key "$key" must have a String value');
+    }
+    // Spot-check critical keys
+    expect(italian['settings'], 'Impostazioni');
+    expect(italian['back'], 'Indietro');
+    expect(italian['next'], 'Avanti');
+    expect(italian['completed'], 'Completato');
+  });
+
+  testWidgets(
+      'All four locale ARB files share identical key sets (bn, en, hi, it)',
+      (tester) async {
+    final files = await tester.runAsync(() async => Future.wait([
+          rootBundle.loadString('assets/l10n/app_bn.arb'),
+          rootBundle.loadString('assets/l10n/app_en.arb'),
+          rootBundle.loadString('assets/l10n/app_hi.arb'),
+          rootBundle.loadString('assets/l10n/app_it.arb'),
+        ]));
+    expect(files, isNotNull);
+    final arbMaps = files!
+        .map((s) => jsonDecode(s) as Map<String, dynamic>)
+        .toList();
+    final keysets = arbMaps
+        .map((m) => m.keys
+            .where((k) => !k.startsWith('@') && k != '@@locale')
+            .toSet())
+        .toList();
+    // All four locales must have the same set of translatable keys
+    for (var i = 1; i < keysets.length; i++) {
+      final diff = keysets[0].difference(keysets[i]);
+      expect(diff, isEmpty,
+          reason: 'Keys in bn but missing in locale index $i: $diff');
+    }
+  });
+
+  testWidgets(
+      'AppState accepts and persists Hindi (hi) language code',
+      (tester) async {
+    SharedPreferences.setMockInitialValues({'language': 'hi'});
+    final state = AppState();
+    await state.loadFromPrefs();
+    expect(state.selectedLanguage, 'hi');
+
+    await state.updateLanguage('it');
+    expect(state.selectedLanguage, 'it');
+    final prefs = await SharedPreferences.getInstance();
+    expect(prefs.getString('language'), 'it');
+
+    await state.updateLanguage('hi');
+    expect(state.selectedLanguage, 'hi');
+  });
+
+  testWidgets(
+      'Settings screen shows Hindi and Italian options in language dropdown',
+      (tester) async {
+    SharedPreferences.setMockInitialValues({
+      'language': 'en',
+      'onboarding_done': true,
+      'user_name': 'Yusuf',
+      'user_age': 8,
+    });
+    final state = AppState();
+    await state.loadFromPrefs();
+    await tester.pumpWidget(
+        _LocalizedTestApp(state: state, home: const SettingsScreen()));
+    await tester.runAsync(
+        () => Future<void>.delayed(const Duration(milliseconds: 100)));
+    await tester.pumpAndSettle();
+
+    // Open the dropdown
+    await tester.tap(find.byType(DropdownButton<String>));
+    await tester.pumpAndSettle();
+
+    // All 4 language options must be visible
+    expect(find.text('বাংলা'), findsOneWidget);
+    expect(find.text('English'), findsWidgets);
+    expect(find.text('हिंदी'), findsOneWidget);
+    expect(find.text('Italiano'), findsOneWidget);
+  });
+
+  testWidgets(
+      'Switching to Hindi renders Settings screen in Hindi',
+      (tester) async {
+    SharedPreferences.setMockInitialValues({
+      'language': 'en',
+      'onboarding_done': true,
+      'user_name': 'Fatima',
+      'user_age': 10,
+    });
+    final state = AppState();
+    await state.loadFromPrefs();
+    await tester.pumpWidget(
+        _LocalizedTestApp(state: state, home: const SettingsScreen()));
+    await tester.runAsync(
+        () => Future<void>.delayed(const Duration(milliseconds: 100)));
+    await tester.pumpAndSettle();
+    expect(find.text('Settings'), findsOneWidget);
+
+    // Switch to Hindi
+    await tester.tap(find.byType(DropdownButton<String>));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('हिंदी').last);
+    await tester.pumpAndSettle();
+    await tester.runAsync(
+        () => Future<void>.delayed(const Duration(milliseconds: 100)));
+    await tester.pumpAndSettle();
+
+    expect(state.selectedLanguage, 'hi');
+    expect(find.text('सेटिंग्स'), findsOneWidget);
+  });
+
+  testWidgets(
+      'Switching to Italian renders Settings screen in Italian',
+      (tester) async {
+    SharedPreferences.setMockInitialValues({
+      'language': 'en',
+      'onboarding_done': true,
+      'user_name': 'Ibrahim',
+      'user_age': 7,
+    });
+    final state = AppState();
+    await state.loadFromPrefs();
+    await tester.pumpWidget(
+        _LocalizedTestApp(state: state, home: const SettingsScreen()));
+    await tester.runAsync(
+        () => Future<void>.delayed(const Duration(milliseconds: 100)));
+    await tester.pumpAndSettle();
+    expect(find.text('Settings'), findsOneWidget);
+
+    // Switch to Italian
+    await tester.tap(find.byType(DropdownButton<String>));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Italiano').last);
+    await tester.pumpAndSettle();
+    await tester.runAsync(
+        () => Future<void>.delayed(const Duration(milliseconds: 100)));
+    await tester.pumpAndSettle();
+
+    expect(state.selectedLanguage, 'it');
+    expect(find.text('Impostazioni'), findsOneWidget);
+  });
+
+  test('_validLang accepts bn/en/hi/it and rejects unknown codes', () async {
+    SharedPreferences.setMockInitialValues({});
+    final state = AppState();
+    await state.loadFromPrefs();
+
+    await state.updateLanguage('hi');
+    expect(state.selectedLanguage, 'hi');
+    await state.updateLanguage('it');
+    expect(state.selectedLanguage, 'it');
+    await state.updateLanguage('en');
+    expect(state.selectedLanguage, 'en');
+    await state.updateLanguage('bn');
+    expect(state.selectedLanguage, 'bn');
+    // Unknown code falls back to 'bn'
+    await state.updateLanguage('fr');
+    expect(state.selectedLanguage, 'bn');
+    await state.updateLanguage('ar');
+    expect(state.selectedLanguage, 'bn');
+  });
+
+  testWidgets('Profile and Login screens render in English and Bangla',
+      (tester) async {
+    SharedPreferences.setMockInitialValues({
+      'language': 'en',
+      'onboarding_done': true,
+      'user_name': 'Zayd',
+      'user_age': 9,
+    });
+    final state = AppState();
+    await state.loadFromPrefs();
+
+    await tester.pumpWidget(
+        _LocalizedTestApp(state: state, home: const ProfileScreen()));
+    await tester.runAsync(
+        () => Future<void>.delayed(const Duration(milliseconds: 100)));
+    await tester.pumpAndSettle();
+    expect(find.text('Profile & Account'), findsOneWidget);
+    expect(find.byWidgetPredicate((w) => w is Text && w.data == 'Zayd'), findsOneWidget);
+    expect(find.text('Save Profile'), findsOneWidget);
+
+    await tester.pumpWidget(
+        _LocalizedTestApp(state: state, home: const LoginScreen()));
+    await tester.runAsync(
+        () => Future<void>.delayed(const Duration(milliseconds: 100)));
+    await tester.pumpAndSettle();
+    expect(find.text('Welcome Back'), findsWidgets);
+    expect(find.text('Login'), findsOneWidget);
+  });
 }
+

@@ -8,15 +8,16 @@ import 'duolingo_appbar.dart';
 class AppLoadingState extends StatelessWidget {
   const AppLoadingState({
     super.key,
-    this.message = 'তথ্য লোড হচ্ছে…',
+    this.message,
     this.detail,
   });
 
-  final String message;
+  final String? message;
   final String? detail;
 
   @override
   Widget build(BuildContext context) {
+    final effectiveMessage = message ?? context.t('common.loading_data');
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(24),
@@ -29,7 +30,7 @@ class AppLoadingState extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             LocalizedText(
-              message,
+              effectiveMessage,
               style: const TextStyle(
                 color: AppTheme.darkText,
                 fontWeight: FontWeight.w700,
@@ -131,17 +132,18 @@ class AppErrorState extends StatelessWidget {
     super.key,
     required this.title,
     required this.detail,
-    this.retryLabel = 'আবার চেষ্টা করো',
+    this.retryLabel,
     this.onRetry,
   });
 
   final String title;
   final String detail;
-  final String retryLabel;
+  final String? retryLabel;
   final VoidCallback? onRetry;
 
   @override
   Widget build(BuildContext context) {
+    final effectiveRetry = retryLabel ?? context.t('common.retry');
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(24),
@@ -181,7 +183,7 @@ class AppErrorState extends StatelessWidget {
                 FilledButton.icon(
                   onPressed: onRetry,
                   icon: const Icon(Icons.refresh_rounded),
-                  label: LocalizedText(retryLabel),
+                  label: LocalizedText(effectiveRetry),
                   style: FilledButton.styleFrom(
                     backgroundColor: AppTheme.accentCoral,
                     shape: RoundedRectangleBorder(

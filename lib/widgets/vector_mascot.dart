@@ -57,13 +57,13 @@ class MascotSpeechBanner extends StatelessWidget {
   const MascotSpeechBanner({
     super.key,
     required this.message,
-    this.title = 'স্মরণ করিয়ে দেয়',
+    this.title,
     this.mood = MascotMood.happy,
     this.mascotSize = 78,
   });
 
   final String message;
-  final String title;
+  final String? title;
   final MascotMood mood;
   final double mascotSize;
 
@@ -103,7 +103,7 @@ class MascotSpeechBanner extends StatelessWidget {
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: LocalizedText(
-                        title,
+                        title ?? context.t('mascot.reminder_title'),
                         style: const TextStyle(
                           fontSize: 11,
                           fontWeight: FontWeight.w800,

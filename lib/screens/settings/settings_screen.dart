@@ -2,6 +2,8 @@ import '../../l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../core/localization/app_languages.dart';
+
 import '../../theme/app_theme.dart';
 import '../../utils/app_state.dart';
 import '../../widgets/duolingo_appbar.dart';
@@ -28,14 +30,14 @@ class SettingsScreen extends StatelessWidget {
               padding: EdgeInsets.all(tablet ? 32 : 18),
               children: [
                 DuolingoPageHeader(
-                  title: 'সেটিংস',
-                  subtitle: 'শেখার অভিজ্ঞতা নিজের মতো সাজাও',
+                  title: context.t('settings.title'),
+                  subtitle: context.t('settings.subtitle'),
                   iconType: VectorIconType.shield,
                   gradientColors: const [Color(0xFF58CC02), Color(0xFF46A302)],
                   onBack: () => Navigator.pop(context),
                 ),
                 _SettingsSection(
-                  title: 'প্রোফাইল ও অ্যাকাউন্ট',
+                  title: context.t('profile.title'),
                   child: Column(children: [
                     ListTile(
                       contentPadding: EdgeInsets.zero,
@@ -43,13 +45,13 @@ class SettingsScreen extends StatelessWidget {
                         size: 44,
                         circleBackground: true,
                       ),
-                      title: LocalizedText(
+                      title: Text(
                           state.userName.isEmpty
-                              ? 'শিক্ষার্থীর প্রোফাইল'
+                              ? context.t('settings.learner_profile')
                               : state.userName,
                           style: const TextStyle(fontWeight: FontWeight.w900)),
-                      subtitle: LocalizedText(
-                          'বয়স ${state.age} · এই ডিভাইসে সংরক্ষিত'),
+                      subtitle: Text(context.t('settings.age_device_saved',
+                          params: {'age': context.formatNumber(state.age)})),
                       trailing: const Icon(Icons.chevron_right_rounded),
                       onTap: () => Navigator.of(context).push(
                           MaterialPageRoute<void>(
@@ -69,12 +71,12 @@ class SettingsScreen extends StatelessWidget {
                           color: Color(state.avatarColor),
                         ),
                       ),
-                      title: const LocalizedText('অবতার ও রঙ নির্বাচন',
-                          style: TextStyle(fontWeight: FontWeight.w900)),
-                      subtitle: LocalizedText(
+                      title: Text(context.t('avatar.modal_title'),
+                          style: const TextStyle(fontWeight: FontWeight.w900)),
+                      subtitle: Text(
                         state.avatarType == 'hijab'
-                            ? 'হিজাব অবতার · রঙ পরিবর্তন করুন'
-                            : 'টুপি অবতার · রঙ পরিবর্তন করুন',
+                            ? context.t('settings.avatar_hijab_subtitle')
+                            : context.t('settings.avatar_topi_subtitle'),
                       ),
                       trailing: const Icon(Icons.chevron_right_rounded),
                       onTap: () => showAvatarCustomizerModal(context),
@@ -83,14 +85,18 @@ class SettingsScreen extends StatelessWidget {
                       contentPadding: EdgeInsets.zero,
                       leading: const Icon(Icons.language_rounded,
                           color: AppTheme.primaryGreen),
-                      title: const LocalizedText('অ্যাপের ভাষা',
-                          style: TextStyle(fontWeight: FontWeight.w800)),
+                      title: Text(context.t('settings.language'),
+                          style: const TextStyle(fontWeight: FontWeight.w800)),
                       trailing: DropdownButton<String>(
-                        value: state.selectedLanguage == 'en' ? 'en' : 'bn',
-                        items: const [
-                          DropdownMenuItem(value: 'bn', child: Text('বাংলা')),
-                          DropdownMenuItem(value: 'en', child: Text('English')),
-                        ],
+                        value: ['bn', 'en', 'hi', 'it'].contains(state.selectedLanguage)
+                            ? state.selectedLanguage
+                            : 'bn',
+                        items: AppLanguages.all
+                            .map((lang) => DropdownMenuItem(
+                                  value: lang.code,
+                                  child: Text(lang.name),
+                                ))
+                            .toList(),
                         onChanged: (language) {
                           if (language != null) {
                             context.read<AppState>().updateLanguage(language);
@@ -98,15 +104,15 @@ class SettingsScreen extends StatelessWidget {
                         },
                       ),
                     ),
-                    const LocalizedText(
-                      'ইমেইল/ফোন login ও cloud sync এখনো backend-এ যুক্ত হয়নি।',
-                      style: TextStyle(color: Colors.black45, fontSize: 11),
+                    Text(
+                      context.t('settings.cloud_sync_notice'),
+                      style: const TextStyle(color: Colors.black45, fontSize: 11),
                     ),
                   ]),
                 ),
                 const SizedBox(height: 13),
                 _SettingsSection(
-                  title: 'নামাজের আযান অ্যালার্ট',
+                  title: context.t('settings.prayer_adhan_section'),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -114,12 +120,12 @@ class SettingsScreen extends StatelessWidget {
                         contentPadding: EdgeInsets.zero,
                         value: state.prayerAlertsEnabled,
                         activeThumbColor: AppTheme.primaryGreen,
-                        title: const LocalizedText('নামাজের সময় আযান বাজবে',
-                            style: TextStyle(
+                        title: Text(context.t('settings.prayer_adhan_toggle_title'),
+                            style: const TextStyle(
                                 fontWeight: FontWeight.w800, fontSize: 14)),
-                        subtitle: const LocalizedText(
-                            'ওয়াক্ত হলে সুমধুর আযানের অ্যালার্ট ও নোটিফিকেশন আসবে',
-                            style: TextStyle(fontSize: 11)),
+                        subtitle: Text(
+                            context.t('settings.prayer_adhan_toggle_subtitle'),
+                            style: const TextStyle(fontSize: 11)),
                         onChanged: (value) async {
                           final appState = context.read<AppState>();
                           if (value) {
@@ -132,9 +138,9 @@ class SettingsScreen extends StatelessWidget {
                       ),
                       if (state.prayerAlertsEnabled) ...[
                         const SizedBox(height: 6),
-                        const LocalizedText(
-                          'ওয়াক্ত অনুযায়ী আযান নির্বাচন:',
-                          style: TextStyle(
+                        Text(
+                          context.t('settings.select_prayer_adhan'),
+                          style: const TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.w700,
                               color: AppTheme.darkText),
@@ -144,15 +150,15 @@ class SettingsScreen extends StatelessWidget {
                           spacing: 8,
                           runSpacing: 8,
                           children: [
-                            for (final entry in const [
-                              ('Fajr', 'ফজর'),
-                              ('Dhuhr', 'যোহর'),
-                              ('Asr', 'আসর'),
-                              ('Maghrib', 'মাগরিব'),
-                              ('Isha', 'ইশা'),
+                            for (final entry in [
+                              ('Fajr', context.t('prayer.fajr')),
+                              ('Dhuhr', context.t('prayer.dhuhr')),
+                              ('Asr', context.t('prayer.asr')),
+                              ('Maghrib', context.t('prayer.maghrib')),
+                              ('Isha', context.t('prayer.isha')),
                             ])
                               FilterChip(
-                                label: LocalizedText(entry.$2),
+                                label: Text(entry.$2),
                                 selected: state.isPrayerAlertEnabled(entry.$1),
                                 onSelected: (selected) {
                                   context
@@ -217,8 +223,8 @@ class SettingsScreen extends StatelessWidget {
                                   Flexible(
                                     child: Text(
                                       isPlaying
-                                          ? 'আযান থামান'
-                                          : 'আযান টেস্ট করুন / শুনুন',
+                                          ? context.t('settings.stop_adhan')
+                                          : context.t('settings.test_adhan'),
                                       style: TextStyle(
                                         fontWeight: FontWeight.w800,
                                         fontSize: 13,
@@ -241,19 +247,19 @@ class SettingsScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 13),
                 _SettingsSection(
-                  title: 'পড়ার অ্যালার্ম ও স্ট্রিক রিমাইন্ডার',
+                  title: context.t('settings.alarm_streak_section'),
                   child: Column(children: [
                     SwitchListTile.adaptive(
                       contentPadding: EdgeInsets.zero,
                       value: state.learningAlarmEnabled,
                       activeThumbColor: AppTheme.primaryGreen,
-                      title: const LocalizedText(
-                          'দৈনিক পড়ার অ্যালার্ম (আউযুবিল্লাহ ও বিসমিল্লাহ)',
-                          style: TextStyle(
+                      title: Text(
+                          context.t('settings.learning_alarm_title'),
+                          style: const TextStyle(
                               fontWeight: FontWeight.w800, fontSize: 14)),
-                      subtitle: const LocalizedText(
-                          'নির্ধারিত সময়ে আউযুবিল্লাহ ও বিসমিল্লাহ পড়ে পড়ার জন্য ডাকবে',
-                          style: TextStyle(fontSize: 11)),
+                      subtitle: Text(
+                          context.t('settings.learning_alarm_subtitle'),
+                          style: const TextStyle(fontSize: 11)),
                       onChanged: (value) async {
                         final appState = context.read<AppState>();
                         if (value) {
@@ -271,10 +277,10 @@ class SettingsScreen extends StatelessWidget {
                         contentPadding: EdgeInsets.zero,
                         leading: const Icon(Icons.alarm_rounded,
                             color: AppTheme.primaryGreen),
-                        title: const LocalizedText('পড়ার অ্যালার্মের সময়',
-                            style: TextStyle(
+                        title: Text(context.t('settings.learning_alarm_time_label'),
+                            style: const TextStyle(
                                 fontWeight: FontWeight.w800, fontSize: 14)),
-                        subtitle: LocalizedText(
+                        subtitle: Text(
                             _formatTime(state.learningAlarmTime)),
                         trailing: const Icon(Icons.edit_rounded, size: 19),
                         onTap: () async {
@@ -339,8 +345,8 @@ class SettingsScreen extends StatelessWidget {
                                   Flexible(
                                     child: Text(
                                       isPlaying
-                                          ? 'পড়ার অ্যালার্ম থামান'
-                                          : 'পড়ার অ্যালার্ম টেস্ট করুন (আউযুবিল্লাহ ও বিসমিল্লাহ)',
+                                          ? context.t('settings.stop_learning_alarm')
+                                          : context.t('settings.test_learning_alarm'),
                                       style: TextStyle(
                                         fontWeight: FontWeight.w800,
                                         fontSize: 12,
@@ -365,12 +371,12 @@ class SettingsScreen extends StatelessWidget {
                       contentPadding: EdgeInsets.zero,
                       value: state.streakAlertsEnabled,
                       activeThumbColor: AppTheme.primaryGreen,
-                      title: const LocalizedText('দৈনিক স্ট্রিক রিমাইন্ডার',
-                          style: TextStyle(
+                      title: Text(context.t('settings.daily_streak_reminder_title'),
+                          style: const TextStyle(
                               fontWeight: FontWeight.w800, fontSize: 14)),
-                      subtitle: const LocalizedText(
-                          'স্ট্রিক ধরে রাখতে মনে করিয়ে দেবে',
-                          style: TextStyle(fontSize: 11)),
+                      subtitle: Text(
+                          context.t('settings.daily_streak_reminder_subtitle'),
+                          style: const TextStyle(fontSize: 11)),
                       onChanged: (value) async {
                         final appState = context.read<AppState>();
                         if (value) {
@@ -387,11 +393,11 @@ class SettingsScreen extends StatelessWidget {
                       contentPadding: EdgeInsets.zero,
                       value: state.classAlertsEnabled,
                       activeThumbColor: AppTheme.primaryGreen,
-                      title: const LocalizedText('শিক্ষকের ক্লাসের আপডেট',
-                          style: TextStyle(
+                      title: Text(context.t('settings.teacher_class_updates_title'),
+                          style: const TextStyle(
                               fontWeight: FontWeight.w800, fontSize: 14)),
-                      subtitle: const LocalizedText('ক্লাস schedule ও reminder',
-                          style: TextStyle(fontSize: 11)),
+                      subtitle: Text(context.t('settings.teacher_class_updates_subtitle'),
+                          style: const TextStyle(fontSize: 11)),
                       onChanged: (value) async {
                         final appState = context.read<AppState>();
                         if (value) {
@@ -408,10 +414,10 @@ class SettingsScreen extends StatelessWidget {
                       contentPadding: EdgeInsets.zero,
                       leading: const Icon(Icons.alarm_rounded,
                           color: AppTheme.primaryGreen),
-                      title: const LocalizedText('স্ট্রিক রিমাইন্ডারের সময়',
-                          style: TextStyle(
+                      title: Text(context.t('settings.streak_reminder_time_label'),
+                          style: const TextStyle(
                               fontWeight: FontWeight.w800, fontSize: 14)),
-                      subtitle: LocalizedText(_formatTime(state.reminderTime)),
+                      subtitle: Text(_formatTime(state.reminderTime)),
                       trailing: const Icon(Icons.edit_rounded, size: 19),
                       onTap: () async {
                         final appState = context.read<AppState>();
@@ -433,9 +439,9 @@ class SettingsScreen extends StatelessWidget {
                         }
                       },
                     ),
-                    const LocalizedText(
-                      'নির্ধারিত সময়ে আপনার ডিভাইসে দৈনিক পড়ার রিমাইন্ডার পৌঁছে যাবে।',
-                      style: TextStyle(
+                    Text(
+                      context.t('settings.reminder_device_footer'),
+                      style: const TextStyle(
                           color: Colors.black45, fontSize: 11, height: 1.5),
                     ),
                   ]),
@@ -455,27 +461,27 @@ class SettingsScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-                  child: const Row(children: [
-                    CircleAvatar(
+                  child: Row(children: [
+                    const CircleAvatar(
                         radius: 25,
                         backgroundColor: Colors.white24,
                         child: Icon(Icons.credit_card_rounded,
                             color: Colors.white, size: 27)),
-                    SizedBox(width: 13),
+                    const SizedBox(width: 13),
                     Expanded(
                         child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                          LocalizedText('Subscription ও পেমেন্ট',
-                              style: TextStyle(
+                          Text(context.t('payment.subscription_title'),
+                              style: const TextStyle(
                                   color: Colors.white,
                                   fontSize: 18,
                                   fontWeight: FontWeight.w900)),
-                          SizedBox(height: 4),
-                          LocalizedText(
-                              'শিক্ষকের সঙ্গে live class-এর মাসিক পরিকল্পনা',
+                          const SizedBox(height: 4),
+                          Text(
+                              context.t('payment.live_class_plan_subtitle'),
                               style:
-                                  TextStyle(color: Colors.white, fontSize: 12)),
+                                  const TextStyle(color: Colors.white, fontSize: 12)),
                         ])),
                   ]),
                 ),
@@ -489,9 +495,9 @@ class SettingsScreen extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Row(children: [
-                          const Expanded(
-                              child: LocalizedText('শিক্ষক-সহ মাসিক পরিকল্পনা',
-                                  style: TextStyle(
+                          Expanded(
+                              child: Text(context.t('payment.plan_with_teacher'),
+                                  style: const TextStyle(
                                       color: AppTheme.darkText,
                                       fontSize: 16,
                                       fontWeight: FontWeight.w900))),
@@ -501,22 +507,22 @@ class SettingsScreen extends StatelessWidget {
                               decoration: BoxDecoration(
                                   color: const Color(0xFFFFEBCF),
                                   borderRadius: BorderRadius.circular(20)),
-                              child: const LocalizedText('শিগগিরই',
-                                  style: TextStyle(
+                              child: Text(context.t('payment.coming_soon'),
+                                  style: const TextStyle(
                                       color: Color(0xFF9A6500),
                                       fontSize: 10,
                                       fontWeight: FontWeight.w800))),
                         ]),
                         const SizedBox(height: 12),
-                        const _PlanLine(
+                        _PlanLine(
                             icon: Icons.menu_book_rounded,
-                            text: 'কুরআন তিলাওয়াত অথবা মৌলিক ইসলাম শিক্ষা'),
-                        const _PlanLine(
+                            text: context.t('payment.feature_quran_or_basics')),
+                        _PlanLine(
                             icon: Icons.video_call_rounded,
-                            text: 'শিক্ষকের সঙ্গে app-এর ভেতর live class'),
-                        const _PlanLine(
+                            text: context.t('payment.feature_live_class')),
+                        _PlanLine(
                             icon: Icons.calendar_month_rounded,
-                            text: 'মাসিক subscription ও class schedule'),
+                            text: context.t('payment.feature_monthly_schedule')),
                         const SizedBox(height: 13),
                         Container(
                           width: double.infinity,
@@ -524,9 +530,9 @@ class SettingsScreen extends StatelessWidget {
                           decoration: BoxDecoration(
                               color: const Color(0xFFF7F3E9),
                               borderRadius: BorderRadius.circular(15)),
-                          child: const LocalizedText(
-                              'মাসিক মূল্য, class সংখ্যা ও সময়সূচি শিক্ষক/প্রতিষ্ঠান নির্ধারণ করলে এখানে দেখানো হবে। এখনো কোনো টাকা কাটা হবে না।',
-                              style: TextStyle(
+                          child: Text(
+                              context.t('payment.pricing_notice'),
+                              style: const TextStyle(
                                   color: Colors.black54,
                                   fontSize: 11,
                                   height: 1.6)),
@@ -542,21 +548,21 @@ class SettingsScreen extends StatelessWidget {
                   child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const LocalizedText('পেমেন্ট পদ্ধতি',
-                            style: TextStyle(
+                        Text(context.t('payment.payment_methods_title'),
+                            style: const TextStyle(
                                 color: AppTheme.darkText,
                                 fontSize: 16,
                                 fontWeight: FontWeight.w900)),
                         const SizedBox(height: 10),
-                        const _PaymentMethod(
+                        _PaymentMethod(
                             icon: Icons.account_balance_wallet_rounded,
-                            title: 'মোবাইল ওয়ালেট',
-                            detail: 'bKash / Nagad সংযোগ বাকি'),
+                            title: context.t('payment.mobile_wallet_title'),
+                            detail: context.t('payment.mobile_wallet_detail')),
                         const Divider(height: 16),
-                        const _PaymentMethod(
+                        _PaymentMethod(
                             icon: Icons.credit_card_rounded,
-                            title: 'কার্ড বা অনলাইন পেমেন্ট',
-                            detail: 'Payment gateway সংযোগ বাকি'),
+                            title: context.t('payment.card_payment_title'),
+                            detail: context.t('payment.card_payment_detail')),
                         const SizedBox(height: 11),
                         SizedBox(
                           width: double.infinity,
@@ -565,7 +571,7 @@ class SettingsScreen extends StatelessWidget {
                             onPressed: () => _showSetupInfo(context),
                             icon: const Icon(Icons.settings_suggest_rounded),
                             label:
-                                const LocalizedText('পেমেন্ট সেটআপের অবস্থা'),
+                                Text(context.t('payment.setup_status_btn')),
                             style: FilledButton.styleFrom(
                                 backgroundColor: AppTheme.primaryGreen,
                                 shape: RoundedRectangleBorder(
@@ -576,19 +582,19 @@ class SettingsScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 14),
                 _SettingsSection(
-                  title: 'প্রাইভেসি ও ডেটা নিয়ন্ত্রণ',
+                  title: context.t('settings.privacy_data_section'),
                   child: Column(
                     children: [
                       ListTile(
                         contentPadding: EdgeInsets.zero,
                         leading: const Icon(Icons.privacy_tip_rounded,
                             color: AppTheme.primaryGreen),
-                        title: const LocalizedText('শিশু প্রাইভেসি নীতি',
-                            style: TextStyle(
+                        title: Text(context.t('settings.privacy'),
+                            style: const TextStyle(
                                 fontWeight: FontWeight.w800, fontSize: 14)),
-                        subtitle: const LocalizedText(
-                            'LittleMuslim কোনো ব্যক্তিগত তথ্য সংগ্রহ বা ট্র্যাক করে না',
-                            style: TextStyle(fontSize: 11)),
+                        subtitle: Text(
+                            context.t('settings.child_privacy_subtitle'),
+                            style: const TextStyle(fontSize: 11)),
                         trailing: const Icon(Icons.arrow_forward_ios_rounded,
                             size: 14),
                         onTap: () => _showPrivacyPolicy(context),
@@ -598,14 +604,14 @@ class SettingsScreen extends StatelessWidget {
                         contentPadding: EdgeInsets.zero,
                         leading: const Icon(Icons.delete_forever_rounded,
                             color: AppTheme.accentCoral),
-                        title: const LocalizedText('সব অগ্রগতি ও ডেটা মুছুন',
-                            style: TextStyle(
+                        title: Text(context.t('settings.reset_all_data_title'),
+                            style: const TextStyle(
                                 fontWeight: FontWeight.w800,
                                 fontSize: 14,
                                 color: AppTheme.accentCoral)),
-                        subtitle: const LocalizedText(
-                            'ডিভাইসে সংরক্ষিত সব শিক্ষা ও স্কোর মুছে ফেলা হবে',
-                            style: TextStyle(fontSize: 11)),
+                        subtitle: Text(
+                            context.t('settings.reset_all_data_subtitle'),
+                            style: const TextStyle(fontSize: 11)),
                         trailing: const Icon(Icons.arrow_forward_ios_rounded,
                             size: 14),
                         onTap: () => _confirmResetData(context),
@@ -614,9 +620,9 @@ class SettingsScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 14),
-                const LocalizedText(
-                    'নিরাপত্তার জন্য এই preview-তে card number, mobile wallet PIN বা OTP চাওয়া হয় না। Live payment চালুর আগে merchant account, payment gateway ও subscription backend যুক্ত করতে হবে।',
-                    style: TextStyle(
+                Text(
+                    context.t('payment.security_note'),
+                    style: const TextStyle(
                         color: Colors.black45, fontSize: 11, height: 1.6)),
               ],
             ),
@@ -630,18 +636,18 @@ class SettingsScreen extends StatelessWidget {
     showDialog<void>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const LocalizedText('শিশু প্রাইভেসি নীতি'),
-        content: const SingleChildScrollView(
+        title: Text(context.t('settings.privacy')),
+        content: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              LocalizedText(
-                '• LittleMuslim শিশুদের কোনো ব্যক্তিগত সংবেদনশীল তথ্য সার্ভারে সংগ্রহ করে না।\n'
-                '• শেখার যাবতীয় অগ্রগতি (XP, কায়দা ও দুআ পড়া) স্থানীয়ভাবে ডিভাইসে সংরক্ষিত থাকে।\n'
-                '• নামাজের সময় নির্ধারণের জন্য শুধুমাত্র আল-আধান এপিআই-তে জিপিএস স্থানাঙ্ক পাঠানো হয়।\n'
-                '• কোনো তৃতীয় পক্ষের ট্র্যাকার বা অনাকাঙ্ক্ষিত বিজ্ঞাপন অ্যাপে নেই।',
-                style: TextStyle(fontSize: 13, height: 1.6),
+              Text(
+                '${context.t('settings.privacy_bullet_1')}\n'
+                '${context.t('settings.privacy_bullet_2')}\n'
+                '${context.t('settings.privacy_bullet_3')}\n'
+                '${context.t('settings.privacy_bullet_4')}',
+                style: const TextStyle(fontSize: 13, height: 1.6),
               ),
             ],
           ),
@@ -649,7 +655,7 @@ class SettingsScreen extends StatelessWidget {
         actions: [
           FilledButton(
             onPressed: () => Navigator.pop(context),
-            child: const LocalizedText('ঠিক আছে'),
+            child: Text(context.t('common.ok')),
           ),
         ],
       ),
@@ -660,14 +666,14 @@ class SettingsScreen extends StatelessWidget {
     showDialog<void>(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: const LocalizedText('সব ডেটা মুছে ফেলবেন?'),
-        content: const LocalizedText(
-          'আপনার অর্জিত XP, স্ট্রিক, পড়া পাঠের অগ্রগতি এবং সংরক্ষণ করা বুকমার্ক সব মুছে যাবে।',
+        title: Text(context.t('settings.reset_dialog_title')),
+        content: Text(
+          context.t('settings.reset_dialog_body'),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(dialogContext),
-            child: const LocalizedText('বাতিল'),
+            child: Text(context.t('common.cancel')),
           ),
           FilledButton(
             style: FilledButton.styleFrom(
@@ -678,12 +684,12 @@ class SettingsScreen extends StatelessWidget {
               await context.read<AppState>().resetOnboarding();
               if (!context.mounted) return;
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: LocalizedText('সব ডেটা সফলভাবে মুছে ফেলা হয়েছে।'),
+                SnackBar(
+                  content: Text(context.t('settings.reset_success_snack')),
                 ),
               );
             },
-            child: const LocalizedText('মুছে ফেলুন'),
+            child: Text(context.t('common.delete')),
           ),
         ],
       ),
@@ -694,13 +700,12 @@ class SettingsScreen extends StatelessWidget {
     showDialog<void>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const LocalizedText('পেমেন্ট এখনো যুক্ত হয়নি'),
-        content: const LocalizedText(
-            'মাসিক মূল্য ও subscription নিয়ম ঠিক করে payment merchant account/API key যুক্ত হলে এখান থেকেই নিরাপদ payment flow চালু করা যাবে।'),
+        title: Text(context.t('payment.not_connected_dialog_title')),
+        content: Text(context.t('payment.not_connected_dialog_body')),
         actions: [
           FilledButton(
               onPressed: () => Navigator.pop(context),
-              child: const LocalizedText('ঠিক আছে'))
+              child: Text(context.t('common.ok')))
         ],
       ),
     );
@@ -727,7 +732,7 @@ class _SettingsSection extends StatelessWidget {
         margin: EdgeInsets.zero,
         padding: const EdgeInsets.all(17),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          LocalizedText(title,
+          Text(title,
               style: const TextStyle(
                   color: AppTheme.darkText,
                   fontWeight: FontWeight.w900,
@@ -749,7 +754,7 @@ class _PlanLine extends StatelessWidget {
           Icon(icon, color: AppTheme.primaryGreen, size: 19),
           const SizedBox(width: 9),
           Expanded(
-              child: LocalizedText(text,
+              child: Text(text,
                   style: const TextStyle(
                       color: AppTheme.darkText, fontSize: 12, height: 1.4))),
         ]),
@@ -771,13 +776,13 @@ class _PaymentMethod extends StatelessWidget {
         Expanded(
             child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          LocalizedText(title,
+          Text(title,
               style: const TextStyle(
                   color: AppTheme.darkText,
                   fontSize: 13,
                   fontWeight: FontWeight.w800)),
           const SizedBox(height: 2),
-          LocalizedText(detail,
+          Text(detail,
               style: const TextStyle(color: Colors.black54, fontSize: 11)),
         ])),
         const Icon(Icons.hourglass_empty_rounded,

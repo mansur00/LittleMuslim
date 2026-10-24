@@ -29,10 +29,10 @@ class AchievementsScreen extends StatelessWidget {
   const AchievementsScreen({super.key});
 
   static const _levels = [
-    (name: 'নতুন শিক্ষার্থী', threshold: 0),
-    (name: 'কৌতূহলী পাঠক', threshold: 50),
-    (name: 'জ্ঞান অন্বেষী', threshold: 120),
-    (name: 'আলোকিত শিক্ষার্থী', threshold: 250),
+    (key: 'achievements.level_new_learner', threshold: 0),
+    (key: 'achievements.level_curious_reader', threshold: 50),
+    (key: 'achievements.level_knowledge_seeker', threshold: 120),
+    (key: 'achievements.level_illuminated_learner', threshold: 250),
   ];
 
   @override
@@ -51,36 +51,36 @@ class AchievementsScreen extends StatelessWidget {
 
     final badges = [
       _BadgeInfo(
-          title: 'প্রথম পাঠ',
-          description: '১টি ক্বায়দা পাঠ শেষ করো',
+          title: context.t('achievements.badge_first_lesson'),
+          description: context.t('achievements.badge_first_lesson_desc'),
           emblem: BadgeEmblem.star,
           primaryColor: const Color(0xFF10B981),
           bevelColor: const Color(0xFF047857),
-          ribbonText: '১ম ধাপ',
+          ribbonText: context.t('achievements.badge_first_step'),
           unlocked: lessonCount >= 1),
       _BadgeInfo(
-          title: 'তিন ধাপ এগিয়ে',
-          description: '৩টি ক্বায়দা পাঠ শেষ করো',
+          title: context.t('achievements.badge_three_steps'),
+          description: context.t('achievements.badge_three_steps_desc'),
           emblem: BadgeEmblem.lightning,
           primaryColor: const Color(0xFFF59E0B),
           bevelColor: const Color(0xFFB45309),
-          ribbonText: 'গতিশীল',
+          ribbonText: context.t('achievements.badge_fast'),
           unlocked: lessonCount >= 3),
       _BadgeInfo(
-          title: 'পাঁচ পাঠের বন্ধু',
-          description: '৫টি ক্বায়দা পাঠ শেষ করো',
+          title: context.t('achievements.badge_five_lessons'),
+          description: context.t('achievements.badge_five_lessons_desc'),
           emblem: BadgeEmblem.diamond,
           primaryColor: const Color(0xFF3B82F6),
           bevelColor: const Color(0xFF1D4ED8),
-          ribbonText: 'হিরক',
+          ribbonText: context.t('achievements.badge_diamond'),
           unlocked: lessonCount >= 5),
       _BadgeInfo(
-          title: 'XP সংগ্রাহক',
-          description: '১০০ XP অর্জন করো',
+          title: context.t('achievements.badge_xp_collector'),
+          description: context.t('achievements.badge_xp_collector_desc'),
           emblem: BadgeEmblem.trophy,
           primaryColor: const Color(0xFF8B5CF6),
           bevelColor: const Color(0xFF6D28D9),
-          ribbonText: 'মাস্টার',
+          ribbonText: context.t('achievements.badge_master'),
           unlocked: xp >= 100),
     ];
     final unlocked = badges.where((b) => b.unlocked).length;
@@ -101,14 +101,14 @@ class AchievementsScreen extends StatelessWidget {
                     delegate: SliverChildListDelegate([
                       // ── Duolingo Header ──
                       DuolingoPageHeader(
-                        title: 'আমার অর্জন',
-                        subtitle: 'XP ও ব্যাজ সংগ্রহ দেখো',
-                        customIcon: const DSGamifyBadge(
+                        title: context.t('achievements.title'),
+                        subtitle: context.t('achievements.subtitle'),
+                        customIcon: DSGamifyBadge(
                           emblem: BadgeEmblem.trophy,
-                          primaryColor: Color(0xFFFFC800),
-                          bevelColor: Color(0xFFE5A100),
-                          ribbonColor: Color(0xFFFFD700),
-                          ribbonText: 'অর্জন',
+                          primaryColor: const Color(0xFFFFC800),
+                          bevelColor: const Color(0xFFE5A100),
+                          ribbonColor: const Color(0xFFFFD700),
+                          ribbonText: context.t('achievements.ribbon'),
                           size: 38,
                         ),
                         gradientColors: const [
@@ -173,13 +173,13 @@ class AchievementsScreen extends StatelessWidget {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        const LocalizedText(
-                                            'তোমার বর্তমান লেভেল',
+                                        Text(
+                                            context.t('achievements.current_level'),
                                             style: TextStyle(
                                                 color: Color(0xFF6B7280),
                                                 fontSize: 11,
                                                 fontWeight: FontWeight.w600)),
-                                        LocalizedText(level.name,
+                                        Text(context.t(level.key),
                                             style: const TextStyle(
                                                 color: AppTheme.darkText,
                                                 fontSize: 17,
@@ -200,10 +200,10 @@ class AchievementsScreen extends StatelessWidget {
                                 ),
                               ]),
                               const SizedBox(height: 8),
-                              LocalizedText(
+                              Text(
                                 nextLevel == null
-                                    ? 'সব লেভেল শেষ! শেখা চালিয়ে যাও।'
-                                    : 'পরের লেভেল: ${context.uiText(nextLevel.name)} · আর ${nextLevel.threshold - xp} XP',
+                                    ? context.t('achievements.all_levels_completed')
+                                    : context.t('achievements.next_level_info', params: {'level': context.t(nextLevel.key), 'xp': nextLevel.threshold - xp}),
                                 style: const TextStyle(
                                     color: Color(0xFF6B7280),
                                     fontSize: 12,
@@ -214,8 +214,8 @@ class AchievementsScreen extends StatelessWidget {
 
                       // ── Badges ──
                       DuolingoSectionLabel(
-                        label: 'ব্যাজ সংগ্রহ',
-                        badgeText: '$unlocked / ${badges.length} পাওয়া',
+                        label: context.t('achievements.badge_collection'),
+                        badgeText: context.t('achievements.badges_earned', params: {'unlocked': unlocked, 'total': badges.length}),
                       ),
                       const SizedBox(height: 14),
                       GridView.builder(
@@ -248,13 +248,13 @@ class AchievementsScreen extends StatelessWidget {
                             child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  LocalizedText('সম্পন্ন ক্বায়দা পাঠ',
+                                  Text(context.t('achievements.completed_qaida_lessons'),
                                       style: TextStyle(
                                           color: AppTheme.darkText
                                               .withValues(alpha: 0.6),
                                           fontSize: 11,
                                           fontWeight: FontWeight.w600)),
-                                  LocalizedText('$lessonCount টি পাঠ',
+                                  Text(context.t('achievements.lessons_count', params: {'count': lessonCount}),
                                       style: const TextStyle(
                                           color: AppTheme.darkText,
                                           fontWeight: FontWeight.w900,
@@ -330,7 +330,7 @@ class _BadgeCardState extends State<_BadgeCard> {
               isLocked: !badge.unlocked,
             ),
             const SizedBox(height: 8),
-            LocalizedText(
+            Text(
               badge.title,
               textAlign: TextAlign.center,
               style: TextStyle(
@@ -340,8 +340,8 @@ class _BadgeCardState extends State<_BadgeCard> {
               ),
             ),
             const SizedBox(height: 4),
-            LocalizedText(
-              badge.unlocked ? 'আনলক!' : badge.description,
+            Text(
+              badge.unlocked ? context.t('achievements.unlocked') : badge.description,
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: badge.unlocked

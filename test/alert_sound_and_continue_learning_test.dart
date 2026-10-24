@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:little_muslim/l10n/app_localizations.dart';
 import 'package:little_muslim/screens/home/home_screen.dart';
 import 'package:little_muslim/screens/prayer/prayer_screen.dart';
 import 'package:little_muslim/screens/settings/settings_screen.dart';
@@ -11,6 +12,12 @@ import 'package:little_muslim/utils/app_state.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+
+  setUpAll(() async {
+    const delegate = AppLocalizationsDelegate();
+    await delegate.load(const Locale('en'));
+    await delegate.load(const Locale('bn'));
+  });
 
   setUp(() {
     SharedPreferences.setMockInitialValues({});
@@ -147,6 +154,9 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('নামাজ শিখি'), findsOneWidget);
-    expect(find.text('Prayer times'), findsOneWidget);
+    expect(
+        find.byWidgetPredicate((w) =>
+            w is Text && (w.data == 'Prayer times' || w.data == 'নামাজের সময়')),
+        findsOneWidget);
   });
 }

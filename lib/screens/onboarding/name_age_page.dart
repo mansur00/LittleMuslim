@@ -106,8 +106,8 @@ class _NameAgePageState extends State<NameAgePage> {
                       ),
                     ],
                   ),
-                  child: LocalizedText(
-                    'কে ব্যবহার করবে? প্রোফাইল বেছে নাও',
+                  child: Text(
+                    context.t('onboarding.who_will_use'),
                     style: TextStyle(
                       fontSize: widget.isTablet ? 17 : 14,
                       fontWeight: DS.black,
@@ -122,8 +122,8 @@ class _NameAgePageState extends State<NameAgePage> {
           const SizedBox(height: 16),
 
           // User Role Selector (Original Child vs Admin Tester)
-          LocalizedText(
-            'ব্যবহারকারীর ধরন',
+          Text(
+            context.t('onboarding.user_type'),
             style: TextStyle(
               fontSize: widget.isTablet ? 18 : 15,
               fontWeight: DS.black,
@@ -138,9 +138,9 @@ class _NameAgePageState extends State<NameAgePage> {
               // 1. Regular Student
               Expanded(
                 child: _RoleCard(
-                  title: 'মূল শিক্ষার্থী',
-                  subtitle: 'স্বাভাবিক নিয়মে শেখা',
-                  badge: 'ডিফল্ট',
+                  title: context.t('onboarding.role_student_title'),
+                  subtitle: context.t('onboarding.role_student_sub'),
+                  badge: context.t('onboarding.role_student_badge'),
                   icon: Icons.child_care_rounded,
                   color: DS.green500,
                   shadowColor: DS.green600,
@@ -148,7 +148,7 @@ class _NameAgePageState extends State<NameAgePage> {
                   onTap: () {
                     setState(() {
                       _selectedRole = 'child';
-                      if (_nameController.text == 'অ্যাডমিন (Admin)') {
+                      if (_nameController.text == 'Admin') {
                         _nameController.clear();
                         context.read<AppState>().updateDraftName('');
                       }
@@ -161,9 +161,9 @@ class _NameAgePageState extends State<NameAgePage> {
               // 2. Admin Tester
               Expanded(
                 child: _RoleCard(
-                  title: 'অ্যাডমিন',
-                  subtitle: 'সব ধাপ ও লেভেল আনলক',
-                  badge: 'সব আনলক 🔓',
+                  title: context.t('onboarding.role_admin_title'),
+                  subtitle: context.t('onboarding.role_admin_sub'),
+                  badge: context.t('onboarding.role_admin_badge'),
                   icon: Icons.admin_panel_settings_rounded,
                   color: DS.orange500,
                   shadowColor: DS.orange600,
@@ -172,8 +172,8 @@ class _NameAgePageState extends State<NameAgePage> {
                     setState(() {
                       _selectedRole = 'admin';
                       if (_nameController.text.trim().isEmpty) {
-                        _nameController.text = 'অ্যাডমিন (Admin)';
-                        context.read<AppState>().updateDraftName('অ্যাডমিন (Admin)');
+                        _nameController.text = 'Admin';
+                        context.read<AppState>().updateDraftName('Admin');
                       }
                     });
                     context.read<AppState>().updateDraftRole('admin');
@@ -185,8 +185,8 @@ class _NameAgePageState extends State<NameAgePage> {
 
           const SizedBox(height: 20),
 
-          LocalizedText(
-            'তোমার নাম কী?',
+          Text(
+            context.t('onboarding.enter_name'),
             style: TextStyle(
               fontSize: widget.isTablet ? 18 : 15,
               fontWeight: DS.black,
@@ -208,7 +208,7 @@ class _NameAgePageState extends State<NameAgePage> {
               context.read<AppState>().updateDraftName(value);
             },
             decoration: InputDecoration(
-              hintText: context.uiText('যেমন: আয়েশা, ইউসুফ, ফাতিমা...'),
+              hintText: context.t('onboarding.name_hint_examples'),
               hintStyle: const TextStyle(color: Color(0xFF9CA3AF), fontSize: 14),
               filled: true,
               fillColor: Colors.white,
@@ -234,8 +234,8 @@ class _NameAgePageState extends State<NameAgePage> {
 
           const SizedBox(height: 20),
 
-          LocalizedText(
-            'বয়স নির্বাচন করো',
+          Text(
+            context.t('onboarding.select_age'),
             style: TextStyle(
               fontSize: widget.isTablet ? 18 : 15,
               fontWeight: DS.black,
@@ -286,7 +286,7 @@ class _NameAgePageState extends State<NameAgePage> {
                               width: 1.5,
                             ),
                           ),
-                          child: LocalizedText(
+                          child: Text(
                             '$age',
                             style: TextStyle(
                               fontSize: widget.isTablet ? 18 : 16,
@@ -306,8 +306,8 @@ class _NameAgePageState extends State<NameAgePage> {
           const SizedBox(height: 20),
 
           // Avatar & Color Picker Section (Prani-chhara Faceless Silhouette)
-          LocalizedText(
-            'অবতার ও প্রিয় রঙ বেছে নাও',
+          Text(
+            context.t('onboarding.avatar_color_picker_title'),
             style: TextStyle(
               fontSize: widget.isTablet ? 18 : 15,
               fontWeight: DS.black,
@@ -370,7 +370,7 @@ class _NameAgePageState extends State<NameAgePage> {
                         children: [
                           Expanded(
                             child: _AvatarTypeChip(
-                              title: 'টুপি (Topi)',
+                              title: context.t('avatar.cap_topi'),
                               icon: Icons.person_rounded,
                               isSelected: _selectedAvatarType == 'topi',
                               activeColor: Color(_selectedAvatarColor),
@@ -383,7 +383,7 @@ class _NameAgePageState extends State<NameAgePage> {
                           const SizedBox(width: 8),
                           Expanded(
                             child: _AvatarTypeChip(
-                              title: 'হিজাব (Hijab)',
+                              title: context.t('avatar.hijab'),
                               icon: Icons.face_3_rounded,
                               isSelected: _selectedAvatarType == 'hijab',
                               activeColor: Color(_selectedAvatarColor),
@@ -404,9 +404,9 @@ class _NameAgePageState extends State<NameAgePage> {
                 // Color palette row
                 Row(
                   children: [
-                    const LocalizedText(
-                      'রঙ:',
-                      style: TextStyle(
+                    Text(
+                      context.t('avatar.color_label'),
+                      style: const TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.bold,
                         color: Color(0xFF6B7280),
@@ -486,10 +486,10 @@ class _NameAgePageState extends State<NameAgePage> {
                 ),
                 const SizedBox(width: 10),
                 Expanded(
-                  child: LocalizedText(
+                  child: Text(
                     _selectedRole == 'admin'
-                        ? 'অ্যাডমিন মোড নির্বাচন করা হয়েছে। ক্বায়দা, কুরআন, কুইজ ও সব ধাপ সম্পূর্ণ আনলক থাকবে।'
-                        : 'মূল শিক্ষার্থী মোড। ধাপে ধাপে সম্পন্ন করার মাধ্যমে নতুন ধাপ আনলক হবে।',
+                        ? context.t('onboarding.admin_mode_notice')
+                        : context.t('onboarding.student_mode_notice'),
                     style: TextStyle(
                       fontSize: widget.isTablet ? 13.5 : 12,
                       color: _selectedRole == 'admin'
@@ -579,7 +579,7 @@ class _RoleCard extends StatelessWidget {
                     color: isSelected ? color : const Color(0xFFF3F4F6),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: LocalizedText(
+                  child: Text(
                     badge,
                     style: TextStyle(
                       fontSize: 10,
@@ -591,7 +591,7 @@ class _RoleCard extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 10),
-            LocalizedText(
+            Text(
               title,
               style: TextStyle(
                 fontSize: 15,
@@ -600,7 +600,7 @@ class _RoleCard extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 3),
-            LocalizedText(
+            Text(
               subtitle,
               style: const TextStyle(
                 fontSize: 11,

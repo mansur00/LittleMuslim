@@ -653,63 +653,74 @@ class _DSModuleCardState extends State<DSModuleCard> {
               ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   // 3D Badge / Icon
                   if (widget.badgeAsset != null)
-                    SizedBox(
-                      width: badgeSize,
-                      height: badgeSize,
-                      child: Image.asset(
-                        widget.badgeAsset!,
-                        fit: BoxFit.contain,
-                        errorBuilder: (_, __, ___) => widget.iconPainter != null
-                            ? CustomPaint(painter: widget.iconPainter)
-                            : const SizedBox.shrink(),
+                    Flexible(
+                      child: SizedBox(
+                        width: badgeSize,
+                        height: badgeSize,
+                        child: Image.asset(
+                          widget.badgeAsset!,
+                          fit: BoxFit.contain,
+                          errorBuilder: (_, __, ___) => widget.iconPainter != null
+                              ? CustomPaint(painter: widget.iconPainter)
+                              : const SizedBox.shrink(),
+                        ),
                       ),
                     )
                   else if (widget.customBadge != null)
-                    SizedBox(
-                      width: badgeSize,
-                      height: badgeSize,
-                      child: widget.customBadge!,
+                    Flexible(
+                      child: SizedBox(
+                        width: badgeSize,
+                        height: badgeSize,
+                        child: widget.customBadge!,
+                      ),
                     )
                   else if (widget.iconPainter != null)
-                    Container(
-                      width: badgeSize * 0.75,
-                      height: badgeSize * 0.75,
-                      decoration: BoxDecoration(
-                        color: widget.colors.face,
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: widget.colors.bevel.withValues(alpha: 0.35),
-                            offset: const Offset(0, 3),
-                            blurRadius: 0,
-                          ),
-                        ],
-                      ),
-                      child: CustomPaint(
-                        painter: widget.iconPainter,
+                    Flexible(
+                      child: Container(
+                        width: badgeSize * 0.75,
+                        height: badgeSize * 0.75,
+                        decoration: BoxDecoration(
+                          color: widget.colors.face,
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: widget.colors.bevel.withValues(alpha: 0.35),
+                              offset: const Offset(0, 3),
+                              blurRadius: 0,
+                            ),
+                          ],
+                        ),
+                        child: CustomPaint(
+                          painter: widget.iconPainter,
+                        ),
                       ),
                     ),
-                  const SizedBox(height: 6),
+                  const SizedBox(height: 4),
                   LocalizedText(
                     widget.title,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                       fontSize: titleSize,
                       fontWeight: DS.black,
                       color: DS.textPrimary,
                     ),
                   ),
-                  const SizedBox(height: 3),
+                  const SizedBox(height: 2),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                     decoration: BoxDecoration(
                       color: widget.colors.face.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: LocalizedText(
                       widget.subtitle,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         fontSize: subtitleSize,
                         fontWeight: DS.bold,

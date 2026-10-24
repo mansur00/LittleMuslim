@@ -1,3 +1,5 @@
+import '../../core/core.dart';
+import '../../l10n/app_localizations.dart';
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -94,13 +96,13 @@ class _QaidaTrackLessonsScreenState extends State<QaidaTrackLessonsScreen>
         children: [
           _ViewModeButton(
             icon: Icons.alt_route_rounded,
-            label: 'ম্যাপ',
+            label: context.t('qaida.view_map'),
             isSelected: _viewMode == TrackViewMode.roadmap,
             onTap: () => setState(() => _viewMode = TrackViewMode.roadmap),
           ),
           _ViewModeButton(
             icon: Icons.list_alt_rounded,
-            label: 'তালিকা',
+            label: context.t('qaida.view_list'),
             isSelected: _viewMode == TrackViewMode.list,
             onTap: () => setState(() => _viewMode = TrackViewMode.list),
           ),
@@ -118,8 +120,11 @@ class _QaidaTrackLessonsScreenState extends State<QaidaTrackLessonsScreen>
               padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
               children: [
                 DuolingoHeader(
-                  title: track.title,
-                  subtitle: 'ধাপ ${track.trackNumber} · মোট ${track.totalLessons}টি পাঠ',
+                  title: context.uiText(track.title),
+                  subtitle: context.t('qaida.track_subtitle', params: {
+                    'step': context.formatDigits('${track.trackNumber}'),
+                    'count': context.formatDigits('${track.totalLessons}'),
+                  }),
                   iconType: VectorIconType.book,
                   gradientColors: const [Color(0xFF58CC02), Color(0xFF46A302)],
                   onBack: () => Navigator.of(context).pop(),
@@ -152,23 +157,30 @@ class _QaidaTrackLessonsScreenState extends State<QaidaTrackLessonsScreen>
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 12, vertical: 6),
-                            decoration: BoxDecoration(
-                              color: Colors.white.withValues(alpha: 0.2),
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Text(
-                              'ট্র্যাক ${track.trackNumber}',
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 13,
+                          Flexible(
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 6),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withValues(alpha: 0.2),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: LocalizedText(
+                                context.t('qaida.track_badge', params: {
+                                  'number': context.formatDigits('${track.trackNumber}'),
+                                }),
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 13,
+                                ),
+                                overflow: TextOverflow.ellipsis,
                               ),
                             ),
                           ),
+                          const SizedBox(width: 8),
                           Row(
+                            mainAxisSize: MainAxisSize.min,
                             children: [
                               Text(
                                 track.arabicTitle,
@@ -191,8 +203,8 @@ class _QaidaTrackLessonsScreenState extends State<QaidaTrackLessonsScreen>
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        track.title,
-                        style: GoogleFonts.hindSiliguri(
+                        context.uiText(track.title),
+                        style: AppFonts.getTextStyle(context, 
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
@@ -200,8 +212,8 @@ class _QaidaTrackLessonsScreenState extends State<QaidaTrackLessonsScreen>
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        track.subtitle,
-                        style: GoogleFonts.hindSiliguri(
+                        context.uiText(track.subtitle),
+                        style: AppFonts.getTextStyle(context, 
                           fontSize: 14,
                           color: Colors.white.withValues(alpha: 0.92),
                         ),
@@ -225,8 +237,11 @@ class _QaidaTrackLessonsScreenState extends State<QaidaTrackLessonsScreen>
                             ),
                           ),
                           const SizedBox(width: 14),
-                          Text(
-                            '$completedCount/${track.totalLessons} সম্পন্ন',
+                          LocalizedText(
+                            context.t('qaida.track_completed_lessons', params: {
+                              'done': context.formatDigits('$completedCount'),
+                              'total': context.formatDigits('${track.totalLessons}'),
+                            }),
                             style: const TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.bold,
@@ -252,28 +267,34 @@ class _QaidaTrackLessonsScreenState extends State<QaidaTrackLessonsScreen>
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Row(
-                              children: [
-                                Icon(
-                                  state.isAdmin
-                                      ? Icons.lock_open_rounded
-                                      : Icons.lock_outline_rounded,
-                                  size: 16,
-                                  color: state.isAdmin ? Colors.black87 : Colors.white,
-                                ),
-                                const SizedBox(width: 6),
-                                Text(
-                                  state.isAdmin
-                                      ? 'এডমিন মোড: সকল পাঠ উন্মুক্ত'
-                                      : 'লক মোড: ক্রমান্বয়ে আনলক',
-                                  style: TextStyle(
+                            Expanded(
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    state.isAdmin
+                                        ? Icons.lock_open_rounded
+                                        : Icons.lock_outline_rounded,
+                                    size: 16,
                                     color: state.isAdmin ? Colors.black87 : Colors.white,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.bold,
                                   ),
-                                ),
-                              ],
+                                  const SizedBox(width: 6),
+                                  Expanded(
+                                    child: LocalizedText(
+                                      state.isAdmin
+                                          ? context.t('qaida.admin_all_lessons_open')
+                                          : context.t('qaida.lock_mode_sequential'),
+                                      style: TextStyle(
+                                        color: state.isAdmin ? Colors.black87 : Colors.white,
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
+                            const SizedBox(width: 8),
                             InkWell(
                               onTap: () async {
                                 await state.toggleAdminMode();
@@ -285,8 +306,8 @@ class _QaidaTrackLessonsScreenState extends State<QaidaTrackLessonsScreen>
                                   color: state.isAdmin ? Colors.black87 : Colors.white,
                                   borderRadius: BorderRadius.circular(8),
                                 ),
-                                child: Text(
-                                  state.isAdmin ? 'লক মোড' : 'সব আনলক',
+                                child: LocalizedText(
+                                  state.isAdmin ? context.t('qaida.lock_mode_button') : context.t('qaida.unlock_all_button'),
                                   style: TextStyle(
                                     color: state.isAdmin ? Colors.white : const Color(0xFF0F766E),
                                     fontSize: 11,
@@ -314,9 +335,11 @@ class _QaidaTrackLessonsScreenState extends State<QaidaTrackLessonsScreen>
                   ),
                 ] else ...[
                   // ── LIST VIEW (Classic Tabular) ──
-                  Text(
-                    'পাঠ তালিকা (${track.totalLessons}টি পাঠ)',
-                    style: GoogleFonts.hindSiliguri(
+                  LocalizedText(
+                    context.t('qaida.lesson_list_title', params: {
+                      'count': context.formatDigits('${track.totalLessons}'),
+                    }),
+                    style: AppFonts.getTextStyle(context, 
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                       color: const Color(0xFF1E293B),
@@ -693,14 +716,14 @@ class _LessonRoadNode extends StatelessWidget {
                   ),
                 ],
               ),
-              child: const Row(
+              child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  QuranBookMascot(size: 20, mood: QuranMascotMood.glowing),
-                  SizedBox(width: 4),
-                  Text(
-                    'শুরু করো!',
-                    style: TextStyle(
+                  const QuranBookMascot(size: 20, mood: QuranMascotMood.glowing),
+                  const SizedBox(width: 4),
+                  LocalizedText(
+                    context.t('qaida.start_action'),
+                    style: const TextStyle(
                       color: Colors.white,
                       fontSize: 11,
                       fontWeight: FontWeight.bold,
@@ -728,11 +751,11 @@ class _LessonRoadNode extends StatelessWidget {
               : () {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: const Text('আগের পাঠ সফলভাবে শেষ করে এই পাঠে পৌঁছাও।'),
+                      content: LocalizedText(context.t('qaida.lesson_reach_req')),
                       duration: const Duration(seconds: 4),
                       behavior: SnackBarBehavior.floating,
                       action: SnackBarAction(
-                        label: 'অ্যাডমিন আনলক',
+                        label: context.t('qaida.admin_unlock_action'),
                         textColor: Colors.amber,
                         onPressed: () async {
                           await context.read<AppState>().setUserRole('admin');
@@ -831,8 +854,10 @@ class _LessonRoadNode extends StatelessWidget {
               ),
             ],
           ),
-          child: Text(
-            'পাঠ ${lesson.lessonNumber}',
+          child: LocalizedText(
+            context.t('qaida.lesson_badge', params: {
+              'number': context.formatDigits('${lesson.lessonNumber}'),
+            }),
             style: TextStyle(
               fontSize: 11,
               fontWeight: FontWeight.bold,
@@ -858,11 +883,10 @@ QaidaLessonInfo _buildCheckpointExamLesson(
     id: '${track.id}_checkpoint_$blockNumber',
     trackId: track.id,
     lessonNumber: blockNumber,
-    title: 'চেকপয়েন্ট পরীক্ষা $blockNumber',
-    subtitle: 'পাঠ ${startIdx + 1} থেকে $endIdx এর মূল্যায়ন',
+    titleKey: 'qaida.checkpoint_exam_title',
+    subtitleKey: 'qaida.checkpoint_exam_subtitle',
     arabicDisplay: 'امْتِحَان',
-    description:
-        'পূর্ববর্তী ৫টি পাঠের অর্জিত জ্ঞান যাচাই করুন। পাস নম্বর: ৮০/১০০।',
+    descriptionKey: 'qaida.checkpoint_exam_desc',
     isCheckpoint: true,
     activities: List.generate(10, (qIdx) {
       final refLesson = blockLessons[qIdx % blockLessons.length];
@@ -890,12 +914,13 @@ QaidaLessonInfo _buildCheckpointExamLesson(
         id: '${track.id}_cp_${blockNumber}_q$qIdx',
         slotNumber: qIdx + 1,
         type: QaidaActivityType.checkpointExam,
-        prompt:
-            'চেকপয়েন্ট প্রশ্ন ${qIdx + 1}: ${refLesson.title}-এর সঠিক আরবি রূপ কোনটি?',
+        promptKey: 'qaida.exam.fallback_prompt',
+        prompt: 'qaida.exam.fallback_prompt',
         arabicTarget: refLesson.arabicDisplay,
         options: options,
         correctIndex: correctPos,
-        explanation: 'সঠিক! এটি ${refLesson.title}।',
+        explanationKey: 'qaida.activity.common.great_job',
+        explanation: 'qaida.activity.common.great_job',
       );
     }),
   );
@@ -906,11 +931,10 @@ QaidaLessonInfo _buildTrackFinalExamLesson(QaidaTrackInfo track) {
     id: '${track.id}_final',
     trackId: track.id,
     lessonNumber: track.totalLessons + 1,
-    title: '${track.title} - চূড়ান্ত পরীক্ষা',
-    subtitle: 'ট্র্যাক ${track.trackNumber} সমাপনী মূল্যায়ন',
+    title: 'qaida.final_exam.title',
+    subtitle: 'qaida.final_exam.subtitle',
     arabicDisplay: 'النِّهَايَة',
-    description:
-        'সম্পূর্ণ ট্র্যাকের সকল পাঠ থেকে সমন্বিত প্রশ্ন। পাস করলে পরবর্তী ট্র্যাক উন্মুক্ত হবে।',
+    description: 'qaida.final_exam.desc',
     isTrackFinal: true,
     activities: List.generate(10, (qIdx) {
       final refLesson = track.lessons[qIdx % track.lessons.length];
@@ -938,12 +962,13 @@ QaidaLessonInfo _buildTrackFinalExamLesson(QaidaTrackInfo track) {
         id: '${track.id}_final_q$qIdx',
         slotNumber: qIdx + 1,
         type: QaidaActivityType.trackFinalExam,
-        prompt:
-            'চূড়ান্ত প্রশ্ন ${qIdx + 1}: ${refLesson.title}-এর সঠিক রূপ/বিধান কোনটি?',
+        promptKey: 'qaida.exam.fallback_prompt',
+        prompt: 'qaida.exam.fallback_prompt',
         arabicTarget: refLesson.arabicDisplay,
         options: options,
         correctIndex: correctPos,
-        explanation: 'মাশাআল্লাহ! আপনি সঠিক উত্তর দিয়েছেন।',
+        explanationKey: 'qaida.activity.common.great_job',
+        explanation: 'qaida.activity.common.great_job',
       );
     }),
   );
@@ -1029,8 +1054,14 @@ class _CheckpointRoadNode extends StatelessWidget {
                   isPassed ? const Color(0xFF86EFAC) : const Color(0xFFFDE68A),
             ),
           ),
-          child: Text(
-            isPassed ? 'চেকপয়েন্ট $blockNumber ✓' : 'চেকপয়েন্ট পরীক্ষা $blockNumber',
+          child: LocalizedText(
+            isPassed
+                ? context.t('qaida.checkpoint_passed_badge', params: {
+                    'number': context.formatDigits('$blockNumber'),
+                  })
+                : context.t('qaida.checkpoint_exam_title', params: {
+                    'number': context.formatDigits('$blockNumber'),
+                  }),
             style: TextStyle(
               fontSize: 10,
               fontWeight: FontWeight.bold,
@@ -1135,8 +1166,12 @@ class _FinalExamRoadNode extends StatelessWidget {
                 ),
                 const SizedBox(width: 5),
               ],
-              Text(
-                isPassed ? 'ট্র্যাক ${track.trackNumber} সমাপনী উত্তীর্ণ!' : 'চূড়ান্ত পরীক্ষা',
+              LocalizedText(
+                isPassed
+                    ? context.t('qaida.track_passed_badge', params: {
+                        'number': context.formatDigits('${track.trackNumber}'),
+                      })
+                    : context.t('qaida.track_final_exam_label'),
                 style: TextStyle(
                   fontSize: 11,
                   fontWeight: FontWeight.bold,
@@ -1208,10 +1243,10 @@ class _LessonTile extends StatelessWidget {
               : () {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: const Text('পাঠটি লক করা রয়েছে।'),
+                      content: LocalizedText(context.t('qaida.lesson_locked_snack')),
                       behavior: SnackBarBehavior.floating,
                       action: SnackBarAction(
-                        label: 'অ্যাডমিন আনলক',
+                        label: context.t('qaida.admin_unlock_action'),
                         textColor: Colors.amber,
                         onPressed: () async {
                           await context.read<AppState>().setUserRole('admin');
@@ -1256,8 +1291,10 @@ class _LessonTile extends StatelessWidget {
                     children: [
                       Row(
                         children: [
-                          Text(
-                            'পাঠ ${lesson.lessonNumber}',
+                          LocalizedText(
+                            context.t('qaida.lesson_badge', params: {
+                              'number': context.formatDigits('${lesson.lessonNumber}'),
+                            }),
                             style: TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.bold,
@@ -1275,9 +1312,9 @@ class _LessonTile extends StatelessWidget {
                                 color: const Color(0xFFDCFCE7),
                                 borderRadius: BorderRadius.circular(4),
                               ),
-                              child: const Text(
-                                'সম্পন্ন',
-                                style: TextStyle(
+                              child: LocalizedText(
+                                context.t('qaida.completed_status'),
+                                style: const TextStyle(
                                   fontSize: 10,
                                   fontWeight: FontWeight.bold,
                                   color: Color(0xFF16A34A),
@@ -1289,8 +1326,12 @@ class _LessonTile extends StatelessWidget {
                       ),
                       const SizedBox(height: 2),
                       Text(
-                        lesson.title,
-                        style: GoogleFonts.hindSiliguri(
+                        lesson.isCheckpoint
+                            ? context.t(lesson.title, params: {
+                                'number': context.formatDigits('${lesson.lessonNumber}'),
+                              })
+                            : context.uiText(lesson.title),
+                        style: AppFonts.getTextStyle(context, 
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                           color: isUnlocked
@@ -1299,8 +1340,13 @@ class _LessonTile extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        lesson.subtitle,
-                        style: GoogleFonts.hindSiliguri(
+                        lesson.isCheckpoint
+                            ? context.t(lesson.subtitle, params: {
+                                'start': context.formatDigits('${(lesson.lessonNumber - 1) * 5 + 1}'),
+                                'end': context.formatDigits('${lesson.lessonNumber * 5}'),
+                              })
+                            : context.uiText(lesson.subtitle),
+                        style: AppFonts.getTextStyle(context, 
                           fontSize: 13,
                           color: isUnlocked
                               ? const Color(0xFF64748B)
@@ -1440,10 +1486,12 @@ class _CheckpointExamTile extends StatelessWidget {
                                   : const Color(0xFFFEF3C7),
                               borderRadius: BorderRadius.circular(4),
                             ),
-                            child: Text(
+                            child: LocalizedText(
                               isPassed
-                                  ? 'পাস (১০০/১০০)'
-                                  : 'চেকপয়েন্ট পরীক্ষা $blockNumber',
+                                  ? context.t('qaida.passed_score_100')
+                                  : context.t('qaida.checkpoint_exam_title', params: {
+                                      'number': context.formatDigits('$blockNumber'),
+                                    }),
                               style: TextStyle(
                                 fontSize: 10,
                                 fontWeight: FontWeight.bold,
@@ -1458,7 +1506,7 @@ class _CheckpointExamTile extends StatelessWidget {
                       const SizedBox(height: 2),
                       Text(
                         examLesson.subtitle,
-                        style: GoogleFonts.hindSiliguri(
+                        style: AppFonts.getTextStyle(context, 
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
                           color: isUnlocked
@@ -1565,8 +1613,8 @@ class _TrackFinalExamTile extends StatelessWidget {
                     children: [
                       Row(
                         children: [
-                          Text(
-                            'ট্র্যাক ফাইনাল পরীক্ষা',
+                          LocalizedText(
+                            context.t('qaida.track_final_exam'),
                             style: TextStyle(
                               fontSize: 11,
                               fontWeight: FontWeight.bold,
@@ -1584,9 +1632,9 @@ class _TrackFinalExamTile extends StatelessWidget {
                                 color: const Color(0xFFDCFCE7),
                                 borderRadius: BorderRadius.circular(4),
                               ),
-                              child: const Text(
-                                'সার্টিফায়েড',
-                                style: TextStyle(
+                              child: LocalizedText(
+                                context.t('qaida.certified_badge'),
+                                style: const TextStyle(
                                   fontSize: 10,
                                   fontWeight: FontWeight.bold,
                                   color: Color(0xFF15803D),
@@ -1597,9 +1645,11 @@ class _TrackFinalExamTile extends StatelessWidget {
                         ],
                       ),
                       const SizedBox(height: 2),
-                      Text(
-                        '${track.title} সম্পূর্ণ মূল্যায়ন',
-                        style: GoogleFonts.hindSiliguri(
+                      LocalizedText(
+                        context.t('qaida.full_track_assessment', params: {
+                          'title': context.uiText(track.title),
+                        }),
+                        style: AppFonts.getTextStyle(context, 
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                           color: isUnlocked

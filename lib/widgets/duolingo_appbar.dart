@@ -133,7 +133,7 @@ class DuolingoHeader extends StatelessWidget {
                         if (onBack != null)
                           Semantics(
                             button: true,
-                            label: context.uiText('ফিরে যান'),
+                            label: context.t('common.go_back'),
                             child: Material(
                               color: Colors.transparent,
                               child: InkWell(

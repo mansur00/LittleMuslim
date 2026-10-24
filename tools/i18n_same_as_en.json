@@ -1,0 +1,338 @@
+{
+  "qaida.title": {
+    "value": "Noorani Qaida",
+    "reason": "Proper noun / Islamic term"
+  },
+  "home.greeting": {
+    "value": "Assalamu Alaikum",
+    "reason": "Proper noun / Islamic term"
+  },
+  "qaida.course.1.3.opt0": {
+    "value": "Ba · Bi · Bu",
+    "reason": "Standard Arabic phonetic/tajweed transliteration"
+  },
+  "qaida.course.1.3.opt1": {
+    "value": "Bi · Bu · Ba",
+    "reason": "Standard Arabic phonetic/tajweed transliteration"
+  },
+  "qaida.course.1.3.opt2": {
+    "value": "Bu · Ba · Bi",
+    "reason": "Standard Arabic phonetic/tajweed transliteration"
+  },
+  "prayer.standard_shafi": {
+    "value": "Standard (Shafi)",
+    "reason": "Standard Islamic prayer terminology"
+  },
+  "prayer.fard.fajr.reference": {
+    "value": "Sahih Bukhari 574",
+    "reason": "Hadith source citation"
+  },
+  "prayer.fard.dhuhr.reference": {
+    "value": "Sahih Bukhari 527",
+    "reason": "Hadith source citation"
+  },
+  "prayer.fard.asr.rakat": {
+    "value": "Fard: 4 Rakat",
+    "reason": "Standard Islamic prayer terminology"
+  },
+  "prayer.fard.asr.reference": {
+    "value": "Sahih Bukhari 574",
+    "reason": "Hadith source citation"
+  },
+  "prayer.fard.maghrib.reference": {
+    "value": "Sahih Muslim 233b",
+    "reason": "Hadith source citation"
+  },
+  "prayer.fard.isha.reference": {
+    "value": "Sahih Muslim 656a",
+    "reason": "Hadith source citation"
+  },
+  "prayer.other.sunnah.reference": {
+    "value": "Sahih Muslim 728c",
+    "reason": "Hadith source citation"
+  },
+  "prayer.other.tahajjud.reference": {
+    "value": "Sahih Muslim 1163b",
+    "reason": "Hadith source citation"
+  },
+  "prayer.other.duha.title": {
+    "value": "Duha / Chasht",
+    "reason": "Standard Islamic prayer terminology"
+  },
+  "prayer.other.tarawih.reference": {
+    "value": "Sahih Bukhari 2008",
+    "reason": "Hadith source citation"
+  },
+  "prayer.other.jumah.reference": {
+    "value": "Sahih Muslim 233b",
+    "reason": "Hadith source citation"
+  },
+  "prayer.other.janazah.reference": {
+    "value": "Sahih Bukhari 47",
+    "reason": "Hadith source citation"
+  },
+  "duas.item.wake.reference": {
+    "value": "Sahih Bukhari 6324",
+    "reason": "Hadith source citation"
+  },
+  "duas.item.morning_protection.reference": {
+    "value": "Abu Dawud 5088",
+    "reason": "Hadith source citation"
+  },
+  "duas.item.morning_sabah.reference": {
+    "value": "Sahih Muslim 2723",
+    "reason": "Hadith source citation"
+  },
+  "duas.item.food.reference": {
+    "value": "Sahih Bukhari 5376",
+    "reason": "Hadith source citation"
+  },
+  "duas.item.food_after.reference": {
+    "value": "Sahih Muslim 2715",
+    "reason": "Hadith source citation"
+  },
+  "duas.item.wudu_after.reference": {
+    "value": "Sahih Muslim 234",
+    "reason": "Hadith source citation"
+  },
+  "duas.item.clothes.reference": {
+    "value": "Abu Dawud 4023",
+    "reason": "Hadith source citation"
+  },
+  "duas.item.restroom.reference": {
+    "value": "Sahih Bukhari 142",
+    "reason": "Hadith source citation"
+  },
+  "duas.item.leave_home.reference": {
+    "value": "Abu Dawud 5095",
+    "reason": "Hadith source citation"
+  },
+  "duas.item.enter_home.reference": {
+    "value": "Abu Dawud 5096",
+    "reason": "Hadith source citation"
+  },
+  "duas.item.mosque_enter.reference": {
+    "value": "Abu Dawud 465",
+    "reason": "Hadith source citation"
+  },
+  "duas.item.mosque_exit.reference": {
+    "value": "Sahih Muslim 713",
+    "reason": "Hadith source citation"
+  },
+  "duas.item.sleep.reference": {
+    "value": "Sahih Bukhari 6324",
+    "reason": "Hadith source citation"
+  },
+  "duas.item.nightmare.reference": {
+    "value": "Abu Dawud 3893",
+    "reason": "Hadith source citation"
+  },
+  "duas.item.travel.reference": {
+    "value": "Abu Dawud 2602",
+    "reason": "Hadith source citation"
+  },
+  "duas.item.travel_return.reference": {
+    "value": "Sahih Muslim 1342",
+    "reason": "Hadith source citation"
+  },
+  "duas.item.rain.reference": {
+    "value": "Sahih Bukhari 1032",
+    "reason": "Hadith source citation"
+  },
+  "duas.item.sneeze.reference": {
+    "value": "Sahih Bukhari 6224",
+    "reason": "Hadith source citation"
+  },
+  "duas.item.sneeze_response.reference": {
+    "value": "Sahih Bukhari 6224",
+    "reason": "Hadith source citation"
+  },
+  "duas.item.anxiety.reference": {
+    "value": "Abu Dawud 5081",
+    "reason": "Hadith source citation"
+  },
+  "duas.item.forgiveness.title": {
+    "value": "Sayyid al-Istighfar",
+    "reason": "Proper noun / Islamic term"
+  },
+  "duas.item.forgiveness.reference": {
+    "value": "Sahih Bukhari 6306",
+    "reason": "Hadith source citation"
+  },
+  "seerah.story.abu_umair.reference": {
+    "value": "Sahih Bukhari 6203",
+    "reason": "Standard scholarly Hadith reference"
+  },
+  "qaida.step.5.title": {
+    "value": "Khari Harakat",
+    "reason": "Standard Arabic phonetic/tajweed transliteration"
+  },
+  "qaida.step.6.title": {
+    "value": "Hurufe Layyin",
+    "reason": "Standard Arabic phonetic/tajweed transliteration"
+  },
+  "qaida.step.10.title": {
+    "value": "Meem Sakin",
+    "reason": "Standard Arabic phonetic/tajweed transliteration"
+  },
+  "qaida.step.11.title": {
+    "value": "Wajib Ghunnah",
+    "reason": "Standard Arabic phonetic/tajweed transliteration"
+  },
+  "basics.chapter.6.quiz.8.a": {
+    "value": "Assalamu Alaikum",
+    "reason": "Proper noun / Islamic term"
+  },
+  "basics.chapter.7.quiz.8.a": {
+    "value": "JazakAllahu Khairan",
+    "reason": "Proper noun / Islamic term"
+  },
+  "hijri.month.3": {
+    "value": "",
+    "reason": "Standard transliterated Arabic month name"
+  },
+  "hijri.month.4": {
+    "value": "",
+    "reason": "Standard transliterated Arabic month name"
+  },
+  "hijri.month.5": {
+    "value": "",
+    "reason": "Standard transliterated Arabic month name"
+  },
+  "hijri.month.6": {
+    "value": "",
+    "reason": "Standard transliterated Arabic month name"
+  },
+  "hijri.month.11": {
+    "value": "",
+    "reason": "Standard transliterated Arabic month name"
+  },
+  "hijri.month.12": {
+    "value": "Dhul Hijjah",
+    "reason": "Standard transliterated Arabic month name"
+  },
+  "qaida.activity.xp_plus": {
+    "value": "+{xp} XP",
+    "reason": "Standard gaming term"
+  },
+  "qaida.activity.combo": {
+    "value": "{count} Combo!",
+    "reason": "Standard gaming term"
+  },
+  "seerah.story.hasan_kindness.reference": {
+    "value": "Sahih Bukhari 5997",
+    "reason": "Standard scholarly Hadith reference"
+  },
+  "seerah.story.first_revelation.reference": {
+    "value": "Sahih Bukhari 3",
+    "reason": "Standard scholarly Hadith reference"
+  },
+  "seerah.story.zamzam_baby.reference": {
+    "value": "Sahih Bukhari 3184",
+    "reason": "Standard scholarly Hadith reference"
+  },
+  "seerah.story.kaaba_corner.reference": {
+    "value": "Sirat Ibn Hisham",
+    "reason": "Standard scholarly Hadith reference"
+  },
+  "seerah.story.khadija_trust.reference": {
+    "value": "Sahih Bukhari 3",
+    "reason": "Standard scholarly Hadith reference"
+  },
+  "seerah.story.bilal_patience.reference": {
+    "value": "Sunan Ibn Majah 150",
+    "reason": "Standard scholarly Hadith reference"
+  },
+  "seerah.story.anas_servant.reference": {
+    "value": "Sahih Muslim 2309",
+    "reason": "Standard scholarly Hadith reference"
+  },
+  "seerah.story.migration_madina.reference": {
+    "value": "Sahih Bukhari 3905",
+    "reason": "Standard scholarly Hadith reference"
+  },
+  "seerah.story.badr_dua.reference": {
+    "value": "Sahih Muslim 1763",
+    "reason": "Standard scholarly Hadith reference"
+  },
+  "seerah.story.conquest_mercy.reference": {
+    "value": "Sunan al-Kubra 18275",
+    "reason": "Standard scholarly Hadith reference"
+  },
+  "seerah.story.taif_patience.reference": {
+    "value": "Sahih Bukhari 3231",
+    "reason": "Standard scholarly Hadith reference"
+  },
+  "seerah.story.suleiman_wisdom.reference": {
+    "value": "Quran 27:18-19",
+    "reason": "Standard scholarly Hadith reference"
+  },
+  "seerah.story.madinah_brotherhood.reference": {
+    "value": "Sahih Bukhari 2293",
+    "reason": "Standard scholarly Hadith reference"
+  },
+  "seerah.story.uhud_wound.reference": {
+    "value": "Sahih Bukhari 4073",
+    "reason": "Standard scholarly Hadith reference"
+  },
+  "seerah.story.marriage_khadija.reference": {
+    "value": "Sirat Ibn Hisham",
+    "reason": "Standard scholarly Hadith reference"
+  },
+  "seerah.story.isra_miraj.reference": {
+    "value": "Sahih Bukhari 349",
+    "reason": "Standard scholarly Hadith reference"
+  },
+  "seerah.story.arqam_house.reference": {
+    "value": "Tarikh al-Tabari",
+    "reason": "Standard scholarly Hadith reference"
+  },
+  "seerah.story.farewell_sermon.reference": {
+    "value": "Musnad Ahmad 22978",
+    "reason": "Standard scholarly Hadith reference"
+  },
+  "seerah.story.hadith_smile.reference": {
+    "value": "Jami at-Tirmidhi 1956",
+    "reason": "Standard scholarly Hadith reference"
+  },
+  "seerah.story.food_sharing.reference": {
+    "value": "Sahih Bukhari 5392",
+    "reason": "Standard scholarly Hadith reference"
+  },
+  "seerah.story.muadh_kindness.reference": {
+    "value": "Sahih Bukhari 6125",
+    "reason": "Standard scholarly Hadith reference"
+  },
+  "seerah.story.ashab_suffa.reference": {
+    "value": "Sahih Bukhari 6452",
+    "reason": "Standard scholarly Hadith reference"
+  },
+  "prayer.method.0": {
+    "value": "Shia Ithna-Ansari",
+    "reason": "Proper noun / Organization name"
+  },
+  "prayer.method.9": {
+    "value": "Kuwait",
+    "reason": "Proper noun / Organization name"
+  },
+  "prayer.method.10": {
+    "value": "Qatar",
+    "reason": "Proper noun / Organization name"
+  },
+  "prayer.method.11": {
+    "value": "Majlis Ugama Islam Singapura",
+    "reason": "Proper noun / Organization name"
+  },
+  "prayer.method.16": {
+    "value": "Dubai",
+    "reason": "Proper noun / Organization name"
+  },
+  "prayer.method.18": {
+    "value": "Tunisia",
+    "reason": "Proper noun / Organization name"
+  },
+  "prayer.method.20": {
+    "value": "KEMENAG",
+    "reason": "Proper noun / Organization name"
+  }
+}

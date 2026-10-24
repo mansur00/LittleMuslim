@@ -1,3 +1,4 @@
+import '../../core/core.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -90,21 +91,21 @@ class QaidaChaptersScreen extends StatelessWidget {
     }
 
     final phaseTitles = {
-      1: 'লেভেল ১ · হরফ চেনা ও রূপভেদ (Steps 1–2)',
-      2: 'লেভেল ২ · হারাকাত ও তানবীন (Steps 3–5)',
-      3: 'লেভেল ৩ · সুকুন, শাদ্দাহ ও লাইয়্যিন (Steps 6–8)',
-      4: 'লেভেল ৪ · তাজবীদের মূল নিয়মাবলি (Steps 9–12)',
-      5: 'লেভেল ৫ · অগ্রসর নিয়মাবলি (Steps 13–15)',
-      6: 'লেভেল ৬ · ওয়াকফ ও পূর্ণাঙ্গ তিলাওয়াত (Steps 16–17)',
+      1: context.t('qaida.phase_1_title'),
+      2: context.t('qaida.phase_2_title'),
+      3: context.t('qaida.phase_3_title'),
+      4: context.t('qaida.phase_4_title'),
+      5: context.t('qaida.phase_5_title'),
+      6: context.t('qaida.phase_6_title'),
     };
 
     final phaseSubtitles = {
-      1: 'আলাদা আলাদা হরফ চেনা এবং হরফের শুরু, মাঝে ও শেষের রূপভেদ',
-      2: 'যবর, যের, পেশ, তানবীন এবং খাড়া হারাকাতের শুদ্ধ উচ্চারণ',
-      3: 'হরফে লাইয়্যিন, সাকিন হরফ ও তাশদীদ ডাবল-প্রেস অনুশীলন',
-      4: 'নূন সাকিন, মীম সাকিন, ওয়াজিব গুন্নাহ ও মাদ্দের প্রকারভেদ',
-      5: 'শামসী ও ক্বামারিয়্যাহ লাম, র ও লামের গভীর চর্চা এবং ক্বলক্বলাহ',
-      6: 'ওয়াকফের চিহ্ন ও নিয়মাবলি এবং পূর্ণাঙ্গ কুরআন তিলাওয়াত প্রস্তুতি',
+      1: context.t('qaida.phase_1_subtitle'),
+      2: context.t('qaida.phase_2_subtitle'),
+      3: context.t('qaida.phase_3_subtitle'),
+      4: context.t('qaida.phase_4_subtitle'),
+      5: context.t('qaida.phase_5_subtitle'),
+      6: context.t('qaida.phase_6_subtitle'),
     };
 
     return Scaffold(
@@ -183,9 +184,9 @@ class QaidaChaptersScreen extends StatelessWidget {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    const LocalizedText(
-                                      'রিভিশন আইল্যান্ড',
-                                      style: TextStyle(
+                                    LocalizedText(
+                                      context.t('qaida.revision_island'),
+                                      style: const TextStyle(
                                         fontSize: 12,
                                         fontWeight: FontWeight.bold,
                                         color: Color(0xFF4338CA),
@@ -195,8 +196,10 @@ class QaidaChaptersScreen extends StatelessWidget {
                                     ),
                                     LocalizedText(
                                       state.hasSkillsDueForReview
-                                          ? '${state.skillsDueForReview.length}টি হরফ রিভিশন প্রয়োজন'
-                                          : 'দুর্বল হরফ অনুশীলন',
+                                          ? context.t('qaida.letters_due_for_review', params: {
+                                              'count': context.formatDigits('${state.skillsDueForReview.length}'),
+                                            })
+                                          : context.t('qaida.weak_letters_practice'),
                                       style: TextStyle(
                                         fontSize: 10,
                                         color: state.hasSkillsDueForReview
@@ -258,13 +261,13 @@ class QaidaChaptersScreen extends StatelessWidget {
                                     color: Color(0xFF16A34A)),
                               ),
                               const SizedBox(width: 8),
-                              const Flexible(
+                              Flexible(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     LocalizedText(
-                                      'অগ্রগতি প্রতিবেদন',
-                                      style: TextStyle(
+                                      context.t('qaida.progress_report'),
+                                      style: const TextStyle(
                                         fontSize: 12,
                                         fontWeight: FontWeight.bold,
                                         color: Color(0xFF15803D),
@@ -273,8 +276,8 @@ class QaidaChaptersScreen extends StatelessWidget {
                                       overflow: TextOverflow.ellipsis,
                                     ),
                                     LocalizedText(
-                                      'মাস্টারি ও পারফরম্যান্স',
-                                      style: TextStyle(
+                                      context.t('qaida.mastery_and_performance'),
+                                      style: const TextStyle(
                                         fontSize: 10,
                                         color: Color(0xFF16A34A),
                                       ),
@@ -339,13 +342,13 @@ class QaidaChaptersScreen extends StatelessWidget {
                                     color: Color(0xFFD97706)),
                               ),
                               const SizedBox(width: 8),
-                              const Flexible(
+                              Flexible(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     LocalizedText(
-                                      'সাপ্তাহিক পরীক্ষা',
-                                      style: TextStyle(
+                                      context.t('qaida.weekly_exam'),
+                                      style: const TextStyle(
                                         fontSize: 12,
                                         fontWeight: FontWeight.bold,
                                         color: Color(0xFF92400E),
@@ -354,8 +357,8 @@ class QaidaChaptersScreen extends StatelessWidget {
                                       overflow: TextOverflow.ellipsis,
                                     ),
                                     LocalizedText(
-                                      '৮০% পাসে +২৫ XP',
-                                      style: TextStyle(
+                                      context.t('qaida.weekly_exam_reward'),
+                                      style: const TextStyle(
                                         fontSize: 10,
                                         color: Color(0xFFB45309),
                                       ),
@@ -414,13 +417,13 @@ class QaidaChaptersScreen extends StatelessWidget {
                                     color: Color(0xFF9333EA)),
                               ),
                               const SizedBox(width: 8),
-                              const Flexible(
+                              Flexible(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     LocalizedText(
-                                      'মাসিক পরীক্ষা',
-                                      style: TextStyle(
+                                      context.t('qaida.monthly_exam'),
+                                      style: const TextStyle(
                                         fontSize: 12,
                                         fontWeight: FontWeight.bold,
                                         color: Color(0xFF6B21A8),
@@ -429,8 +432,8 @@ class QaidaChaptersScreen extends StatelessWidget {
                                       overflow: TextOverflow.ellipsis,
                                     ),
                                     LocalizedText(
-                                      'মেগা রিভিউ +৪০ XP',
-                                      style: TextStyle(
+                                      context.t('qaida.monthly_exam_reward'),
+                                      style: const TextStyle(
                                         fontSize: 10,
                                         color: Color(0xFF7E22CE),
                                       ),
@@ -473,8 +476,8 @@ class QaidaChaptersScreen extends StatelessWidget {
                           children: [
                             LocalizedText(
                               state.isAdmin
-                                  ? 'এডমিন মোড সক্রিয়'
-                                  : 'শিক্ষার্থী মোড (ধাপে ধাপে আনলক)',
+                                  ? context.t('qaida.admin_mode_active')
+                                  : context.t('qaida.student_mode_active'),
                               style: TextStyle(
                                 fontSize: 13,
                                 color: state.isAdmin ? const Color(0xFF92400E) : const Color(0xFF334155),
@@ -483,8 +486,8 @@ class QaidaChaptersScreen extends StatelessWidget {
                             ),
                             LocalizedText(
                               state.isAdmin
-                                  ? '১৭টি স্টেপ ও সকল পাঠ উন্মুক্ত রয়েছে'
-                                  : 'পরীক্ষা করতে অ্যাডমিন মোড চালু করুন',
+                                  ? context.t('qaida.admin_all_unlocked_desc')
+                                  : context.t('qaida.admin_enable_desc'),
                               style: TextStyle(
                                 fontSize: 11,
                                 color: state.isAdmin ? const Color(0xFFB45309) : const Color(0xFF64748B),
@@ -495,7 +498,7 @@ class QaidaChaptersScreen extends StatelessWidget {
                       ),
                       const SizedBox(width: 8),
                       DSButton(
-                        label: state.isAdmin ? 'লক মোড' : 'সব আনলক',
+                        label: state.isAdmin ? context.t('qaida.lock_mode_button') : context.t('qaida.unlock_all_button'),
                         height: 38,
                         fontSize: 12,
                         borderRadius: 12,
@@ -513,7 +516,7 @@ class QaidaChaptersScreen extends StatelessWidget {
                 // 17-Island Treasure Map Levels & Steps
                 for (final phaseEntry in phaseMap.entries) ...[
                   _PhaseSectionHeader(
-                    title: phaseTitles[phaseEntry.key] ?? 'লেভেল ${phaseEntry.key}',
+                    title: phaseTitles[phaseEntry.key] ?? context.t('qaida.level_number', params: {'number': context.formatDigits('${phaseEntry.key}')}),
                     subtitle: phaseSubtitles[phaseEntry.key] ?? '',
                     phaseNumber: phaseEntry.key,
                   ),
@@ -562,8 +565,8 @@ class _QaidaHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => DuolingoPageHeader(
-        title: 'নূরানী ক্বায়দা',
-        subtitle: '১৭টি ধাপের পূর্ণাঙ্গ লার্নিং ম্যাপ',
+        title: context.t('qaida.title'),
+        subtitle: context.t('qaida.full_map_subtitle'),
         customIcon: Image.asset(
           'assets/images/badge_qaida_3d.png',
           width: 36,
@@ -579,7 +582,10 @@ class _QaidaHeader extends StatelessWidget {
             borderRadius: BorderRadius.circular(12),
           ),
           child: LocalizedText(
-            '$completedCount/$totalCount ধাপ',
+            context.t('qaida.steps_progress_badge', params: {
+              'completed': context.formatDigits('$completedCount'),
+              'total': context.formatDigits('$totalCount'),
+            }),
             style: const TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.w900,
@@ -636,7 +642,7 @@ class _PhaseSectionHeader extends StatelessWidget {
               Expanded(
                 child: Text(
                   title,
-                  style: GoogleFonts.hindSiliguri(
+                  style: AppFonts.getTextStyle(context, 
                     fontSize: 15,
                     fontWeight: FontWeight.bold,
                     color: const Color(0xFF0F172A),
@@ -716,10 +722,13 @@ class _StepIslandCard extends StatelessWidget {
               : () {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: LocalizedText('ধাপ ${step.stepNumber} (${step.title}) লক করা রয়েছে।'),
+                      content: LocalizedText(context.t('qaida.step_locked_snack', params: {
+                        'step': context.formatDigits('${step.stepNumber}'),
+                        'title': context.uiText(step.title),
+                      })),
                       behavior: SnackBarBehavior.floating,
                       action: SnackBarAction(
-                        label: context.uiText('অ্যাডমিন আনলক'),
+                        label: context.t('qaida.admin_unlock_action'),
                         textColor: Colors.amber,
                         onPressed: () async {
                           await state.setUserRole('admin');
@@ -768,7 +777,9 @@ class _StepIslandCard extends StatelessWidget {
                           ),
                           const SizedBox(height: 1),
                           LocalizedText(
-                            'ধাপ ${step.stepNumber}',
+                            context.t('qaida.step_badge', params: {
+                              'number': context.formatDigits('${step.stepNumber}'),
+                            }),
                             style: TextStyle(
                               fontSize: 9,
                               fontWeight: FontWeight.bold,
@@ -792,7 +803,7 @@ class _StepIslandCard extends StatelessWidget {
                               Expanded(
                                 child: LocalizedText(
                                   step.title,
-                                  style: GoogleFonts.hindSiliguri(
+                                  style: AppFonts.getTextStyle(context, 
                                     fontSize: 16,
                                     fontWeight: FontWeight.bold,
                                     color: !isUnlocked
@@ -818,7 +829,7 @@ class _StepIslandCard extends StatelessWidget {
                           const SizedBox(height: 2),
                           Text(
                             step.description,
-                            style: GoogleFonts.hindSiliguri(
+                            style: AppFonts.getTextStyle(context, 
                               fontSize: 12,
                               color: !isUnlocked
                                   ? const Color(0xFFCBD5E1)
@@ -844,7 +855,7 @@ class _StepIslandCard extends StatelessWidget {
                                 const VectorIcon(type: VectorIconType.plant, size: 14),
                                 const SizedBox(width: 4),
                                 LocalizedText(
-                                  'বাগান পুরস্কার: ${step.gardenPlant}',
+                                  context.t('qaida.garden_reward', params: {'plant': context.uiText(step.gardenPlant)}),
                                   style: const TextStyle(
                                     fontSize: 10,
                                     fontWeight: FontWeight.bold,
@@ -880,10 +891,13 @@ class _StepIslandCard extends StatelessWidget {
                     const SizedBox(width: 10),
                     LocalizedText(
                       !isUnlocked
-                          ? 'লকড (৮০% প্রয়োজন)'
+                          ? context.t('qaida.locked_threshold')
                           : (isCompleted
-                              ? 'মাস্টার্ড (সম্পন্ন)'
-                              : '$doneCount/$total পাঠ'),
+                              ? context.t('qaida.mastered_completed')
+                              : context.t('qaida.lessons_progress', params: {
+                                  'done': context.formatDigits('$doneCount'),
+                                  'total': context.formatDigits('$total'),
+                                })),
                       style: TextStyle(
                         fontSize: 11,
                         fontWeight: FontWeight.bold,
@@ -941,8 +955,8 @@ class _StepIslandCard extends StatelessWidget {
                           const SizedBox(width: 6),
                           LocalizedText(
                             bossPassed
-                                ? 'স্টেপ বস পাস (৮০%+) ✓'
-                                : 'স্টেপ বস পরীক্ষা দিন (৮০%+)',
+                                ? context.t('qaida.step_boss_passed')
+                                : context.t('qaida.step_boss_take_exam'),
                             style: TextStyle(
                               fontSize: 11,
                               fontWeight: FontWeight.bold,
@@ -1051,8 +1065,8 @@ class QaidaChapterPath extends StatelessWidget {
             children: [
               Expanded(
                 child: LocalizedText(
-                  'নূরানী ক্বায়দা · ১৭টি ধাপের পাঠ্যক্রম',
-                  style: GoogleFonts.hindSiliguri(
+                  context.t('qaida.curriculum_subtitle'),
+                  style: AppFonts.getTextStyle(context, 
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                     color: AppTheme.darkText,
@@ -1066,7 +1080,10 @@ class QaidaChapterPath extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: LocalizedText(
-                  '$completed/${allSteps.length} ধাপ',
+                  context.t('qaida.steps_progress_badge', params: {
+                    'completed': context.formatDigits('$completed'),
+                    'total': context.formatDigits('${allSteps.length}'),
+                  }),
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 12,
@@ -1106,9 +1123,9 @@ class QaidaChapterPath extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 8),
-          const LocalizedText(
-            'হরফ চেনা → সংযোগ → হারাকাত/তানবীন → সুকুন/শাদ্দাহ → তাজবীদ → ওয়াকফ ও তিলাওয়াত',
-            style: TextStyle(fontSize: 11, color: Colors.black54),
+          LocalizedText(
+            context.t('qaida.learning_stages_flow'),
+            style: const TextStyle(fontSize: 11, color: Colors.black54),
           ),
         ],
       ),
@@ -1188,17 +1205,25 @@ class _CompactStepCard extends StatelessWidget {
                 ),
                 const Spacer(),
                 LocalizedText(
-                  'ধাপ ${step.stepNumber}: ${step.title}',
+                  context.t('qaida.compact_step_title', params: {
+                    'number': context.formatDigits('${step.stepNumber}'),
+                    'title': context.uiText(step.title),
+                  }),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.hindSiliguri(
+                  style: AppFonts.getTextStyle(context, 
                     fontSize: 13,
                     fontWeight: FontWeight.bold,
                     color: locked ? const Color(0xFF94A3B8) : AppTheme.darkText,
                   ),
                 ),
                 LocalizedText(
-                  locked ? 'লক করা (৮০% প্রয়োজন)' : '$done/$total পাঠ সম্পন্ন',
+                  locked
+                      ? context.t('qaida.locked_threshold')
+                      : context.t('qaida.lessons_completed', params: {
+                          'done': context.formatDigits('$done'),
+                          'total': context.formatDigits('$total'),
+                        }),
                   style: TextStyle(
                     fontSize: 10,
                     fontWeight: FontWeight.w600,

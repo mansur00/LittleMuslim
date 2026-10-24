@@ -9,9 +9,22 @@ import '../../widgets/duolingo_appbar.dart';
 import '../../widgets/duolingo_button.dart';
 import '../../widgets/vector_icons.dart';
 
-const qaidaCourseTitles = ['যুক্ত বর্ণ', 'হরকত', 'মাদ ও গুন্নাহ', 'আয়াত পড়া'];
+const qaidaCourseTitleKeys = [
+  'qaida.course.0.title',
+  'qaida.course.1.title',
+  'qaida.course.2.title',
+  'qaida.course.3.title',
+];
+const qaidaCourseTitles = qaidaCourseTitleKeys;
 const qaidaCourseLetters = ['بـ', 'بَ', 'مَدّ', 'آية'];
 const qaidaCourseCount = 4;
+
+String getQaidaCourseTitle(BuildContext context, int index) {
+  if (index >= 0 && index < qaidaCourseCount) {
+    return context.t('qaida.course.$index.title');
+  }
+  return context.t(qaidaCourseTitleKeys[index.clamp(0, qaidaCourseTitleKeys.length - 1)]);
+}
 
 class _Exercise {
   const _Exercise(this.stage, this.prompt, this.options, this.answer);
@@ -29,58 +42,223 @@ class _Course {
   final List<_Exercise> exercises;
 }
 
-const _courses = <_Course>[
-  _Course('যুক্ত বর্ণ', 'আলাদা হরফ জুড়ে শব্দের রূপ চিনি', 'ب + ا = با',
-      Color(0xFFDDF4E9), Icons.extension_rounded, [
-    _Exercise(
-        'দেখে শিখি', 'ب + ا একসাথে লিখলে কোন রূপ হবে?', ['با', 'بت', 'اب'], 0),
-    _Exercise(
-        'রূপ চিনি', 'শব্দের শুরুতে ب দেখতে কেমন?', ['بـ', 'ـبـ', 'ـب'], 0),
-    _Exercise(
-        'জোড়া লাগাই', 'ت + ا যুক্ত হলে কোনটি হবে?', ['تا', 'با', 'تي'], 0),
-    _Exercise('মনে রাখি', 'কোন অক্ষরগুলো পরের অক্ষরের সঙ্গে যুক্ত হয় না?',
-        ['ا د ذ ر ز و', 'ب ت ث ج ح', 'س ش ص ض ط'], 0),
-    _Exercise('নিজে পড়ে দেখি', 'با-তে কোন দুই হরফ আছে?',
-        ['ب এবং ا', 'ب এবং ت', 'ا এবং ت'], 0),
-  ]),
-  _Course('হরকত', 'যবর, যের ও পেশ দিয়ে ছোট স্বর পড়ি', 'بَ  بِ  بُ',
-      Color(0xFFFFEBCF), Icons.graphic_eq_rounded, [
-    _Exercise('যবর চিনি', 'বর্ণের ওপরে যবর (َ) থাকলে কী ধ্বনি?',
-        ['ছোট “আ/অ” ধ্বনি', 'ছোট “ই” ধ্বনি', 'ছোট “উ” ধ্বনি'], 0),
-    _Exercise('যের চিনি', 'বর্ণের নিচে যের (ِ) থাকলে কী ধ্বনি?',
-        ['ছোট “ই” ধ্বনি', 'ছোট “উ” ধ্বনি', 'টেনে “আ”'], 0),
-    _Exercise('পেশ চিনি', 'بُ কোনভাবে পড়ি?', ['বু', 'বি', 'বা'], 0),
-    _Exercise('ক্রম মিলাই', 'بَ بِ بُ এর সঠিক ক্রম কোনটি?',
-        ['বা · বি · বু', 'বি · বু · বা', 'বু · বা · বি'], 0),
-    _Exercise('নিজে পড়ে দেখি', 'একটি হরকত সাধারণত কেমন স্বর দেয়?',
-        ['ছোট স্বর', 'দুই হারাকাত টান', 'পুরো থামা'], 0),
-  ]),
-  _Course('মাদ ও গুন্নাহ', 'টেনে পড়া ও নাকের অনুরণন চিনি', 'مَدّ · غُنَّة',
-      Color(0xFFE8E2FF), Icons.waves_rounded, [
-    _Exercise('মাদ চিনি', 'মাদ হলে ধ্বনি কীভাবে পড়ি?',
-        ['নিয়ম অনুযায়ী টেনে', 'একেবারে বাদ দিয়ে', 'যত দ্রুত সম্ভব'], 0),
-    _Exercise('মাদের হরফ', 'সাধারণ মাদের হরফ কোনগুলো?',
-        ['ا و ي', 'ب ت ث', 'ج ح خ'], 0),
-    _Exercise('গুন্নাহ চিনি', 'গুন্নাহর অনুরণন কোথা দিয়ে হয়?',
-        ['নাক দিয়ে', 'শুধু ঠোঁট দিয়ে', 'দাঁত চেপে'], 0),
-    _Exercise('শুনে মনে রাখি', 'نّ বা مّ এলে কী অনুশীলন করি?',
-        ['নাকের অনুরণনসহ গুন্নাহ', 'সবসময় থামা', 'হরফ বাদ দেওয়া'], 0),
-    _Exercise('শিক্ষকের সঙ্গে পড়ি', 'মাদ ও গুন্নাহর সঠিক মাত্রা কীভাবে শিখব?',
-        ['শিক্ষকের তিলাওয়াত শুনে', 'অনুমান করে', 'সব জায়গায় একই টান দিয়ে'], 0),
-  ]),
-  _Course('আয়াত পড়া', 'শেখা নিয়ম দিয়ে ছোট আয়াত পড়ি', 'قُلْ هُوَ اللَّهُ أَحَدٌ',
-      Color(0xFFDDF1FF), Icons.menu_book_rounded, [
-    _Exercise('আয়াত দেখি', 'আয়াত পড়ার আগে কী দেখি?',
-        ['হরফ, হরকত ও থামার চিহ্ন', 'শুধু শেষের শব্দ', 'শুধু রং'], 0),
-    _Exercise('হরফ জুড়ি', 'শব্দ পড়া সহজ করতে কী কাজে দেয়?',
-        ['যুক্ত রূপ চেনা', 'বিন্দু উপেক্ষা', 'হরকত বাদ'], 0),
-    _Exercise('ধীরে পড়ি', 'নতুন আয়াত শেখার সময় কেমন পড়ি?',
-        ['ধীরে, স্পষ্ট করে', 'দৌড়ে', 'অনুমান করে'], 0),
-    _Exercise('নিয়ম মনে রাখি', 'মাদ/গুন্নাহ দেখলে কী করি?',
-        ['তাজবিদের নিয়ম মেনে পড়ি', 'চিহ্ন মুছে ফেলি', 'সব একইভাবে পড়ি'], 0),
-    _Exercise('শুনে মিলাই', 'তিলাওয়াত শুদ্ধ করতে কার কাছে শুনব?',
-        ['যোগ্য শিক্ষক/অভিভাবকের কাছে', 'শুধু নিজের অনুমান', 'না শুনেই'], 0),
-  ]),
+List<_Course> _getCourses(BuildContext context) => [
+  _Course(
+    context.t('qaida.course.0.title'),
+    context.t('qaida.course.0.desc'),
+    'ب + ا = با',
+    const Color(0xFFDDF4E9),
+    Icons.extension_rounded,
+    [
+      _Exercise(
+        context.t('qaida.course.stage.look_learn'),
+        context.t('qaida.course.0.0.prompt'),
+        const ['با', 'بت', 'اب'],
+        0,
+      ),
+      _Exercise(
+        context.t('qaida.course.stage.recognize_form'),
+        context.t('qaida.course.0.1.prompt'),
+        const ['بـ', 'ـبـ', 'ـب'],
+        0,
+      ),
+      _Exercise(
+        context.t('qaida.course.stage.join'),
+        context.t('qaida.course.0.2.prompt'),
+        const ['تا', 'با', 'تي'],
+        0,
+      ),
+      _Exercise(
+        context.t('qaida.course.stage.remember'),
+        context.t('qaida.course.0.3.prompt'),
+        const ['ا د ذ ر ز و', 'ب ت ث ج ح', 'س ش ص ض ط'],
+        0,
+      ),
+      _Exercise(
+        context.t('qaida.course.stage.read_myself'),
+        context.t('qaida.course.0.4.prompt'),
+        [
+          context.t('qaida.course.0.4.opt0'),
+          context.t('qaida.course.0.4.opt1'),
+          context.t('qaida.course.0.4.opt2'),
+        ],
+        0,
+      ),
+    ],
+  ),
+  _Course(
+    context.t('qaida.course.1.title'),
+    context.t('qaida.course.1.desc'),
+    'بَ  بِ  بُ',
+    const Color(0xFFFFEBCF),
+    Icons.graphic_eq_rounded,
+    [
+      _Exercise(
+        context.t('qaida.course.stage.zabar'),
+        context.t('qaida.course.1.0.prompt'),
+        [
+          context.t('qaida.course.1.0.opt0'),
+          context.t('qaida.course.1.0.opt1'),
+          context.t('qaida.course.1.0.opt2'),
+        ],
+        0,
+      ),
+      _Exercise(
+        context.t('qaida.course.stage.zer'),
+        context.t('qaida.course.1.1.prompt'),
+        [
+          context.t('qaida.course.1.1.opt0'),
+          context.t('qaida.course.1.1.opt1'),
+          context.t('qaida.course.1.1.opt2'),
+        ],
+        0,
+      ),
+      _Exercise(
+        context.t('qaida.course.stage.pesh'),
+        context.t('qaida.course.1.2.prompt'),
+        [
+          context.t('qaida.course.1.2.opt0'),
+          context.t('qaida.course.1.2.opt1'),
+          context.t('qaida.course.1.2.opt2'),
+        ],
+        0,
+      ),
+      _Exercise(
+        context.t('qaida.course.stage.sequence'),
+        context.t('qaida.course.1.3.prompt'),
+        [
+          context.t('qaida.course.1.3.opt0'),
+          context.t('qaida.course.1.3.opt1'),
+          context.t('qaida.course.1.3.opt2'),
+        ],
+        0,
+      ),
+      _Exercise(
+        context.t('qaida.course.stage.read_myself'),
+        context.t('qaida.course.1.4.prompt'),
+        [
+          context.t('qaida.course.1.4.opt0'),
+          context.t('qaida.course.1.4.opt1'),
+          context.t('qaida.course.1.4.opt2'),
+        ],
+        0,
+      ),
+    ],
+  ),
+  _Course(
+    context.t('qaida.course.2.title'),
+    context.t('qaida.course.2.desc'),
+    'مَدّ · غُنَّة',
+    const Color(0xFFE8E2FF),
+    Icons.waves_rounded,
+    [
+      _Exercise(
+        context.t('qaida.course.stage.madd'),
+        context.t('qaida.course.2.0.prompt'),
+        [
+          context.t('qaida.course.2.0.opt0'),
+          context.t('qaida.course.2.0.opt1'),
+          context.t('qaida.course.2.0.opt2'),
+        ],
+        0,
+      ),
+      _Exercise(
+        context.t('qaida.course.stage.madd_letters'),
+        context.t('qaida.course.2.1.prompt'),
+        const ['ا و ي', 'ب ت ث', 'ج ح خ'],
+        0,
+      ),
+      _Exercise(
+        context.t('qaida.course.stage.ghunnah'),
+        context.t('qaida.course.2.2.prompt'),
+        [
+          context.t('qaida.course.2.2.opt0'),
+          context.t('qaida.course.2.2.opt1'),
+          context.t('qaida.course.2.2.opt2'),
+        ],
+        0,
+      ),
+      _Exercise(
+        context.t('qaida.course.stage.listen_remember'),
+        context.t('qaida.course.2.3.prompt'),
+        [
+          context.t('qaida.course.2.3.opt0'),
+          context.t('qaida.course.2.3.opt1'),
+          context.t('qaida.course.2.3.opt2'),
+        ],
+        0,
+      ),
+      _Exercise(
+        context.t('qaida.course.stage.read_with_teacher'),
+        context.t('qaida.course.2.4.prompt'),
+        [
+          context.t('qaida.course.2.4.opt0'),
+          context.t('qaida.course.2.4.opt1'),
+          context.t('qaida.course.2.4.opt2'),
+        ],
+        0,
+      ),
+    ],
+  ),
+  _Course(
+    context.t('qaida.course.3.title'),
+    context.t('qaida.course.3.desc'),
+    'قُلْ هُوَ اللَّهُ أَحَدٌ',
+    const Color(0xFFDDF1FF),
+    Icons.menu_book_rounded,
+    [
+      _Exercise(
+        context.t('qaida.course.stage.look_ayah'),
+        context.t('qaida.course.3.0.prompt'),
+        [
+          context.t('qaida.course.3.0.opt0'),
+          context.t('qaida.course.3.0.opt1'),
+          context.t('qaida.course.3.0.opt2'),
+        ],
+        0,
+      ),
+      _Exercise(
+        context.t('qaida.course.stage.join_letters'),
+        context.t('qaida.course.3.1.prompt'),
+        [
+          context.t('qaida.course.3.1.opt0'),
+          context.t('qaida.course.3.1.opt1'),
+          context.t('qaida.course.3.1.opt2'),
+        ],
+        0,
+      ),
+      _Exercise(
+        context.t('qaida.course.stage.read_slowly'),
+        context.t('qaida.course.3.2.prompt'),
+        [
+          context.t('qaida.course.3.2.opt0'),
+          context.t('qaida.course.3.2.opt1'),
+          context.t('qaida.course.3.2.opt2'),
+        ],
+        0,
+      ),
+      _Exercise(
+        context.t('qaida.course.stage.remember'),
+        context.t('qaida.course.3.3.prompt'),
+        [
+          context.t('qaida.course.3.3.opt0'),
+          context.t('qaida.course.3.3.opt1'),
+          context.t('qaida.course.3.3.opt2'),
+        ],
+        0,
+      ),
+      _Exercise(
+        context.t('qaida.course.stage.listen_verify'),
+        context.t('qaida.course.3.4.prompt'),
+        [
+          context.t('qaida.course.3.4.opt0'),
+          context.t('qaida.course.3.4.opt1'),
+          context.t('qaida.course.3.4.opt2'),
+        ],
+        0,
+      ),
+    ],
+  ),
 ];
 
 int firstIncompleteQaidaCourse(AppState state) {
@@ -115,20 +293,22 @@ class _QaidaNextCourseScreenState extends State<QaidaNextCourseScreen> {
   }
 
   Future<void> _playExample() async {
+    final courses = _getCourses(context);
     try {
       await _tts.setLanguage('ar-SA');
       await _tts.setSpeechRate(.38);
-      await _tts.speak(_courses[_index].example);
+      await _tts.speak(courses[_index].example);
     } catch (_) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: LocalizedText('এই ডিভাইসে আরবি অডিও পাওয়া যায়নি।'),
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: LocalizedText(context.t('qaida.next_course.audio_not_found')),
       ));
     }
   }
 
   Future<void> _advance() async {
-    final course = _courses[_index];
+    final courses = _getCourses(context);
+    final course = courses[_index];
     if (!_checked) {
       setState(() => _checked = true);
       return;
@@ -171,7 +351,8 @@ class _QaidaNextCourseScreenState extends State<QaidaNextCourseScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final course = _courses[_index];
+    final courses = _getCourses(context);
+    final course = courses[_index];
     final exercise = course.exercises[_step];
     final total = qaidaCourseCount * course.exercises.length;
     final overallStep = _index * course.exercises.length + _step + 1;
@@ -187,15 +368,23 @@ class _QaidaNextCourseScreenState extends State<QaidaNextCourseScreen> {
                         padding:
                             EdgeInsets.fromLTRB(tablet ? 32 : 18, 10, 18, 0),
                         child: DuolingoPageHeader(
-                          title: 'ক্বায়দা · ${course.title}',
-                          subtitle: 'ধাপ ${_step + 1} · ${exercise.stage}',
+                          title: context.t('qaida.next_course.header_title',
+                              params: {'course': course.title}),
+                          subtitle: context.t(
+                              'qaida.next_course.header_subtitle',
+                              params: {
+                                'step': '${_step + 1}',
+                                'stage': exercise.stage
+                              }),
                           iconType: VectorIconType.qaida,
                           gradientColors: const [
                             Color(0xFF58CC02),
                             Color(0xFF46A302)
                           ],
                           onBack: () => Navigator.pop(context),
-                          trailing: LocalizedText('${_step + 1}/৫',
+                          trailing: LocalizedText(
+                              context.t('qaida.next_course.step_counter',
+                                  params: {'step': '${_step + 1}'}),
                               style: const TextStyle(
                                   color: Colors.white,
                                   fontWeight: FontWeight.w900)),
@@ -268,7 +457,12 @@ class _QaidaNextCourseScreenState extends State<QaidaNextCourseScreen> {
                                               BorderRadius.circular(15)),
                                       child: Column(children: [
                                         LocalizedText(
-                                            'ধাপ ${_step + 1}: ${exercise.stage}',
+                                            context.t(
+                                                'qaida.next_course.step_indicator',
+                                                params: {
+                                                  'step': '${_step + 1}',
+                                                  'stage': exercise.stage
+                                                }),
                                             style: const TextStyle(
                                                 fontWeight: FontWeight.w900,
                                                 color: AppTheme.primaryGreen)),
@@ -284,12 +478,14 @@ class _QaidaNextCourseScreenState extends State<QaidaNextCourseScreen> {
                                 ])),
                             const SizedBox(height: 19),
                             Duolingo3DButton.secondary(
-                                text: 'আরবি উচ্চারণ শুনি',
+                                text: context
+                                    .t('qaida.next_course.listen_audio'),
                                 icon: const Icon(Icons.volume_up_rounded),
                                 onPressed: _playExample),
                             const SizedBox(height: 12),
-                            const LocalizedText('অনুশীলনটি করো',
-                                style: TextStyle(
+                            LocalizedText(
+                                context.t('qaida.next_course.do_exercise'),
+                                style: const TextStyle(
                                     fontSize: 19,
                                     fontWeight: FontWeight.w900,
                                     color: AppTheme.darkText)),
@@ -311,8 +507,10 @@ class _QaidaNextCourseScreenState extends State<QaidaNextCourseScreen> {
                                   padding: const EdgeInsets.only(bottom: 12),
                                   child: LocalizedText(
                                       _selected == exercise.answer
-                                          ? 'ঠিক হয়েছে! ধীরে পড়ে আবার মিলিয়ে নাও।'
-                                          : 'আবার চেষ্টা করো—উদাহরণটি দেখে উত্তর বেছে নাও।',
+                                          ? context.t(
+                                              'qaida.next_course.correct_feedback')
+                                          : context.t(
+                                              'qaida.next_course.retry_feedback'),
                                       style: const TextStyle(
                                           color: AppTheme.primaryGreen,
                                           fontWeight: FontWeight.w800))),
@@ -327,14 +525,20 @@ class _QaidaNextCourseScreenState extends State<QaidaNextCourseScreen> {
                                           ? Icons.arrow_forward_rounded
                                           : Icons.refresh_rounded),
                                   text: !_checked
-                                      ? 'উত্তর মিলিয়ে দেখি'
+                                      ? context
+                                          .t('qaida.next_course.btn_check')
                                       : _selected != exercise.answer
-                                          ? 'আবার চেষ্টা করি'
-                                          : _step < course.exercises.length - 1
-                                              ? 'পরের ধাপ'
+                                          ? context.t(
+                                              'qaida.next_course.btn_try_again')
+                                          : _step <
+                                                  course.exercises.length - 1
+                                              ? context.t(
+                                                  'qaida.next_course.btn_next_step')
                                               : _index < qaidaCourseCount - 1
-                                                  ? 'পরের পাঠ'
-                                                  : 'ক্বায়দা পাঠ শেষ',
+                                                  ? context.t(
+                                                      'qaida.next_course.btn_next_lesson')
+                                                  : context.t(
+                                                      'qaida.next_course.btn_finish'),
                                   color: AppTheme.primaryGreen),
                             ),
                           ])),

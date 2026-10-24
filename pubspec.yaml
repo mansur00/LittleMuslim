@@ -16,6 +16,7 @@ dependencies:
   flutter_svg: ^2.0.10+1
   shared_preferences: ^2.3.2
   provider: ^6.1.2
+  intl: ^0.20.3
   lottie: ^3.1.2
   audioplayers: ^6.1.0
   http: ^1.6.0
@@ -43,6 +44,7 @@ flutter:
     - assets/audio/letters/
     - assets/audio/duas/
     - assets/l10n/
+    - assets/locales/
   fonts:
     - family: Amiri
       fonts:

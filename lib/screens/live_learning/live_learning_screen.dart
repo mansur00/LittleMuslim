@@ -1,3 +1,4 @@
+import '../../core/core.dart';
 import '../../l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -62,8 +63,8 @@ class _LiveLearningScreenState extends State<LiveLearningScreen> {
                 padding: EdgeInsets.all(tablet ? 32 : 18),
                 children: [
                   DuolingoPageHeader(
-                    title: 'শিক্ষকের সাথে শিখি',
-                    subtitle: 'ক্লাসের সময় ও তথ্য দেখো',
+                    title: context.t('live.learn_with_teacher'),
+                    subtitle: context.t('live.subtitle'),
                     iconType: VectorIconType.book,
                     gradientColors: const [
                       Color(0xFF58CC02),
@@ -87,14 +88,14 @@ class _LiveLearningScreenState extends State<LiveLearningScreen> {
                         ),
                       ],
                     ),
-                    child: const Row(children: [
-                      Icon(Icons.video_call_rounded,
+                    child: Row(children: [
+                      const Icon(Icons.video_call_rounded,
                           color: Colors.white, size: 38),
-                      SizedBox(width: 14),
+                      const SizedBox(width: 14),
                       Expanded(
-                        child: LocalizedText(
-                          'শিক্ষকের দেওয়া ক্লাসের তথ্য এখানে দেখবে।',
-                          style: TextStyle(
+                        child: Text(
+                          context.t('live.banner_info'),
+                          style: const TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.w800,
                               height: 1.5),
@@ -103,29 +104,29 @@ class _LiveLearningScreenState extends State<LiveLearningScreen> {
                     ]),
                   ),
                   const SizedBox(height: 22),
-                  const DuolingoSectionLabel(label: 'তোমার ক্লাস'),
+                  DuolingoSectionLabel(label: context.t('live.section_title')),
                   const SizedBox(height: 10),
                   FutureBuilder<List<LiveClass>>(
                     future: _classesFuture,
                     builder: (context, snapshot) {
                       if (snapshot.connectionState != ConnectionState.done) {
-                        return const _ScheduleMessage(
+                        return _ScheduleMessage(
                           icon: Icons.hourglass_top_rounded,
-                          title: 'ক্লাসের তথ্য আনা হচ্ছে…',
-                          detail: 'একটু অপেক্ষা করো।',
+                          title: context.t('live.loading_title'),
+                          detail: context.t('live.loading_detail'),
                         );
                       }
                       if (snapshot.hasError) {
                         return _ScheduleMessage(
                           icon: Icons.wifi_off_rounded,
-                          title: 'ক্লাসের তথ্য আনা যায়নি।',
-                          detail: 'আবার চেষ্টা করো।',
+                          title: context.t('live.error_title'),
+                          detail: context.t('live.error_detail'),
                           action: TextButton.icon(
                             onPressed: () => setState(() {
                               _classesFuture = _loadClasses();
                             }),
                             icon: const Icon(Icons.refresh_rounded),
-                            label: const LocalizedText('আবার চেষ্টা'),
+                            label: Text(context.t('live.retry_btn')),
                           ),
                         );
                       }
@@ -133,11 +134,10 @@ class _LiveLearningScreenState extends State<LiveLearningScreen> {
                           (a.startAt ?? DateTime(9999))
                               .compareTo(b.startAt ?? DateTime(9999)));
                       if (classes.isEmpty) {
-                        return const _ScheduleMessage(
+                        return _ScheduleMessage(
                           icon: Icons.event_busy_rounded,
-                          title: 'এখনো কোনো ক্লাসের সময়সূচি নেই।',
-                          detail:
-                              'শিক্ষক বা প্রতিষ্ঠান সময়সূচি দিলে এখানে দেখাবে।',
+                          title: context.t('live.empty_title'),
+                          detail: context.t('live.empty_detail'),
                         );
                       }
                       return Column(
@@ -161,8 +161,8 @@ class _LiveLearningScreenState extends State<LiveLearningScreen> {
                     },
                   ),
                   const SizedBox(height: 12),
-                  LocalizedText(
-                    'ক্লাসের সময়সূচি ও লিংক শিক্ষক/প্রতিষ্ঠানের কাছ থেকে আসতে হবে।',
+                  Text(
+                    context.t('live.schedule_source_note'),
                     textAlign: TextAlign.center,
                     style: TextStyle(
                         color: AppTheme.darkText.withValues(alpha: .55),
@@ -204,23 +204,23 @@ class _LiveClassDetailScreenState extends State<LiveClassDetailScreen> {
       widget.liveClass.statusAt(_now) == LiveClassStatus.live &&
       widget.liveClass.safeMeetingUri != null;
 
-  String get _joinMessage {
+  String _joinMessage(BuildContext context) {
     switch (widget.liveClass.statusAt(_now)) {
       case LiveClassStatus.upcoming:
-        return 'ক্লাস শুরু হলে যোগ দিতে পারবে।';
+        return context.t('live.cannot_join_upcoming');
       case LiveClassStatus.completed:
-        return 'এই ক্লাসটি শেষ হয়েছে।';
+        return context.t('live.cannot_join_completed');
       case LiveClassStatus.cancelled:
-        return 'এই ক্লাসটি বাতিল করা হয়েছে।';
+        return context.t('live.cannot_join_cancelled');
       case LiveClassStatus.unavailable:
-        return 'এই ক্লাসের সময়সূচি এখন পাওয়া যাচ্ছে না।';
+        return context.t('live.cannot_join_unavailable');
       case LiveClassStatus.live:
         if (widget.liveClass.meetingUrl == null ||
             widget.liveClass.meetingUrl!.trim().isEmpty) {
-          return 'শিক্ষক এখনো মিটিং লিংক দেননি।';
+          return context.t('live.cannot_join_missing_url');
         }
         if (widget.liveClass.safeMeetingUri == null) {
-          return 'নিরাপদ HTTPS মিটিং লিংক না থাকায় যোগ দেওয়া যাবে না।';
+          return context.t('live.cannot_join_unsafe_url');
         }
         return '';
     }
@@ -242,10 +242,9 @@ class _LiveClassDetailScreenState extends State<LiveClassDetailScreen> {
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
         ..showSnackBar(SnackBar(
-          content: const LocalizedText(
-              'মিটিং লিংক খুলতে পারিনি। অভিভাবকের সাহায্য নাও।'),
+          content: Text(context.t('live.join_error_snackbar')),
           action: SnackBarAction(
-            label: context.uiText('লিংক কপি'),
+            label: context.t('live.copy_link'),
             onPressed: () =>
                 Clipboard.setData(ClipboardData(text: uri.toString())),
           ),
@@ -257,6 +256,8 @@ class _LiveClassDetailScreenState extends State<LiveClassDetailScreen> {
   Widget build(BuildContext context) {
     final liveClass = widget.liveClass;
     final status = liveClass.statusAt(_now);
+    final joinMsg = _joinMessage(context);
+
     return Scaffold(
       backgroundColor: AppTheme.cream,
       body: SafeArea(
@@ -264,7 +265,7 @@ class _LiveClassDetailScreenState extends State<LiveClassDetailScreen> {
           padding: const EdgeInsets.all(20),
           children: [
             DuolingoPageHeader(
-              title: 'ক্লাসের বিস্তারিত',
+              title: context.t('live.detail_header_title'),
               subtitle: liveClass.title,
               iconType: VectorIconType.book,
               gradientColors: const [Color(0xFF58CC02), Color(0xFF46A302)],
@@ -280,7 +281,7 @@ class _LiveClassDetailScreenState extends State<LiveClassDetailScreen> {
                   Row(
                     children: [
                       Expanded(
-                        child: LocalizedText(liveClass.title,
+                        child: Text(liveClass.title,
                             style: const TextStyle(
                                 fontSize: 20,
                                 fontWeight: FontWeight.w900,
@@ -293,21 +294,21 @@ class _LiveClassDetailScreenState extends State<LiveClassDetailScreen> {
                     const SizedBox(height: 14),
                     _DetailLine(
                         icon: Icons.person_rounded,
-                        label: 'শিক্ষক',
+                        label: context.t('live.teacher_label'),
                         value: liveClass.teacher!.trim()),
                   ],
                   if (liveClass.startAt != null) ...[
                     const SizedBox(height: 11),
                     _DetailLine(
                       icon: Icons.calendar_month_rounded,
-                      label: 'তারিখ',
+                      label: context.t('live.date_label'),
                       value: _formatDate(context, liveClass.startAt!),
                     ),
                     if (liveClass.endAt != null) ...[
                       const SizedBox(height: 9),
                       _DetailLine(
                         icon: Icons.schedule_rounded,
-                        label: 'সময়',
+                        label: context.t('live.time_label'),
                         value:
                             '${_formatTime(context, liveClass.startAt!)} – ${_formatTime(context, liveClass.endAt!)}',
                       ),
@@ -315,7 +316,7 @@ class _LiveClassDetailScreenState extends State<LiveClassDetailScreen> {
                   ],
                   if (liveClass.description?.trim().isNotEmpty ?? false) ...[
                     const SizedBox(height: 16),
-                    LocalizedText(liveClass.description!.trim(),
+                    Text(liveClass.description!.trim(),
                         style: const TextStyle(
                             color: Colors.black87, height: 1.6)),
                   ],
@@ -332,22 +333,22 @@ class _LiveClassDetailScreenState extends State<LiveClassDetailScreen> {
                       child: CircularProgressIndicator(strokeWidth: 2),
                     )
                   : const Icon(Icons.open_in_new_rounded),
-              label: LocalizedText(
-                  _opening ? 'লিংক খোলা হচ্ছে…' : 'ক্লাসে যোগ দাও'),
+              label: Text(
+                  _opening ? context.t('live.opening_link') : context.t('live.join_btn')),
               style: FilledButton.styleFrom(
                 minimumSize: const Size.fromHeight(52),
                 backgroundColor: AppTheme.primaryGreen,
               ),
             ),
-            if (!_canJoin && _joinMessage.isNotEmpty) ...[
+            if (!_canJoin && joinMsg.isNotEmpty) ...[
               const SizedBox(height: 9),
-              LocalizedText(_joinMessage,
+              Text(joinMsg,
                   textAlign: TextAlign.center,
                   style: const TextStyle(color: Colors.black54, height: 1.5)),
             ],
             const SizedBox(height: 14),
-            LocalizedText(
-              'ক্লাসে যোগ দিতে সমস্যা হলে অভিভাবককে বলো. ক্লাসের উপস্থিতি ও উপকরণ এখন অ্যাপে সংযুক্ত নেই.',
+            Text(
+              context.t('live.parent_help_disclaimer'),
               textAlign: TextAlign.center,
               style: TextStyle(
                   color: AppTheme.darkText.withValues(alpha: .55),
@@ -362,18 +363,17 @@ class _LiveClassDetailScreenState extends State<LiveClassDetailScreen> {
 }
 
 String _formatDate(BuildContext context, DateTime date) =>
-    MaterialLocalizations.of(context).formatMediumDate(date.toLocal());
+    context.formatDate(date.toLocal(), format: AppDateFormat.medium);
 
 String _formatTime(BuildContext context, DateTime date) =>
-    MaterialLocalizations.of(context)
-        .formatTimeOfDay(TimeOfDay.fromDateTime(date.toLocal()));
+    context.formatTime(date.toLocal());
 
-String _statusTitle(LiveClassStatus status) => switch (status) {
-      LiveClassStatus.upcoming => 'আসছে',
-      LiveClassStatus.live => 'এখন চলছে',
-      LiveClassStatus.completed => 'শেষ',
-      LiveClassStatus.cancelled => 'বাতিল',
-      LiveClassStatus.unavailable => 'তথ্য নেই',
+String _statusTitle(BuildContext context, LiveClassStatus status) => switch (status) {
+      LiveClassStatus.upcoming => context.t('live.status.upcoming'),
+      LiveClassStatus.live => context.t('live.status.live'),
+      LiveClassStatus.completed => context.t('live.status.completed'),
+      LiveClassStatus.cancelled => context.t('live.status.cancelled'),
+      LiveClassStatus.unavailable => context.t('live.status.unavailable'),
     };
 
 Color _statusColor(LiveClassStatus status) => switch (status) {
@@ -404,7 +404,7 @@ class _ClassCard extends StatelessWidget {
         children: [
           Row(children: [
             Expanded(
-              child: LocalizedText(liveClass.title,
+              child: Text(liveClass.title,
                   style: const TextStyle(
                       color: AppTheme.darkText,
                       fontSize: 16,
@@ -414,12 +414,14 @@ class _ClassCard extends StatelessWidget {
           ]),
           if (liveClass.teacher?.trim().isNotEmpty ?? false) ...[
             const SizedBox(height: 7),
-            LocalizedText('শিক্ষক: ${liveClass.teacher!.trim()}',
-                style: const TextStyle(color: Colors.black54, fontSize: 12)),
+            Text(
+              context.t('live.teacher', params: {'name': liveClass.teacher!.trim()}),
+              style: const TextStyle(color: Colors.black54, fontSize: 12),
+            ),
           ],
           if (liveClass.startAt != null) ...[
             const SizedBox(height: 7),
-            LocalizedText(
+            Text(
               '${_formatDate(context, liveClass.startAt!)} · ${_formatTime(context, liveClass.startAt!)}',
               style: const TextStyle(
                   color: AppTheme.primaryGreen,
@@ -428,8 +430,8 @@ class _ClassCard extends StatelessWidget {
             ),
           ],
           const SizedBox(height: 9),
-          const LocalizedText('বিস্তারিত দেখো  ›',
-              style: TextStyle(
+          Text(context.t('live.card_view_details'),
+              style: const TextStyle(
                   color: AppTheme.primaryGreen,
                   fontSize: 12,
                   fontWeight: FontWeight.w800)),
@@ -450,7 +452,7 @@ class _StatusBadge extends StatelessWidget {
           color: _statusColor(status).withValues(alpha: .12),
           borderRadius: BorderRadius.circular(20),
         ),
-        child: LocalizedText(_statusTitle(status),
+        child: Text(_statusTitle(context, status),
             style: TextStyle(
                 color: _statusColor(status),
                 fontSize: 11,
@@ -468,11 +470,11 @@ class _DetailLine extends StatelessWidget {
   Widget build(BuildContext context) => Row(children: [
         Icon(icon, size: 19, color: AppTheme.primaryGreen),
         const SizedBox(width: 9),
-        LocalizedText('$label: ',
+        Text('$label: ',
             style: const TextStyle(
                 color: Colors.black54, fontWeight: FontWeight.w700)),
         Expanded(
-          child: LocalizedText(value,
+          child: Text(value,
               style: const TextStyle(
                   color: AppTheme.darkText, fontWeight: FontWeight.w700)),
         ),
@@ -496,12 +498,12 @@ class _ScheduleMessage extends StatelessWidget {
         child: Column(children: [
           Icon(icon, size: 32, color: AppTheme.primaryGreen),
           const SizedBox(height: 9),
-          LocalizedText(title,
+          Text(title,
               textAlign: TextAlign.center,
               style: const TextStyle(
                   color: AppTheme.darkText, fontWeight: FontWeight.w900)),
           const SizedBox(height: 5),
-          LocalizedText(detail,
+          Text(detail,
               textAlign: TextAlign.center,
               style: const TextStyle(color: Colors.black54, height: 1.5)),
           if (action != null) action!,

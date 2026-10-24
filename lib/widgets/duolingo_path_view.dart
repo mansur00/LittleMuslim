@@ -104,8 +104,8 @@ class _DuolingoPathViewState extends State<DuolingoPathView>
     list.add(const PathItemData(
       type: PathItemType.unitHeader,
       unitNumber: 1,
-      unitTitle: 'অধ্যায় ১: হরফ পরিচয় (১)',
-      unitSubtitle: 'আলিফ থেকে খা পর্যন্ত শিখি',
+      unitTitle: 'path.unit_1_title',
+      unitSubtitle: 'path.unit_1_subtitle',
     ));
     for (var i = 0; i <= 6; i++) {
       list.add(PathItemData(type: PathItemType.lesson, lessonIndex: i));
@@ -120,8 +120,8 @@ class _DuolingoPathViewState extends State<DuolingoPathView>
     list.add(const PathItemData(
       type: PathItemType.unitHeader,
       unitNumber: 2,
-      unitTitle: 'অধ্যায় ২: হরফ পরিচয় (২)',
-      unitSubtitle: 'দাল থেকে সাদ পর্যন্ত শিখি',
+      unitTitle: 'path.unit_2_title',
+      unitSubtitle: 'path.unit_2_subtitle',
     ));
     for (var i = 7; i <= 13; i++) {
       list.add(PathItemData(type: PathItemType.lesson, lessonIndex: i));
@@ -136,8 +136,8 @@ class _DuolingoPathViewState extends State<DuolingoPathView>
     list.add(const PathItemData(
       type: PathItemType.unitHeader,
       unitNumber: 3,
-      unitTitle: 'অধ্যায় ৩: হরফ পরিচয় (৩)',
-      unitSubtitle: 'দ্বাদ থেকে কাফ পর্যন্ত শিখি',
+      unitTitle: 'path.unit_3_title',
+      unitSubtitle: 'path.unit_3_subtitle',
     ));
     for (var i = 14; i <= 21; i++) {
       list.add(PathItemData(type: PathItemType.lesson, lessonIndex: i));
@@ -152,8 +152,8 @@ class _DuolingoPathViewState extends State<DuolingoPathView>
     list.add(const PathItemData(
       type: PathItemType.unitHeader,
       unitNumber: 4,
-      unitTitle: 'অধ্যায় ৪: হরফ পরিচয় (৪)',
-      unitSubtitle: 'লাম থেকে ইয়া পর্যন্ত সমাপ্তি',
+      unitTitle: 'path.unit_4_title',
+      unitSubtitle: 'path.unit_4_subtitle',
     ));
     for (var i = 22; i <= 27; i++) {
       list.add(PathItemData(type: PathItemType.lesson, lessonIndex: i));
@@ -168,8 +168,8 @@ class _DuolingoPathViewState extends State<DuolingoPathView>
     list.add(const PathItemData(
       type: PathItemType.unitHeader,
       unitNumber: 5,
-      unitTitle: 'অধ্যায় ৫: কুরআন তিলাওয়াত অনুশীলন',
-      unitSubtitle: 'যুক্ত বর্ণ · হরকত · মাদ · আয়াত',
+      unitTitle: 'path.unit_5_title',
+      unitSubtitle: 'path.unit_5_subtitle',
     ));
     for (var c = 0; c < qaidaCourseCount; c++) {
       list.add(PathItemData(type: PathItemType.lesson, courseIndex: c));
@@ -301,19 +301,19 @@ class _DuolingoPathViewState extends State<DuolingoPathView>
               size: 64,
             ),
             const SizedBox(height: 16),
-            const LocalizedText(
-              'এই ধাপটি এখনও লক!',
-              style: TextStyle(
+            Text(
+              context.t('path.step_locked'),
+              style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w900,
                 color: AppTheme.darkText,
               ),
             ),
             const SizedBox(height: 8),
-            const LocalizedText(
-              'আগের পাঠগুলো সফলভাবে শেষ করে এখানে পৌঁছাও। চলো শুরু করি!',
+            Text(
+              context.t('path.step_locked_desc'),
               textAlign: TextAlign.center,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 13,
                 color: Color(0xFF6B7280),
                 height: 1.4,
@@ -321,7 +321,7 @@ class _DuolingoPathViewState extends State<DuolingoPathView>
             ),
             const SizedBox(height: 20),
             Duolingo3DButton(
-              text: 'বুঝেছি',
+              text: context.t('path.got_it'),
               onPressed: () => Navigator.pop(ctx),
               color: const Color(0xFF58CC02),
               shadowColor: const Color(0xFF46A302),
@@ -360,10 +360,10 @@ class _DuolingoPathViewState extends State<DuolingoPathView>
               size: 64,
             ),
             const SizedBox(height: 12),
-            LocalizedText(
+            Text(
               alreadyOpened
-                  ? 'উপহার নেওয়া হয়েছে!'
-                  : 'অভিনন্দন! অধ্যায় মাইলস্টোন!',
+                  ? context.t('path.gift_claimed')
+                  : context.t('path.milestone_congrats'),
               textAlign: TextAlign.center,
               style: const TextStyle(
                 fontSize: 19,
@@ -372,10 +372,10 @@ class _DuolingoPathViewState extends State<DuolingoPathView>
               ),
             ),
             const SizedBox(height: 8),
-            LocalizedText(
+            Text(
               alreadyOpened
-                  ? 'তুমি আগেই এই ট্রেজার বক্স থেকে +${item.chestRewardXp} XP সংগ্রহ করেছ।'
-                  : 'চমৎকার অগ্রগতি! এই বক্সে তোমার জন্য আছে +${item.chestRewardXp} বোনাস XP!',
+                  ? context.t('path.chest_collected_xp', params: {'xp': item.chestRewardXp})
+                  : context.t('path.chest_reward_xp', params: {'xp': item.chestRewardXp}),
               textAlign: TextAlign.center,
               style: const TextStyle(
                 fontSize: 13,
@@ -386,7 +386,7 @@ class _DuolingoPathViewState extends State<DuolingoPathView>
             const SizedBox(height: 20),
             if (!alreadyOpened)
               Duolingo3DButton.gold(
-                text: '+${item.chestRewardXp} XP গ্রহণ করো',
+                text: context.t('path.claim_xp', params: {'xp': item.chestRewardXp}),
                 onPressed: () {
                   state.openChest(item.chestId!, xp: item.chestRewardXp);
                   Navigator.pop(ctx);
@@ -394,7 +394,7 @@ class _DuolingoPathViewState extends State<DuolingoPathView>
               )
             else
               Duolingo3DButton(
-                text: 'চালিয়ে যাও',
+                text: context.t('path.continue'),
                 onPressed: () => Navigator.pop(ctx),
                 height: 48,
               ),
@@ -570,8 +570,8 @@ class _UnitSignboard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                LocalizedText(
-                  'সেকশন $unitNumber · ইউনিট $unitNumber',
+                Text(
+                  context.t('path.section_unit', params: {'section': unitNumber, 'unit': unitNumber}),
                   style: TextStyle(
                     color: Colors.white.withValues(alpha: 0.85),
                     fontSize: 12,
@@ -580,8 +580,8 @@ class _UnitSignboard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 4),
-                LocalizedText(
-                  title,
+                Text(
+                  context.t(title),
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 17,
@@ -816,7 +816,7 @@ class _DuolingoNodeWidget extends StatelessWidget {
           ] else if (item.isCourseLesson) ...[
             const SizedBox(height: 3),
             LocalizedText(
-              qaidaCourseTitles[item.courseIndex!],
+              getQaidaCourseTitle(context, item.courseIndex!),
               style: TextStyle(
                 fontSize: 11,
                 fontWeight: FontWeight.w800,
@@ -890,12 +890,12 @@ class _MilestoneChestNode extends StatelessWidget {
               borderRadius: BorderRadius.circular(10),
               border: Border.all(color: const Color(0xFFE5E7EB)),
             ),
-            child: LocalizedText(
+            child: Text(
               isOpened
-                  ? 'উপহার সম্পন্ন'
+                  ? context.t('path.gift_completed')
                   : isUnlocked
-                      ? '+${item.chestRewardXp} XP উপহার'
-                      : 'লক চেস্ট',
+                      ? context.t('path.gift_xp', params: {'xp': item.chestRewardXp})
+                      : context.t('path.locked_chest'),
               style: TextStyle(
                 fontSize: 10,
                 fontWeight: FontWeight.w800,

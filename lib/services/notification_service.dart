@@ -1,8 +1,20 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
+import '../l10n/static_translations.dart';
 import '../utils/app_state.dart';
+
+String _notifText(String lang, String key, {Map<String, String>? params}) {
+  String val = staticTranslations[lang]?[key] ?? staticTranslations['en']?[key] ?? key;
+  if (params != null) {
+    params.forEach((k, v) {
+      val = val.replaceAll('{{$k}}', v).replaceAll('{$k}', v);
+    });
+  }
+  return val;
+}
 
 class NotificationService {
   NotificationService._();
@@ -14,19 +26,19 @@ class NotificationService {
   static const int learningAlarmNotificationId = 4001;
 
   static const String notificationChannelId = 'little_muslim_reminders';
-  static const String notificationChannelName = 'LittleMuslim Reminders';
+  static const String notificationChannelName = 'little_muslim_reminders_channel';
   static const String notificationChannelDescription =
-      'Daily learning streak and live class reminder alerts';
+      'little_muslim_reminders_description';
 
   static const String prayerChannelId = 'little_muslim_prayer';
-  static const String prayerChannelName = 'নামাজের আযান ও ওয়াক্ত (Prayer Times)';
+  static const String prayerChannelName = 'little_muslim_prayer_channel';
   static const String prayerChannelDescription =
-      'নামাজের ওয়াক্ত হলে আযানের নোটিফিকেশন ও অ্যালার্ট';
+      'little_muslim_prayer_description';
 
   static const String learningAlarmChannelId = 'little_muslim_learning_alarm';
-  static const String learningAlarmChannelName = 'পড়ার অ্যালার্ম (আউযুবিল্লাহ ও বিসমিল্লাহ)';
+  static const String learningAlarmChannelName = 'little_muslim_learning_alarm_channel';
   static const String learningAlarmChannelDescription =
-      'দৈনিক কুরআন ও কায়দা পড়ার অ্যালার্ম ও স্মরণিকা';
+      'little_muslim_learning_alarm_description';
 
   final FlutterLocalNotificationsPlugin _plugin =
       FlutterLocalNotificationsPlugin();
@@ -120,13 +132,9 @@ class NotificationService {
       final hour = int.tryParse(parts.first) ?? 19;
       final minute = int.tryParse(parts.length > 1 ? parts[1] : '0') ?? 0;
 
-      final isBangla = state.selectedLanguage != 'en';
-      final title = isBangla
-          ? 'আজকের কায়দা ও দুআ পড়া বাকি আছে!'
-          : 'Keep your streak going! Time to learn!';
-      final body = isBangla
-          ? 'প্রতিদিনের ছোট আমল ও পড়াশোনা নিয়মিত রাখলে স্ট্রিক বাড়ে।'
-          : 'Complete your daily lesson to grow your streak and earn XP.';
+      final lang = state.selectedLanguage;
+      final title = _notifText(lang, 'notification.streak_title');
+      final body = _notifText(lang, 'notification.streak_body');
 
       await scheduleDailyStreakReminder(
         hour: hour,
@@ -144,13 +152,9 @@ class NotificationService {
       final hour = int.tryParse(parts.first) ?? 17;
       final minute = int.tryParse(parts.length > 1 ? parts[1] : '30') ?? 30;
 
-      final isBangla = state.selectedLanguage != 'en';
-      final title = isBangla
-          ? 'পড়ার সময় হয়েছে! — আউযুবিল্লাহ ও বিসমিল্লাহ'
-          : 'Time to learn! Recite Auzubillah & Bismillah';
-      final body = isBangla
-          ? 'أَعُوذُ بِاللَّهِ مِنَ الشَّيْطَانِ الرَّجِيمِ • بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ'
-          : 'Start your Quran & Qaida reading with blessings!';
+      final lang = state.selectedLanguage;
+      final title = _notifText(lang, 'notification.learning_title');
+      final body = _notifText(lang, 'notification.learning_body');
 
       await scheduleDailyLearningAlarm(
         hour: hour,
@@ -333,8 +337,10 @@ class NotificationService {
       );
 
       final id = prayerReminderBaseNotificationId + prayerIndex;
-      final title = 'ওয়াক্ত হয়েছে: $prayerName ($arabicName)';
-      final body = 'আল্লাহু আকবার! নামাজের সময় হয়েছে, ওজু করে সালাতের জন্য প্রস্তুত হও।';
+      final prefs = await SharedPreferences.getInstance();
+      final lang = prefs.getString('language') ?? 'en';
+      final title = _notifText(lang, 'notification.prayer_title', params: {'prayer': '$prayerName ($arabicName)'});
+      final body = _notifText(lang, 'notification.prayer_body');
 
       await _plugin.zonedSchedule(
         id,

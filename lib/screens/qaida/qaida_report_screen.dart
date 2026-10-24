@@ -1,3 +1,4 @@
+import '../../core/core.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -11,6 +12,7 @@ import '../../utils/app_state.dart';
 import '../../widgets/duolingo_appbar.dart';
 import '../../widgets/quran_book_mascot.dart';
 import '../../widgets/vector_icons.dart';
+import 'qaida_letters.dart';
 import 'qaida_revision_screen.dart';
 import 'qaida_track_lessons_screen.dart';
 
@@ -66,8 +68,8 @@ class QaidaReportScreen extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
               children: [
                 DuolingoHeader(
-                  title: 'শিক্ষার্থী অগ্রগতি প্রতিবেদন',
-                  subtitle: 'নূরানী কায়দা ১৭ ধাপের পূর্ণাঙ্গ মূল্যায়ন ও বিশ্লেষণ',
+                  title: context.t('report.title'),
+                  subtitle: context.t('report.subtitle'),
                   iconType: VectorIconType.trophy,
                   gradientColors: const [Color(0xFF58CC02), Color(0xFF46A302)],
                   onBack: () => Navigator.of(context).pop(),
@@ -106,20 +108,20 @@ class QaidaReportScreen extends StatelessWidget {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                LocalizedText(
+                                Text(
                                   state.userName.isNotEmpty
                                       ? state.userName
-                                      : 'শিশু শিক্ষার্থী',
-                                  style: GoogleFonts.hindSiliguri(
+                                      : context.t('report.default_child_learner'),
+                                  style: AppFonts.getTextStyle(context, 
                                     fontSize: 20,
                                     fontWeight: FontWeight.bold,
                                     color: Colors.white,
                                   ),
                                 ),
-                                LocalizedText(
+                                Text(
                                   state.isAdmin
-                                      ? 'ভূমিকা: অ্যাডমিন পর্যবেক্ষক'
-                                      : 'বয়স: ${state.age} বছর · নূরানী ক্বায়দা শিক্ষার্থী',
+                                      ? context.t('report.role_admin')
+                                      : context.t('report.learner_age_desc', params: {'age': '${state.age}'}),
                                   style: TextStyle(
                                     fontSize: 13,
                                     color: Colors.white.withValues(alpha: 0.9),
@@ -152,8 +154,8 @@ class QaidaReportScreen extends StatelessWidget {
                                 const Icon(Icons.bolt_rounded,
                                     color: Color(0xFFFFC800), size: 16),
                                 const SizedBox(width: 4),
-                                LocalizedText(
-                                  '${state.xp} XP অর্জিত',
+                                Text(
+                                  context.t('report.xp_earned', params: {'xp': '${state.xp}'}),
                                   style: const TextStyle(
                                     color: Colors.white,
                                     fontWeight: FontWeight.bold,
@@ -163,8 +165,12 @@ class QaidaReportScreen extends StatelessWidget {
                               ],
                             ),
                           ),
-                          LocalizedText(
-                            '$completedLessonsCount / $totalLessonsCount পাঠ (${(overallProgress * 100).toStringAsFixed(0)}%)',
+                          Text(
+                            context.t('report.lessons_completed_summary', params: {
+                              'completed': '$completedLessonsCount',
+                              'total': '$totalLessonsCount',
+                              'percent': (overallProgress * 100).toStringAsFixed(0),
+                            }),
                             style: const TextStyle(
                               color: Colors.white,
                               fontSize: 13,
@@ -196,9 +202,9 @@ class QaidaReportScreen extends StatelessWidget {
                       child: _MetricCard(
                         icon: Icons.auto_stories_rounded,
                         color: const Color(0xFF58CC02),
-                        title: 'পাঠ সম্পন্ন',
+                        title: context.t('report.metric_lessons_completed'),
                         value: '$completedLessonsCount',
-                        subtitle: 'মোট $totalLessonsCount',
+                        subtitle: context.t('report.metric_total_lessons', params: {'total': '$totalLessonsCount'}),
                       ),
                     ),
                     const SizedBox(width: 10),
@@ -206,9 +212,9 @@ class QaidaReportScreen extends StatelessWidget {
                       child: _MetricCard(
                         icon: Icons.layers_rounded,
                         color: const Color(0xFF6366F1),
-                        title: 'স্টেপ সমাপ্ত',
+                        title: context.t('report.metric_steps_finished'),
                         value: '$completedTracksCount',
-                        subtitle: 'মোট ১৭টি স্টেপ',
+                        subtitle: context.t('report.metric_total_steps'),
                       ),
                     ),
                     const SizedBox(width: 10),
@@ -216,9 +222,9 @@ class QaidaReportScreen extends StatelessWidget {
                       child: _MetricCard(
                         icon: Icons.workspace_premium_rounded,
                         color: const Color(0xFFF59E0B),
-                        title: 'পরীক্ষা উত্তীর্ণ',
+                        title: context.t('report.metric_exams_passed'),
                         value: '$passedExamsCount',
-                        subtitle: '৮০%+ পাস মার্ক',
+                        subtitle: context.t('report.metric_pass_mark'),
                       ),
                     ),
                   ],
@@ -249,18 +255,18 @@ class QaidaReportScreen extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            LocalizedText(
-                              'দক্ষতা ও নির্ভুলতা হার: $avgAccuracy%',
+                            Text(
+                              context.t('report.accuracy_rate', params: {'accuracy': '$avgAccuracy'}),
                               style: const TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.bold,
                                 color: Color(0xFF1E293B),
                               ),
                             ),
-                            LocalizedText(
+                            Text(
                               dueCount > 0
-                                  ? '$dueCountটি দক্ষতার রিভিশন অপেক্ষমাণ'
-                                  : 'সব পাঠ তাজা রয়েছে',
+                                  ? context.t('report.revision_due', params: {'count': '$dueCount'})
+                                  : context.t('report.all_fresh'),
                               style: TextStyle(
                                 fontSize: 12,
                                 color: dueCount > 0
@@ -290,9 +296,9 @@ class QaidaReportScreen extends StatelessWidget {
                           );
                         },
                         icon: const Icon(Icons.replay_rounded, size: 14),
-                        label: const LocalizedText(
-                          'অনুশীলন',
-                          style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                        label: Text(
+                          context.t('report.practice_btn'),
+                          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
                         ),
                       ),
                     ],
@@ -313,9 +319,9 @@ class QaidaReportScreen extends StatelessWidget {
                 const SizedBox(height: 24),
 
                 // Track by Track breakdown
-                LocalizedText(
-                  'ট্র্যাকভিত্তিক দক্ষতা বিবরণ',
-                  style: GoogleFonts.hindSiliguri(
+                Text(
+                  context.t('report.track_breakdown_title'),
+                  style: AppFonts.getTextStyle(context, 
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                     color: const Color(0xFF1E293B),
@@ -348,18 +354,18 @@ class QaidaReportScreen extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const LocalizedText(
-                              'অভিভাবকদের জন্য নির্দেশনা',
-                              style: TextStyle(
+                            Text(
+                              context.t('report.guardian_guidance_title'),
+                              style: const TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.bold,
                                 color: Color(0xFF92400E),
                               ),
                             ),
                             const SizedBox(height: 4),
-                            LocalizedText(
-                              'অ্যাপের ফলাফল শিক্ষার্থীর পরিচিতি ও নিয়মিত অনুশীলনের অগ্রগতি নির্দেশ করে। বিশুদ্ধ মাখরাজ ও পরিপূর্ণ তাজবীদের জন্য অভিজ্ঞ শিক্ষকের সরাসরি তিলাওয়াত শ্রবণ ও যাচাই প্রশংসনীয়।',
-                              style: GoogleFonts.hindSiliguri(
+                            Text(
+                              context.t('report.guardian_guidance_body'),
+                              style: AppFonts.getTextStyle(context, 
                                 fontSize: 13,
                                 color: const Color(0xFF78350F),
                                 height: 1.4,
@@ -510,16 +516,21 @@ class _TrackProgressReportTile extends StatelessWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
-                            track.title,
-                            style: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFF1E293B),
+                          Expanded(
+                            child: Text(
+                              context.uiText(track.title),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xFF1E293B),
+                              ),
                             ),
                           ),
+                          const SizedBox(width: 8),
                           Text(
-                            '$done/$total ($pct%)',
+                            '${context.formatDigits('$done')}/${context.formatDigits('$total')} (${context.formatDigits('$pct')}%)',
                             style: TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.bold,
@@ -559,44 +570,13 @@ class _TrackProgressReportTile extends StatelessWidget {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// 28-LETTER WEAK LETTER HEATMAP (দুর্বল হরফ ও মাখরাজ মানচিত্র)
+// 28-LETTER WEAK LETTER HEATMAP
 // ─────────────────────────────────────────────────────────────────────────────
 
 class _WeakLetterHeatmapWidget extends StatelessWidget {
   const _WeakLetterHeatmapWidget({required this.state});
 
   final AppState state;
-
-  static const _letters = [
-    {'ar': 'ا', 'name': 'আলিফ', 'makhraj': 'মুখের খালি জায়গা থেকে'},
-    {'ar': 'ب', 'name': 'বা', 'makhraj': 'দুই ঠোঁটের ভেজা অংশ থেকে'},
-    {'ar': 'ت', 'name': 'তা', 'makhraj': 'জিহ্বার আগা ও ওপরের সামনের দুই দাঁতের গোড়া'},
-    {'ar': 'ث', 'name': 'ছা', 'makhraj': 'জিহ্বার আগা ও ওপরের সামনের দুই দাঁতের আগা'},
-    {'ar': 'ج', 'name': 'জীম', 'makhraj': 'জিহ্বার মধ্যভাগ ও তালু'},
-    {'ar': 'ح', 'name': 'হা', 'makhraj': 'হলক্ব বা গলার মধ্যভাগ'},
-    {'ar': 'خ', 'name': 'খা', 'makhraj': 'হলক্ব বা গলার শেষভাগ'},
-    {'ar': 'د', 'name': 'দাল', 'makhraj': 'জিহ্বার আগা ও ওপরের দাঁতের গোড়া'},
-    {'ar': 'ذ', 'name': 'যাল', 'makhraj': 'জিহ্বার আগা ও ওপরের দাঁতের আগা'},
-    {'ar': 'ر', 'name': 'রা', 'makhraj': 'জিহ্বার আগার পিঠ ও তালু'},
-    {'ar': 'ز', 'name': 'যা', 'makhraj': 'জিহ্বার আগা ও নিচের দাঁতের পেট'},
-    {'ar': 'س', 'name': 'সীন', 'makhraj': 'জিহ্বার আগা ও নিচের দাঁতের পেট'},
-    {'ar': 'ش', 'name': 'শীন', 'makhraj': 'জিহ্বার মধ্যভাগ ও তালু'},
-    {'ar': 'ص', 'name': 'সোয়াদ', 'makhraj': 'জিহ্বার আগা ও নিচের দাঁতের পেট'},
-    {'ar': 'ض', 'name': 'দোয়াদ', 'makhraj': 'জিহ্বার গোড়ার কিনারা ও ওপরের মাড়ির দাঁত'},
-    {'ar': 'ط', 'name': 'তোয়া', 'makhraj': 'জিহ্বার আগা ও ওপরের দাঁতের গোড়া'},
-    {'ar': 'ظ', 'name': 'যোয়া', 'makhraj': 'জিহ্বার আগা ও ওপরের দাঁতের আগা'},
-    {'ar': 'ع', 'name': 'আইন', 'makhraj': 'হলক্ব বা গলার মধ্যভাগ'},
-    {'ar': 'غ', 'name': 'গাইন', 'makhraj': 'হলক্ব বা গলার শেষভাগ'},
-    {'ar': 'ف', 'name': 'ফা', 'makhraj': 'ওপরের দাঁতের আগা ও নিচের ঠোঁটের পেট'},
-    {'ar': 'ق', 'name': 'ক্বাফ', 'makhraj': 'জিহ্বার গোড়া ও নরম তালু'},
-    {'ar': 'ك', 'name': 'কাফ', 'makhraj': 'জিহ্বার গোড়া থেকে একটু আগে ও শক্ত তালু'},
-    {'ar': 'ل', 'name': 'লাম', 'makhraj': 'জিহ্বার আগার কিনারা ও ওপরের তালু'},
-    {'ar': 'م', 'name': 'মীম', 'makhraj': 'দুই ঠোঁটের শুকনা অংশ থেকে'},
-    {'ar': 'ن', 'name': 'নূন', 'makhraj': 'জিহ্বার আগা ও ওপরের তালু'},
-    {'ar': 'و', 'name': 'ওয়াও', 'makhraj': 'দুই ঠোঁট গোল করে'},
-    {'ar': 'ه', 'name': 'হা', 'makhraj': 'হলক্ব বা গলার শুরুভাগ'},
-    {'ar': 'ي', 'name': 'ইয়া', 'makhraj': 'জিহ্বার মধ্যভাগ ও তালু'},
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -633,17 +613,17 @@ class _WeakLetterHeatmapWidget extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    LocalizedText(
-                      '২৮ হরফ মাখরাজ হিটম্যাপ (Weak Letter List)',
-                      style: GoogleFonts.hindSiliguri(
+                    Text(
+                      context.t('report.heatmap_title'),
+                      style: AppFonts.getTextStyle(context, 
                         fontSize: 15,
                         fontWeight: FontWeight.bold,
                         color: const Color(0xFF1E293B),
                       ),
                     ),
-                    const LocalizedText(
-                      'সবুজ = নিখুঁত • কমলা = অনুশীলন দরকার • লাল = দুর্বল হরফ',
-                      style: TextStyle(fontSize: 10, color: Color(0xFF64748B)),
+                    Text(
+                      context.t('report.heatmap_legend'),
+                      style: const TextStyle(fontSize: 10, color: Color(0xFF64748B)),
                     ),
                   ],
                 ),
@@ -656,7 +636,7 @@ class _WeakLetterHeatmapWidget extends StatelessWidget {
           GridView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
-            itemCount: _letters.length,
+            itemCount: qaidaLetters.length,
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 7,
               crossAxisSpacing: 8,
@@ -664,10 +644,10 @@ class _WeakLetterHeatmapWidget extends StatelessWidget {
               childAspectRatio: 1.0,
             ),
             itemBuilder: (context, index) {
-              final item = _letters[index];
-              final ar = item['ar']!;
-              final name = item['name']!;
-              final makhraj = item['makhraj']!;
+              final letter = qaidaLetters[index];
+              final ar = letter.letter;
+              final name = context.t(letter.nameKey);
+              final makhraj = context.t(letter.makhrajKey);
 
               // Skill resolution
               final skill = state.allSkillProgress[ar] ??
@@ -721,9 +701,9 @@ class _WeakLetterHeatmapWidget extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(width: 12),
-                          LocalizedText(
-                            '$name হরফ',
-                            style: GoogleFonts.hindSiliguri(
+                          Text(
+                            context.t('report.letter_title', params: {'name': name}),
+                            style: AppFonts.getTextStyle(context, 
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
                             ),
@@ -734,9 +714,9 @@ class _WeakLetterHeatmapWidget extends StatelessWidget {
                         mainAxisSize: MainAxisSize.min,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          LocalizedText(
-                            'মাখরাজ (উচ্চারণস্থল):',
-                            style: GoogleFonts.hindSiliguri(
+                          Text(
+                            context.t('report.makhraj_label'),
+                            style: AppFonts.getTextStyle(context, 
                               fontWeight: FontWeight.bold,
                               fontSize: 13,
                               color: const Color(0xFF475569),
@@ -744,13 +724,16 @@ class _WeakLetterHeatmapWidget extends StatelessWidget {
                           ),
                           Text(
                             makhraj,
-                            style: GoogleFonts.hindSiliguri(fontSize: 14),
+                            style: AppFonts.getTextStyle(context, fontSize: 14),
                           ),
                           const SizedBox(height: 12),
-                          LocalizedText(
+                          Text(
                             skill != null
-                                ? 'নির্ভুলতা: ${(skill.accuracy * 100).toInt()}% • ভুল: ${skill.incorrectAttempts} বার'
-                                : 'এখনো অনুশীলন শুরু হয়নি',
+                                ? context.t('report.letter_accuracy_stats', params: {
+                                    'accuracy': '${(skill.accuracy * 100).toInt()}',
+                                    'errors': '${skill.incorrectAttempts}',
+                                  })
+                                : context.t('report.letter_no_practice'),
                             style: const TextStyle(
                                 fontSize: 12, color: Color(0xFF64748B)),
                           ),
@@ -759,10 +742,10 @@ class _WeakLetterHeatmapWidget extends StatelessWidget {
                       actions: [
                         TextButton(
                           onPressed: () => Navigator.of(ctx).pop(),
-                          child: const LocalizedText('ঠিক আছে'),
+                          child: Text(context.t('common.ok')),
                         ),
                         DSButton(
-                          label: 'অনুশীলন করুন',
+                          label: context.t('report.practice_now_btn'),
                           height: 42,
                           onPressed: () {
                             Navigator.of(ctx).pop();
@@ -806,7 +789,7 @@ class _WeakLetterHeatmapWidget extends StatelessWidget {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// 3-TIER EXAM AUDIT CARD (পরীক্ষা অডিট)
+// 3-TIER EXAM AUDIT CARD
 // ─────────────────────────────────────────────────────────────────────────────
 
 class _ExamAuditCard extends StatelessWidget {
@@ -873,17 +856,17 @@ class _ExamAuditCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    LocalizedText(
-                      '৩-স্তর বিশিষ্ট পরীক্ষা অডিট (৮০% পাস গেট)',
-                      style: GoogleFonts.hindSiliguri(
+                    Text(
+                      context.t('report.exam_audit_title'),
+                      style: AppFonts.getTextStyle(context, 
                         fontSize: 15,
                         fontWeight: FontWeight.bold,
                         color: const Color(0xFF1E293B),
                       ),
                     ),
-                    const LocalizedText(
-                      'স্টেপ বস পরীক্ষা, সাপ্তাহিক ও মাসিক মূল্যায়ন রেকর্ড',
-                      style: TextStyle(fontSize: 10, color: Color(0xFF64748B)),
+                    Text(
+                      context.t('report.exam_audit_subtitle'),
+                      style: const TextStyle(fontSize: 10, color: Color(0xFF64748B)),
                     ),
                   ],
                 ),
@@ -895,24 +878,24 @@ class _ExamAuditCard extends StatelessWidget {
             children: [
               Expanded(
                 child: _ExamMiniBadge(
-                  label: 'স্টেপ বস',
-                  value: '$passedBossCount/১৭',
+                  label: context.t('report.step_boss'),
+                  value: context.formatDigits('$passedBossCount/17'),
                   color: const Color(0xFF58CC02),
                 ),
               ),
               const SizedBox(width: 8),
               Expanded(
                 child: _ExamMiniBadge(
-                  label: 'সাপ্তাহিক',
-                  value: '$passedWeeklyCountটি',
+                  label: context.t('report.weekly_exam'),
+                  value: context.t('report.count_suffix', params: {'count': '$passedWeeklyCount'}),
                   color: const Color(0xFFD97706),
                 ),
               ),
               const SizedBox(width: 8),
               Expanded(
                 child: _ExamMiniBadge(
-                  label: 'মাসিক মেগা',
-                  value: '$passedMonthlyCountটি',
+                  label: context.t('report.monthly_mega_exam'),
+                  value: context.t('report.count_suffix', params: {'count': '$passedMonthlyCount'}),
                   color: const Color(0xFF9333EA),
                 ),
               ),
@@ -971,7 +954,7 @@ class _ExamMiniBadge extends StatelessWidget {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// GUARDIAN TEACH BACK & FAMILY LISTENING (অভিভাবক চেক-ইন)
+// GUARDIAN TEACH BACK & FAMILY LISTENING
 // ─────────────────────────────────────────────────────────────────────────────
 
 class _GuardianTeachBackCard extends StatefulWidget {
@@ -1021,17 +1004,17 @@ class _GuardianTeachBackCardState extends State<_GuardianTeachBackCard> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    LocalizedText(
-                      'অভিভাবক চেক-ইন (Teach Back & Family Practice)',
-                      style: GoogleFonts.hindSiliguri(
+                    Text(
+                      context.t('report.guardian_checkin_title'),
+                      style: AppFonts.getTextStyle(context, 
                         fontSize: 15,
                         fontWeight: FontWeight.bold,
                         color: const Color(0xFF166534),
                       ),
                     ),
-                    const LocalizedText(
-                      'সন্তানের তিলাওয়াত সরাসরি শুনুন ও উৎসাহ দিন (+১৫ XP)',
-                      style: TextStyle(fontSize: 11, color: Color(0xFF15803D)),
+                    Text(
+                      context.t('report.guardian_checkin_sub'),
+                      style: const TextStyle(fontSize: 11, color: Color(0xFF15803D)),
                     ),
                   ],
                 ),
@@ -1039,9 +1022,9 @@ class _GuardianTeachBackCardState extends State<_GuardianTeachBackCard> {
             ],
           ),
           const SizedBox(height: 12),
-          LocalizedText(
-            'আজকের পাঠ বা দুর্বল হরফগুলো সন্তানকে আপনার সামনে জোরে উচ্চারণ করতে বলুন। এতে আত্মবিশ্বাস বাড়ে ও ভুল দ্রুত সংশোধন হয়।',
-            style: GoogleFonts.hindSiliguri(
+          Text(
+            context.t('report.guardian_checkin_body'),
+            style: AppFonts.getTextStyle(context, 
               fontSize: 13,
               color: const Color(0xFF14532D),
               height: 1.35,
@@ -1057,10 +1040,10 @@ class _GuardianTeachBackCardState extends State<_GuardianTeachBackCard> {
                     });
                     widget.state.addXp(15);
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: LocalizedText(
-                            'মাশাআল্লাহ! বাচ্চার সাথে অভিভাবকের তিলাওয়াত অনুশীলনের জন্য +১৫ XP যোগ হয়েছে!'),
-                        backgroundColor: Color(0xFF16A34A),
+                      SnackBar(
+                        content: Text(
+                            context.t('report.guardian_checkin_snack')),
+                        backgroundColor: const Color(0xFF16A34A),
                       ),
                     );
                   },
@@ -1089,11 +1072,11 @@ class _GuardianTeachBackCardState extends State<_GuardianTeachBackCard> {
                     size: 18,
                   ),
                   const SizedBox(width: 8),
-                  LocalizedText(
+                  Text(
                     _checkedToday
-                        ? 'আজকের তিলাওয়াত শোনা হয়েছে ✓'
-                        : 'আজকের তিলাওয়াত শুনেছি (+১৫ XP)',
-                    style: GoogleFonts.hindSiliguri(
+                        ? context.t('report.checked_done')
+                        : context.t('report.check_listen_action'),
+                    style: AppFonts.getTextStyle(context, 
                       fontSize: 14,
                       fontWeight: FontWeight.bold,
                       color: _checkedToday

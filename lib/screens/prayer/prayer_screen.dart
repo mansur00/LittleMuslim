@@ -1,3 +1,4 @@
+import '../../core/core.dart';
 import '../../l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -20,9 +21,8 @@ class _PrayerChapter {
       required this.note,
       required this.icon,
       required this.color,
-      this.rule =
-          'নিয়ত, তাকবির, কিয়াম, রুকু, সিজদা, শেষ বৈঠক ও সালাম—শিক্ষকের শেখানো পদ্ধতি অনুসরণ করো।',
-      this.virtue = 'নিয়মিত ইবাদত ও আল্লাহর স্মরণে সাহায্য করে।',
+      this.rule = 'prayer.default_rule',
+      this.virtue = 'prayer.default_virtue',
       this.reference = ''});
   final String title, subtitle, rakat, time, note, rule, virtue, reference;
   final IconData icon;
@@ -36,225 +36,248 @@ class PrayerScreen extends StatelessWidget {
   final PrayerSettingsStore? settingsStore;
   final PrayerDeviceLocationProvider? locationProvider;
 
-  static const _fardChapters = <_PrayerChapter>[
-    _PrayerChapter(
-        title: 'ফজর',
-        subtitle: 'ভোরের নামাজ',
-        rakat: 'ফরজ: ২ রাকাত · আগে ২ রাকাত সুন্নত প্রচলিত',
-        time: 'শুরু: সুবহে সাদিক হলে  ·  শেষ: সূর্য ওঠার আগে',
-        note:
-            'ফজরের সময় সত্য ভোরের আলো দেখা দিলে শুরু হয় এবং সূর্যোদয়ে শেষ হয়। স্থানীয় ক্যালেন্ডারে ঘড়ির সময় দেখো।',
-        virtue: 'ফজর ও আসর যত্নে আদায়ের ব্যাপারে জান্নাতের সুসংবাদ এসেছে।',
-        reference: 'সহিহ বুখারি ৫৭৪',
+  static List<_PrayerChapter> _getFardChapters(BuildContext context) {
+    final defaultRule = context.t('prayer.chapter.default_rule');
+    return [
+      _PrayerChapter(
+        title: context.t('prayer.fard.fajr.title'),
+        subtitle: context.t('prayer.fard.fajr.subtitle'),
+        rakat: context.t('prayer.fard.fajr.rakat'),
+        time: context.t('prayer.fard.fajr.time'),
+        note: context.t('prayer.fard.fajr.note'),
+        virtue: context.t('prayer.fard.fajr.virtue'),
+        reference: context.t('prayer.fard.fajr.reference'),
+        rule: defaultRule,
         icon: Icons.wb_twilight_rounded,
-        color: Color(0xFF6D75BC)),
-    _PrayerChapter(
-        title: 'যোহর',
-        subtitle: 'দুপুরের নামাজ',
-        rakat: 'ফরজ: ৪ রাকাত · সুন্নতের রাকাত বিন্যাসে মতভেদ আছে',
-        time: 'শুরু: সূর্য ঢলে গেলে  ·  শেষ: আসরের সময় শুরু হলে',
-        note:
-            'সূর্য মধ্য আকাশ পার হয়ে পশ্চিমে ঢলে গেলে যোহর শুরু হয়। আসরের শুরু হিসাবের পদ্ধতি অনুযায়ী কিছুটা ভিন্ন হতে পারে।',
-        virtue: 'নামাজ নির্ধারিত সময়ে আদায় করা আল্লাহর কাছে প্রিয় আমল।',
-        reference: 'সহিহ বুখারি ৫২৭',
+        color: const Color(0xFF6D75BC),
+      ),
+      _PrayerChapter(
+        title: context.t('prayer.fard.dhuhr.title'),
+        subtitle: context.t('prayer.fard.dhuhr.subtitle'),
+        rakat: context.t('prayer.fard.dhuhr.rakat'),
+        time: context.t('prayer.fard.dhuhr.time'),
+        note: context.t('prayer.fard.dhuhr.note'),
+        virtue: context.t('prayer.fard.dhuhr.virtue'),
+        reference: context.t('prayer.fard.dhuhr.reference'),
+        rule: defaultRule,
         icon: Icons.wb_sunny_rounded,
-        color: Color(0xFFE39C4D)),
-    _PrayerChapter(
-        title: 'আসর',
-        subtitle: 'বিকেলের নামাজ',
-        rakat: 'ফরজ: ৪ রাকাত',
-        time: 'শুরু: আসরের ওয়াক্ত হলে  ·  শেষ: সূর্যাস্তের আগে',
-        note:
-            'আসরের শুরুর হিসাব মাযহাবভেদে ভিন্ন হতে পারে। দেরি না করে স্থানীয় মসজিদের সময় মেনে পড়ো।',
-        virtue: 'ফজর ও আসর যত্নে আদায়ের ব্যাপারে জান্নাতের সুসংবাদ এসেছে।',
-        reference: 'সহিহ বুখারি ৫৭৪',
+        color: const Color(0xFFE39C4D),
+      ),
+      _PrayerChapter(
+        title: context.t('prayer.fard.asr.title'),
+        subtitle: context.t('prayer.fard.asr.subtitle'),
+        rakat: context.t('prayer.fard.asr.rakat'),
+        time: context.t('prayer.fard.asr.time'),
+        note: context.t('prayer.fard.asr.note'),
+        virtue: context.t('prayer.fard.asr.virtue'),
+        reference: context.t('prayer.fard.asr.reference'),
+        rule: defaultRule,
         icon: Icons.wb_sunny_rounded,
-        color: Color(0xFF54A8C8)),
-    _PrayerChapter(
-        title: 'মাগরিব',
-        subtitle: 'সূর্যাস্তের নামাজ',
-        rakat: 'ফরজ: ৩ রাকাত · পরে ২ রাকাত সুন্নত প্রচলিত',
-        time: 'শুরু: সূর্য ডুবে গেলে  ·  শেষ: সন্ধ্যার আভা মিলিয়ে যাওয়ার আগে',
-        note:
-            'সূর্য পুরোপুরি অস্ত গেলে মাগরিব শুরু হয়। এর সময় তুলনামূলক ছোট, তাই দ্রুত আদায় করা ভালো।',
-        virtue:
-            'পাঁচ ওয়াক্ত নামাজের ধারাবাহিকতা ভুলত্রুটি মাফের কারণ হয়—বড় গুনাহ থেকে বেঁচে থাকতে হয়।',
-        reference: 'সহিহ মুসলিম ২৩৩b',
+        color: const Color(0xFF54A8C8),
+      ),
+      _PrayerChapter(
+        title: context.t('prayer.fard.maghrib.title'),
+        subtitle: context.t('prayer.fard.maghrib.subtitle'),
+        rakat: context.t('prayer.fard.maghrib.rakat'),
+        time: context.t('prayer.fard.maghrib.time'),
+        note: context.t('prayer.fard.maghrib.note'),
+        virtue: context.t('prayer.fard.maghrib.virtue'),
+        reference: context.t('prayer.fard.maghrib.reference'),
+        rule: defaultRule,
         icon: Icons.wb_twilight_rounded,
-        color: Color(0xFFD97868)),
-    _PrayerChapter(
-        title: 'ইশা',
-        subtitle: 'রাতের নামাজ',
-        rakat: 'ফরজ: ৪ রাকাত · এরপর সুন্নত ও বিতর',
-        time:
-            'শুরু: সন্ধ্যার আভা মিলালে  ·  শেষসীমা বিষয়ে মতভেদ; অর্ধরাত পার না করাই ভালো',
-        note:
-            'সন্ধ্যার আভা মিলিয়ে গেলে ইশার সময় শুরু হয়। হাদিসে মধ্যরাত পর্যন্ত সময়ের উল্লেখ আছে; মধ্যরাত বলতে সূর্যাস্ত থেকে ফজর পর্যন্ত রাতের অর্ধেক, ঘড়ির ১২টা সবসময় নয়।',
-        virtue: 'জামাতে ইশা ও ফজর আদায়ের বিশেষ ফজিলত বর্ণিত হয়েছে।',
-        reference: 'সহিহ মুসলিম ৬৫৬a',
+        color: const Color(0xFFD97868),
+      ),
+      _PrayerChapter(
+        title: context.t('prayer.fard.isha.title'),
+        subtitle: context.t('prayer.fard.isha.subtitle'),
+        rakat: context.t('prayer.fard.isha.rakat'),
+        time: context.t('prayer.fard.isha.time'),
+        note: context.t('prayer.fard.isha.note'),
+        virtue: context.t('prayer.fard.isha.virtue'),
+        reference: context.t('prayer.fard.isha.reference'),
+        rule: defaultRule,
         icon: Icons.nights_stay_rounded,
-        color: Color(0xFF8D79C7)),
-  ];
+        color: const Color(0xFF8D79C7),
+      ),
+    ];
+  }
 
-  static const _otherChapters = <_PrayerChapter>[
-    _PrayerChapter(
-        title: 'সুন্নত নামাজ',
-        subtitle: 'ফরজের আগে-পরে',
-        rakat: 'উদাহরণ: ফজরের আগে ২; কিছু ফরজের আগে/পরে ২ রাকাত',
-        time: 'সংশ্লিষ্ট ফরজের আগে বা পরে',
-        note:
-            'সুন্নত নামাজের সংখ্যা ও জোরালো/কম জোরালো শ্রেণিতে মাযহাবভেদে পার্থক্য আছে। পরিবারের শিক্ষক বা স্থানীয় ইমামের শেখানো নিয়ম অনুসরণ করো।',
-        virtue:
-            'প্রতিদিন ফরজের বাইরে ১২ রাকাত সুন্নত পড়ার জন্য জান্নাতে ঘরের সুসংবাদ এসেছে।',
-        reference: 'সহিহ মুসলিম ৭২৮c',
+  static List<_PrayerChapter> _getOtherChapters(BuildContext context) {
+    final defaultRule = context.t('prayer.chapter.default_rule');
+    return [
+      _PrayerChapter(
+        title: context.t('prayer.other.sunnah.title'),
+        subtitle: context.t('prayer.other.sunnah.subtitle'),
+        rakat: context.t('prayer.other.sunnah.rakat'),
+        time: context.t('prayer.other.sunnah.time'),
+        note: context.t('prayer.other.sunnah.note'),
+        virtue: context.t('prayer.other.sunnah.virtue'),
+        reference: context.t('prayer.other.sunnah.reference'),
+        rule: defaultRule,
         icon: Icons.auto_awesome_rounded,
-        color: Color(0xFFE8F8D8)),
-    _PrayerChapter(
-        title: 'বিতর',
-        subtitle: 'ইশার পর বিজোড় রাকাত',
-        rakat: 'বিজোড় রাকাত; ১ বা ৩-সহ পদ্ধতিতে মতভেদ আছে',
-        time: 'ইশার পর থেকে ফজরের আগে',
-        note:
-            'বিতর কীভাবে ও কয় রাকাত পড়তে হয়—এ বিষয়ে মাযহাবভেদে কিছু পার্থক্য রয়েছে। নিজের শেখা পদ্ধতিতে আদায় করো।',
-        rule:
-            'ইশার পর বিজোড় রাকাত আদায় করো; কুনুত ও রাকাতের নিয়ম তোমার মাযহাবের শিক্ষক/ইমামের কাছ থেকে শিখে নাও।',
-        virtue: 'বিতর বিজোড় রাকাতের নামাজ; রাসুল ﷺ এটি আদায়ে উৎসাহ দিয়েছেন।',
+        color: const Color(0xFFE8F8D8),
+      ),
+      _PrayerChapter(
+        title: context.t('prayer.other.witr.title'),
+        subtitle: context.t('prayer.other.witr.subtitle'),
+        rakat: context.t('prayer.other.witr.rakat'),
+        time: context.t('prayer.other.witr.time'),
+        note: context.t('prayer.other.witr.note'),
+        rule: context.t('prayer.other.witr.rule'),
+        virtue: context.t('prayer.other.witr.virtue'),
         icon: Icons.star_rounded,
-        color: Color(0xFFFFF0C8)),
-    _PrayerChapter(
-        title: 'তাহাজ্জুদ',
-        subtitle: 'রাতের নফল নামাজ',
-        rakat: '২ রাকাত করে পড়া যায়; নির্দিষ্ট মোট সংখ্যা নেই',
-        time: 'ইশার পর ঘুম থেকে উঠে, ফজরের আগে',
-        note:
-            'রাতের শেষ ভাগে পড়া উত্তম। ক্লান্ত হলে অল্প পড়ো; নিয়ম শেখার জন্য অভিভাবককে জিজ্ঞেস করো।',
-        rule:
-            'সাধারণভাবে ২ রাকাত করে পড়া হয়। রাতের নামাজ শেষে বিতর আদায়ের নিয়ম শিখে নাও।',
-        virtue: 'ফরজের পর রাতের নামাজকে উত্তম নফল নামাজ বলা হয়েছে।',
-        reference: 'সহিহ মুসলিম ১১৬৩b',
+        color: const Color(0xFFFFF0C8),
+      ),
+      _PrayerChapter(
+        title: context.t('prayer.other.tahajjud.title'),
+        subtitle: context.t('prayer.other.tahajjud.subtitle'),
+        rakat: context.t('prayer.other.tahajjud.rakat'),
+        time: context.t('prayer.other.tahajjud.time'),
+        note: context.t('prayer.other.tahajjud.note'),
+        rule: context.t('prayer.other.tahajjud.rule'),
+        virtue: context.t('prayer.other.tahajjud.virtue'),
+        reference: context.t('prayer.other.tahajjud.reference'),
         icon: Icons.dark_mode_rounded,
-        color: Color(0xFFE8E2FF)),
-    _PrayerChapter(
-        title: 'ইশরাক',
-        subtitle: 'সূর্য ওঠার পর নফল',
-        rakat: 'সাধারণত ২ রাকাত দিয়ে শুরু',
-        time: 'সূর্য ওঠার নিষিদ্ধ সময় পার হওয়ার পর; যোহরের আগে',
-        note:
-            'সূর্য ওঠার পরপর নামাজ পড়া হয় না। সূর্য কিছুটা ওপরে উঠলে—স্থানীয় সূর্যোদয়ের প্রায় ১৫–২০ মিনিট পর—সময় শুরু হয়; নির্দিষ্ট ব্যবধান শহর/মৌসুমে যাচাই করো।',
-        rule:
-            'সময় হওয়ার পর সাধারণ নফল নামাজের মতো ২ রাকাত পড়ো; সূর্য ওঠার নিষিদ্ধ সময় এড়িয়ে চলো।',
-        virtue: 'ফজরের পর আল্লাহর স্মরণ ও নফল নামাজ দিয়ে সকাল শুরু করার সুযোগ।',
+        color: const Color(0xFFE8E2FF),
+      ),
+      _PrayerChapter(
+        title: context.t('prayer.other.ishraq.title'),
+        subtitle: context.t('prayer.other.ishraq.subtitle'),
+        rakat: context.t('prayer.other.ishraq.rakat'),
+        time: context.t('prayer.other.ishraq.time'),
+        note: context.t('prayer.other.ishraq.note'),
+        rule: context.t('prayer.other.ishraq.rule'),
+        virtue: context.t('prayer.other.ishraq.virtue'),
         icon: Icons.wb_sunny_outlined,
-        color: Color(0xFFFFEBCF)),
-    _PrayerChapter(
-        title: 'দুহা / চাশত',
-        subtitle: 'সকালের নফল নামাজ',
-        rakat: 'কমপক্ষে ২ রাকাত; একাধিক রাকাত পড়া যায়',
-        time: 'সূর্য ওপরে ওঠার পর থেকে যোহরের আগে',
-        note:
-            'ইশরাককে অনেক জায়গায় দুহার প্রথম দিকের নামাজ বলা হয়। নাম ও সময় গণনায় প্রচলিত ব্যাখ্যা ভিন্ন হতে পারে।',
-        rule:
-            '২ রাকাত করে নফল পড়ো; কয় রাকাত পড়বে তা সামর্থ্য ও শেখা পদ্ধতি অনুযায়ী রাখো।',
-        virtue: 'দুহা একটি পরিচিত নফল ইবাদত; সামর্থ্য অনুযায়ী নিয়মিত করা যায়।',
+        color: const Color(0xFFFFEBCF),
+      ),
+      _PrayerChapter(
+        title: context.t('prayer.other.duha.title'),
+        subtitle: context.t('prayer.other.duha.subtitle'),
+        rakat: context.t('prayer.other.duha.rakat'),
+        time: context.t('prayer.other.duha.time'),
+        note: context.t('prayer.other.duha.note'),
+        rule: context.t('prayer.other.duha.rule'),
+        virtue: context.t('prayer.other.duha.virtue'),
         icon: Icons.light_mode_rounded,
-        color: Color(0xFFFFF6D0)),
-    _PrayerChapter(
-        title: 'তারাবিহ',
-        subtitle: 'রমজানের রাতের নামাজ',
-        rakat: 'রাকাত সংখ্যায় প্রচলিত পদ্ধতিগুলো ভিন্ন',
-        time: 'রমজানে ইশার পর',
-        note:
-            'তারাবিহ জামাতে বা একা পড়া যায়। ৮/২০ রাকাতসহ বিভিন্ন স্বীকৃত পদ্ধতি আছে—নিজের মসজিদ/শিক্ষকের অনুসরণ করো।',
-        rule:
-            'রমজানে ইশার পর ২ রাকাত করে পড়া হয়; বিরতি ও মোট রাকাতের পদ্ধতি মসজিদ/ইমামের অনুসরণ করো।',
-        virtue:
-            'ঈমান ও সওয়াবের আশায় রমজানের রাতে ইবাদত করার ফজিলত বর্ণিত হয়েছে.',
-        reference: 'সহিহ বুখারি ২০০৮',
+        color: const Color(0xFFFFF6D0),
+      ),
+      _PrayerChapter(
+        title: context.t('prayer.other.tarawih.title'),
+        subtitle: context.t('prayer.other.tarawih.subtitle'),
+        rakat: context.t('prayer.other.tarawih.rakat'),
+        time: context.t('prayer.other.tarawih.time'),
+        note: context.t('prayer.other.tarawih.note'),
+        rule: context.t('prayer.other.tarawih.rule'),
+        virtue: context.t('prayer.other.tarawih.virtue'),
+        reference: context.t('prayer.other.tarawih.reference'),
         icon: Icons.nightlight_round,
-        color: Color(0xFFDCEBFF)),
-    _PrayerChapter(
-        title: 'জুমার নামাজ',
-        subtitle: 'শুক্রবারের জামাত',
-        rakat: 'খুতবার পর জামাতে ২ রাকাত ফরজ',
-        time: 'যোহরের ওয়াক্তে',
-        note:
-            'জুমার শর্ত ও কার ওপর ফরজ—এসব বিষয়ে অভিভাবক বা আলেমের কাছ থেকে বয়স ও পরিস্থিতি অনুযায়ী শিখে নাও।',
-        rule: 'খুতবা মনোযোগ দিয়ে শোনো, তারপর জামাতে ২ রাকাত ফরজ আদায় করো।',
-        virtue:
-            'জুমা থেকে পরের জুমা পর্যন্ত নামাজগুলো গুনাহ মাফের কারণ হয়—বড় গুনাহ থেকে বেঁচে থাকতে হয়।',
-        reference: 'সহিহ মুসলিম ২৩৩b',
+        color: const Color(0xFFDCEBFF),
+      ),
+      _PrayerChapter(
+        title: context.t('prayer.other.jumah.title'),
+        subtitle: context.t('prayer.other.jumah.subtitle'),
+        rakat: context.t('prayer.other.jumah.rakat'),
+        time: context.t('prayer.other.jumah.time'),
+        note: context.t('prayer.other.jumah.note'),
+        rule: context.t('prayer.other.jumah.rule'),
+        virtue: context.t('prayer.other.jumah.virtue'),
+        reference: context.t('prayer.other.jumah.reference'),
         icon: Icons.groups_rounded,
-        color: Color(0xFFDDF4E9)),
-    _PrayerChapter(
-        title: 'ঈদের নামাজ',
-        subtitle: 'ঈদুল ফিতর ও ঈদুল আজহা',
-        rakat: '২ রাকাত; অতিরিক্ত তাকবিরের নিয়মে মতভেদ আছে',
-        time: 'ঈদের সকালে, সূর্য ওঠার কিছু পর',
-        note:
-            'ঈদের নামাজের তাকবির ও পদ্ধতি মাযহাবভেদে কিছুটা আলাদা হতে পারে; জামাতের ইমামের অনুসরণ করো।',
-        rule:
-            '২ রাকাত জামাতে হয় এবং অতিরিক্ত তাকবির থাকে; ইমামের সঙ্গে ধাপে ধাপে পড়ো।',
-        virtue: 'জামাতে ঈদের নামাজ মুসলিমদের আনন্দ ও কৃতজ্ঞতার ইবাদত।',
+        color: const Color(0xFFDDF4E9),
+      ),
+      _PrayerChapter(
+        title: context.t('prayer.other.eid.title'),
+        subtitle: context.t('prayer.other.eid.subtitle'),
+        rakat: context.t('prayer.other.eid.rakat'),
+        time: context.t('prayer.other.eid.time'),
+        note: context.t('prayer.other.eid.note'),
+        rule: context.t('prayer.other.eid.rule'),
+        virtue: context.t('prayer.other.eid.virtue'),
         icon: Icons.celebration_rounded,
-        color: Color(0xFFFFE4E8)),
-    _PrayerChapter(
-        title: 'জানাজার নামাজ',
-        subtitle: 'মৃত মুসলিমের জন্য দোয়া',
-        rakat: 'রুকু-সিজদা নেই; সাধারণ পদ্ধতিতে ৪ তাকবির',
-        time: 'জানাজা প্রস্তুত হলে জামাতে',
-        note:
-            'জানাজার নামাজ দাঁড়িয়ে আদায় করা হয়। দোয়া ও তাকবিরের ধাপ কোনো বড়দের সঙ্গে শিখে নাও।',
-        rule:
-            'দাঁড়িয়ে ৪ তাকবির; এতে রুকু-সিজদা নেই। দোয়ার ধাপ অভিভাবক/ইমামের কাছে শিখে নাও।',
-        virtue: 'জানাজার নামাজে অংশ নেওয়ার বড় প্রতিদানের কথা হাদিসে এসেছে।',
-        reference: 'সহিহ বুখারি ৪৭',
+        color: const Color(0xFFFFE4E8),
+      ),
+      _PrayerChapter(
+        title: context.t('prayer.other.janazah.title'),
+        subtitle: context.t('prayer.other.janazah.subtitle'),
+        rakat: context.t('prayer.other.janazah.rakat'),
+        time: context.t('prayer.other.janazah.time'),
+        note: context.t('prayer.other.janazah.note'),
+        rule: context.t('prayer.other.janazah.rule'),
+        virtue: context.t('prayer.other.janazah.virtue'),
+        reference: context.t('prayer.other.janazah.reference'),
         icon: Icons.volunteer_activism_rounded,
-        color: Color(0xFFE0F1FF)),
+        color: const Color(0xFFE0F1FF),
+      ),
+    ];
+  }
+
+  static List<(String, String, IconData)> _getPrayers(BuildContext context) => [
+    (context.t('prayer.fajr'), 'الفجر', Icons.wb_twilight_rounded),
+    (context.t('prayer.dhuhr'), 'الظهر', Icons.wb_sunny_rounded),
+    (context.t('prayer.asr'), 'العصر', Icons.wb_sunny_rounded),
+    (context.t('prayer.maghrib'), 'المغرب', Icons.wb_twilight_rounded),
+    (context.t('prayer.isha'), 'العشاء', Icons.nights_stay_rounded),
   ];
 
-  static const _prayers = [
-    ('ফজর', 'الفجر', Icons.wb_twilight_rounded),
-    ('যোহর', 'الظهر', Icons.wb_sunny_rounded),
-    ('আসর', 'العصر', Icons.wb_sunny_rounded),
-    ('মাগরিব', 'المغرب', Icons.wb_twilight_rounded),
-    ('ইশা', 'العشاء', Icons.nights_stay_rounded),
-  ];
-
-  static const _steps = [
+  static List<(String, String, String, IconData, Color)> _getSteps(BuildContext context) => [
     (
-      '১',
-      'প্রস্তুতি',
-      'পবিত্রতা ও কিবলামুখী হওয়া',
+      context.formatDigits('1'),
+      context.t('prayer.step.1.title'),
+      context.t('prayer.step.1.detail'),
       Icons.water_drop_rounded,
-      Color(0xFF54A8C8)
+      const Color(0xFF54A8C8)
     ),
     (
-      '২',
-      'তাকবির ও কিয়াম',
-      'দাঁড়ানোর ধাপ',
+      context.formatDigits('2'),
+      context.t('prayer.step.2.title'),
+      context.t('prayer.step.2.detail'),
       Icons.accessibility_new_rounded,
-      Color(0xFF8D79C7)
+      const Color(0xFF8D79C7)
     ),
     (
-      '৩',
-      'কিরাত',
-      'দাঁড়িয়ে তিলাওয়াত',
+      context.formatDigits('3'),
+      context.t('prayer.step.3.title'),
+      context.t('prayer.step.3.detail'),
       Icons.menu_book_rounded,
-      Color(0xFF58A976)
+      const Color(0xFF58A976)
     ),
     (
-      '৪',
-      'রুকু ও সিজদা',
-      'নামাজের ভঙ্গিগুলো',
+      context.formatDigits('4'),
+      context.t('prayer.step.4.title'),
+      context.t('prayer.step.4.detail'),
       Icons.self_improvement_rounded,
-      Color(0xFFE39C4D)
+      const Color(0xFFE39C4D)
     ),
     (
-      '٥',
-      'বৈঠক ও সালাম',
-      'শেষের ধাপ',
+      context.formatDigits('5'),
+      context.t('prayer.step.5.title'),
+      context.t('prayer.step.5.detail'),
       Icons.waving_hand_rounded,
-      Color(0xFFD97868)
+      const Color(0xFFD97868)
+    ),
+  ];
+
+  static List<(String, String)> _getGuideDetails(BuildContext context) => [
+    (
+      context.t('prayer.guide.1.title'),
+      context.t('prayer.guide.1.desc'),
+    ),
+    (
+      context.t('prayer.guide.2.title'),
+      context.t('prayer.guide.2.desc'),
+    ),
+    (
+      context.t('prayer.guide.3.title'),
+      context.t('prayer.guide.3.desc'),
+    ),
+    (
+      context.t('prayer.guide.4.title'),
+      context.t('prayer.guide.4.desc'),
+    ),
+    (
+      context.t('prayer.guide.5.title'),
+      context.t('prayer.guide.5.desc'),
     ),
   ];
 
@@ -264,6 +287,9 @@ class PrayerScreen extends StatelessWidget {
     final appState = context.watch<AppState>();
     final salahCompleted = appState.isSalahCompleted;
     final salahStep = appState.salahStep;
+    final steps = _getSteps(context);
+    final fardChapters = _getFardChapters(context);
+    final otherChapters = _getOtherChapters(context);
 
     return Scaffold(
       backgroundColor: const Color(0xFFEEF4FF),
@@ -279,8 +305,8 @@ class PrayerScreen extends StatelessWidget {
                   sliver: SliverList(
                     delegate: SliverChildListDelegate([
                       DuolingoPageHeader(
-                        title: 'নামাজ শিখি',
-                        subtitle: 'সময় জেনে নাও, ধাপে ধাপে শিখে নাও।',
+                        title: context.t('prayer.learn_title'),
+                        subtitle: context.t('prayer.learn_subtitle'),
                         customIcon: Image.asset(
                           'assets/images/badge_prayer_3d.png',
                           width: 36,
@@ -299,9 +325,9 @@ class PrayerScreen extends StatelessWidget {
                           locationProvider: locationProvider),
                       const SizedBox(height: 22),
                       _PrayerChapterGroup(
-                        number: 'অধ্যায় ১',
-                        title: 'নামাজের ধাপ',
-                        subtitle: 'ওজু থেকে সালাম পর্যন্ত শিখি',
+                        number: context.formatDigits('1'),
+                        title: context.t('prayer.group.1.title'),
+                        subtitle: context.t('prayer.group.1.subtitle'),
                         icon: Icons.self_improvement_rounded,
                         color: const Color(0xFFE8E2FF),
                         initiallyExpanded: true,
@@ -316,7 +342,7 @@ class PrayerScreen extends StatelessWidget {
                           LayoutBuilder(builder: (context, constraints) {
                             if (constraints.maxWidth < 640) {
                               return Column(children: [
-                                for (final step in _steps)
+                                for (final step in steps)
                                   _StepCard(
                                       number: step.$1,
                                       title: step.$2,
@@ -324,7 +350,7 @@ class PrayerScreen extends StatelessWidget {
                                       icon: step.$4,
                                       color: step.$5,
                                       onTap: () => _showStep(
-                                          context, _steps.indexOf(step)))
+                                          context, steps.indexOf(step)))
                               ]);
                             }
                             return GridView.count(
@@ -336,7 +362,7 @@ class PrayerScreen extends StatelessWidget {
                               mainAxisSpacing: 12,
                               childAspectRatio: 2.55,
                               children: [
-                                for (final step in _steps)
+                                for (final step in steps)
                                   _StepCard(
                                       number: step.$1,
                                       title: step.$2,
@@ -344,7 +370,7 @@ class PrayerScreen extends StatelessWidget {
                                       icon: step.$4,
                                       color: step.$5,
                                       onTap: () => _showStep(
-                                          context, _steps.indexOf(step)))
+                                          context, steps.indexOf(step)))
                               ],
                             );
                           }),
@@ -352,25 +378,25 @@ class PrayerScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 12),
                       _PrayerChapterGroup(
-                        number: 'অধ্যায় ২',
-                        title: 'পাঁচ ওয়াক্ত ফরজ নামাজ',
-                        subtitle: 'রাকাত · ওয়াক্ত · নিয়ম · ফজিলত',
+                        number: context.formatDigits('2'),
+                        title: context.t('prayer.group.2.title'),
+                        subtitle: context.t('prayer.group.2.subtitle'),
                         icon: Icons.wb_twilight_rounded,
                         color: const Color(0xFFDDF4E9),
                         children: [
-                          for (final chapter in _fardChapters)
+                          for (final chapter in fardChapters)
                             _PrayerChapterTile(chapter: chapter),
                         ],
                       ),
                       const SizedBox(height: 12),
                       _PrayerChapterGroup(
-                        number: 'অধ্যায় ৩',
-                        title: 'অন্যান্য সুন্নত ও নফল নামাজ',
-                        subtitle: 'তাহাজ্জুদ · ইশরাক · বিতরসহ',
+                        number: context.formatDigits('3'),
+                        title: context.t('prayer.group.3.title'),
+                        subtitle: context.t('prayer.group.3.subtitle'),
                         icon: Icons.nightlight_round,
                         color: const Color(0xFFFFEBCF),
                         children: [
-                          for (final chapter in _otherChapters)
+                          for (final chapter in otherChapters)
                             _PrayerChapterTile(chapter: chapter),
                         ],
                       ),
@@ -386,54 +412,33 @@ class PrayerScreen extends StatelessWidget {
     );
   }
 
-  static const _guideDetails = [
-    (
-      'ওজু করে প্রস্তুত হও',
-      'শরীর, পোশাক ও নামাজের জায়গা পরিষ্কার রাখো। ওজু করে কিবলামুখী হয়ে দাঁড়াও।'
-    ),
-    (
-      'নিয়ত করে নামাজ শুরু',
-      'কোন নামাজ পড়ছ তা মনে স্থির করো। দাঁড়িয়ে “আল্লাহু আকবার” বলে নামাজ শুরু করো।'
-    ),
-    (
-      'দাঁড়িয়ে তিলাওয়াত',
-      'শান্তভাবে দাঁড়িয়ে সূরা আল-ফাতিহা পড়ো। এরপর কুরআন থেকে যা সহজ, তা পড়ো।'
-    ),
-    (
-      'রুকু, দাঁড়ানো ও সিজদা',
-      'রুকুতে স্থির হও, তারপর সোজা হয়ে দাঁড়াও। এরপর সিজদা করো, বসো, আবার সিজদা করো।'
-    ),
-    (
-      'বৈঠক ও সালাম',
-      'শেষ বৈঠকে তাশাহহুদ পড়ো। নামাজ শেষ করতে ডানে ও বামে সালাম ফেরাও।'
-    ),
-  ];
-
   void _showStep(BuildContext context, int startIndex) {
     final appState = context.read<AppState>();
-    var activeIndex = startIndex.clamp(0, _steps.length - 1);
+    final steps = _getSteps(context);
+    final guideDetails = _getGuideDetails(context);
+    var activeIndex = startIndex.clamp(0, steps.length - 1);
     appState.saveSalahStep(activeIndex);
 
     Future<bool> confirmExitMidway(BuildContext sheetContext) async {
       if (activeIndex == 0 ||
-          activeIndex >= _steps.length - 1 ||
+          activeIndex >= steps.length - 1 ||
           appState.isSalahCompleted) {
         return true;
       }
       final shouldExit = await showDialog<bool>(
         context: sheetContext,
         builder: (dialogCtx) => AlertDialog(
-          title: const LocalizedText('নামাজ শেখা থেকে বের হবে?'),
-          content: LocalizedText(
-              'তোমার অগ্রগতি (ধাপ ${activeIndex + 1}) সংরক্ষিত থাকবে। পরে যেকোনো সময় এখান থেকে চালিয়ে যেতে পারবে।'),
+          title: LocalizedText(dialogCtx.t('prayer.dialog.exit_title')),
+          content: LocalizedText(dialogCtx.t('prayer.dialog.exit_desc',
+              params: {'step': '${activeIndex + 1}'})),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(dialogCtx, false),
-              child: const LocalizedText('পড়তে থাকি'),
+              child: LocalizedText(dialogCtx.t('prayer.dialog.btn_keep_reading')),
             ),
             FilledButton(
               onPressed: () => Navigator.pop(dialogCtx, true),
-              child: const LocalizedText('বের হই'),
+              child: LocalizedText(dialogCtx.t('prayer.dialog.btn_exit')),
             ),
           ],
         ),
@@ -447,8 +452,8 @@ class PrayerScreen extends StatelessWidget {
       backgroundColor: Colors.transparent,
       builder: (sheetContext) =>
           StatefulBuilder(builder: (context, setSheetState) {
-        final step = _steps[activeIndex];
-        final detail = _guideDetails[activeIndex];
+        final step = steps[activeIndex];
+        final detail = guideDetails[activeIndex];
         return PopScope(
           canPop: false,
           onPopInvokedWithResult: (didPop, _) async {
@@ -494,15 +499,15 @@ class PrayerScreen extends StatelessWidget {
                     color: AppTheme.primaryGreen.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: const Row(
+                  child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(Icons.school_rounded,
+                      const Icon(Icons.school_rounded,
                           size: 16, color: AppTheme.primaryGreen),
-                      SizedBox(width: 6),
+                      const SizedBox(width: 6),
                       LocalizedText(
-                        'শিক্ষামূলক অনুশীলন · নামাজের অঙ্গভঙ্গি শেখা',
-                        style: TextStyle(
+                        context.t('prayer.sheet.edu_banner'),
+                        style: const TextStyle(
                           fontSize: 11,
                           fontWeight: FontWeight.w700,
                           color: AppTheme.primaryGreen,
@@ -513,7 +518,7 @@ class PrayerScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 14),
                 Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                  for (var i = 0; i < _steps.length; i++)
+                  for (var i = 0; i < steps.length; i++)
                     AnimatedContainer(
                         duration: const Duration(milliseconds: 180),
                         width: i == activeIndex ? 28 : 8,
@@ -534,7 +539,9 @@ class PrayerScreen extends StatelessWidget {
                         borderRadius: BorderRadius.circular(24)),
                     child: Icon(step.$4, size: 38, color: step.$5)),
                 const SizedBox(height: 13),
-                LocalizedText('ধাপ ${activeIndex + 1} · ${step.$2}',
+                LocalizedText(
+                    context.t('prayer.sheet.step_header',
+                        params: {'step': '${activeIndex + 1}', 'title': step.$2}),
                     textAlign: TextAlign.center,
                     style: const TextStyle(
                         color: AppTheme.darkText,
@@ -557,10 +564,10 @@ class PrayerScreen extends StatelessWidget {
                     decoration: BoxDecoration(
                         color: const Color(0xFFFFF2CE),
                         borderRadius: BorderRadius.circular(15)),
-                    child: const LocalizedText(
-                        'মাযহাবভেদে কিছু নিয়মে পার্থক্য থাকতে পারে—পরিবারের অভিভাবক বা শিক্ষকের কাছ থেকে নিজের পদ্ধতিটি শিখে নাও।',
+                    child: LocalizedText(
+                        context.t('prayer.sheet.madhab_note'),
                         textAlign: TextAlign.center,
-                        style: TextStyle(
+                        style: const TextStyle(
                             color: Color(0xFF735B24),
                             fontSize: 11,
                             height: 1.5))),
@@ -575,14 +582,14 @@ class PrayerScreen extends StatelessWidget {
                             },
                             icon: Icons.arrow_back_rounded,
                             variant: DSButtonVariant.outline,
-                            label: 'আগের ধাপ'))
+                            label: context.t('prayer.btn_prev_step')))
                   else
                     const Spacer(),
                   const SizedBox(width: 10),
                   Expanded(
                       child: DSButton(
                           onPressed: () async {
-                            if (activeIndex < _steps.length - 1) {
+                            if (activeIndex < steps.length - 1) {
                               setSheetState(() => activeIndex++);
                               await appState.saveSalahStep(activeIndex);
                             } else {
@@ -596,13 +603,13 @@ class PrayerScreen extends StatelessWidget {
                                 builder: (dialogCtx) => AlertDialog(
                                   shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(24)),
-                                  title: const Row(children: [
-                                    Icon(Icons.celebration_rounded,
+                                  title: Row(children: [
+                                    const Icon(Icons.celebration_rounded,
                                         color: AppTheme.primaryGreen, size: 28),
-                                    SizedBox(width: 8),
+                                    const SizedBox(width: 8),
                                     Expanded(
                                         child: LocalizedText(
-                                            'মাশাআল্লাহ! নামাজ শেখা সম্পন্ন')),
+                                            dialogCtx.t('prayer.dialog.completed_title'))),
                                   ]),
                                   content: Column(
                                     mainAxisSize: MainAxisSize.min,
@@ -610,14 +617,14 @@ class PrayerScreen extends StatelessWidget {
                                     children: [
                                       LocalizedText(
                                         earned
-                                            ? 'তুমি ওজু থেকে সালাম পর্যন্ত ৫টি মৌলিক ধাপ সফলভাবে সম্পন্ন করেছ। +১৫ XP পেয়েছ!'
-                                            : 'নামাজের ধাপগুলো আবার পূর্ণ মনোযোগ দিয়ে পড়ে শেষ করেছ।',
+                                            ? dialogCtx.t('prayer.dialog.completed_earned')
+                                            : dialogCtx.t('prayer.dialog.completed_revisit'),
                                         style: const TextStyle(height: 1.5),
                                       ),
                                       const SizedBox(height: 10),
-                                      const LocalizedText(
-                                        'আজকের ওয়াক্ত অনুযায়ী সঠিক সময়ে নামাজ আদায়ের জন্য মূল স্ক্রিনের সময়সূচি দেখো।',
-                                        style: TextStyle(
+                                      LocalizedText(
+                                        dialogCtx.t('prayer.dialog.completed_hint'),
+                                        style: const TextStyle(
                                             fontSize: 12,
                                             color: Colors.black54,
                                             height: 1.4),
@@ -635,27 +642,28 @@ class PrayerScreen extends StatelessWidget {
                                           _showStep(context, 0);
                                         }
                                       },
-                                      child:
-                                          const LocalizedText('আবার রিভিশন দিই'),
+                                      child: LocalizedText(
+                                          dialogCtx.t('prayer.dialog.btn_revision')),
                                     ),
                                     FilledButton(
                                       onPressed: () => Navigator.pop(dialogCtx),
                                       style: FilledButton.styleFrom(
                                           backgroundColor:
                                               AppTheme.primaryGreen),
-                                      child: const LocalizedText('শেষ করি'),
+                                      child: LocalizedText(
+                                          dialogCtx.t('prayer.dialog.btn_done')),
                                     ),
                                   ],
                                 ),
                               );
                             }
                           },
-                          icon: Icon(activeIndex < _steps.length - 1
+                          icon: Icon(activeIndex < steps.length - 1
                               ? Icons.arrow_forward_rounded
                               : Icons.check_rounded),
-                          label: activeIndex < _steps.length - 1
-                              ? 'পরের ধাপ'
-                              : 'পাঠ শেষ করি')),
+                          label: activeIndex < steps.length - 1
+                              ? context.t('prayer.btn_next_step')
+                              : context.t('prayer.btn_finish_lesson'))),
                 ]),
               ]),
             ),
@@ -728,10 +736,11 @@ class _SalahProgressCard extends StatelessWidget {
                         ),
                         child: LocalizedText(
                           isCompleted
-                              ? 'সম্পন্ন ✓'
+                              ? context.t('prayer.progress.completed_badge')
                               : (currentStep > 0
-                                  ? 'ধাপ ${currentStep + 1}/৫ চলছে'
-                                  : 'নতুন পাঠ'),
+                                  ? context.t('prayer.progress.step_in_progress',
+                                      params: {'step': '${currentStep + 1}'})
+                                  : context.t('prayer.progress.new_lesson')),
                           style: TextStyle(
                             fontSize: 10,
                             fontWeight: FontWeight.w800,
@@ -746,10 +755,11 @@ class _SalahProgressCard extends StatelessWidget {
                   const SizedBox(height: 4),
                   LocalizedText(
                     isCompleted
-                        ? 'মাশাআল্লাহ! ৫টি ধাপই সম্পন্ন হয়েছে।'
+                        ? context.t('prayer.progress.completed_desc')
                         : (currentStep > 0
-                            ? 'ধাপ ${currentStep + 1} থেকে অনুশীলন চালিয়ে যাও।'
-                            : 'ওজু থেকে সালাম পর্যন্ত ৫টি ধাপ ধাপে ধাপে শিখি।'),
+                            ? context.t('prayer.progress.continue_desc',
+                                params: {'step': '${currentStep + 1}'})
+                            : context.t('prayer.progress.start_desc')),
                     style: const TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
@@ -773,8 +783,10 @@ class _SalahProgressCard extends StatelessWidget {
               ),
               child: LocalizedText(
                 isCompleted
-                    ? 'রিভিশন'
-                    : (currentStep > 0 ? 'চালিয়ে যাই' : 'শুরু করি'),
+                    ? context.t('prayer.progress.btn_review')
+                    : (currentStep > 0
+                        ? context.t('prayer.progress.btn_continue')
+                        : context.t('prayer.progress.btn_start')),
                 style: const TextStyle(fontWeight: FontWeight.w800),
               ),
             ),
@@ -889,8 +901,7 @@ class _PrayerTimesCardState extends State<_PrayerTimesCard>
       if (mounted) {
         setState(() {
           _loading = false;
-          _error =
-              'Prayer times could not load. Check your connection and try again.';
+          _error = 'prayer.err_load';
         });
       }
     }
@@ -913,11 +924,11 @@ class _PrayerTimesCardState extends State<_PrayerTimesCard>
     final state = context.read<AppState>();
     if (!state.prayerAlertsEnabled) return;
     const prayers = [
-      (0, 'Fajr', 'ফজর', 'الفجر'),
-      (1, 'Dhuhr', 'যোহর', 'الظهر'),
-      (2, 'Asr', 'আসর', 'العصر'),
-      (3, 'Maghrib', 'মাগরিব', 'المغرب'),
-      (4, 'Isha', 'ইশা', 'العشاء'),
+      (0, 'Fajr', 'الفجر'),
+      (1, 'Dhuhr', 'الظهر'),
+      (2, 'Asr', 'العصر'),
+      (3, 'Maghrib', 'المغرب'),
+      (4, 'Isha', 'العشاء'),
     ];
     for (final p in prayers) {
       final time = result.times[p.$2];
@@ -925,8 +936,8 @@ class _PrayerTimesCardState extends State<_PrayerTimesCard>
         NotificationService.instance.schedulePrayerAlert(
           prayerIndex: p.$1,
           prayerTime: time,
-          prayerName: p.$3,
-          arabicName: p.$4,
+          prayerName: p.$2,
+          arabicName: p.$3,
         );
       } else {
         NotificationService.instance.cancelPrayerAlert(p.$1);
@@ -938,16 +949,15 @@ class _PrayerTimesCardState extends State<_PrayerTimesCard>
     final accepted = await showDialog<bool>(
         context: context,
         builder: (context) => AlertDialog(
-              title: Text(context.uiText('Use your location?')),
-              content: Text(context.uiText(
-                  'Your location is used only to calculate prayer times and is sent to AlAdhan. You can enter a city instead.')),
+              title: Text(context.t('prayer.use_location_title')),
+              content: Text(context.t('prayer.use_location_content')),
               actions: [
                 TextButton(
                     onPressed: () => Navigator.pop(context, false),
-                    child: Text(context.uiText('Cancel'))),
+                    child: Text(context.t('common.cancel'))),
                 FilledButton(
                     onPressed: () => Navigator.pop(context, true),
-                    child: Text(context.uiText('Continue')))
+                    child: Text(context.t('common.continue_btn')))
               ],
             ));
     if (accepted != true || !mounted) return;
@@ -964,13 +974,13 @@ class _PrayerTimesCardState extends State<_PrayerTimesCard>
     } on DeviceLocationException catch (error) {
       final message = switch (error.failure) {
         DeviceLocationFailure.serviceDisabled =>
-          'Turn on location services or enter a city.',
+          'prayer.err_service_disabled',
         DeviceLocationFailure.denied =>
-          'Location permission was not allowed. You can enter a city instead.',
+          'prayer.err_permission_denied',
         DeviceLocationFailure.deniedForever =>
-          'Location permission is blocked. Open app settings or enter a city.',
+          'prayer.err_permission_blocked',
         DeviceLocationFailure.unavailable =>
-          'Your location is unavailable. Try again or enter a city.',
+          'prayer.err_unavailable',
       };
       if (mounted) {
         setState(() {
@@ -987,21 +997,21 @@ class _PrayerTimesCardState extends State<_PrayerTimesCard>
     final values = await showDialog<(String, String)>(
         context: context,
         builder: (context) => AlertDialog(
-              title: Text(context.uiText('Enter a city')),
+              title: Text(context.t('prayer.enter_city_title')),
               content: Column(mainAxisSize: MainAxisSize.min, children: [
                 TextField(
                     controller: _cityController,
                     decoration:
-                        InputDecoration(labelText: context.uiText('City'))),
+                        InputDecoration(labelText: context.t('prayer.city_label'))),
                 TextField(
                     controller: _countryController,
                     decoration:
-                        InputDecoration(labelText: context.uiText('Country')))
+                        InputDecoration(labelText: context.t('prayer.country_label')))
               ]),
               actions: [
                 TextButton(
                     onPressed: () => Navigator.pop(context),
-                    child: Text(context.uiText('Cancel'))),
+                    child: Text(context.t('common.cancel'))),
                 FilledButton(
                     onPressed: () {
                       if (_cityController.text.trim().isNotEmpty &&
@@ -1012,7 +1022,7 @@ class _PrayerTimesCardState extends State<_PrayerTimesCard>
                         ));
                       }
                     },
-                    child: Text(context.uiText('Save')))
+                    child: Text(context.t('common.save')))
               ],
             ));
     if (values == null || !mounted) return;
@@ -1023,46 +1033,20 @@ class _PrayerTimesCardState extends State<_PrayerTimesCard>
             PrayerLocationSelection.city(city: values.$1, country: values.$2)));
   }
 
-  String _methodLabel(int id) =>
-      const {
-        0: 'Shia Ithna-Ansari',
-        1: 'University of Islamic Sciences, Karachi',
-        2: 'Islamic Society of North America',
-        3: 'Muslim World League',
-        4: 'Umm Al-Qura University, Makkah',
-        5: 'Egyptian General Authority of Survey',
-        7: 'Institute of Geophysics, University of Tehran',
-        8: 'Gulf Region',
-        9: 'Kuwait',
-        10: 'Qatar',
-        11: 'Majlis Ugama Islam Singapura',
-        12: 'Union Organization Islamic de France',
-        13: 'Diyanet İşleri Başkanlığı, Turkey',
-        14: 'Spiritual Administration of Muslims of Russia',
-        15: 'Moonsighting Committee Worldwide',
-        16: 'Dubai',
-        17: 'Jabatan Kemajuan Islam Malaysia',
-        18: 'Tunisia',
-        19: 'Algeria',
-        20: 'KEMENAG',
-        21: 'Morocco',
-        22: 'Portugal',
-        23: 'Jordan'
-      }[id] ??
-      'Karachi';
+  String _methodLabel(int id) => context.t('prayer.method.$id');
   Future<void> _settingsDialog() async {
     var method = _settings.methodId, school = _settings.asrSchool;
     await showDialog<void>(
         context: context,
         builder: (context) => StatefulBuilder(
             builder: (context, update) => AlertDialog(
-                  title: Text(context.uiText('Calculation settings')),
+                  title: Text(context.t('prayer.calculation_settings')),
                   content: Column(mainAxisSize: MainAxisSize.min, children: [
                     DropdownButtonFormField<int>(
                         initialValue: method,
                         isExpanded: true,
                         decoration: InputDecoration(
-                            labelText: context.uiText('Calculation method')),
+                            labelText: context.t('prayer.calculation_method')),
                         items: supportedPrayerMethodIds
                             .map((id) => DropdownMenuItem(
                                 value: id,
@@ -1076,13 +1060,13 @@ class _PrayerTimesCardState extends State<_PrayerTimesCard>
                     DropdownButtonFormField<int>(
                         initialValue: school,
                         decoration: InputDecoration(
-                            labelText: context.uiText('Asr method')),
+                            labelText: context.t('prayer.asr_method')),
                         items: [
                           DropdownMenuItem(
                               value: 0,
-                              child: Text(context.uiText('Standard (Shafi)'))),
+                              child: Text(context.t('prayer.standard_shafi'))),
                           DropdownMenuItem(
-                              value: 1, child: Text(context.uiText('Hanafi')))
+                              value: 1, child: Text(context.t('prayer.hanafi')))
                         ],
                         onChanged: (v) {
                           if (v != null) update(() => school = v);
@@ -1091,14 +1075,14 @@ class _PrayerTimesCardState extends State<_PrayerTimesCard>
                   actions: [
                     TextButton(
                         onPressed: () => Navigator.pop(context),
-                        child: Text(context.uiText('Cancel'))),
+                        child: Text(context.t('common.cancel'))),
                     FilledButton(
                         onPressed: () {
                           Navigator.pop(context);
                           _saveSettings(_settings.copyWith(
                               methodId: method, asrSchool: school));
                         },
-                        child: Text(context.uiText('Save')))
+                        child: Text(context.t('common.save')))
                   ],
                 )));
   }
@@ -1133,30 +1117,24 @@ class _PrayerTimesCardState extends State<_PrayerTimesCard>
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                Text(context.uiText('Prayer times'),
+                Text(context.t('prayer.title'),
                     style: const TextStyle(
                         color: AppTheme.darkText,
                         fontWeight: FontWeight.w800,
                         fontSize: 16)),
                 Text(
                     _settings.location == null
-                        ? context.uiText('Choose a location')
+                        ? context.t('prayer.choose_location')
                         : _settings.location!.kind == PrayerLocationKind.device
-                            ? context.uiText(
-                                'Device location ({latitude}, {longitude})'
-                                    .replaceAll(
-                                        '{latitude}',
-                                        _settings.location!.latitude!
-                                            .toStringAsFixed(3))
-                                    .replaceAll(
-                                        '{longitude}',
-                                        _settings.location!.longitude!
-                                            .toStringAsFixed(3)))
-                            : _settings.location!.displayName,
+                            ? context.t('prayer.device_location_coords', params: {
+                                'lat': _settings.location!.latitude!.toStringAsFixed(3),
+                                'lng': _settings.location!.longitude!.toStringAsFixed(3),
+                              })
+                            : context.uiText(_settings.location!.displayName),
                     style: const TextStyle(color: Colors.black54, fontSize: 11))
               ])),
           IconButton(
-              tooltip: context.uiText('Calculation settings'),
+              tooltip: context.t('prayer.calculation_settings'),
               onPressed: _settingsDialog,
               icon: const Icon(Icons.tune_rounded))
         ]),
@@ -1164,19 +1142,18 @@ class _PrayerTimesCardState extends State<_PrayerTimesCard>
           TextButton.icon(
               onPressed: _useDeviceLocation,
               icon: const Icon(Icons.my_location),
-              label: Text(context.uiText('Use device location'))),
+              label: Text(context.t('prayer.use_device_location'))),
           TextButton.icon(
               onPressed: _enterCity,
               icon: const Icon(Icons.location_city),
-              label: Text(context.uiText('Enter city')))
+              label: Text(context.t('prayer.enter_city_btn')))
         ]),
         if (_settings.location != null) ...[
           Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
             IconButton(
                 onPressed: () => _changeDate(-1),
                 icon: const Icon(Icons.chevron_left)),
-            Text(context.uiText(
-                '${_date.year}-${_date.month.toString().padLeft(2, '0')}-${_date.day.toString().padLeft(2, '0')}')),
+            Text(context.formatDate(_date, format: AppDateFormat.medium)),
             IconButton(
                 onPressed: () => _changeDate(1),
                 icon: const Icon(Icons.chevron_right)),
@@ -1187,10 +1164,10 @@ class _PrayerTimesCardState extends State<_PrayerTimesCard>
                       timeZoneId: _settings.location?.timeZoneId);
                   _load();
                 },
-                child: Text(context.uiText('Today')))
+                child: Text(context.t('prayer.today')))
           ]),
           Text(
-              '${context.uiText('Method')}: ${_methodLabel(_settings.methodId)} · ${_settings.asrSchool == 1 ? context.uiText('Hanafi') : context.uiText('Standard (Shafi)')}',
+              '${context.t('prayer.method_prefix')}: ${_methodLabel(_settings.methodId)} · ${_settings.asrSchool == 1 ? context.t('prayer.hanafi') : context.t('prayer.standard_shafi')}',
               style: const TextStyle(fontSize: 11, color: Colors.black54)),
         ],
         const Divider(),
@@ -1201,20 +1178,19 @@ class _PrayerTimesCardState extends State<_PrayerTimesCard>
                   child: CircularProgressIndicator()))
         else if (_error != null)
           Column(children: [
-            Text(context.uiText(_error!), textAlign: TextAlign.center),
+            Text(context.t(_error!), textAlign: TextAlign.center),
             TextButton.icon(
                 onPressed: _load,
                 icon: const Icon(Icons.refresh),
-                label: Text(context.uiText('Retry'))),
-            if (_error!.contains('blocked'))
+                label: Text(context.t('prayer.retry'))),
+            if (_error! == 'prayer.err_permission_blocked')
               TextButton(
                   onPressed: _location.openAppSettings,
-                  child: Text(context.uiText('Open app settings')))
+                  child: Text(context.t('prayer.open_settings')))
           ])
         else if (_settings.location == null)
           Text(
-              context.uiText(
-                  'Choose a city or use your location to see prayer times.'),
+              context.t('prayer.empty_location_desc'),
               style: const TextStyle(color: Colors.black54))
         else if (_result != null) ...[
           // Test Adhan Banner & Play/Stop
@@ -1257,8 +1233,8 @@ class _PrayerTimesCardState extends State<_PrayerTimesCard>
                               size: 18,
                             ),
                             const SizedBox(width: 6),
-                            LocalizedText(
-                              isPlaying ? 'আযান থামান' : 'আযান শুনুন',
+                            Text(
+                              context.t(isPlaying ? 'prayer.stop_adhan' : 'prayer.play_adhan'),
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
@@ -1272,10 +1248,10 @@ class _PrayerTimesCardState extends State<_PrayerTimesCard>
                   },
                 ),
                 const SizedBox(width: 12),
-                const Expanded(
-                  child: LocalizedText(
-                    'ওয়াক্ত হলে ডিভাইসে আযানের অ্যালার্ট বাজবে। ঘণ্টা আইকন ট্যাপ করে ওয়াক্তের অ্যালার্ট অন/অফ করো।',
-                    style: TextStyle(
+                Expanded(
+                  child: Text(
+                    context.t('prayer.adhan_banner_desc'),
+                    style: const TextStyle(
                       fontSize: 11,
                       color: Color(0xFF166534),
                       height: 1.35,
@@ -1287,7 +1263,7 @@ class _PrayerTimesCardState extends State<_PrayerTimesCard>
             ),
           ),
           Wrap(spacing: 8, runSpacing: 8, children: [
-            for (final prayer in PrayerScreen._prayers)
+            for (final prayer in PrayerScreen._getPrayers(context))
               _PrayerTimeChip(
                   name: prayer.$1,
                   arabic: prayer.$2,
@@ -1300,7 +1276,8 @@ class _PrayerTimesCardState extends State<_PrayerTimesCard>
                 size: 18, color: AppTheme.secondaryGold),
             const SizedBox(width: 6),
             Text(
-                '${context.uiText('Sunrise (reference only, not a prayer)')}: ${_formatPrayerTime(_result!.times['Sunrise'])}')
+                '${context.t('prayer.sunrise_ref')}: ' +
+                _formatPrayerTime(_result!.times['Sunrise'], context))
           ]),
           if (_result!.isCached) ...[
             const SizedBox(height: 8),
@@ -1309,7 +1286,7 @@ class _PrayerTimesCardState extends State<_PrayerTimesCard>
                   size: 16, color: Color(0xFFE39C4D)),
               const SizedBox(width: 6),
               Text(
-                context.uiText('সংরক্ষিত অফলাইন তথ্য'),
+                context.t('prayer.cached_offline'),
                 style: const TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
@@ -1321,9 +1298,11 @@ class _PrayerTimesCardState extends State<_PrayerTimesCard>
       ]));
 }
 
-String _formatPrayerTime(DateTime? time) => time == null
-    ? '--:--'
-    : '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}';
+String _formatPrayerTime(DateTime? time, [BuildContext? context]) =>
+    AppFormatters.formatPrayerTime(
+      time,
+      locale: context != null ? context.currentLanguageCode : null,
+    );
 
 class _PrayerTimeChip extends StatelessWidget {
   const _PrayerTimeChip(
@@ -1334,15 +1313,7 @@ class _PrayerTimeChip extends StatelessWidget {
   final String name, arabic;
   final IconData icon;
   final Map<String, DateTime> times;
-  String get _key =>
-      const {
-        'ফজর': 'Fajr',
-        'যোহর': 'Dhuhr',
-        'আসর': 'Asr',
-        'মাগরিব': 'Maghrib',
-        'ইশা': 'Isha'
-      }[name] ??
-      name;
+  String get _key => name;
   @override
   Widget build(BuildContext context) {
     final appState = context.watch<AppState>();
@@ -1372,7 +1343,7 @@ class _PrayerTimeChip extends StatelessWidget {
                 },
                 borderRadius: BorderRadius.circular(12),
                 child: Tooltip(
-                  message: isAlertOn ? 'আযান বন্ধ করুন' : 'আযান চালু করুন',
+                  message: context.t(isAlertOn ? 'prayer.alert_disable' : 'prayer.alert_enable'),
                   child: Padding(
                     padding: const EdgeInsets.all(2),
                     child: Icon(
@@ -1401,9 +1372,8 @@ class _PrayerTimeChip extends StatelessWidget {
                   const TextStyle(color: AppTheme.primaryGreen, fontSize: 11)),
           const SizedBox(height: 4),
           Text(
-              times[_key] == null
-                  ? '--:--'
-                  : '${times[_key]!.hour.toString().padLeft(2, '0')}:${times[_key]!.minute.toString().padLeft(2, '0')}',
+              AppFormatters.formatPrayerTime(times[_key],
+                  locale: context.currentLanguageCode),
               style: TextStyle(
                   color: isUpcoming ? AppTheme.primaryGreen : Colors.black45,
                   fontWeight: FontWeight.w800,
@@ -1574,8 +1544,8 @@ class _PrayerChapterTile extends StatelessWidget {
                 child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const LocalizedText('ওয়াক্ত',
-                          style: TextStyle(
+                      Text(context.t('prayer.detail.waqt'),
+                          style: const TextStyle(
                               color: AppTheme.darkText,
                               fontSize: 12,
                               fontWeight: FontWeight.w900)),
@@ -1587,8 +1557,8 @@ class _PrayerChapterTile extends StatelessWidget {
                               height: 1.5,
                               fontWeight: FontWeight.w800)),
                       const SizedBox(height: 9),
-                      const LocalizedText('কীভাবে পড়ি',
-                          style: TextStyle(
+                      Text(context.t('prayer.detail.how_to_pray'),
+                          style: const TextStyle(
                               color: AppTheme.darkText,
                               fontSize: 12,
                               fontWeight: FontWeight.w900)),
@@ -1599,8 +1569,8 @@ class _PrayerChapterTile extends StatelessWidget {
                               fontSize: 12,
                               height: 1.6)),
                       const SizedBox(height: 9),
-                      const LocalizedText('সময় ও নিয়মের কথা',
-                          style: TextStyle(
+                      Text(context.t('prayer.detail.time_and_rules'),
+                          style: const TextStyle(
                               color: AppTheme.darkText,
                               fontSize: 12,
                               fontWeight: FontWeight.w900)),
@@ -1611,8 +1581,8 @@ class _PrayerChapterTile extends StatelessWidget {
                               fontSize: 12,
                               height: 1.6)),
                       const SizedBox(height: 10),
-                      const LocalizedText('ফজিলত',
-                          style: TextStyle(
+                      Text(context.t('prayer.detail.virtue'),
+                          style: const TextStyle(
                               color: AppTheme.darkText,
                               fontSize: 12,
                               fontWeight: FontWeight.w900)),
@@ -1624,7 +1594,9 @@ class _PrayerChapterTile extends StatelessWidget {
                               height: 1.6)),
                       if (chapter.reference.isNotEmpty) ...[
                         const SizedBox(height: 5),
-                        LocalizedText('সূত্র: ${chapter.reference}',
+                        Text(
+                            context.t('prayer.detail.source',
+                                params: {'reference': chapter.reference}),
                             style: const TextStyle(
                                 color: Colors.black54,
                                 fontSize: 10,

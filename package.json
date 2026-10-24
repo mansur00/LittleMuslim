@@ -1,0 +1,17 @@
+{
+  "name": "little_muslim",
+  "version": "1.0.0",
+  "description": "Little Muslim gamified Islamic learning app for children",
+  "scripts": {
+    "i18n:check": "node tools/i18n_check.js",
+    "test": "flutter test",
+    "lint": "flutter analyze && node tools/i18n_check.js"
+  },
+  "keywords": [
+    "flutter",
+    "i18n",
+    "islamic-learning"
+  ],
+  "author": "Antigravity",
+  "license": "UNLICENSED"
+}

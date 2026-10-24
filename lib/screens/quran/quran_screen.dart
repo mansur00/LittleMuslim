@@ -62,7 +62,7 @@ class _QuranScreenState extends State<QuranScreen> {
       if (!mounted) return;
       setState(() {
         _loading = false;
-        _loadError = 'সূরার তালিকা আনা যায়নি। ইন্টারনেট দেখে আবার চেষ্টা করো।';
+        _loadError = context.t('quran.load_error');
       });
     }
   }
@@ -94,8 +94,8 @@ class _QuranScreenState extends State<QuranScreen> {
                     delegate: SliverChildListDelegate([
                       // ── Duolingo Header ──
                       DuolingoPageHeader(
-                        title: 'কুরআনের সাথে সময় কাটাই',
-                        subtitle: 'শান্ত মনে পড়ো, ভাবো, আর সুন্দর গল্প শোনো।',
+                        title: context.t('quran.header_title'),
+                        subtitle: context.t('quran.header_subtitle'),
                         customIcon: Image.asset(
                           'assets/images/quran_3d_open.png',
                           width: 36,
@@ -112,8 +112,8 @@ class _QuranScreenState extends State<QuranScreen> {
                       // ── Continue reading banner ──
                       _ContinueReadingCard(
                         surahLabel: continueSurah == null
-                            ? 'সূরা লোড হলে আবার চেষ্টা করো'
-                            : 'সূরা ${continueSurah.englishName}',
+                            ? context.t('quran.wait_load_retry')
+                            : context.t('quran.surah_prefix', params: {'name': continueSurah.englishName}),
                         ayahNumber: position?.$2,
                         canResume: continueSurah != null,
                         onTap: () => _openReader(
@@ -132,8 +132,10 @@ class _QuranScreenState extends State<QuranScreen> {
 
                       if (_section == 0) ...[
                         DuolingoSectionLabel(
-                            label: 'সব ১১৪টি সূরা',
-                            badgeText: '${_surahs.length}টি',
+                            label: context.t('quran.all_114_surahs'),
+                            badgeText: context.t('quran.surahs_count_badge', params: {
+                              'count': context.formatDigits(_surahs.length.toString()),
+                            }),
                             badgeColor: const Color(0xFFE8F8D8),
                             badgeTextColor: AppTheme.primaryDark),
                         const SizedBox(height: 12),
@@ -150,7 +152,7 @@ class _QuranScreenState extends State<QuranScreen> {
                             onChanged: (v) => setState(
                                 () => _search = v.trim().toLowerCase()),
                             decoration: InputDecoration(
-                              hintText: context.uiText('সূরা খুঁজে দেখো'),
+                              hintText: context.t('quran.search_hint'),
                               hintStyle:
                                   const TextStyle(color: Color(0xFF9CA3AF)),
                               prefixIcon: const Icon(Icons.search_rounded,
@@ -213,8 +215,13 @@ class _QuranScreenState extends State<QuranScreen> {
                                     number: '${surah.number}',
                                     arabicName: surah.arabicName,
                                     title: surah.englishName,
-                                    detail:
-                                        '${surah.ayahCount} আয়াত · ${surah.revelationType == 'Meccan' ? 'মক্কী' : 'মাদানী'} · ${surah.nameMeaning}',
+                                    detail: context.t('quran.surah_meta', params: {
+                                      'ayahs': context.formatDigits(surah.ayahCount.toString()),
+                                      'revelation': surah.revelationType == 'Meccan'
+                                          ? context.t('quran.meccan')
+                                          : context.t('quran.medinan'),
+                                      'meaning': surah.nameMeaning,
+                                    }),
                                     onTap: () => _openReader(context, surah),
                                   ),
                               ],
@@ -223,8 +230,10 @@ class _QuranScreenState extends State<QuranScreen> {
                         ],
                       ] else if (_section == 1) ...[
                         DuolingoSectionLabel(
-                            label: '৩০টি পারা / জুয',
-                            badgeText: '${quranJuzList.length} পারা',
+                            label: context.t('quran.thirty_juz'),
+                            badgeText: context.t('quran.juz_count_badge', params: {
+                              'count': context.formatDigits(quranJuzList.length.toString()),
+                            }),
                             badgeColor: const Color(0xFFE8F8D8),
                             badgeTextColor: AppTheme.primaryDark),
                         const SizedBox(height: 12),
@@ -245,8 +254,10 @@ class _QuranScreenState extends State<QuranScreen> {
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
                               DuolingoSectionLabel(
-                                  label: 'সংরক্ষিত আয়াত',
-                                  badgeText: '${bookmarks.length}টি',
+                                  label: context.t('quran.saved_ayahs'),
+                                  badgeText: context.t('quran.bookmarks_count_badge', params: {
+                                    'count': context.formatDigits(bookmarks.length.toString()),
+                                  }),
                                   badgeColor: const Color(0xFFE8F8D8),
                                   badgeTextColor: AppTheme.primaryDark),
                               const SizedBox(height: 12),
@@ -259,39 +270,45 @@ class _QuranScreenState extends State<QuranScreen> {
                           );
                         }(),
                       ] else ...[
-                        const DuolingoSectionLabel(label: 'ছোট্ট ইসলামিক গল্প'),
+                        DuolingoSectionLabel(label: context.t('quran.islamic_stories_section')),
                         const SizedBox(height: 12),
                         _StoryCard(
                             iconType: VectorIconType.plant,
-                            title: 'দয়ার সুন্দর গল্প',
-                            subtitle: 'ভালো আচরণ আর মমতা',
+                            title: context.t('quran.story_kindness_title'),
+                            subtitle: context.t('quran.story_kindness_desc'),
                             color: const Color(0xFFE8F5E9),
                             accent: const Color(0xFF58A700),
                             onTap: () => _openStoryInfo(
-                                context, 'দয়ার সুন্দর গল্প', 'ভালো আচরণ আর মমতা')),
+                                context,
+                                context.t('quran.story_kindness_title'),
+                                context.t('quran.story_kindness_desc'))),
                         _StoryCard(
                             iconType: VectorIconType.star,
-                            title: 'সাহস ও ধৈর্যের গল্প',
-                            subtitle: 'ছোটদের জন্য ছোট্ট শিক্ষা',
+                            title: context.t('quran.story_courage_title'),
+                            subtitle: context.t('quran.story_courage_desc'),
                             color: const Color(0xFFFFF2D1),
                             accent: const Color(0xFFD4A017),
-                            onTap: () => _openStoryInfo(context,
-                                'সাহস ও ধৈর্যের গল্প', 'ছোটদের জন্য ছোট্ট শিক্ষা')),
+                            onTap: () => _openStoryInfo(
+                                context,
+                                context.t('quran.story_courage_title'),
+                                context.t('quran.story_courage_desc'))),
                         _StoryCard(
                             iconType: VectorIconType.bird,
-                            title: 'সত্য বলার গল্প',
-                            subtitle: 'সুন্দর চরিত্রের অনুশীলন',
+                            title: context.t('quran.story_truth_title'),
+                            subtitle: context.t('quran.story_truth_desc'),
                             color: const Color(0xFFE8F1FA),
                             accent: const Color(0xFF3B82C4),
-                            onTap: () => _openStoryInfo(context,
-                                'সত্য বলার গল্প', 'সুন্দর চরিত্রের অনুশীলন')),
+                            onTap: () => _openStoryInfo(
+                                context,
+                                context.t('quran.story_truth_title'),
+                                context.t('quran.story_truth_desc'))),
                       ],
 
                       const SizedBox(height: 14),
-                      const LocalizedText(
-                        'রঙিন তাজবিদ পাঠ: Quran.com · বাংলা অনুবাদ: মুহিউদ্দীন খান, Al Quran Cloud',
+                      LocalizedText(
+                        context.t('quran.credits_footer'),
                         textAlign: TextAlign.center,
-                        style: TextStyle(color: Colors.black38, fontSize: 10),
+                        style: const TextStyle(color: Colors.black38, fontSize: 10),
                       ),
                     ]),
                   ),
@@ -315,8 +332,8 @@ class _QuranScreenState extends State<QuranScreen> {
   void _openReader(BuildContext context, QuranSurah? surah,
       {int initialAyah = 1}) {
     if (surah == null) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: LocalizedText('সূরার তালিকা লোড হলে পড়া শুরু হবে।')));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: LocalizedText(context.t('quran.surahs_loading_wait'))));
       return;
     }
     Navigator.of(context).push(MaterialPageRoute<void>(
@@ -328,7 +345,7 @@ class _QuranScreenState extends State<QuranScreen> {
       BuildContext context, String title, String subtitle) {
     showDialog<void>(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (dialogContext) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
         title: Row(children: [
           const VectorIcon(
@@ -344,26 +361,26 @@ class _QuranScreenState extends State<QuranScreen> {
                 style: const TextStyle(
                     fontWeight: FontWeight.w700, color: AppTheme.primaryGreen)),
             const SizedBox(height: 12),
-            const LocalizedText(
-              'কুরআনিক শিক্ষণীয় ঘটনাভিত্তিক বিশেষ শিশুতোষ মডিউলটি নির্ভরযোগ্য তাফসির সূত্রের আলোকে সংকলন করা হচ্ছে।\n\nবর্তমানে তুমি ‘সীরাত’ মডিউল থেকে রাসুলুল্লাহ ﷺ-এর জীবনের নির্ভরযোগ্য ঐতিহাসিক গল্পগুলো পড়তে পারো।',
-              style: TextStyle(height: 1.6, color: AppTheme.darkText),
+            LocalizedText(
+              dialogContext.t('quran.stories_modal_body'),
+              style: const TextStyle(height: 1.6, color: AppTheme.darkText),
             ),
           ],
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const LocalizedText('বুঝেছি'),
+            onPressed: () => Navigator.pop(dialogContext),
+            child: LocalizedText(dialogContext.t('common.got_it')),
           ),
           FilledButton.icon(
             onPressed: () {
-              Navigator.pop(context);
+              Navigator.pop(dialogContext);
               Navigator.of(context).push(
                 MaterialPageRoute<void>(builder: (_) => const SeerahScreen()),
               );
             },
             icon: const Icon(Icons.auto_stories_rounded, size: 18),
-            label: const LocalizedText('সীরাতের গল্পে যাই'),
+            label: LocalizedText(dialogContext.t('quran.go_to_seerah')),
             style:
                 FilledButton.styleFrom(backgroundColor: AppTheme.primaryGreen),
           ),
@@ -395,7 +412,8 @@ class _QuranScreenState extends State<QuranScreen> {
               color: Colors.redAccent, size: 22),
           const SizedBox(width: 10),
           Expanded(
-            child: LocalizedText('মুছে যাওয়া বা অপ্রাসঙ্গিক রেফারেন্স ($key)',
+            child: LocalizedText(
+                context.t('quran.broken_bookmark_ref', params: {'key': key}),
                 style: const TextStyle(fontSize: 12, color: Colors.black54)),
           ),
           IconButton(
@@ -408,7 +426,7 @@ class _QuranScreenState extends State<QuranScreen> {
             },
             icon:
                 const Icon(Icons.delete_outline_rounded, color: Colors.black45),
-            tooltip: context.uiText('মুছে ফেলো'),
+            tooltip: context.t('common.delete'),
           ),
         ]),
       );
@@ -443,7 +461,7 @@ class _LoadError extends StatelessWidget {
               onPressed: onRetry,
               icon: Icons.refresh_rounded,
               variant: DSButtonVariant.outline,
-              label: 'আবার চেষ্টা করি'),
+              label: context.t('common.retry')),
         ]),
       );
 }
@@ -457,13 +475,13 @@ class _EmptySurahs extends StatelessWidget {
         decoration: BoxDecoration(
             color: Colors.white, borderRadius: BorderRadius.circular(20)),
         child: Column(children: [
-          const LocalizedText('এখন কোনো সূরা পাওয়া যায়নি।'),
+          LocalizedText(context.t('quran.no_surahs_found')),
           const SizedBox(height: 10),
           DSButton(
               onPressed: onRetry,
               icon: Icons.refresh_rounded,
               variant: DSButtonVariant.outline,
-              label: 'আবার চেষ্টা করি'),
+              label: context.t('common.retry')),
         ]),
       );
 }
@@ -530,8 +548,8 @@ class _ContinueReadingCardState extends State<_ContinueReadingCard> {
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const LocalizedText('পড়া চালিয়ে যাও',
-                        style: TextStyle(color: Colors.white70, fontSize: 12)),
+                    LocalizedText(context.t('quran.continue_reading'),
+                        style: const TextStyle(color: Colors.white70, fontSize: 12)),
                     const SizedBox(height: 3),
                     LocalizedText(widget.surahLabel,
                         style: const TextStyle(
@@ -541,10 +559,12 @@ class _ContinueReadingCardState extends State<_ContinueReadingCard> {
                     const SizedBox(height: 3),
                     LocalizedText(
                         !widget.canResume
-                            ? 'ইন্টারনেট সংযোগ দেখে আবার চেষ্টা করো'
+                            ? context.t('quran.check_internet_retry')
                             : widget.ayahNumber == null
-                                ? 'শুরু থেকে পড়ি'
-                                : 'আয়াত ${widget.ayahNumber} থেকে পড়ি',
+                                ? context.t('quran.read_from_beginning')
+                                : context.t('quran.read_from_ayah', params: {
+                                    'ayah': context.formatDigits(widget.ayahNumber.toString()),
+                                  }),
                         style: const TextStyle(
                             color: Colors.white70, fontSize: 11)),
                   ]),
@@ -576,15 +596,15 @@ class _SectionPicker extends StatelessWidget {
             border: Border.all(color: const Color(0xFFE5E7EB), width: 2)),
         child: Row(children: [
           _Tab(
-              label: 'সূরা', selected: selected == 0, onTap: () => onSelect(0)),
+              label: context.t('quran.tab_surah'), selected: selected == 0, onTap: () => onSelect(0)),
           _Tab(
-              label: 'পারা', selected: selected == 1, onTap: () => onSelect(1)),
+              label: context.t('quran.tab_juz'), selected: selected == 1, onTap: () => onSelect(1)),
           _Tab(
-              label: 'বুকমার্ক',
+              label: context.t('quran.tab_bookmarks'),
               selected: selected == 2,
               onTap: () => onSelect(2)),
           _Tab(
-              label: 'গল্প', selected: selected == 3, onTap: () => onSelect(3)),
+              label: context.t('quran.tab_stories'), selected: selected == 3, onTap: () => onSelect(3)),
         ]),
       );
 }
@@ -800,7 +820,8 @@ class _SearchEmptySurahs extends StatelessWidget {
           const Icon(Icons.search_off_rounded,
               color: Color(0xFF9CA3AF), size: 36),
           const SizedBox(height: 8),
-          LocalizedText('“$query” দিয়ে কোনো সূরা পাওয়া যায়নি।',
+          LocalizedText(
+              context.t('quran.search_no_results', params: {'query': query}),
               textAlign: TextAlign.center,
               style: const TextStyle(fontWeight: FontWeight.w700)),
           const SizedBox(height: 12),
@@ -808,7 +829,7 @@ class _SearchEmptySurahs extends StatelessWidget {
               onPressed: onClear,
               icon: Icons.clear_rounded,
               variant: DSButtonVariant.outline,
-              label: 'অনুসন্ধান মুছুন'),
+              label: context.t('common.clear_search')),
         ]),
       );
 }
@@ -821,20 +842,20 @@ class _BookmarksEmptyCard extends StatelessWidget {
         padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(
             color: Colors.white, borderRadius: BorderRadius.circular(20)),
-        child: const Column(children: [
-          Icon(Icons.bookmark_border_rounded,
+        child: Column(children: [
+          const Icon(Icons.bookmark_border_rounded,
               color: AppTheme.primaryGreen, size: 38),
-          SizedBox(height: 10),
-          LocalizedText('এখনো কোনো বুকমার্ক নেই',
-              style: TextStyle(
+          const SizedBox(height: 10),
+          LocalizedText(context.t('quran.no_bookmarks_title'),
+              style: const TextStyle(
                   fontWeight: FontWeight.w800,
                   fontSize: 16,
                   color: AppTheme.darkText)),
-          SizedBox(height: 6),
+          const SizedBox(height: 6),
           LocalizedText(
-              'কুরআন পড়ার সময় যেকোনো আয়াতের পাশে বুকমার্ক আইকনে চাপ দিলে এখানে সহজে খুঁজে পাবে।',
+              context.t('quran.no_bookmarks_subtitle'),
               textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.black54, fontSize: 12, height: 1.5)),
+              style: const TextStyle(color: Colors.black54, fontSize: 12, height: 1.5)),
         ]),
       );
 }
@@ -863,7 +884,7 @@ class _JuzCard extends StatelessWidget {
             ),
             alignment: Alignment.center,
             child: LocalizedText(
-              '${juz.number}',
+              context.formatDigits('${juz.number}'),
               style: const TextStyle(
                 color: AppTheme.primaryDark,
                 fontWeight: FontWeight.w900,
@@ -875,7 +896,9 @@ class _JuzCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               LocalizedText(
-                'পারা ${juz.number}',
+                context.t('quran.juz_title', params: {
+                  'number': context.formatDigits('${juz.number}'),
+                }),
                 style: const TextStyle(
                   fontWeight: FontWeight.w800,
                   color: AppTheme.darkText,
@@ -893,7 +916,10 @@ class _JuzCard extends StatelessWidget {
             ],
           ),
           subtitle: LocalizedText(
-            'শুরু: সূরা ${juz.startSurahName} · আয়াত ${juz.startAyahNumber}',
+            context.t('quran.juz_start_info', params: {
+              'surah': juz.startSurahName,
+              'ayah': context.formatDigits('${juz.startAyahNumber}'),
+            }),
             style: const TextStyle(fontSize: 11, color: Colors.black54),
           ),
           trailing: const Icon(Icons.arrow_forward_ios_rounded,
@@ -940,7 +966,11 @@ class _BookmarkCard extends StatelessWidget {
           Expanded(
             child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              LocalizedText('সূরা ${surah.englishName} · আয়াত $ayahNumber',
+              LocalizedText(
+                  context.t('quran.bookmark_item_title', params: {
+                    'surah': surah.englishName,
+                    'ayah': context.formatDigits('$ayahNumber'),
+                  }),
                   style: const TextStyle(
                       fontWeight: FontWeight.w800,
                       fontSize: 14,
@@ -952,12 +982,12 @@ class _BookmarkCard extends StatelessWidget {
           ),
           IconButton(
             onPressed: onOpen,
-            tooltip: context.uiText('পড়া শুরু করি'),
+            tooltip: context.t('quran.start_reading'),
             icon: const Icon(Icons.menu_book_rounded, color: AppTheme.primaryGreen),
           ),
           IconButton(
             onPressed: onRemove,
-            tooltip: context.uiText('বুকমার্ক সরাও'),
+            tooltip: context.t('quran.remove_bookmark'),
             icon: const Icon(Icons.delete_outline_rounded, color: Colors.black45),
           ),
         ]),

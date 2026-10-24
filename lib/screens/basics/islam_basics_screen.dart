@@ -8,17 +8,23 @@ import '../../widgets/duolingo_appbar.dart';
 import '../../widgets/duolingo_button.dart';
 import '../../widgets/vector_icons.dart';
 
-typedef _QuizItem = ({String question, String answer});
+typedef _QuizItem = ({String questionKey, String answerKey});
 
 class _Chapter {
-  const _Chapter(
-      {required this.title,
-      required this.definition,
-      required this.story,
-      required this.icon,
-      required this.color,
-      required this.quiz});
-  final String title, definition, story;
+  const _Chapter({
+    required this.id,
+    required this.titleKey,
+    required this.definitionKey,
+    required this.storyKey,
+    required this.icon,
+    required this.color,
+    required this.quiz,
+  });
+  final int id;
+  final String titleKey, definitionKey, storyKey;
+  String get title => titleKey;
+  String get definition => definitionKey;
+  String get story => storyKey;
   final IconData icon;
   final Color color;
   final List<_QuizItem> quiz;
@@ -26,328 +32,205 @@ class _Chapter {
 
 const _chapters = <_Chapter>[
   _Chapter(
-      title: 'ঈমান কী?',
-      definition:
-          'ঈমান হলো আল্লাহ ও তিনি যে সত্যগুলো জানিয়েছেন, সেগুলো অন্তর দিয়ে বিশ্বাস করা।',
-      story:
-          'ছোট্ট আমিন আকাশের তারা দেখে ভাবল—এত সুন্দর সৃষ্টি কে বানিয়েছেন? মা বললেন, “আল্লাহ সবকিছুর স্রষ্টা। আমরা তাঁকে দেখি না, কিন্তু তাঁর সৃষ্টি দেখি এবং তাঁর ওপর ভরসা করি।” আমিন শিখল, ঈমান শুধু মুখের কথা নয়; বিশ্বাস, ভালো কাজ আর আল্লাহর ওপর ভরসায় তা প্রকাশ পায়।',
-      icon: Icons.auto_awesome_rounded,
-      color: Color(0xFFDDF4E9),
-      quiz: [
-        (question: 'ঈমান কোথায় বিশ্বাস হিসেবে থাকে?', answer: 'অন্তরে'),
-        (question: 'সবকিছুর স্রষ্টা কে?', answer: 'আল্লাহ'),
-        (
-          question: 'আল্লাহকে না দেখলেও কীভাবে তাঁর নিদর্শন দেখি?',
-          answer: 'সৃষ্টির মধ্যে'
-        ),
-        (
-          question: 'কোন গুণটি মুমিনকে সাহায্য করে?',
-          answer: 'আল্লাহর ওপর ভরসা'
-        ),
-        (
-          question: 'ভালো কাজের সঙ্গে ঈমানের সম্পর্ক কী?',
-          answer: 'বিশ্বাসকে কাজে প্রকাশ করে'
-        ),
-        (
-          question: 'সত্য কথা বলার চেষ্টা কেন করি?',
-          answer: 'আল্লাহ সত্য ভালোবাসেন'
-        ),
-        (question: 'কঠিন সময়ে কার কাছে সাহায্য চাই?', answer: 'আল্লাহর কাছে'),
-        (question: 'নিয়ামত পেলে কী বলি?', answer: 'আলহামদুলিল্লাহ'),
-        (
-          question: 'ভুল হলে কী করি?',
-          answer: 'আল্লাহর কাছে ক্ষমা চাই ও ঠিক করি'
-        ),
-        (
-          question: 'ঈমান কেবল মুখে বললেই পূর্ণ হয়?',
-          answer: 'না, বিশ্বাস ও ভালো কাজও জরুরি'
-        ),
-      ]),
+    id: 1,
+    titleKey: 'basics.chapter.1.title',
+    definitionKey: 'basics.chapter.1.definition',
+    storyKey: 'basics.chapter.1.story',
+    icon: Icons.auto_awesome_rounded,
+    color: Color(0xFFDDF4E9),
+    quiz: [
+      (questionKey: 'basics.chapter.1.quiz.1.q', answerKey: 'basics.chapter.1.quiz.1.a'),
+      (questionKey: 'basics.chapter.1.quiz.2.q', answerKey: 'basics.chapter.1.quiz.2.a'),
+      (questionKey: 'basics.chapter.1.quiz.3.q', answerKey: 'basics.chapter.1.quiz.3.a'),
+      (questionKey: 'basics.chapter.1.quiz.4.q', answerKey: 'basics.chapter.1.quiz.4.a'),
+      (questionKey: 'basics.chapter.1.quiz.5.q', answerKey: 'basics.chapter.1.quiz.5.a'),
+      (questionKey: 'basics.chapter.1.quiz.6.q', answerKey: 'basics.chapter.1.quiz.6.a'),
+      (questionKey: 'basics.chapter.1.quiz.7.q', answerKey: 'basics.chapter.1.quiz.7.a'),
+      (questionKey: 'basics.chapter.1.quiz.8.q', answerKey: 'basics.chapter.1.quiz.8.a'),
+      (questionKey: 'basics.chapter.1.quiz.9.q', answerKey: 'basics.chapter.1.quiz.9.a'),
+      (questionKey: 'basics.chapter.1.quiz.10.q', answerKey: 'basics.chapter.1.quiz.10.a'),
+    ],
+  ),
   _Chapter(
-      title: 'আকিদা কী?',
-      definition:
-          'আকিদা হলো ইসলামের বিশ্বাসের ভিত্তি—যে সত্যগুলো একজন মুসলিম মনে-প্রাণে মেনে নেয়।',
-      story:
-          'স্কুলে শিক্ষক একটি ঘরের ভিত্তির কথা বললেন। ভিত্তি মজবুত হলে ঘর দাঁড়িয়ে থাকে। ইসলামের বিশ্বাসও তেমন—আল্লাহ এক, তিনি আমাদের রব; তাঁর পাঠানো রাসূলগণ মানুষকে সত্য পথ দেখিয়েছেন। সঠিক বিশ্বাস শিখতে আমিন মা-বাবা ও বিশ্বস্ত শিক্ষকের কাছে প্রশ্ন করে।',
-      icon: Icons.lightbulb_rounded,
-      color: Color(0xFFE8E2FF),
-      quiz: [
-        (question: 'আকিদা বলতে কী বোঝায়?', answer: 'ইসলামের বিশ্বাসের ভিত্তি'),
-        (question: 'আল্লাহ কয়জন?', answer: 'একজন'),
-        (question: 'আমাদের স্রষ্টা ও পালনকর্তা কে?', answer: 'আল্লাহ'),
-        (question: 'রাসূলগণ কী করেছেন?', answer: 'মানুষকে আল্লাহর পথে ডেকেছেন'),
-        (question: 'আল্লাহর ফেরেশতারা কী?', answer: 'আল্লাহর সৃষ্টি'),
-        (question: 'আল্লাহর কিতাব কী শেখায়?', answer: 'সত্য ও সঠিক পথ'),
-        (
-          question: 'শেষ দিনের কথা মনে রাখলে কী করি?',
-          answer: 'ভালো কাজের চেষ্টা করি'
-        ),
-        (
-          question: 'বিশ্বাস নিয়ে প্রশ্ন হলে কার কাছে যাব?',
-          answer: 'বিশ্বস্ত শিক্ষক বা অভিভাবকের কাছে'
-        ),
-        (question: 'আল্লাহর মতো আর কেউ স্রষ্টা?', answer: 'না, আল্লাহ এক'),
-        (
-          question: 'সঠিক আকিদা শেখার ভালো উপায় কী?',
-          answer: 'বিশ্বস্ত জ্ঞানীদের কাছ থেকে শেখা'
-        ),
-      ]),
+    id: 2,
+    titleKey: 'basics.chapter.2.title',
+    definitionKey: 'basics.chapter.2.definition',
+    storyKey: 'basics.chapter.2.story',
+    icon: Icons.lightbulb_rounded,
+    color: Color(0xFFE8E2FF),
+    quiz: [
+      (questionKey: 'basics.chapter.2.quiz.1.q', answerKey: 'basics.chapter.2.quiz.1.a'),
+      (questionKey: 'basics.chapter.2.quiz.2.q', answerKey: 'basics.chapter.2.quiz.2.a'),
+      (questionKey: 'basics.chapter.2.quiz.3.q', answerKey: 'basics.chapter.2.quiz.3.a'),
+      (questionKey: 'basics.chapter.2.quiz.4.q', answerKey: 'basics.chapter.2.quiz.4.a'),
+      (questionKey: 'basics.chapter.2.quiz.5.q', answerKey: 'basics.chapter.2.quiz.5.a'),
+      (questionKey: 'basics.chapter.2.quiz.6.q', answerKey: 'basics.chapter.2.quiz.6.a'),
+      (questionKey: 'basics.chapter.2.quiz.7.q', answerKey: 'basics.chapter.2.quiz.7.a'),
+      (questionKey: 'basics.chapter.2.quiz.8.q', answerKey: 'basics.chapter.2.quiz.8.a'),
+      (questionKey: 'basics.chapter.2.quiz.9.q', answerKey: 'basics.chapter.2.quiz.9.a'),
+      (questionKey: 'basics.chapter.2.quiz.10.q', answerKey: 'basics.chapter.2.quiz.10.a'),
+    ],
+  ),
   _Chapter(
-      title: 'ইসলাম কী?',
-      definition:
-          'ইসলাম হলো এক আল্লাহর ইবাদত করা, তাঁর নির্দেশ মানা এবং মানুষের সঙ্গে ভালো ব্যবহার করা।',
-      story:
-          'আমিনের বন্ধু জানতে চাইল, “ইসলাম মানে কি শুধু নামাজ?” আমিন বলল, “নামাজ খুব গুরুত্বপূর্ণ; পাশাপাশি সত্য বলা, মা-বাবার সম্মান করা, দয়া করা—এসবও ইসলামের শিক্ষা।” তারা ঠিক করল প্রতিদিন একটি ভালো কাজ করবে এবং পাঁচ ওয়াক্ত নামাজ শিখবে।',
-      icon: Icons.mosque_rounded,
-      color: Color(0xFFFFF0CE),
-      quiz: [
-        (question: 'আমরা কার ইবাদত করি?', answer: 'শুধু আল্লাহর'),
-        (
-          question: 'ইসলামের মূল শিক্ষা কী?',
-          answer: 'আল্লাহর আনুগত্য ও ভালো জীবন'
-        ),
-        (question: 'নামাজ কেমন কাজ?', answer: 'ইসলামের গুরুত্বপূর্ণ ইবাদত'),
-        (
-          question: 'মা-বাবাকে সম্মান করা কেমন কাজ?',
-          answer: 'ইসলামের সুন্দর শিক্ষা'
-        ),
-        (question: 'সত্য বলা কেমন?', answer: 'ভালো মুসলিমের গুণ'),
-        (
-          question: 'মানুষকে কষ্ট দেওয়া কি ভালো আচরণ?',
-          answer: 'না, দয়া ও সম্মান দেখাই'
-        ),
-        (question: 'ইবাদত কাকে খুশি করার জন্য?', answer: 'আল্লাহকে'),
-        (
-          question: 'ইসলাম কি শুধু কিছু আচার?',
-          answer: 'না, জীবনযাপনেরও শিক্ষা'
-        ),
-        (question: 'কারও উপকার করলে কী দেখাই?', answer: 'দয়া ও ভালো চরিত্র'),
-        (
-          question: 'ইসলাম শিখি কীভাবে?',
-          answer: 'কুরআন, সুন্নাহ ও বিশ্বস্ত শিক্ষক থেকে'
-        ),
-      ]),
+    id: 3,
+    titleKey: 'basics.chapter.3.title',
+    definitionKey: 'basics.chapter.3.definition',
+    storyKey: 'basics.chapter.3.story',
+    icon: Icons.mosque_rounded,
+    color: Color(0xFFFFF0CE),
+    quiz: [
+      (questionKey: 'basics.chapter.3.quiz.1.q', answerKey: 'basics.chapter.3.quiz.1.a'),
+      (questionKey: 'basics.chapter.3.quiz.2.q', answerKey: 'basics.chapter.3.quiz.2.a'),
+      (questionKey: 'basics.chapter.3.quiz.3.q', answerKey: 'basics.chapter.3.quiz.3.a'),
+      (questionKey: 'basics.chapter.3.quiz.4.q', answerKey: 'basics.chapter.3.quiz.4.a'),
+      (questionKey: 'basics.chapter.3.quiz.5.q', answerKey: 'basics.chapter.3.quiz.5.a'),
+      (questionKey: 'basics.chapter.3.quiz.6.q', answerKey: 'basics.chapter.3.quiz.6.a'),
+      (questionKey: 'basics.chapter.3.quiz.7.q', answerKey: 'basics.chapter.3.quiz.7.a'),
+      (questionKey: 'basics.chapter.3.quiz.8.q', answerKey: 'basics.chapter.3.quiz.8.a'),
+      (questionKey: 'basics.chapter.3.quiz.9.q', answerKey: 'basics.chapter.3.quiz.9.a'),
+      (questionKey: 'basics.chapter.3.quiz.10.q', answerKey: 'basics.chapter.3.quiz.10.a'),
+    ],
+  ),
   _Chapter(
-      title: 'হালাল ও হারাম',
-      definition:
-          'হালাল মানে ইসলামে অনুমোদিত; হারাম মানে ইসলামে নিষিদ্ধ। সব বিষয়ে নিজে অনুমান না করে বিশ্বস্ত বড়দের জিজ্ঞেস করি।',
-      story:
-          'দোকানে নতুন খাবারের প্যাকেট দেখে আমিনের মনে প্রশ্ন এল। সে নিজে সিদ্ধান্ত না নিয়ে বাবাকে জিজ্ঞেস করল। বাবা উপাদান ও নির্ভরযোগ্য তথ্য দেখে বুঝিয়ে দিলেন। আমিন শিখল—কোনো কাজ বা খাবারের বিধান নিয়ে সন্দেহ হলে লুকিয়ে নয়, জেনে-বুঝে এবং বিশ্বস্ত আলেম/অভিভাবকের সাহায্যে চলতে হয়।',
-      icon: Icons.rule_rounded,
-      color: Color(0xFFDDF1FF),
-      quiz: [
-        (question: 'হালাল মানে কী?', answer: 'ইসলামে অনুমোদিত'),
-        (question: 'হারাম মানে কী?', answer: 'ইসলামে নিষিদ্ধ'),
-        (
-          question: 'সন্দেহ হলে কাকে জিজ্ঞেস করব?',
-          answer: 'অভিভাবক বা বিশ্বস্ত আলেম'
-        ),
-        (
-          question: 'নিজে অনুমান করে ফতোয়া দেওয়া ঠিক?',
-          answer: 'না, জেনে ও যাচাই করে শিখি'
-        ),
-        (
-          question: 'কোনো ভুল বুঝলে কী করব?',
-          answer: 'শান্তভাবে সঠিক তথ্য শিখব'
-        ),
-        (
-          question: 'ইসলামের বিধান কোথা থেকে শিখি?',
-          answer: 'কুরআন-সুন্নাহ ও যোগ্য শিক্ষকের কাছ থেকে'
-        ),
-        (
-          question: 'অন্যের মত শুনে যাচাই ছাড়া কী করব?',
-          answer: 'বিশ্বস্ত সূত্রে যাচাই করব'
-        ),
-        (question: 'হালাল-হারাম শেখার সময় কেমন থাকব?', answer: 'সৎ ও সতর্ক'),
-        (
-          question: 'খাবারের উপাদান বুঝতে না পারলে?',
-          answer: 'বড়দের সাহায্যে যাচাই করব'
-        ),
-        (
-          question: 'কাউকে বিধান নিয়ে অপমান করা উচিত?',
-          answer: 'না, সম্মান দিয়ে বুঝি ও জিজ্ঞেস করি'
-        ),
-      ]),
+    id: 4,
+    titleKey: 'basics.chapter.4.title',
+    definitionKey: 'basics.chapter.4.definition',
+    storyKey: 'basics.chapter.4.story',
+    icon: Icons.rule_rounded,
+    color: Color(0xFFDDF1FF),
+    quiz: [
+      (questionKey: 'basics.chapter.4.quiz.1.q', answerKey: 'basics.chapter.4.quiz.1.a'),
+      (questionKey: 'basics.chapter.4.quiz.2.q', answerKey: 'basics.chapter.4.quiz.2.a'),
+      (questionKey: 'basics.chapter.4.quiz.3.q', answerKey: 'basics.chapter.4.quiz.3.a'),
+      (questionKey: 'basics.chapter.4.quiz.4.q', answerKey: 'basics.chapter.4.quiz.4.a'),
+      (questionKey: 'basics.chapter.4.quiz.5.q', answerKey: 'basics.chapter.4.quiz.5.a'),
+      (questionKey: 'basics.chapter.4.quiz.6.q', answerKey: 'basics.chapter.4.quiz.6.a'),
+      (questionKey: 'basics.chapter.4.quiz.7.q', answerKey: 'basics.chapter.4.quiz.7.a'),
+      (questionKey: 'basics.chapter.4.quiz.8.q', answerKey: 'basics.chapter.4.quiz.8.a'),
+      (questionKey: 'basics.chapter.4.quiz.9.q', answerKey: 'basics.chapter.4.quiz.9.a'),
+      (questionKey: 'basics.chapter.4.quiz.10.q', answerKey: 'basics.chapter.4.quiz.10.a'),
+    ],
+  ),
   _Chapter(
-      title: 'পোশাক ও শালীনতা',
-      definition:
-          'পরিষ্কার, আরামদায়ক ও শালীন পোশাক পরি। বয়স অনুযায়ী শালীনতার নিয়ম পরিবার ও শিক্ষকের কাছ থেকে শিখি।',
-      story:
-          'স্কুলের অনুষ্ঠানে আমিন আর তার বোন পোশাক বেছে নিচ্ছিল। মা বললেন, পরিষ্কার পোশাক পরতে, শরীর ঢেকে রাখতে এবং অন্যের পোশাক নিয়ে হাসাহাসি না করতে। তারা বুঝল—পোশাক পরিচ্ছন্ন ও শালীন হওয়া দরকার, আর সবার প্রতি সম্মানও জরুরি।',
-      icon: Icons.checkroom_rounded,
-      color: Color(0xFFFFE4E8),
-      quiz: [
-        (question: 'পোশাক কেমন হওয়া ভালো?', answer: 'পরিষ্কার ও শালীন'),
-        (question: 'পোশাক কি আবহাওয়ার উপযোগী হওয়া উচিত?', answer: 'হ্যাঁ'),
-        (question: 'অন্যের পোশাক নিয়ে হাসাহাসি করব?', answer: 'না, সম্মান করব'),
-        (
-          question: 'শালীনতার নিয়ম কার কাছে শিখব?',
-          answer: 'অভিভাবক ও বিশ্বস্ত শিক্ষকের কাছে'
-        ),
-        (question: 'নোংরা পোশাকের বদলে কী বেছে নেব?', answer: 'পরিষ্কার পোশাক'),
-        (question: 'পোশাক কি অহংকারের কারণ?', answer: 'না, বিনয়ী থাকি'),
-        (
-          question: 'পোশাক বাছাইয়ে পরিবারের পরামর্শ কেমন?',
-          answer: 'গুরুত্ব দিয়ে শুনি'
-        ),
-        (question: 'অন্যের ব্যক্তিগত সীমা মানা কী?', answer: 'সম্মানজনক আচরণ'),
-        (
-          question: 'পোশাকের জন্য কাউকে ছোট করা কেমন?',
-          answer: 'অন্যায় ও কষ্টদায়ক'
-        ),
-        (question: 'শালীনতা কি শুধু পোশাকে?', answer: 'না, কথা ও আচরণেও'),
-      ]),
+    id: 5,
+    titleKey: 'basics.chapter.5.title',
+    definitionKey: 'basics.chapter.5.definition',
+    storyKey: 'basics.chapter.5.story',
+    icon: Icons.checkroom_rounded,
+    color: Color(0xFFFFE0EB),
+    quiz: [
+      (questionKey: 'basics.chapter.5.quiz.1.q', answerKey: 'basics.chapter.5.quiz.1.a'),
+      (questionKey: 'basics.chapter.5.quiz.2.q', answerKey: 'basics.chapter.5.quiz.2.a'),
+      (questionKey: 'basics.chapter.5.quiz.3.q', answerKey: 'basics.chapter.5.quiz.3.a'),
+      (questionKey: 'basics.chapter.5.quiz.4.q', answerKey: 'basics.chapter.5.quiz.4.a'),
+      (questionKey: 'basics.chapter.5.quiz.5.q', answerKey: 'basics.chapter.5.quiz.5.a'),
+      (questionKey: 'basics.chapter.5.quiz.6.q', answerKey: 'basics.chapter.5.quiz.6.a'),
+      (questionKey: 'basics.chapter.5.quiz.7.q', answerKey: 'basics.chapter.5.quiz.7.a'),
+      (questionKey: 'basics.chapter.5.quiz.8.q', answerKey: 'basics.chapter.5.quiz.8.a'),
+      (questionKey: 'basics.chapter.5.quiz.9.q', answerKey: 'basics.chapter.5.quiz.9.a'),
+      (questionKey: 'basics.chapter.5.quiz.10.q', answerKey: 'basics.chapter.5.quiz.10.a'),
+    ],
+  ),
   _Chapter(
-      title: 'সুন্দর কথা',
-      definition:
-          'সত্য, নরম ও সম্মানজনক কথা বলি। গালি, মিথ্যা, অপমান ও গীবত থেকে দূরে থাকি।',
-      story:
-          'বন্ধু রাফি খেলতে গিয়ে পড়ে গেল। কয়েকজন হাসতে চাইলে আমিন বলল, “চলো, ওকে উঠতে সাহায্য করি।” রাফিকে সান্ত্বনা দিয়ে সে নরম করে কথা বলল। শিক্ষক বললেন, সুন্দর কথা মানুষের মন ভালো করে; তাই সত্য বলি, সালাম দিই, আর কাউকে নিয়ে বিদ্রূপ করি না।',
-      icon: Icons.chat_bubble_rounded,
-      color: Color(0xFFE3F5DB),
-      quiz: [
-        (question: 'কেমন কথা বলব?', answer: 'সত্য ও নরম'),
-        (
-          question: 'ভুল করে ফেললে কী বলব?',
-          answer: 'দুঃখিত, ঠিক করার চেষ্টা করব'
-        ),
-        (question: 'কারও সঙ্গে দেখা হলে কী বলি?', answer: 'সালাম দিই'),
-        (question: 'মিথ্যা বলা কেমন?', answer: 'এড়িয়ে চলি'),
-        (question: 'কাউকে অপমান করলে তার কেমন লাগে?', answer: 'কষ্ট লাগে'),
-        (
-          question: 'বন্ধুর গোপন কথা ছড়ানো উচিত?',
-          answer: 'না, আমানত রক্ষা করি'
-        ),
-        (question: 'রাগ হলে কীভাবে কথা বলি?', answer: 'শান্ত হয়ে'),
-        (
-          question: 'গীবত কী থেকে বাঁচতে শেখায়?',
-          answer: 'কারও অনুপস্থিতিতে তার দোষ বলা'
-        ),
-        (question: 'ভালো কথা শুনলে কী করি?', answer: 'মন দিয়ে শুনি'),
-        (question: 'কথা বলার আগে কী ভাবি?', answer: 'এতে কারও কষ্ট হবে কি না'),
-      ]),
+    id: 6,
+    titleKey: 'basics.chapter.6.title',
+    definitionKey: 'basics.chapter.6.definition',
+    storyKey: 'basics.chapter.6.story',
+    icon: Icons.chat_bubble_rounded,
+    color: Color(0xFFE5F9DB),
+    quiz: [
+      (questionKey: 'basics.chapter.6.quiz.1.q', answerKey: 'basics.chapter.6.quiz.1.a'),
+      (questionKey: 'basics.chapter.6.quiz.2.q', answerKey: 'basics.chapter.6.quiz.2.a'),
+      (questionKey: 'basics.chapter.6.quiz.3.q', answerKey: 'basics.chapter.6.quiz.3.a'),
+      (questionKey: 'basics.chapter.6.quiz.4.q', answerKey: 'basics.chapter.6.quiz.4.a'),
+      (questionKey: 'basics.chapter.6.quiz.5.q', answerKey: 'basics.chapter.6.quiz.5.a'),
+      (questionKey: 'basics.chapter.6.quiz.6.q', answerKey: 'basics.chapter.6.quiz.6.a'),
+      (questionKey: 'basics.chapter.6.quiz.7.q', answerKey: 'basics.chapter.6.quiz.7.a'),
+      (questionKey: 'basics.chapter.6.quiz.8.q', answerKey: 'basics.chapter.6.quiz.8.a'),
+      (questionKey: 'basics.chapter.6.quiz.9.q', answerKey: 'basics.chapter.6.quiz.9.a'),
+      (questionKey: 'basics.chapter.6.quiz.10.q', answerKey: 'basics.chapter.6.quiz.10.a'),
+    ],
+  ),
   _Chapter(
-      title: 'ভালো আচরণ',
-      definition:
-          'সততা, ধৈর্য, পরিচ্ছন্নতা, দয়া ও দায়িত্বশীলতা—এসব সুন্দর আচরণের অংশ।',
-      story:
-          'আমিন দেখল তার ছোট ভাই খেলনা গুছাতে পারছে না। সে বিরক্ত না হয়ে পাশে বসে সাহায্য করল। নিজের ভুল হলে সে স্বীকার করল, আর ধার করা বই সময়মতো ফিরিয়ে দিল। সে শিখল—ভালো চরিত্র প্রতিদিনের ছোট ছোট কাজে দেখা যায়।',
-      icon: Icons.emoji_people_rounded,
-      color: Color(0xFFFFEBCF),
-      quiz: [
-        (
-          question: 'ধার করা জিনিসের সঙ্গে কী করি?',
-          answer: 'যত্ন নিয়ে ফেরত দিই'
-        ),
-        (question: 'ভুল করলে কী করি?', answer: 'স্বীকার করে ঠিক করি'),
-        (question: 'ছোটদের সঙ্গে কেমন থাকি?', answer: 'দয়ালু'),
-        (question: 'পরিচ্ছন্নতা কেমন অভ্যাস?', answer: 'ভালো অভ্যাস'),
-        (question: 'কাজের দায়িত্ব কীভাবে পালন করি?', answer: 'সততার সঙ্গে'),
-        (question: 'রাগ উঠলে কী করি?', answer: 'ধৈর্য ধরে শান্ত হই'),
-        (question: 'অন্যের জিনিস অনুমতি ছাড়া নেওয়া ঠিক?', answer: 'না'),
-        (question: 'প্রতিশ্রুতি দিলে কী করি?', answer: 'রাখার চেষ্টা করি'),
-        (
-          question: 'কেউ সাহায্য চাইলে কী করি?',
-          answer: 'সামর্থ্য অনুযায়ী সাহায্য করি'
-        ),
-        (question: 'ভালো চরিত্র কোথায় দেখা যায়?', answer: 'প্রতিদিনের আচরণে'),
-      ]),
+    id: 7,
+    titleKey: 'basics.chapter.7.title',
+    definitionKey: 'basics.chapter.7.definition',
+    storyKey: 'basics.chapter.7.story',
+    icon: Icons.favorite_rounded,
+    color: Color(0xFFFFECE5),
+    quiz: [
+      (questionKey: 'basics.chapter.7.quiz.1.q', answerKey: 'basics.chapter.7.quiz.1.a'),
+      (questionKey: 'basics.chapter.7.quiz.2.q', answerKey: 'basics.chapter.7.quiz.2.a'),
+      (questionKey: 'basics.chapter.7.quiz.3.q', answerKey: 'basics.chapter.7.quiz.3.a'),
+      (questionKey: 'basics.chapter.7.quiz.4.q', answerKey: 'basics.chapter.7.quiz.4.a'),
+      (questionKey: 'basics.chapter.7.quiz.5.q', answerKey: 'basics.chapter.7.quiz.5.a'),
+      (questionKey: 'basics.chapter.7.quiz.6.q', answerKey: 'basics.chapter.7.quiz.6.a'),
+      (questionKey: 'basics.chapter.7.quiz.7.q', answerKey: 'basics.chapter.7.quiz.7.a'),
+      (questionKey: 'basics.chapter.7.quiz.8.q', answerKey: 'basics.chapter.7.quiz.8.a'),
+      (questionKey: 'basics.chapter.7.quiz.9.q', answerKey: 'basics.chapter.7.quiz.9.a'),
+      (questionKey: 'basics.chapter.7.quiz.10.q', answerKey: 'basics.chapter.7.quiz.10.a'),
+    ],
+  ),
   _Chapter(
-      title: 'মানুষের সঙ্গে ব্যবহার',
-      definition:
-          'মা-বাবা, আত্মীয়, শিক্ষক, প্রতিবেশী, বন্ধু—সবার সঙ্গে ন্যায়, দয়া ও সম্মান দিয়ে ব্যবহার করি.',
-      story:
-          'পড়শি খালা অসুস্থ ছিলেন। আমিনের পরিবার তাঁর খোঁজ নিল। স্কুলে আমিন নতুন বন্ধুকে খেলায় যোগ দিল, আর শিক্ষক কথা বললে মন দিয়ে শুনল। সে বুঝল—মানুষের পরিচয় আলাদা হলেও সবার সঙ্গে ন্যায় ও সম্মান জরুরি।',
-      icon: Icons.diversity_3_rounded,
-      color: Color(0xFFFFE8D8),
-      quiz: [
-        (
-          question: 'মা-বাবার সঙ্গে কেমন ব্যবহার করি?',
-          answer: 'সম্মান ও সদয়ভাবে'
-        ),
-        (question: 'শিক্ষক কথা বললে কী করি?', answer: 'মন দিয়ে শুনি'),
-        (
-          question: 'নতুন বন্ধুকে কীভাবে স্বাগত জানাই?',
-          answer: 'বন্ধুত্ব ও সম্মান দিয়ে'
-        ),
-        (question: 'প্রতিবেশীর খোঁজ নেওয়া কেমন কাজ?', answer: 'দয়ার কাজ'),
-        (question: 'মত আলাদা হলে কী করি?', answer: 'শান্তভাবে কথা বলি'),
-        (question: 'কারও সঙ্গে অন্যায় করা ঠিক?', answer: 'না, ন্যায় করি'),
-        (question: 'দুর্বল কাউকে কষ্ট দেওয়া কেমন?', answer: 'ভুল'),
-        (question: 'পরিবারে কাজে সাহায্য করা কেমন?', answer: 'ভালো দায়িত্ব'),
-        (
-          question: 'অন্যের কথা মন দিয়ে শোনা কেন?',
-          answer: 'সম্মান দেখানোর জন্য'
-        ),
-        (question: 'সব মানুষের সঙ্গে কেমন থাকি?', answer: 'ন্যায় ও দয়া দিয়ে'),
-      ]),
+    id: 8,
+    titleKey: 'basics.chapter.8.title',
+    definitionKey: 'basics.chapter.8.definition',
+    storyKey: 'basics.chapter.8.story',
+    icon: Icons.people_rounded,
+    color: Color(0xFFEAE5FF),
+    quiz: [
+      (questionKey: 'basics.chapter.8.quiz.1.q', answerKey: 'basics.chapter.8.quiz.1.a'),
+      (questionKey: 'basics.chapter.8.quiz.2.q', answerKey: 'basics.chapter.8.quiz.2.a'),
+      (questionKey: 'basics.chapter.8.quiz.3.q', answerKey: 'basics.chapter.8.quiz.3.a'),
+      (questionKey: 'basics.chapter.8.quiz.4.q', answerKey: 'basics.chapter.8.quiz.4.a'),
+      (questionKey: 'basics.chapter.8.quiz.5.q', answerKey: 'basics.chapter.8.quiz.5.a'),
+      (questionKey: 'basics.chapter.8.quiz.6.q', answerKey: 'basics.chapter.8.quiz.6.a'),
+      (questionKey: 'basics.chapter.8.quiz.7.q', answerKey: 'basics.chapter.8.quiz.7.a'),
+      (questionKey: 'basics.chapter.8.quiz.8.q', answerKey: 'basics.chapter.8.quiz.8.a'),
+      (questionKey: 'basics.chapter.8.quiz.9.q', answerKey: 'basics.chapter.8.quiz.9.a'),
+      (questionKey: 'basics.chapter.8.quiz.10.q', answerKey: 'basics.chapter.8.quiz.10.a'),
+    ],
+  ),
   _Chapter(
-      title: 'হালাল খাবার',
-      definition:
-          'বৈধ, পরিষ্কার ও নিরাপদ খাবার বেছে নিই। উপাদান বা বিধান বুঝতে না পারলে অভিভাবকের সঙ্গে যাচাই করি।',
-      story:
-          'স্কুলের টিফিনে আমিন ফল, রুটি আর পানি নিল। খাবারের আগে বিসমিল্লাহ বলল, পরিমিত খেল, বন্ধুর সঙ্গে ভাগ করল এবং খাবার নষ্ট করল না। নতুন কোনো প্যাকেটের উপাদান বুঝতে না পেরে সে বাবাকে দেখাল।',
-      icon: Icons.restaurant_rounded,
-      color: Color(0xFFE0F1FF),
-      quiz: [
-        (question: 'খাবার কেমন হওয়া ভালো?', answer: 'বৈধ, পরিষ্কার ও নিরাপদ'),
-        (question: 'খাবারের আগে কী বলি?', answer: 'বিসমিল্লাহ'),
-        (question: 'খাবার নষ্ট করা কেমন?', answer: 'অপচয়, এড়িয়ে চলি'),
-        (
-          question: 'নতুন খাবারের উপাদান বুঝতে না পারলে?',
-          answer: 'অভিভাবককে দেখাই'
-        ),
-        (question: 'খাওয়ার সময় কীভাবে থাকি?', answer: 'পরিমিত ও কৃতজ্ঞ'),
-        (question: 'খাবার ভাগ করে দেওয়া কেমন?', answer: 'সুন্দর কাজ'),
-        (question: 'খাবারের পর কী করি?', answer: 'আল্লাহর শুকরিয়া আদায় করি'),
-        (
-          question: 'নিরাপদ খাবার বাছাইয়ে কার সাহায্য নিই?',
-          answer: 'অভিভাবকের'
-        ),
-        (
-          question: 'পরিষ্কার হাতে খাওয়া কেন ভালো?',
-          answer: 'স্বাস্থ্য ও পরিচ্ছন্নতার জন্য'
-        ),
-        (question: 'খাবার নিয়ে সন্দেহ হলে কী করি?', answer: 'যাচাই করে শিখি'),
-      ]),
+    id: 9,
+    titleKey: 'basics.chapter.9.title',
+    definitionKey: 'basics.chapter.9.definition',
+    storyKey: 'basics.chapter.9.story',
+    icon: Icons.restaurant_rounded,
+    color: Color(0xFFE0F7F4),
+    quiz: [
+      (questionKey: 'basics.chapter.9.quiz.1.q', answerKey: 'basics.chapter.9.quiz.1.a'),
+      (questionKey: 'basics.chapter.9.quiz.2.q', answerKey: 'basics.chapter.9.quiz.2.a'),
+      (questionKey: 'basics.chapter.9.quiz.3.q', answerKey: 'basics.chapter.9.quiz.3.a'),
+      (questionKey: 'basics.chapter.9.quiz.4.q', answerKey: 'basics.chapter.9.quiz.4.a'),
+      (questionKey: 'basics.chapter.9.quiz.5.q', answerKey: 'basics.chapter.9.quiz.5.a'),
+      (questionKey: 'basics.chapter.9.quiz.6.q', answerKey: 'basics.chapter.9.quiz.6.a'),
+      (questionKey: 'basics.chapter.9.quiz.7.q', answerKey: 'basics.chapter.9.quiz.7.a'),
+      (questionKey: 'basics.chapter.9.quiz.8.q', answerKey: 'basics.chapter.9.quiz.8.a'),
+      (questionKey: 'basics.chapter.9.quiz.9.q', answerKey: 'basics.chapter.9.quiz.9.a'),
+      (questionKey: 'basics.chapter.9.quiz.10.q', answerKey: 'basics.chapter.9.quiz.10.a'),
+    ],
+  ),
   _Chapter(
-      title: 'হারাম খাবার থেকে বাঁচি',
-      definition:
-          'ইসলাম কিছু খাবার ও পানীয় নিষিদ্ধ করেছে। উপাদান বা কোনো নির্দিষ্ট খাবার নিয়ে সন্দেহ হলে বিশ্বস্ত বড়দের কাছে যাচাই করি।',
-      story:
-          'একদিন আমিন শুনল, ইসলামে কিছু খাবার নিষেধ। সে জানতে চাইল কোনগুলো, আর মা কুরআনের শিক্ষা বুঝিয়ে দিলেন—শূকর এবং নেশা সৃষ্টিকারী পানীয় থেকে দূরে থাকতে হয়। প্যাকেটের অচেনা উপাদান দেখলে সে অনুমান না করে বড়দের সঙ্গে যাচাই করে।',
-      icon: Icons.no_food_rounded,
-      color: Color(0xFFFFE1D5),
-      quiz: [
-        (question: 'ইসলামে শূকরের মাংসের বিধান কী?', answer: 'নিষিদ্ধ'),
-        (question: 'নেশা সৃষ্টিকারী পানীয় থেকে কী করি?', answer: 'দূরে থাকি'),
-        (
-          question: 'অজানা উপাদান দেখলে কী করি?',
-          answer: 'অভিভাবকের সঙ্গে যাচাই'
-        ),
-        (
-          question: 'খাবার নিয়ে অনুমান করে অন্যকে দোষ দিই?',
-          answer: 'না, আগে নির্ভরযোগ্যভাবে জানি'
-        ),
-        (
-          question: 'নিষিদ্ধ জিনিস থেকে বাঁচতে কে সাহায্য করেন?',
-          answer: 'আল্লাহর নির্দেশ ও অভিভাবকের শিক্ষা'
-        ),
-        (
-          question: 'ভুল করে কিছু খেয়ে ফেললে কী করব?',
-          answer: 'বড়দের বলব ও সঠিকটা শিখব'
-        ),
-        (question: 'বন্ধুকে নিষিদ্ধ কিছু খেতে চাপ দেওয়া ঠিক?', answer: 'না'),
-        (
-          question: 'খাবারের নিয়ম কার কাছে শিখব?',
-          answer: 'বিশ্বস্ত আলেম ও অভিভাবকের কাছে'
-        ),
-        (question: 'সব অচেনা খাবারকে নিজে হারাম বলব?', answer: 'না, যাচাই করব'),
-        (
-          question: 'হালাল খাবার বাছাইয়ের উদ্দেশ্য কী?',
-          answer: 'আল্লাহর নির্দেশ মেনে চলা'
-        ),
-      ]),
+    id: 10,
+    titleKey: 'basics.chapter.10.title',
+    definitionKey: 'basics.chapter.10.definition',
+    storyKey: 'basics.chapter.10.story',
+    icon: Icons.no_food_rounded,
+    color: Color(0xFFFFE8E8),
+    quiz: [
+      (questionKey: 'basics.chapter.10.quiz.1.q', answerKey: 'basics.chapter.10.quiz.1.a'),
+      (questionKey: 'basics.chapter.10.quiz.2.q', answerKey: 'basics.chapter.10.quiz.2.a'),
+      (questionKey: 'basics.chapter.10.quiz.3.q', answerKey: 'basics.chapter.10.quiz.3.a'),
+      (questionKey: 'basics.chapter.10.quiz.4.q', answerKey: 'basics.chapter.10.quiz.4.a'),
+      (questionKey: 'basics.chapter.10.quiz.5.q', answerKey: 'basics.chapter.10.quiz.5.a'),
+      (questionKey: 'basics.chapter.10.quiz.6.q', answerKey: 'basics.chapter.10.quiz.6.a'),
+      (questionKey: 'basics.chapter.10.quiz.7.q', answerKey: 'basics.chapter.10.quiz.7.a'),
+      (questionKey: 'basics.chapter.10.quiz.8.q', answerKey: 'basics.chapter.10.quiz.8.a'),
+      (questionKey: 'basics.chapter.10.quiz.9.q', answerKey: 'basics.chapter.10.quiz.9.a'),
+      (questionKey: 'basics.chapter.10.quiz.10.q', answerKey: 'basics.chapter.10.quiz.10.a'),
+    ],
+  ),
 ];
 
 enum _Stage { intro, story, reflect, quiz, result }
@@ -467,19 +350,18 @@ class _IslamBasicsScreenState extends State<IslamBasicsScreen> {
       builder: (ctx) => AlertDialog(
         shape:
             RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: const LocalizedText('পড়া থেকে বিরতি নেবে?'),
-        content: const LocalizedText(
-            'তোমার শেখার অগ্রগতি সেভ থাকবে। পরে এখান থেকেই শুরু করতে পারবে।'),
+        title: Text(context.t('basics.pause.title')),
+        content: Text(context.t('basics.pause.body')),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: const LocalizedText('চালিয়ে যাই'),
+            child: Text(context.t('basics.pause.continue')),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(ctx, true),
             style: FilledButton.styleFrom(
                 backgroundColor: const Color(0xFFE05A7A)),
-            child: const LocalizedText('বের হই'),
+            child: Text(context.t('basics.pause.exit')),
           ),
         ],
       ),
@@ -543,7 +425,7 @@ class _IslamBasicsScreenState extends State<IslamBasicsScreen> {
               style: IconButton.styleFrom(backgroundColor: Colors.white)),
           const SizedBox(width: 8),
           Expanded(
-              child: LocalizedText(chapter.title,
+              child: Text(context.t(chapter.titleKey),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
@@ -552,11 +434,11 @@ class _IslamBasicsScreenState extends State<IslamBasicsScreen> {
                       color: AppTheme.darkText))),
           LocalizedText(
               switch (_stage) {
-                _Stage.intro => 'পাঠ ১',
-                _Stage.story => 'গল্প',
-                _Stage.reflect => 'ভাবি ${_itemIndex + 1}/১০',
-                _Stage.quiz => 'কুইজ ${_itemIndex + 1}/১০',
-                _Stage.result => 'ফলাফল',
+                _Stage.intro => context.t('basics.stage.intro'),
+                _Stage.story => context.t('basics.stage.story'),
+                _Stage.reflect => context.t('basics.stage.reflect', params: {'current': '${_itemIndex + 1}'}),
+                _Stage.quiz => context.t('basics.stage.quiz', params: {'current': '${_itemIndex + 1}'}),
+                _Stage.result => context.t('basics.stage.result'),
               },
               style: const TextStyle(
                   fontWeight: FontWeight.w800, color: AppTheme.primaryGreen)),
@@ -582,15 +464,15 @@ class _IslamBasicsScreenState extends State<IslamBasicsScreen> {
                         padding: EdgeInsets.all(tablet ? 32 : 18),
                         children: [
                           DuolingoPageHeader(
-                            title: 'মৌলিক ইসলাম শিক্ষা',
-                            subtitle: 'গল্পে শিখি, কাজে লাগাই',
+                            title: context.t('basics.header.title'),
+                            subtitle: context.t('basics.header.subtitle'),
                             customIcon: Image.asset(
                               'assets/images/badge_basics_3d.png',
                               width: 36,
                               height: 36,
                               fit: BoxFit.contain,
                             ),
-                            gradientColors: const [
+                            gradientColors: [
                               Color(0xFF58CC02),
                               Color(0xFF46A302)
                             ],
@@ -629,7 +511,7 @@ class _IslamBasicsScreenState extends State<IslamBasicsScreen> {
       return ListView(padding: pad, children: [
         _IllustrationCard(chapter: chapter),
         const SizedBox(height: 18),
-        const LocalizedText('সহজ করে জানি',
+        Text(context.t('basics.intro.know_easily'),
             style: TextStyle(
                 fontSize: 19,
                 fontWeight: FontWeight.w900,
@@ -639,12 +521,12 @@ class _IslamBasicsScreenState extends State<IslamBasicsScreen> {
             padding: const EdgeInsets.all(17),
             decoration: BoxDecoration(
                 color: Colors.white, borderRadius: BorderRadius.circular(20)),
-            child: LocalizedText(chapter.definition,
+            child: Text(context.t(chapter.definitionKey),
                 style: const TextStyle(
                     fontSize: 16, height: 1.7, color: AppTheme.darkText))),
         const SizedBox(height: 17),
         _primaryButton(
-            'পরের পাঠ: গল্প পড়ি', Icons.auto_stories_rounded, _nextStage),
+            context.t('basics.intro.next_story'), Icons.auto_stories_rounded, _nextStage),
       ]);
     }
     if (_stage == _Stage.story) {
@@ -657,19 +539,19 @@ class _IslamBasicsScreenState extends State<IslamBasicsScreen> {
                 color: Colors.white, borderRadius: BorderRadius.circular(22)),
             child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              const LocalizedText('একটি ছোট্ট গল্প',
+              Text(context.t('basics.story.short_story'),
                   style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.w900,
                       color: AppTheme.darkText)),
               const SizedBox(height: 12),
-              LocalizedText(chapter.story,
+              Text(context.t(chapter.storyKey),
                   style: const TextStyle(
                       fontSize: 16, height: 1.85, color: AppTheme.darkText))
             ])),
         const SizedBox(height: 16),
         _primaryButton(
-            'গল্প নিয়ে ভাবি', Icons.psychology_alt_rounded, _nextStage),
+            context.t('basics.story.think_story'), Icons.psychology_alt_rounded, _nextStage),
       ]);
     }
     if (_stage == _Stage.reflect) {
@@ -677,8 +559,8 @@ class _IslamBasicsScreenState extends State<IslamBasicsScreen> {
         _StageLabel(
             color: chapter.color,
             icon: Icons.psychology_alt_rounded,
-            title: 'গল্পটি নিয়ে একটু ভাবো',
-            subtitle: '১০টি ছোট প্রশ্ন—নিজের মনে উত্তর দাও।'),
+            title: context.t('basics.reflect.title'),
+            subtitle: context.t('basics.reflect.subtitle')),
         const SizedBox(height: 18),
         Container(
             padding: const EdgeInsets.all(22),
@@ -700,7 +582,7 @@ class _IslamBasicsScreenState extends State<IslamBasicsScreen> {
                       color: AppTheme.darkText)),
               const SizedBox(height: 16),
               LocalizedText(
-                  'নিজের ভাষায় উত্তর ভাবো। প্রস্তুত হলে পরের প্রশ্নে যাও।',
+                  context.t('basics.reflect.hint'),
                   textAlign: TextAlign.center,
                   style: TextStyle(
                       color: AppTheme.darkText.withValues(alpha: .65),
@@ -708,7 +590,7 @@ class _IslamBasicsScreenState extends State<IslamBasicsScreen> {
             ])),
         const SizedBox(height: 18),
         _primaryButton(
-            _itemIndex == 9 ? 'এবার ১০টি কুইজ দিই' : 'পরের ভাবনার প্রশ্ন',
+            _itemIndex == 9 ? context.t('basics.reflect.take_quiz') : context.t('basics.reflect.next_question'),
             _itemIndex == 9 ? Icons.quiz_rounded : Icons.arrow_forward_rounded,
             () {
           if (_itemIndex < 9) {
@@ -729,25 +611,26 @@ class _IslamBasicsScreenState extends State<IslamBasicsScreen> {
   Widget _quizContent(_Chapter chapter, bool tablet) {
     final item = chapter.quiz[_itemIndex];
     final options = _optionsFor(chapter, _itemIndex);
-    final isCorrect = _selected != null && options[_selected!] == item.answer;
+    final isCorrect =
+        _selected != null && options[_selected!] == context.t(item.answerKey);
 
     return ListView(padding: EdgeInsets.all(tablet ? 32 : 20), children: [
       _StageLabel(
           color: chapter.color,
           icon: Icons.quiz_rounded,
-          title: 'শেখাটা মনে আছে?',
-          subtitle: '১০টি কুইজ—সঠিক উত্তর বেছে নাও।'),
+          title: context.t('basics.quiz.title'),
+          subtitle: context.t('basics.quiz.subtitle')),
       const SizedBox(height: 18),
       Container(
           padding: const EdgeInsets.all(22),
           decoration: BoxDecoration(
               color: Colors.white, borderRadius: BorderRadius.circular(22)),
           child: Column(children: [
-            LocalizedText('প্রশ্ন ${_itemIndex + 1} / ১০',
+            Text(context.t('basics.quiz.question_counter', params: {'current': '${_itemIndex + 1}', 'total': '10'}),
                 style: const TextStyle(
                     fontWeight: FontWeight.w800, color: AppTheme.primaryGreen)),
             const SizedBox(height: 10),
-            LocalizedText(item.question,
+            Text(context.t(item.questionKey),
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                     fontSize: 20,
@@ -762,7 +645,7 @@ class _IslamBasicsScreenState extends State<IslamBasicsScreen> {
             child: _QuizOption(
                 text: options[i],
                 selected: _selected == i,
-                correct: _checked && options[i] == item.answer,
+                correct: _checked && options[i] == context.t(item.answerKey),
                 color: chapter.color,
                 onTap: _checked ? null : () => setState(() => _selected = i))),
       if (_checked) ...[
@@ -770,8 +653,8 @@ class _IslamBasicsScreenState extends State<IslamBasicsScreen> {
             padding: const EdgeInsets.only(bottom: 12),
             child: LocalizedText(
                 isCorrect
-                    ? 'সঠিক উত্তর! মাশাআল্লাহ।'
-                    : 'উত্তরটি ভুল হয়েছে। সঠিক উত্তর: ${item.answer}',
+                    ? context.t('basics.quiz.correct_feedback')
+                    : context.t('basics.quiz.wrong_feedback', params: {'correct': context.t(item.answerKey)}),
                 style: TextStyle(
                     fontWeight: FontWeight.w800,
                     color: isCorrect
@@ -780,14 +663,14 @@ class _IslamBasicsScreenState extends State<IslamBasicsScreen> {
       ],
       _primaryButton(
           !_checked
-              ? 'উত্তর মিলিয়ে দেখি'
-              : (_itemIndex == 9 ? 'ফলাফল দেখি' : 'পরের প্রশ্ন'),
+              ? context.t('basics.quiz.check_answer')
+              : (_itemIndex == 9 ? context.t('basics.quiz.see_result') : context.t('basics.quiz.next_question')),
           !_checked
               ? Icons.check_rounded
               : Icons.arrow_forward_rounded, () {
         if (_selected == null) return;
         if (!_checked) {
-          final correct = options[_selected!] == item.answer;
+          final correct = options[_selected!] == context.t(item.answerKey);
           if (!_firstAttemptStatus.containsKey(_itemIndex)) {
             _firstAttemptStatus[_itemIndex] = correct;
             if (correct) {
@@ -829,7 +712,7 @@ class _IslamBasicsScreenState extends State<IslamBasicsScreen> {
               }
             },
             icon: const Icon(Icons.skip_next_rounded, size: 18),
-            label: const LocalizedText('প্রশ্নটি এড়িয়ে যাই'),
+            label: Text(context.t('basics.quiz.skip_question')),
             style: TextButton.styleFrom(
               foregroundColor: AppTheme.darkText.withValues(alpha: 0.6),
             ),
@@ -889,8 +772,8 @@ class _IslamBasicsScreenState extends State<IslamBasicsScreen> {
                 ),
               ),
               const SizedBox(height: 16),
-              const LocalizedText(
-                'কুইজের ফলাফল',
+              Text(
+                context.t('basics.result.title'),
                 style: TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.w900,
@@ -911,10 +794,10 @@ class _IslamBasicsScreenState extends State<IslamBasicsScreen> {
               const SizedBox(height: 8),
               LocalizedText(
                 score == 10
-                    ? 'মাশাআল্লাহ! তুমি সব প্রশ্নের সঠিক উত্তর দিয়েছো!'
+                    ? context.t('basics.result.perfect')
                     : score >= 7
-                        ? 'খুব ভালো! তুমি সফলভাবে অধ্যায়টি সম্পন্ন করেছ।'
-                        : 'তুমি চেষ্টা করেছো! অধ্যায়টি আবার পড়ে আরও ভালো করতে পারো।',
+                        ? context.t('basics.result.good')
+                        : context.t('basics.result.retry_advice'),
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 14,
@@ -945,8 +828,8 @@ class _IslamBasicsScreenState extends State<IslamBasicsScreen> {
                     const SizedBox(width: 6),
                     LocalizedText(
                       earned
-                          ? '+২৫ XP অর্জিত হয়েছে!'
-                          : '+২৫ XP আগেই অর্জিত হয়েছে',
+                          ? context.t('basics.result.xp_earned')
+                          : context.t('basics.result.xp_already'),
                       style: const TextStyle(
                         fontWeight: FontWeight.w800,
                         fontSize: 13,
@@ -961,18 +844,18 @@ class _IslamBasicsScreenState extends State<IslamBasicsScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   _ResultStat(
-                    label: 'সঠিক',
+                    label: context.t('basics.result.correct_label'),
                     value: '$score',
                     color: const Color(0xFF58A700),
                   ),
                   _ResultStat(
-                    label: 'ভুল',
+                    label: context.t('basics.result.wrong_label'),
                     value: '$incorrect',
                     color: const Color(0xFFD63031),
                   ),
                   if (_unansweredCount > 0)
                     _ResultStat(
-                      label: 'এড়ানো',
+                      label: context.t('basics.result.skipped_label'),
                       value: '$_unansweredCount',
                       color: const Color(0xFF888888),
                     ),
@@ -983,13 +866,13 @@ class _IslamBasicsScreenState extends State<IslamBasicsScreen> {
         ),
         const SizedBox(height: 20),
         _primaryButton(
-          'কুইজ পুনরায় দিন (Retry)',
+          context.t('basics.result.retry_btn'),
           Icons.refresh_rounded,
           _retryQuiz,
         ),
         const SizedBox(height: 10),
         Duolingo3DButton(
-          text: 'অধ্যায় তালিকায় ফিরুন',
+          text: context.t('basics.result.back_to_list'),
           icon: const Icon(Icons.list_rounded),
           color: AppTheme.primaryGreen,
           onPressed: () => setState(() => _chapterIndex = null),
@@ -999,7 +882,7 @@ class _IslamBasicsScreenState extends State<IslamBasicsScreen> {
           child: TextButton.icon(
             onPressed: _restartChapter,
             icon: const Icon(Icons.auto_stories_rounded, size: 18),
-            label: const LocalizedText('অধ্যায়টি শুরু থেকে আবার পড়ুন'),
+            label: Text(context.t('basics.result.read_from_start')),
             style: TextButton.styleFrom(
               foregroundColor: AppTheme.darkText.withValues(alpha: 0.7),
             ),
@@ -1010,12 +893,13 @@ class _IslamBasicsScreenState extends State<IslamBasicsScreen> {
   }
 
   List<String> _optionsFor(_Chapter chapter, int index) {
-    final correct = chapter.quiz[index].answer;
+    final correct = context.t(chapter.quiz[index].answerKey);
     final wrong = <String>[];
     for (var offset = 1;
         wrong.length < 2 && offset < chapter.quiz.length;
         offset++) {
-      final value = chapter.quiz[(index + offset) % chapter.quiz.length].answer;
+      final value =
+          context.t(chapter.quiz[(index + offset) % chapter.quiz.length].answerKey);
       if (value != correct && !wrong.contains(value)) wrong.add(value);
     }
     final list = [correct, ...wrong];
@@ -1025,19 +909,19 @@ class _IslamBasicsScreenState extends State<IslamBasicsScreen> {
   }
 
   String _reflectionQuestion(_Chapter chapter, int index) {
-    const prompts = [
-      'এই কথাটি তোমাকে কী ভাবায়?',
-      'এটি মনে রাখলে তুমি কী ভালো কাজ করতে পারো?',
-      'তোমার জীবনে এর একটি উদাহরণ কী?',
-      'এটি কি তোমাকে কারও উপকার করতে শেখায়?',
-      'এ বিষয়ে তোমার মনে আর কী প্রশ্ন আসে?',
-      'কঠিন হলে কার কাছে সাহায্য চাইবে?',
-      'আজ থেকেই কীভাবে এটি কাজে লাগাবে?',
-      'তোমার পরিবারের সঙ্গে এ নিয়ে কী কথা বলবে?',
-      'এটি ভুলে গেলে কীভাবে মনে করতে পারো?',
-      'এই অধ্যায় থেকে সবচেয়ে জরুরি শিক্ষা কোনটি?'
+    final prompts = [
+      context.t('basics.reflect.q1'),
+      context.t('basics.reflect.q2'),
+      context.t('basics.reflect.q3'),
+      context.t('basics.reflect.q4'),
+      context.t('basics.reflect.q5'),
+      context.t('basics.reflect.q6'),
+      context.t('basics.reflect.q7'),
+      context.t('basics.reflect.q8'),
+      context.t('basics.reflect.q9'),
+      context.t('basics.reflect.q10'),
     ];
-    return '${chapter.quiz[index].question} ${prompts[index]}';
+    return '${context.t(chapter.quiz[index].questionKey)} ${prompts[index]}';
   }
 
   Widget _primaryButton(String label, IconData icon, VoidCallback onPressed,
@@ -1084,7 +968,7 @@ class _ChapterCard extends StatelessWidget {
         Expanded(
             child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          LocalizedText('অধ্যায় ${index + 1}',
+          Text(context.t('basics.card.chapter_n', params: {'number': '${index + 1}'}),
               style: const TextStyle(
                   fontSize: 10,
                   fontWeight: FontWeight.w800,
@@ -1096,14 +980,14 @@ class _ChapterCard extends StatelessWidget {
                   fontWeight: FontWeight.w900,
                   color: AppTheme.darkText)),
           const SizedBox(height: 3),
-          LocalizedText(
+          Text(
               completed
-                  ? 'সম্পন্ন · কুইজ ${quizScore ?? 10}/১০ · চাইলে আবার পড়ো'
+                  ? context.t('basics.card.completed_status', params: {'score': '${quizScore ?? 10}'})
                   : locked
-                      ? 'আগের অধ্যায় শেষ হলে খুলবে'
+                      ? context.t('basics.card.locked_status')
                       : inProgress
-                          ? 'এখান থেকে আবার শুরু করো'
-                          : 'ছবি · গল্প · ১০ ভাবনা · ১০ কুইজ',
+                          ? context.t('basics.card.resume_status')
+                          : context.t('basics.card.default_status'),
               style: const TextStyle(fontSize: 11, color: Colors.black54))
         ])),
         Icon(
@@ -1156,7 +1040,7 @@ class _IllustrationCard extends StatelessWidget {
                   fontWeight: FontWeight.w900,
                   color: AppTheme.darkText)),
           const SizedBox(height: 5),
-          LocalizedText(compact ? 'গল্পের কথা মনে রাখি' : 'দেখি · বুঝি · শিখি',
+          Text(compact ? context.t('basics.card.remember_story') : context.t('basics.card.see_understand_learn'),
               style: const TextStyle(
                   fontSize: 13,
                   fontWeight: FontWeight.w700,

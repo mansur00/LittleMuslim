@@ -1,0 +1,14 @@
+{
+  "en": {
+    "alert.save": "Saved {count} items"
+  },
+  "bn": {
+    "alert.save": "{count} টি আইটেম সংরক্ষিত"
+  },
+  "hi": {
+    "alert.save": "{count} आइटम सहेजे गए"
+  },
+  "it": {
+    "alert.save": "Salvati {count} elementi"
+  }
+}

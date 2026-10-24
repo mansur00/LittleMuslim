@@ -1,3 +1,4 @@
+import '../../core/core.dart';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
@@ -89,11 +90,11 @@ class _QaidaExamScreenState extends State<QaidaExamScreen> {
   String get _examTitle {
     switch (widget.tier) {
       case QaidaExamTier.stepBoss:
-        return 'স্টেপ ${widget.step?.stepNumber ?? 1} বস পরীক্ষা';
+        return context.t('qaida.exam.step_boss_title', params: {'step': '${widget.step?.stepNumber ?? 1}'});
       case QaidaExamTier.weekly:
-        return 'সাপ্তাহিক মূল্যায়ন ${widget.weekNumber}';
+        return context.t('qaida.exam.weekly_eval_title', params: {'number': '${widget.weekNumber}'});
       case QaidaExamTier.monthly:
-        return 'মাসিক মেগা পরীক্ষা ${widget.monthNumber}';
+        return context.t('qaida.exam.monthly_mega_title', params: {'number': '${widget.monthNumber}'});
     }
   }
 
@@ -189,14 +190,14 @@ class _QaidaExamScreenState extends State<QaidaExamScreen> {
     // Fallback if empty
     if (_questions.isEmpty) {
       _questions = [
-        const QaidaExamQuestion(
+        QaidaExamQuestion(
           id: 'fb_1',
-          prompt: 'সঠিক হরফটি নির্বাচন করুন: আলিফ',
+          prompt: context.t('qaida.exam.fallback_prompt'),
           arabicDisplay: 'ا',
-          options: ['ا', 'ب', 'ت'],
+          options: const ['ا', 'ب', 'ت'],
           correctIndex: 0,
-          explanation: 'আলিফ খালি এবং মুখ থেকে নিঃশ্বাসের সাথে উচ্চারিত হয়।',
-          topicName: 'মুফরাদাত',
+          explanation: context.t('qaida.exam.fallback_explanation'),
+          topicName: context.t('qaida.exam.fallback_topic'),
         ),
       ];
     }
@@ -291,24 +292,24 @@ class _QaidaExamScreenState extends State<QaidaExamScreen> {
                           builder: (ctx) => AlertDialog(
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(20)),
-                            title: const Row(
+                            title: Row(
                               children: [
                                 Icon(Icons.warning_amber_rounded,
                                     color: Color(0xFFD97706), size: 24),
                                 SizedBox(width: 8),
                                 Expanded(
-                                  child: LocalizedText(
-                                    'পরীক্ষা থেকে বের হবেন?',
-                                    style: TextStyle(
+                                  child: Text(
+                                    context.t('qaida.exam.exit_dialog_title'),
+                                    style: const TextStyle(
                                         fontWeight: FontWeight.bold,
                                         fontSize: 18),
                                   ),
                                 ),
                               ],
                             ),
-                            content: const LocalizedText(
-                              'এখন বের হলে এই পরীক্ষার অগ্রগতি সংরক্ষিত হবে না।',
-                              style: TextStyle(fontSize: 14),
+                            content: Text(
+                              context.t('qaida.exam.exit_dialog_content'),
+                              style: const TextStyle(fontSize: 14),
                             ),
                             actionsPadding: const EdgeInsets.symmetric(
                                 horizontal: 16, vertical: 12),
@@ -317,7 +318,7 @@ class _QaidaExamScreenState extends State<QaidaExamScreen> {
                                 children: [
                                   Expanded(
                                     child: DSButton(
-                                      label: context.uiText('চালিয়ে যান'),
+                                      label: context.t('qaida.exam.continue_btn'),
                                       variant: DSButtonVariant.primary,
                                       onPressed: () => Navigator.of(ctx).pop(),
                                     ),
@@ -325,7 +326,7 @@ class _QaidaExamScreenState extends State<QaidaExamScreen> {
                                   const SizedBox(width: 10),
                                   Expanded(
                                     child: DSButton(
-                                      label: context.uiText('বের হন'),
+                                      label: context.t('qaida.exam.exit_btn'),
                                       variant: DSButtonVariant.danger,
                                       onPressed: () {
                                         Navigator.of(ctx).pop();
@@ -367,15 +368,18 @@ class _QaidaExamScreenState extends State<QaidaExamScreen> {
                             _examTitle,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: GoogleFonts.hindSiliguri(
+                            style: AppFonts.getTextStyle(context, 
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
                               color: const Color(0xFF0F172A),
                             ),
                           ),
                           const SizedBox(height: 2),
-                          LocalizedText(
-                            'প্রশ্ন ${_currentIndex + 1} / ${_questions.length}  (পাস মার্ক ৮০%)',
+                          Text(
+                            context.t('qaida.exam.question_progress', params: {
+                              'current': '${_currentIndex + 1}',
+                              'total': '${_questions.length}',
+                            }),
                             style: const TextStyle(
                               fontSize: 11,
                               fontWeight: FontWeight.w600,
@@ -432,9 +436,9 @@ class _QaidaExamScreenState extends State<QaidaExamScreen> {
                           ),
                           const SizedBox(width: 8),
                           Expanded(
-                            child: LocalizedText(
-                              '৮০% মার্কস পেলে পরবর্তী ধাপ উন্মুক্ত হবে • নেগেটিভ মার্কিং নেই',
-                              style: GoogleFonts.hindSiliguri(
+                            child: Text(
+                              context.t('qaida.exam.passing_rule_info'),
+                              style: AppFonts.getTextStyle(context, 
                                 fontSize: 12,
                                 fontWeight: FontWeight.bold,
                                 color: const Color(0xFF1E40AF),
@@ -478,9 +482,9 @@ class _QaidaExamScreenState extends State<QaidaExamScreen> {
                           ),
                           const SizedBox(height: 10),
                           Text(
-                            q.prompt,
+                            context.uiText(q.prompt),
                             textAlign: TextAlign.center,
-                            style: GoogleFonts.hindSiliguri(
+                            style: AppFonts.getTextStyle(context, 
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
                               color: const Color(0xFF334155),
@@ -558,7 +562,7 @@ class _QaidaExamScreenState extends State<QaidaExamScreen> {
                                 Expanded(
                                   child: Text(
                                     opt,
-                                    style: GoogleFonts.hindSiliguri(
+                                    style: AppFonts.getTextStyle(context, 
                                       fontSize: 16,
                                       fontWeight: FontWeight.w600,
                                       color: const Color(0xFF1E293B),
@@ -591,10 +595,10 @@ class _QaidaExamScreenState extends State<QaidaExamScreen> {
                 top: false,
                 child: Duolingo3DButton(
                   text: !_hasAnswered
-                      ? 'যাচাই করুন'
+                      ? context.t('qaida.exam.verify_btn')
                       : (_currentIndex < _questions.length - 1
-                          ? 'পরবর্তী প্রশ্ন ➔'
-                          : 'ফলাফল দেখুন ➔'),
+                          ? context.t('qaida.exam.next_question_btn')
+                          : context.t('qaida.exam.view_result_btn')),
                   color: !_hasAnswered
                       ? (_selectedOptionIndex != null
                           ? AppTheme.duoGreen
@@ -640,10 +644,12 @@ class _QaidaExamScreenState extends State<QaidaExamScreen> {
                 ),
               ),
               const SizedBox(height: 20),
-              LocalizedText(
-                passed ? 'মাশাআল্লাহ! অভিনন্দন!' : 'একটু আরও অনুশীলন করি!',
+              Text(
+                passed
+                    ? context.t('qaida.exam.congrats_title')
+                    : context.t('qaida.exam.practice_more_title'),
                 textAlign: TextAlign.center,
-                style: GoogleFonts.hindSiliguri(
+                style: AppFonts.getTextStyle(context, 
                   fontSize: 26,
                   fontWeight: FontWeight.w800,
                   color: passed
@@ -652,12 +658,12 @@ class _QaidaExamScreenState extends State<QaidaExamScreen> {
                 ),
               ),
               const SizedBox(height: 8),
-              LocalizedText(
+              Text(
                 passed
-                    ? 'তুমি সফলভাবে পরীক্ষায় উত্তীর্ণ হয়েছ! (+$_xpReward XP)'
-                    : 'মন খারাপের কিছু নেই! চলো ভুলগুলো রিভিশন দ্বীপে আবার শিখি।',
+                    ? context.t('qaida.exam.congrats_desc', params: {'xp': '$_xpReward'})
+                    : context.t('qaida.exam.practice_more_desc'),
                 textAlign: TextAlign.center,
-                style: GoogleFonts.hindSiliguri(
+                style: AppFonts.getTextStyle(context, 
                   fontSize: 15,
                   color: const Color(0xFF475569),
                 ),
@@ -695,9 +701,11 @@ class _QaidaExamScreenState extends State<QaidaExamScreen> {
                               : const Color(0xFFD97706),
                         ),
                       ),
-                      LocalizedText(
-                        passed ? 'উত্তীর্ণ ✓' : '৮০% প্রয়োজন',
-                        style: GoogleFonts.hindSiliguri(
+                      Text(
+                        passed
+                            ? context.t('qaida.exam.passed_badge')
+                            : context.t('qaida.exam.need_80_badge'),
+                        style: AppFonts.getTextStyle(context, 
                           fontSize: 12,
                           fontWeight: FontWeight.bold,
                           color: passed
@@ -730,9 +738,9 @@ class _QaidaExamScreenState extends State<QaidaExamScreen> {
                         color: Color(0xFFD97706),
                       ),
                       const SizedBox(width: 8),
-                      LocalizedText(
-                        '“আবার চেষ্টা ব্যাজ” অর্জিত হয়েছে!',
-                        style: GoogleFonts.hindSiliguri(
+                      Text(
+                        context.t('qaida.exam.try_again_badge_earned'),
+                        style: AppFonts.getTextStyle(context, 
                           fontSize: 13,
                           fontWeight: FontWeight.bold,
                           color: const Color(0xFF92400E),
@@ -748,13 +756,13 @@ class _QaidaExamScreenState extends State<QaidaExamScreen> {
               // Action Buttons
               if (passed) ...[
                 Duolingo3DButton(
-                  text: context.uiText('পরবর্তী ধাপ ➔'),
+                  text: context.t('qaida.exam.next_step_btn'),
                   color: AppTheme.duoGreen,
                   onPressed: () => Navigator.of(context).pop(true),
                 ),
               ] else ...[
                 Duolingo3DButton(
-                  text: context.uiText('রিভিশন দ্বীপে অনুশীলন ➔'),
+                  text: context.t('qaida.exam.revision_island_btn'),
                   color: const Color(0xFF3B82F6),
                   shadowColor: const Color(0xFF1D4ED8),
                   onPressed: () {
@@ -767,7 +775,7 @@ class _QaidaExamScreenState extends State<QaidaExamScreen> {
                 ),
                 const SizedBox(height: 12),
                 Duolingo3DButton.secondary(
-                  text: context.uiText('আবার পরীক্ষা দিন'),
+                  text: context.t('qaida.exam.retake_exam_btn'),
                   icon: const Icon(Icons.refresh_rounded, size: 20, color: Color(0xFF374151)),
                   onPressed: _retakeExam,
                 ),

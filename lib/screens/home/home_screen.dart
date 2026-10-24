@@ -1,3 +1,4 @@
+import '../../core/core.dart';
 import '../../l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -101,7 +102,7 @@ class _HomeTopBar extends StatelessWidget {
         context.select<AppState, (String, int, int)>(
             (state) => (state.userName, state.xp, state.streakDays));
     return _TopBar(
-      name: userName.isNotEmpty ? userName : 'বন্ধু',
+      name: userName.isNotEmpty ? userName : context.t('common.friend'),
       xp: xp,
       streakDays: streakDays,
       isTablet: isTablet,
@@ -156,10 +157,10 @@ class _HomePathTab extends StatelessWidget {
                         const Icon(Icons.admin_panel_settings_rounded,
                             color: Color(0xFFD97706), size: 20),
                         const SizedBox(width: 8),
-                        const Expanded(
+                        Expanded(
                           child: LocalizedText(
-                            'অ্যাডমিন মোড: সব লেভেল ও ধাপ আনলক',
-                            style: TextStyle(
+                            context.t('home.admin_mode_notice'),
+                            style: const TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.w800,
                               color: Color(0xFF92400E),
@@ -176,9 +177,9 @@ class _HomePathTab extends StatelessWidget {
                               borderRadius: BorderRadius.circular(8),
                               border: Border.all(color: const Color(0xFFF59E0B)),
                             ),
-                            child: const LocalizedText(
-                              'শিক্ষার্থী মোড',
-                              style: TextStyle(
+                            child: LocalizedText(
+                              context.t('home.student_mode'),
+                              style: const TextStyle(
                                 fontSize: 11,
                                 fontWeight: FontWeight.w700,
                                 color: Color(0xFFB45309),
@@ -193,8 +194,8 @@ class _HomePathTab extends StatelessWidget {
                 // Cheerful mascot speech banner (Noor encouraging the child)
                 _QuranSpeechCard(
                   message: todayQaidaLessons > 0
-                      ? 'মাশাআল্লাহ! আজকের মিশন সম্পূর্ণ করেছ।'
-                      : 'আসসালামু আলাইকুম! চলো আজ নতুন পাঠ শিখি!',
+                      ? context.t('home.mission_done_encouragement')
+                      : context.t('home.start_new_lesson_encouragement'),
                   isTablet: isTablet,
                 ),
                 SizedBox(height: isTablet ? 14 : 10),
@@ -211,7 +212,7 @@ class _HomePathTab extends StatelessWidget {
                     physics: const BouncingScrollPhysics(),
                     children: [
                       _QuickPill(
-                        label: 'ক্বায়দা',
+                        label: context.t('nav.qaida'),
                         icon: VectorIconType.qaida,
                         onTap: () => Navigator.of(context).push(
                           MaterialPageRoute<void>(
@@ -221,7 +222,7 @@ class _HomePathTab extends StatelessWidget {
                       ),
                       const SizedBox(width: 8),
                       _QuickPill(
-                        label: 'কুরআন',
+                        label: context.t('nav.quran'),
                         icon: VectorIconType.book,
                         onTap: () => Navigator.of(context).push(
                           MaterialPageRoute<void>(
@@ -231,7 +232,7 @@ class _HomePathTab extends StatelessWidget {
                       ),
                       const SizedBox(width: 8),
                       _QuickPill(
-                        label: 'নামাজ',
+                        label: context.t('nav.prayer'),
                         icon: VectorIconType.mosque,
                         onTap: () => Navigator.of(context).push(
                           MaterialPageRoute<void>(
@@ -241,7 +242,7 @@ class _HomePathTab extends StatelessWidget {
                       ),
                       const SizedBox(width: 8),
                       _QuickPill(
-                        label: 'দোয়া',
+                        label: context.t('nav.dua'),
                         icon: VectorIconType.dua,
                         onTap: () => Navigator.of(context).push(
                           MaterialPageRoute<void>(
@@ -251,7 +252,7 @@ class _HomePathTab extends StatelessWidget {
                       ),
                       const SizedBox(width: 8),
                       _QuickPill(
-                        label: 'সীরাত',
+                        label: context.t('nav.seerah'),
                         icon: VectorIconType.scroll,
                         onTap: () => Navigator.of(context).push(
                           MaterialPageRoute<void>(
@@ -281,8 +282,8 @@ class _HomePathTab extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _SectionTitle(
-                  title: 'মডিউল',
-                  subtitle: 'যেখান থেকে খুশি শুরু করো',
+                  title: context.t('home.all_modules'),
+                  subtitle: context.t('home.modules_subtitle'),
                   isTablet: isTablet,
                 ),
                 SizedBox(height: isTablet ? 16 : 12),
@@ -298,13 +299,14 @@ class _HomePathTab extends StatelessWidget {
   }
 }
 
-String _formatTime(String value) {
+String _formatTime(String value, [BuildContext? context]) {
   final parts = value.split(':');
   final hour = int.tryParse(parts.first) ?? 17;
   final minute = int.tryParse(parts.last) ?? 30;
-  final period = hour >= 12 ? 'PM' : 'AM';
-  final shownHour = hour % 12 == 0 ? 12 : hour % 12;
-  return '$shownHour:${minute.toString().padLeft(2, '0')} $period';
+  return AppFormatters.formatTime(
+    TimeOfDay(hour: hour, minute: minute),
+    locale: context != null ? context.currentLanguageCode : null,
+  );
 }
 
 /// My Learning Journey Tab ("আমার পড়া" / Continue Learning Hub)
@@ -380,7 +382,7 @@ class _HomeContinueTab extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     LocalizedText(
-                      'আমার পড়ার ড্যাশবোর্ড',
+                      context.t('dashboard.my_learning_title'),
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: isTablet ? 20 : 17,
@@ -388,9 +390,9 @@ class _HomeContinueTab extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 3),
-                    const LocalizedText(
-                      'যেখান থেকে শেষ করেছিলে, সেখান থেকেই পড়া চালিয়ে যাও!',
-                      style: TextStyle(
+                    LocalizedText(
+                      context.t('dashboard.resume_subtitle'),
+                      style: const TextStyle(
                         color: Colors.white70,
                         fontSize: 12,
                         height: 1.3,
@@ -406,8 +408,8 @@ class _HomeContinueTab extends StatelessWidget {
 
         // ── 2. Primary 1-Tap Qaida Resume Card ──
         _SectionTitle(
-          title: 'চলমান কায়দা পাঠ',
-          subtitle: 'ধাপ ${step.stepNumber}: ${step.title}',
+          title: context.t('dashboard.current_qaida_title'),
+          subtitle: '${context.t("qaida.step", params: {"stepNumber": step.stepNumber})}: ${context.t(step.title)}',
           isTablet: isTablet,
         ),
         const SizedBox(height: 10),
@@ -427,7 +429,10 @@ class _HomeContinueTab extends StatelessWidget {
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: LocalizedText(
-                      'স্টেপ ${step.stepNumber}: ${step.title}',
+                      context.t('qaida.step_with_title', params: {
+                        'stepNumber': context.formatDigits(step.stepNumber.toString()),
+                        'title': step.title,
+                      }),
                       style: const TextStyle(
                         fontSize: 11.5,
                         fontWeight: FontWeight.w800,
@@ -448,7 +453,10 @@ class _HomeContinueTab extends StatelessWidget {
                             size: 14, color: Color(0xFFFF9600)),
                         const SizedBox(width: 3),
                         LocalizedText(
-                          'পাঠ ${nextLesson.lessonNumber}/${step.lessons.length}',
+                          context.t('qaida.lesson_progress', params: {
+                            'current': context.formatDigits(nextLesson.lessonNumber.toString()),
+                            'total': context.formatDigits(step.lessons.length.toString()),
+                          }),
                           style: const TextStyle(
                             fontSize: 11,
                             fontWeight: FontWeight.bold,
@@ -489,7 +497,10 @@ class _HomeContinueTab extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         LocalizedText(
-                          nextLesson.title,
+                          nextLesson.trackId == 'step_1_mufradat'
+                              ? context.t('qaida.lesson.letter_title',
+                                  params: {'letter': context.t(nextLesson.titleKey)})
+                              : context.t(nextLesson.titleKey),
                           style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w900,
@@ -498,7 +509,10 @@ class _HomeContinueTab extends StatelessWidget {
                         ),
                         const SizedBox(height: 3),
                         LocalizedText(
-                          nextLesson.subtitle,
+                          nextLesson.trackId == 'step_1_mufradat'
+                              ? context.t('qaida.lesson.letter_sub',
+                                  params: {'letter': nextLesson.arabicDisplay})
+                              : context.t(nextLesson.subtitleKey),
                           style: const TextStyle(
                             fontSize: 12,
                             color: Color(0xFF64748B),
@@ -537,14 +551,14 @@ class _HomeContinueTab extends StatelessWidget {
                     ],
                   ),
                   alignment: Alignment.center,
-                  child: const Row(
+                  child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.play_arrow_rounded, color: Colors.white, size: 24),
-                      SizedBox(width: 8),
+                      const Icon(Icons.play_arrow_rounded, color: Colors.white, size: 24),
+                      const SizedBox(width: 8),
                       LocalizedText(
-                        'কায়দা পড়া চালিয়ে যাই',
-                        style: TextStyle(
+                        context.t('qaida.continue_lesson'),
+                        style: const TextStyle(
                           color: Colors.white,
                           fontSize: 15.5,
                           fontWeight: FontWeight.w900,
@@ -573,15 +587,15 @@ class _HomeContinueTab extends StatelessWidget {
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(color: const Color(0xFFBFDBFE)),
                         ),
-                        child: const Row(
+                        child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(Icons.map_rounded, size: 14, color: Color(0xFF2563EB)),
-                            SizedBox(width: 5),
+                            const Icon(Icons.map_rounded, size: 14, color: Color(0xFF2563EB)),
+                            const SizedBox(width: 5),
                             Flexible(
                               child: LocalizedText(
-                                '১৭টি ধাপের মানচিত্র',
-                                style: TextStyle(
+                                context.t('dashboard.seventeen_steps_map'),
+                                style: const TextStyle(
                                   fontSize: 11.5,
                                   fontWeight: FontWeight.bold,
                                   color: Color(0xFF1D4ED8),
@@ -611,15 +625,15 @@ class _HomeContinueTab extends StatelessWidget {
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(color: const Color(0xFFE9D5FF)),
                         ),
-                        child: const Row(
+                        child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(Icons.insights_rounded, size: 14, color: Color(0xFF9333EA)),
-                            SizedBox(width: 5),
+                            const Icon(Icons.insights_rounded, size: 14, color: Color(0xFF9333EA)),
+                            const SizedBox(width: 5),
                             Flexible(
                               child: LocalizedText(
-                                'পড়ার রিপোর্ট (হিটম্যাপ)',
-                                style: TextStyle(
+                                context.t('dashboard.progress_report_heatmap'),
+                                style: const TextStyle(
                                   fontSize: 11.5,
                                   fontWeight: FontWeight.bold,
                                   color: Color(0xFF7E22CE),
@@ -643,10 +657,10 @@ class _HomeContinueTab extends StatelessWidget {
         // ── 3. Spaced Repetition / Smart Review ──
         if (hasDue || hasMistakes) ...[
           _SectionTitle(
-            title: 'স্মার্ট রিভিশন',
+            title: context.t('dashboard.smart_revision'),
             subtitle: hasMistakes
-                ? 'কিছু হরফে ভুল হয়েছিল, পুনরায় ঝালিয়ে নাও'
-                : 'পরবর্তী পড়ার আগে রিভিশন করে নাও',
+                ? context.t('dashboard.revision_mistakes_hint')
+                : context.t('dashboard.revision_routine_hint'),
             isTablet: isTablet,
           ),
           const SizedBox(height: 10),
@@ -656,10 +670,13 @@ class _HomeContinueTab extends StatelessWidget {
 
         // ── 4. Quran Bookmark Resume Card ──
         _SectionTitle(
-          title: 'পবিত্র কুরআন তিলাওয়াত',
+          title: context.t('quran.title'),
           subtitle: quranPos != null
-              ? 'সূরা নম্বর ${quranPos.surahNumber} · আয়াত ${quranPos.ayahNumber}'
-              : 'সূরা আল-ফাতিহা থেকে শুরু করো',
+              ? context.t('quran.surah_ayah_info', params: {
+                  'surah': context.formatNumber(quranPos.surahNumber),
+                  'ayah': context.formatNumber(quranPos.ayahNumber),
+                })
+              : context.t('quran.start_from_fatihah'),
           isTablet: isTablet,
         ),
         const SizedBox(height: 10),
@@ -691,8 +708,11 @@ class _HomeContinueTab extends StatelessWidget {
                   children: [
                     LocalizedText(
                       quranPos != null
-                          ? 'সূরা নম্বর ${quranPos.surahNumber} · আয়াত ${quranPos.ayahNumber}'
-                          : 'সূরা আল-ফাতিহা (১ম আয়াত)',
+                          ? context.t('quran.surah_ayah_info', params: {
+                              'surah': context.formatNumber(quranPos.surahNumber),
+                              'ayah': context.formatNumber(quranPos.ayahNumber),
+                            })
+                          : context.t('quran.fatihah_first_ayah'),
                       style: const TextStyle(
                         fontWeight: FontWeight.w900,
                         fontSize: 14.5,
@@ -700,15 +720,15 @@ class _HomeContinueTab extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 2),
-                    const LocalizedText(
-                      'উচ্চারণ ও অর্থসহ সুন্দর তিলাওয়াত',
-                      style: TextStyle(color: Color(0xFF64748B), fontSize: 11),
+                    LocalizedText(
+                      context.t('quran.recitation_meaning_subtitle'),
+                      style: const TextStyle(color: Color(0xFF64748B), fontSize: 11),
                     ),
                   ],
                 ),
               ),
               DSButton(
-                label: 'পড়ি ›',
+                label: context.t('common.read'),
                 variant: DSButtonVariant.orange,
                 height: 38,
                 width: 84,
@@ -723,8 +743,8 @@ class _HomeContinueTab extends StatelessWidget {
 
         // ── 5. Prayer Adhan & Learning Alarm Audio Panel ──
         _SectionTitle(
-          title: 'আযান ও পড়ার অ্যালার্ম',
-          subtitle: 'সুমধুর আযান ও আউযুবিল্লাহ-বিসমিল্লাহ শুনুন',
+          title: context.t('dashboard.adhan_alarm_title'),
+          subtitle: context.t('dashboard.adhan_alarm_subtitle'),
           isTablet: isTablet,
         ),
         const SizedBox(height: 10),
@@ -778,7 +798,9 @@ class _HomeContinueTab extends StatelessWidget {
                                 const SizedBox(width: 5),
                                 Flexible(
                                   child: LocalizedText(
-                                    isAdhanPlaying ? 'আযান থামান' : 'আযান শুনুন',
+                                    isAdhanPlaying
+                                        ? context.t('prayer.stop_adhan')
+                                        : context.t('prayer.play_adhan'),
                                     style: const TextStyle(
                                       color: Colors.white,
                                       fontWeight: FontWeight.w800,
@@ -830,7 +852,9 @@ class _HomeContinueTab extends StatelessWidget {
                                 const SizedBox(width: 4),
                                 Flexible(
                                   child: LocalizedText(
-                                    isAlarmPlaying ? 'অ্যালার্ম থামান' : 'পড়ার অ্যালার্ম শুনুন',
+                                    isAlarmPlaying
+                                        ? context.t('settings.stop_alarm')
+                                        : context.t('settings.test_alarm'),
                                     style: const TextStyle(
                                       color: Colors.white,
                                       fontWeight: FontWeight.w800,
@@ -854,7 +878,9 @@ class _HomeContinueTab extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   LocalizedText(
-                    'পড়ার অ্যালার্ম: ${_formatTime(state.learningAlarmTime)}',
+                    context.t('settings.alarm_time', params: {
+                      'time': _formatTime(state.learningAlarmTime, context),
+                    }),
                     style: const TextStyle(
                       fontSize: 11.5,
                       fontWeight: FontWeight.w700,
@@ -865,9 +891,9 @@ class _HomeContinueTab extends StatelessWidget {
                     onTap: () => Navigator.of(context).push(
                       MaterialPageRoute<void>(builder: (_) => const PrayerScreen()),
                     ),
-                    child: const LocalizedText(
-                      'নামাজের সময়সূচি ›',
-                      style: TextStyle(
+                    child: LocalizedText(
+                      context.t('prayer.view_schedule'),
+                      style: const TextStyle(
                         fontSize: 11.5,
                         fontWeight: FontWeight.w800,
                         color: Color(0xFF2563EB),
@@ -883,8 +909,8 @@ class _HomeContinueTab extends StatelessWidget {
 
         // ── 6. Compact Subject Directory (All Modules) ──
         _SectionTitle(
-          title: 'সব মডিউল',
-          subtitle: 'কুরআন, নামাজ, দোয়া ও ইসলামিক গল্প শিখি',
+          title: context.t('home.all_modules'),
+          subtitle: context.t('home.modules_subtitle'),
           isTablet: isTablet,
         ),
         SizedBox(height: isTablet ? 16 : 12),
@@ -920,7 +946,7 @@ class _TopBar extends StatelessWidget {
         GestureDetector(
           onTap: () => showAvatarCustomizerModal(context),
           child: Tooltip(
-            message: 'অবতার ও রঙ পরিবর্তন করুন',
+            message: context.t('avatar.customize_tooltip'),
             child: FacelessSilhouette(
               size: isTablet ? 48 : 42,
               circleBackground: true,
@@ -933,7 +959,7 @@ class _TopBar extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               LocalizedText(
-                'আসসালামু আলাইকুম',
+                context.t('home.greeting'),
                 style: TextStyle(
                   fontSize: isTablet ? 12 : 11,
                   color: AppTheme.darkText.withValues(alpha: 0.55),
@@ -991,7 +1017,7 @@ class _TopBar extends StatelessWidget {
         const SizedBox(width: 6),
         IconButton.filledTonal(
           onPressed: onSettings,
-          tooltip: context.uiText('সেটিংস'),
+          tooltip: context.t('settings.title'),
           icon: const Icon(Icons.settings_rounded, size: 20),
           style: IconButton.styleFrom(
             backgroundColor: Colors.white,
@@ -1100,9 +1126,9 @@ class _QuranSpeechCard extends StatelessWidget {
                     color: const Color(0xFF58CC02),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: const LocalizedText(
-                    'কুরআন বলছে',
-                    style: TextStyle(
+                  child: LocalizedText(
+                    context.t('home.quran_says'),
+                    style: const TextStyle(
                       fontSize: 10,
                       fontWeight: FontWeight.w800,
                       color: Colors.white,
@@ -1143,8 +1169,8 @@ class _ReviewRecommendationCard extends StatelessWidget {
     if (!hasDue && !hasMistakes) return const SizedBox.shrink();
 
     final message = hasMistakes
-        ? 'কিছু দক্ষতায় আরো মনোযোগ দরকার। ভুল সংশোধন করে এগিয়ে যাও!'
-        : 'কিছু পুরনো পাঠ পুনরায় অনুশীলন করার সময় হয়েছে।';
+        ? context.t('home.review_mistakes_desc')
+        : context.t('home.review_spaced_desc');
     final icon = hasMistakes ? Icons.auto_fix_high_rounded : Icons.replay_rounded;
     final color = hasMistakes ? const Color(0xFFF59E0B) : const Color(0xFF6366F1);
     final bgColor =
@@ -1152,7 +1178,7 @@ class _ReviewRecommendationCard extends StatelessWidget {
     final borderColor =
         hasMistakes ? const Color(0xFFFDE68A) : const Color(0xFFC7D2FE);
     final btnLabel =
-        hasMistakes ? 'ভুল সংশোধন করি' : 'পুনরায় অনুশীলন করি';
+        hasMistakes ? context.t('home.fix_mistakes') : context.t('home.practice_again');
 
     return Padding(
       padding: EdgeInsets.only(bottom: isTablet ? 12 : 10),
@@ -1187,7 +1213,9 @@ class _ReviewRecommendationCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     LocalizedText(
-                      hasMistakes ? 'ভুল সংশোধন' : 'পুনরায় অনুশীলন',
+                      hasMistakes
+                          ? context.t('home.fix_mistakes')
+                          : context.t('home.practice_again'),
                       style: TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.bold,
@@ -1276,7 +1304,10 @@ class _ContinueLearningCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: LocalizedText(
-                  'চলমান: স্টেপ ${step.stepNumber}: ${step.title}',
+                  '${context.t('common.in_progress')}: ${context.t('qaida.step_with_title', params: {
+                    'stepNumber': context.formatDigits(step.stepNumber.toString()),
+                    'title': step.title,
+                  })}',
                   style: const TextStyle(
                     fontSize: 11,
                     fontWeight: FontWeight.bold,
@@ -1297,7 +1328,10 @@ class _ContinueLearningCard extends StatelessWidget {
                         size: 14, color: Color(0xFFFF9600)),
                     const SizedBox(width: 4),
                     LocalizedText(
-                      'পাঠ ${nextLesson.lessonNumber}/${step.lessons.length}',
+                      context.t('qaida.lesson_progress', params: {
+                        'current': context.formatDigits(nextLesson.lessonNumber.toString()),
+                        'total': context.formatDigits(step.lessons.length.toString()),
+                      }),
                       style: const TextStyle(
                         fontSize: 11,
                         fontWeight: FontWeight.bold,
@@ -1385,14 +1419,14 @@ class _ContinueLearningCard extends StatelessWidget {
                 ],
               ),
               alignment: Alignment.center,
-              child: const Row(
+              child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.play_arrow_rounded, color: Colors.white, size: 22),
-                  SizedBox(width: 6),
+                  const Icon(Icons.play_arrow_rounded, color: Colors.white, size: 22),
+                  const SizedBox(width: 6),
                   LocalizedText(
-                    'পড়া চালিয়ে যাই',
-                    style: TextStyle(
+                    context.t('qaida.continue_lesson'),
+                    style: const TextStyle(
                       color: Colors.white,
                       fontSize: 15,
                       fontWeight: FontWeight.bold,
@@ -1424,7 +1458,7 @@ class _ContinueLearningCard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(10),
                       border: Border.all(color: const Color(0xFFBFDBFE)),
                     ),
-                    child: const Row(
+                    child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         const Icon(Icons.auto_stories_rounded,
@@ -1432,7 +1466,7 @@ class _ContinueLearningCard extends StatelessWidget {
                         const SizedBox(width: 4),
                         Flexible(
                           child: LocalizedText(
-                            '১৭টি স্টেপ',
+                            context.t('qaida.seventeen_steps'),
                             style: const TextStyle(
                               fontSize: 11,
                               fontWeight: FontWeight.bold,
@@ -1474,7 +1508,7 @@ class _ContinueLearningCard extends StatelessWidget {
                         const SizedBox(width: 4),
                         Flexible(
                           child: LocalizedText(
-                            'শিক্ষক সহায়তা',
+                            context.t('live.teacher_help'),
                             style: const TextStyle(
                               fontSize: 11,
                               fontWeight: FontWeight.bold,
@@ -1549,92 +1583,20 @@ class _ModulesGrid extends StatelessWidget {
       mainAxisSpacing: DS.s4,
       crossAxisSpacing: DS.s4,
       childAspectRatio: isTablet ? 1.05 : 0.88,
-      children: [
-        DSModuleCard(
-          colors: DS.qaida,
-          title: 'ক্বায়দা',
-          subtitle: 'বর্ণমালা',
-          badgeAsset: 'assets/images/badge_qaida_3d.png',
-          iconPainter: const QaidaIconPainter(),
+      children: AppModuleRegistry.activeModules.map((module) {
+        return DSModuleCard(
+          colors: module.colors,
+          title: module.getLocalizedTitle(context),
+          subtitle: module.getLocalizedSubtitle(context),
+          badgeAsset: module.badgeAsset,
+          customBadge: module.customBadge,
+          iconPainter: module.iconPainter,
           isTablet: isTablet,
           onTap: () => Navigator.of(context).push(
-            MaterialPageRoute<void>(builder: (_) => const QaidaChaptersScreen()),
+            MaterialPageRoute<void>(builder: module.routeBuilder),
           ),
-        ),
-        DSModuleCard(
-          colors: DS.quran,
-          title: 'কুরআন',
-          subtitle: 'তিলাওয়াত',
-          badgeAsset: 'assets/images/badge_quran_3d.png',
-          iconPainter: const QuranIconPainter(),
-          isTablet: isTablet,
-          onTap: () => Navigator.of(context).push(
-            MaterialPageRoute<void>(builder: (_) => const QuranScreen()),
-          ),
-        ),
-        DSModuleCard(
-          colors: DS.prayer,
-          title: 'নামাজ',
-          subtitle: 'সময় + নিয়ম',
-          badgeAsset: 'assets/images/badge_prayer_3d.png',
-          iconPainter: const PrayerIconPainter(),
-          isTablet: isTablet,
-          onTap: () => Navigator.of(context).push(
-            MaterialPageRoute<void>(builder: (_) => const PrayerScreen()),
-          ),
-        ),
-        DSModuleCard(
-          colors: DS.dua,
-          title: 'দোয়া',
-          subtitle: 'মাসনুন',
-          badgeAsset: 'assets/images/badge_dua_3d.png',
-          iconPainter: const DuaIconPainter(),
-          isTablet: isTablet,
-          onTap: () => Navigator.of(context).push(
-            MaterialPageRoute<void>(builder: (_) => const DuasScreen()),
-          ),
-        ),
-        DSModuleCard(
-          colors: DS.seerah,
-          title: 'সীরাত',
-          subtitle: 'নবীর গল্প',
-          badgeAsset: 'assets/images/badge_seerah_3d.png',
-          iconPainter: const SeerahIconPainter(),
-          isTablet: isTablet,
-          onTap: () => Navigator.of(context).push(
-            MaterialPageRoute<void>(builder: (_) => const SeerahScreen()),
-          ),
-        ),
-        DSModuleCard(
-          colors: DS.basics,
-          title: 'মৌলিক ইসলাম',
-          subtitle: 'গল্পে গল্পে শিখি',
-          badgeAsset: 'assets/images/badge_basics_3d.png',
-          iconPainter: const BasicsIconPainter(),
-          isTablet: isTablet,
-          onTap: () => Navigator.of(context).push(
-            MaterialPageRoute<void>(builder: (_) => const IslamBasicsScreen()),
-          ),
-        ),
-        DSModuleCard(
-          colors: DS.achievements,
-          title: 'অর্জন',
-          subtitle: 'ব্যাজ · লেভেল',
-          customBadge: const DSGamifyBadge(
-            emblem: BadgeEmblem.trophy,
-            primaryColor: Color(0xFFFFC800),
-            bevelColor: Color(0xFFE5A100),
-            ribbonColor: Color(0xFFFFD700),
-            ribbonText: 'অর্জন',
-            size: 76,
-          ),
-          iconPainter: const TrophyIconPainter(),
-          isTablet: isTablet,
-          onTap: () => Navigator.of(context).push(
-            MaterialPageRoute<void>(builder: (_) => const AchievementsScreen()),
-          ),
-        ),
-      ],
+        );
+      }).toList(),
     );
   }
 }
@@ -1690,7 +1652,7 @@ class _TeacherLearningBanner extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     LocalizedText(
-                      'শিক্ষকের সাথে কুরআন ও ইসলাম শিখি',
+                      context.t('live.banner_title'),
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: isTablet ? 16 : 14,
@@ -1698,15 +1660,15 @@ class _TeacherLearningBanner extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 3),
-                    const LocalizedText(
-                      'মাসিক পরিকল্পনায় সরাসরি live class',
-                      style: TextStyle(
+                    LocalizedText(
+                      context.t('live.banner_subtitle'),
+                      style: const TextStyle(
                           color: Colors.white70, fontSize: 11, height: 1.3),
                     ),
                     const SizedBox(height: 6),
-                    const LocalizedText(
-                      'ক্লাস ও পরিকল্পনা দেখো  ›',
-                      style: TextStyle(
+                    LocalizedText(
+                      context.t('live.view_schedule_btn'),
+                      style: const TextStyle(
                         color: Color(0xFFFFE39A),
                         fontSize: 12,
                         fontWeight: FontWeight.w900,
@@ -1763,7 +1725,7 @@ class _DuolingoBottomNavBar extends StatelessWidget {
             Expanded(
               child: _NavBarItem(
                 navType: Real3DNavType.path,
-                label: 'শেখার পথ',
+                label: context.t('nav.learn_path'),
                 isSelected: currentIndex == 0,
                 onTap: () => onTap(0),
               ),
@@ -1771,7 +1733,7 @@ class _DuolingoBottomNavBar extends StatelessWidget {
             Expanded(
               child: _NavBarItem(
                 navType: Real3DNavType.modules,
-                label: 'আমার পড়া',
+                label: context.t('nav.my_learning'),
                 isSelected: currentIndex == 1,
                 onTap: () => onTap(1),
               ),
@@ -1779,7 +1741,7 @@ class _DuolingoBottomNavBar extends StatelessWidget {
             Expanded(
               child: _NavBarItem(
                 navType: Real3DNavType.missions,
-                label: 'মিশন',
+                label: context.t('nav.missions'),
                 isSelected: currentIndex == 2,
                 onTap: () => onTap(2),
               ),
@@ -1787,7 +1749,7 @@ class _DuolingoBottomNavBar extends StatelessWidget {
             Expanded(
               child: _NavBarItem(
                 navType: Real3DNavType.achievements,
-                label: 'অর্জন',
+                label: context.t('nav.achievements'),
                 isSelected: currentIndex == 3,
                 onTap: () => onTap(3),
               ),

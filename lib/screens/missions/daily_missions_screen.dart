@@ -33,8 +33,8 @@ class DailyMissionsScreen extends StatelessWidget {
               children: [
                 // ── Duolingo Header ──
                 DuolingoPageHeader(
-                  title: 'আজকের মিশন',
-                  subtitle: 'প্রতিদিনের শেখার লক্ষ্য',
+                  title: context.t('daily_mission.title'),
+                  subtitle: context.t('daily_mission.subtitle'),
                   iconType: VectorIconType.target,
                   gradientColors: const [Color(0xFFFF9600), Color(0xFFFF6B00)],
                   onBack: () => Navigator.pop(context),
@@ -45,8 +45,10 @@ class DailyMissionsScreen extends StatelessWidget {
                       color: Colors.white.withValues(alpha: 0.25),
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: LocalizedText(
-                      done ? 'সম্পন্ন' : 'চলমান',
+                    child: Text(
+                      done
+                          ? context.t('status.completed')
+                          : context.t('daily_mission.in_progress'),
                       style: const TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.w800,
@@ -82,16 +84,18 @@ class DailyMissionsScreen extends StatelessWidget {
                             size: 24,
                           ),
                           const SizedBox(width: 8),
-                          LocalizedText(
-                            done
-                                ? 'মাশাআল্লাহ! আজকের শেখার লক্ষ্য পূরণ হয়েছে।'
-                                : 'একটি নতুন ক্বায়দা পাঠ শেষ করো।',
-                            style: TextStyle(
-                                color: done
-                                    ? const Color(0xFF58A700)
-                                    : AppTheme.darkText,
-                                fontSize: 13,
-                                fontWeight: FontWeight.w700),
+                          Expanded(
+                            child: Text(
+                              done
+                                  ? context.t('daily_mission.target_achieved')
+                                  : context.t('daily_mission.finish_new_lesson'),
+                              style: TextStyle(
+                                  color: done
+                                      ? const Color(0xFF58A700)
+                                      : AppTheme.darkText,
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w700),
+                            ),
                           ),
                         ]),
                         const SizedBox(height: 14),
@@ -105,8 +109,10 @@ class DailyMissionsScreen extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 8),
-                        LocalizedText(
-                          done ? '১ / ১ পাঠ সম্পন্ন' : '০ / ১ পাঠ সম্পন্ন',
+                        Text(
+                          done
+                              ? context.t('daily_mission.progress_completed')
+                              : context.t('daily_mission.progress_zero'),
                           style: const TextStyle(
                               color: Color(0xFF6B7280),
                               fontSize: 12,
@@ -116,8 +122,10 @@ class DailyMissionsScreen extends StatelessWidget {
                 ),
 
                 DuolingoSectionLabel(
-                    label: 'আজকের কাজ',
-                    badgeText: done ? 'সম্পন্ন' : 'বাকি আছে',
+                    label: context.t('daily_mission.today_task'),
+                    badgeText: done
+                        ? context.t('status.completed')
+                        : context.t('daily_mission.remaining'),
                     badgeColor: done
                         ? const Color(0xFFE8F8D8)
                         : const Color(0xFFFFF3CD),
@@ -139,22 +147,24 @@ class DailyMissionsScreen extends StatelessWidget {
                       bevelColor: done
                           ? const Color(0xFF047857)
                           : const Color(0xFF1D4ED8),
-                      ribbonText: done ? 'সম্পন্ন' : 'দৈনিক',
+                      ribbonText: done
+                          ? context.t('status.completed')
+                          : context.t('daily_mission.daily_badge'),
                       size: 58,
                     ),
                     const SizedBox(width: 13),
-                    const Expanded(
+                    Expanded(
                       child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            LocalizedText('একটি ক্বায়দা পাঠ',
-                                style: TextStyle(
+                            Text(context.t('daily_mission.one_qaida_lesson'),
+                                style: const TextStyle(
                                     color: AppTheme.darkText,
                                     fontSize: 15,
                                     fontWeight: FontWeight.w800)),
-                            SizedBox(height: 4),
-                            LocalizedText('শেষ করলে +১০ XP',
-                                style: TextStyle(
+                            const SizedBox(height: 4),
+                            Text(context.t('daily_mission.complete_10_xp'),
+                                style: const TextStyle(
                                     color: Color(0xFF58A700),
                                     fontSize: 12,
                                     fontWeight: FontWeight.w700)),
@@ -180,14 +190,15 @@ class DailyMissionsScreen extends StatelessWidget {
                 if (!done) ...[
                   const SizedBox(height: 20),
                   Duolingo3DButton(
-                    text: 'মিশন শুরু করো',
+                    text: context.t('daily_mission.start_mission'),
                     onPressed: () => Navigator.of(context).push(
                       MaterialPageRoute<void>(
                         builder: (_) => QaidaLessonScreen(
                           lessonId: missionLessonId,
-                          lessonTitle: 'আজকের আলিফ পাঠ',
+                          lessonTitle:
+                              context.t('daily_mission.today_alif_lesson'),
                           letter: 'ا',
-                          letterName: 'আলিফ',
+                          letterName: context.t('daily_mission.alif_letter'),
                           makhrajNote: qaidaLetters.first.makhraj,
                           options: const ['ب', 'ا', 'ت'],
                         ),
@@ -207,16 +218,16 @@ class DailyMissionsScreen extends StatelessWidget {
                           color: const Color(0xFF58A700).withValues(alpha: 0.3),
                           width: 2),
                     ),
-                    child: const Row(children: [
-                      VectorIcon(
+                    child: Row(children: [
+                      const VectorIcon(
                           type: VectorIconType.star,
                           size: 28,
                           color: Color(0xFFFFC800)),
-                      SizedBox(width: 10),
+                      const SizedBox(width: 10),
                       Expanded(
-                        child: LocalizedText(
-                          'দারুণ! আজকের লক্ষ্য পূরণ হয়েছে। কাল আবার শিখবো!',
-                          style: TextStyle(
+                        child: Text(
+                          context.t('daily_mission.goal_achieved_cheer'),
+                          style: const TextStyle(
                               color: Color(0xFF2D7A00),
                               fontSize: 13,
                               fontWeight: FontWeight.w700,
@@ -228,8 +239,8 @@ class DailyMissionsScreen extends StatelessWidget {
                 ],
 
                 const SizedBox(height: 20),
-                LocalizedText(
-                  'আজকের মিশন এই ডিভাইসে সংরক্ষিত পাঠের তারিখ থেকে হিসাব করা হয়।',
+                Text(
+                  context.t('daily_mission.device_storage_notice'),
                   textAlign: TextAlign.center,
                   style: TextStyle(
                       color: AppTheme.darkText.withValues(alpha: 0.45),

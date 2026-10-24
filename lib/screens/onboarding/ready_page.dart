@@ -26,7 +26,9 @@ class ReadyPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final appState = context.watch<AppState>();
-    final name = appState.draftName.isNotEmpty ? appState.draftName : 'বন্ধু';
+    final name = appState.draftName.isNotEmpty
+        ? appState.draftName
+        : context.t('common.friend');
 
     return LayoutBuilder(
       builder: (context, constraints) => ScrollConfiguration(
@@ -74,8 +76,8 @@ class ReadyPage extends StatelessWidget {
                       .animate()
                       .scale(duration: 550.ms, curve: Curves.easeOutBack),
                   SizedBox(height: isTablet ? 32 : 24),
-                  LocalizedText(
-                    'তুমি প্রস্তুত, $name!',
+                  Text(
+                    context.t('onboarding.ready_name', params: {'name': name}),
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: isTablet ? 28 : 22,
@@ -92,15 +94,15 @@ class ReadyPage extends StatelessWidget {
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(color: const Color(0xFFF59E0B)),
                       ),
-                      child: const Row(
+                      child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(Icons.admin_panel_settings_rounded,
+                          const Icon(Icons.admin_panel_settings_rounded,
                               color: Color(0xFFD97706), size: 16),
-                          SizedBox(width: 6),
-                          LocalizedText(
-                            'অ্যাডমিন মোড: সব ধাপ ও লেভেল আনলক থাকবে',
-                            style: TextStyle(
+                          const SizedBox(width: 6),
+                          Text(
+                            context.t('onboarding.admin_badge_desc'),
+                            style: const TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.w700,
                               color: Color(0xFF92400E),
@@ -111,8 +113,8 @@ class ReadyPage extends StatelessWidget {
                     ).animate().fadeIn(delay: 240.ms, duration: 400.ms),
                   ],
                   SizedBox(height: isTablet ? 12 : 8),
-                  LocalizedText(
-                    'এখন থেকে প্রতিদিন একটু একটু করে\nকুরআন ও ইসলাম শিখবে মজার সাথে',
+                  Text(
+                    context.t('onboarding.ready_learn_fun'),
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: isTablet ? 15 : 14,
@@ -144,8 +146,8 @@ class ReadyPage extends StatelessWidget {
                           type: VectorIconType.qaida,
                           color: const Color(0xFF58A700),
                           bg: const Color(0xFFE8F8D8),
-                          title: 'ক্বায়দা ও বর্ণমালা',
-                          subtitle: 'মজার গেমের সাথে শেখা',
+                          title: context.t('onboarding.curriculum_qaida_title'),
+                          subtitle: context.t('onboarding.curriculum_qaida_sub'),
                           isTablet: isTablet,
                         ),
                         const SizedBox(height: 12),
@@ -153,8 +155,8 @@ class ReadyPage extends StatelessWidget {
                           type: VectorIconType.book,
                           color: const Color(0xFFE8913A),
                           bg: const Color(0xFFFFF0DB),
-                          title: 'কুরআন তিলাওয়াত',
-                          subtitle: 'রঙিন পেজ + সঠিক উচ্চারণ',
+                          title: context.t('onboarding.curriculum_quran_title'),
+                          subtitle: context.t('onboarding.curriculum_quran_sub'),
                           isTablet: isTablet,
                         ),
                         const SizedBox(height: 12),
@@ -162,8 +164,8 @@ class ReadyPage extends StatelessWidget {
                           type: VectorIconType.mosque,
                           color: const Color(0xFF3B82C4),
                           bg: const Color(0xFFDCEBFF),
-                          title: 'নামাজ ও দোয়া',
-                          subtitle: 'নিয়ম + মাসনুন দোয়া',
+                          title: context.t('onboarding.curriculum_prayer_title'),
+                          subtitle: context.t('onboarding.curriculum_prayer_sub'),
                           isTablet: isTablet,
                         ),
                         const SizedBox(height: 12),
@@ -171,8 +173,8 @@ class ReadyPage extends StatelessWidget {
                           type: VectorIconType.scroll,
                           color: const Color(0xFFE05A7A),
                           bg: const Color(0xFFFFE8EE),
-                          title: 'রাসূল (সা.)-এর সীরাত',
-                          subtitle: 'স্টোরি আকারে',
+                          title: context.t('onboarding.curriculum_seerah_title'),
+                          subtitle: context.t('onboarding.curriculum_seerah_sub'),
                           isTablet: isTablet,
                         ),
                       ],
@@ -183,7 +185,7 @@ class ReadyPage extends StatelessWidget {
                       .slideY(begin: 0.12, end: 0),
                   SizedBox(height: isTablet ? 36 : 28),
                   DSButton(
-                    label: 'যাত্রা শুরু করি',
+                    label: context.t('onboarding.start_journey_btn'),
                     width: double.infinity,
                     height: isTablet ? DS.btnLg : DS.btnMd,
                     color: DS.green500,
@@ -235,7 +237,7 @@ class _LearnItem extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              LocalizedText(
+              Text(
                 title,
                 style: TextStyle(
                   fontSize: isTablet ? 15 : 13.5,
@@ -244,7 +246,7 @@ class _LearnItem extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 2),
-              LocalizedText(
+              Text(
                 subtitle,
                 style: TextStyle(
                   fontSize: isTablet ? 12 : 11,

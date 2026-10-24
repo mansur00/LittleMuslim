@@ -1,0 +1,26 @@
+[
+  {
+    "file": "lib/core/config/app_config.dart",
+    "line": 6,
+    "literal": "Little Muslim",
+    "reason": "Brand name constant"
+  },
+  {
+    "file": "lib/services/notification_service.dart",
+    "line": 28,
+    "literal": "little_muslim_reminders",
+    "reason": "Notification channel ID"
+  },
+  {
+    "file": "lib/services/notification_service.dart",
+    "line": 33,
+    "literal": "little_muslim_prayer",
+    "reason": "Notification channel ID"
+  },
+  {
+    "file": "lib/services/notification_service.dart",
+    "line": 38,
+    "literal": "little_muslim_learning_alarm",
+    "reason": "Notification channel ID"
+  }
+]

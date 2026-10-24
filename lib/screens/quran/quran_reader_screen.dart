@@ -42,8 +42,8 @@ class _QuranReaderScreenState extends State<QuranReaderScreen>
       const QuranSurah(
         number: 1,
         arabicName: 'سُورَةُ الْفَاتِحَة',
-        englishName: 'আল-ফাতিহা',
-        nameMeaning: 'The Opening',
+        englishName: 'Al-Fatihah',
+        nameMeaning: 'quran.surah.1.meaning',
         ayahCount: 7,
         revelationType: 'Meccan',
       );
@@ -122,7 +122,7 @@ class _QuranReaderScreenState extends State<QuranReaderScreen>
       if (!mounted) return;
       setState(() {
         _loading = false;
-        _loadError = 'এই সূরার পাঠ আনা যায়নি। ইন্টারনেট দেখে আবার চেষ্টা করো।';
+        _loadError = context.t('quran.surah_load_error');
       });
     }
   }
@@ -264,9 +264,8 @@ class _QuranReaderScreenState extends State<QuranReaderScreen>
       });
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
-        ..showSnackBar(const SnackBar(
-            content: LocalizedText(
-                'আয়াতের অডিও চালু হয়নি। ইন্টারনেট সংযোগ দেখে আবার চেষ্টা করো।')));
+        ..showSnackBar(SnackBar(
+            content: LocalizedText(context.t('quran.audio_error'))));
     }
   }
 
@@ -388,10 +387,10 @@ class _QuranReaderScreenState extends State<QuranReaderScreen>
                                   ],
                                 ]),
                               const SizedBox(height: 11),
-                              const LocalizedText(
-                                  'রঙিন তাজবিদ: Quran.com · বাংলা অর্থ: মুহিউদ্দীন খান, Al Quran Cloud',
+                              LocalizedText(
+                                  context.t('quran.reader_credits'),
                                   textAlign: TextAlign.center,
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                       color: Colors.black45,
                                       fontSize: 11,
                                       height: 1.5)),
@@ -414,10 +413,10 @@ class _QuranReaderScreenState extends State<QuranReaderScreen>
 class _ReaderEmpty extends StatelessWidget {
   const _ReaderEmpty();
   @override
-  Widget build(BuildContext context) => const Padding(
-        padding: EdgeInsets.all(24),
+  Widget build(BuildContext context) => Padding(
+        padding: const EdgeInsets.all(24),
         child:
-            Center(child: LocalizedText('এই সূরায় এখন কোনো আয়াত পাওয়া যায়নি।')),
+            Center(child: LocalizedText(context.t('quran.no_ayahs_in_surah'))),
       );
 }
 
@@ -439,27 +438,29 @@ class _ReaderToolbar extends StatelessWidget {
             icon: const Icon(Icons.arrow_back_rounded),
             style: IconButton.styleFrom(backgroundColor: Colors.white)),
         const SizedBox(width: 7),
-        const Expanded(
-            child: LocalizedText('পাঠ মোড',
-                style: TextStyle(
+        Expanded(
+            child: LocalizedText(context.t('quran.reading_mode'),
+                style: const TextStyle(
                     color: AppTheme.darkText,
                     fontWeight: FontWeight.w800,
                     fontSize: 16))),
         IconButton(
             onPressed: onSmaller,
-            tooltip: context.uiText('ছোট লেখা'),
+            tooltip: context.t('quran.text_smaller'),
             icon: const Icon(Icons.text_decrease_rounded,
                 color: AppTheme.primaryGreen)),
-        LocalizedText('${fontSize.round()}',
+        LocalizedText(context.formatDigits('${fontSize.round()}'),
             style: const TextStyle(color: Colors.black54, fontSize: 11)),
         IconButton(
             onPressed: onLarger,
-            tooltip: context.uiText('বড় লেখা'),
+            tooltip: context.t('quran.text_larger'),
             icon: const Icon(Icons.text_increase_rounded,
                 color: AppTheme.primaryGreen)),
         IconButton.filledTonal(
             onPressed: onBookmark,
-            tooltip: context.uiText(bookmarked ? 'বুকমার্ক সরাও' : 'বুকমার্ক'),
+            tooltip: bookmarked
+                ? context.t('quran.remove_bookmark')
+                : context.t('quran.bookmark'),
             icon: Icon(
                 bookmarked
                     ? Icons.bookmark_rounded
@@ -493,14 +494,21 @@ class _SurahHeading extends StatelessWidget {
                   height: 1.7,
                   fontWeight: FontWeight.w700)),
           const SizedBox(height: 4),
-          LocalizedText('সূরা ${surah.englishName}',
+          LocalizedText(
+              context.t('quran.surah_title_with_name', params: {'name': surah.englishName}),
               style: const TextStyle(
                   color: AppTheme.darkText,
                   fontSize: 18,
                   fontWeight: FontWeight.w800)),
           const SizedBox(height: 5),
           LocalizedText(
-              '${surah.revelationType == 'Meccan' ? 'মক্কী' : 'মাদানী'}  ·  ${surah.ayahCount} আয়াত · ${surah.nameMeaning}',
+              context.t('quran.surah_heading_info', params: {
+                'revelation': surah.revelationType == 'Meccan'
+                    ? context.t('quran.meccan')
+                    : context.t('quran.medinan'),
+                'ayahCount': context.formatDigits('${surah.ayahCount}'),
+                'meaning': context.uiText(surah.nameMeaning),
+              }),
               style: const TextStyle(color: Colors.black54, fontSize: 12)),
           const SizedBox(height: 14),
           FilledButton.icon(
@@ -511,7 +519,7 @@ class _SurahHeading extends StatelessWidget {
                       : Icons.play_circle_filled_rounded,
                   size: 20),
               label: LocalizedText(
-                  isPlaying ? 'তিলাওয়াত থামাই' : 'পুরো সূরা তিলাওয়াত শুনি'),
+                  isPlaying ? context.t('quran.stop_recitation') : context.t('quran.play_full_surah')),
               style: FilledButton.styleFrom(
                   backgroundColor: isPlaying
                       ? AppTheme.accentCoral
@@ -574,7 +582,7 @@ class _VerseCard extends StatelessWidget {
                       color: isPlaying ? const Color(0xFFFFE0E0) : const Color(0xFFFFF2CE),
                       borderRadius: BorderRadius.circular(9)),
                   alignment: Alignment.center,
-                  child: LocalizedText('$number',
+                  child: LocalizedText(context.formatDigits('$number'),
                       style: TextStyle(
                           color: isPlaying ? const Color(0xFFD32F2F) : const Color(0xFFA57910),
                           fontSize: 11,
@@ -588,14 +596,14 @@ class _VerseCard extends StatelessWidget {
                     color: const Color(0xFFFFE0E0),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: const Row(
+                  child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(Icons.graphic_eq_rounded,
+                      const Icon(Icons.graphic_eq_rounded,
                           size: 14, color: AppTheme.accentCoral),
-                      SizedBox(width: 4),
-                      LocalizedText('তিলাওয়াত চলছে...',
-                          style: TextStyle(
+                      const SizedBox(width: 4),
+                      LocalizedText(context.t('quran.reciting_now'),
+                          style: const TextStyle(
                               color: AppTheme.accentCoral,
                               fontSize: 10,
                               fontWeight: FontWeight.w700)),
@@ -606,7 +614,9 @@ class _VerseCard extends StatelessWidget {
               const Spacer(),
               IconButton(
                 onPressed: onPlay,
-                tooltip: context.uiText(isPlaying ? 'আয়াত থামাই' : 'আয়াত শুনি'),
+                tooltip: isPlaying
+                    ? context.t('quran.stop_ayah')
+                    : context.t('quran.play_ayah'),
                 icon: Icon(
                   isPlaying ? Icons.pause_circle_rounded : Icons.play_circle_outline_rounded,
                   color: isPlaying ? AppTheme.accentCoral : AppTheme.primaryGreen,
@@ -637,7 +647,7 @@ class _ReaderLoadError extends StatelessWidget {
               onPressed: onRetry,
               icon: Icons.refresh_rounded,
               variant: DSButtonVariant.outline,
-              label: 'আবার চেষ্টা করি'),
+              label: context.t('common.retry')),
         ]),
       );
 }
