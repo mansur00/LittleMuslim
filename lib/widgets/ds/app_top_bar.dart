@@ -138,7 +138,7 @@ class AppTopBar extends StatelessWidget implements PreferredSizeWidget {
     final xpStr = context.formatDigits(xp.toString());
 
     final screenWidth = MediaQuery.of(context).size.width;
-    final isCompact = screenWidth < 360;
+    final isCompact = screenWidth < 280;
     final isWide = screenWidth >= 600;
 
     return Row(

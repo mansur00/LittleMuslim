@@ -11,12 +11,12 @@ Each offending line is assigned to exactly one primary category, ensuring **zero
 |---|:---:|---|
 | **Hardcoded Colors** | **1881** | Raw `Color(0x...)`, `Colors.xxx` (excluding `Colors.transparent` and `AppColors`), hex strings, and inline opacity modifiers |
 | **Hardcoded Text Styles** | **1331** | Inline `TextStyle`, `fontSize`, `FontWeight`, `letterSpacing`, and direct font calls |
-| **Hardcoded Spacing** | **1131** | Literal `EdgeInsets`, `SizedBox(height/width)` spacers, and `Padding` values |
+| **Hardcoded Spacing** | **1132** | Literal `EdgeInsets`, `SizedBox(height/width)` spacers, and `Padding` values |
 | **Hardcoded Radii** | **465** | Explicit `BorderRadius.circular(n)` and `Radius.circular(n)` numbers |
 | **Borders, Shadows & Gradients** | **369** | Inline `Border.all`, `BorderSide`, `BoxShadow`, and `LinearGradient` decorations |
 | **Hardcoded Sizes** | **25** | Fixed icon sizes, avatar radii, and app bar height literals |
 | **Duplicated UI Widgets** | **78** | Scattered headers (`DuolingoAppBar`, `DuolingoPageHeader`, custom `AppBar`), cards, buttons, and inline avatars |
-| **Fixed Overflow Risks** | **58** | Hardcoded container/button/chip widths with Text vulnerable to overflow in longer languages (`bn`, `hi`, `it`) |
+| **Fixed Overflow Risks** | **57** | Hardcoded container/button/chip widths with Text vulnerable to overflow in longer languages (`bn`, `hi`, `it`) |
 | **TOTAL UNIQUE OFFENDING LINES** | **5338** | **Total design system violations (Zero double-counted lines)** |
 
 ---
@@ -96,8 +96,8 @@ Each offending line is assigned to exactly one primary category, ensuring **zero
 | [`lib/screens/quran/quran_screen.dart:96`](file:////Users/mdmansur/Desktop/apk/little_muslim/lib/screens/quran/quran_screen.dart#L96) | DuolingoPageHeader | `DuolingoPageHeader(` |
 | [`lib/screens/seerah/seerah_screen.dart:209`](file:////Users/mdmansur/Desktop/apk/little_muslim/lib/screens/seerah/seerah_screen.dart#L209) | DuolingoPageHeader | `DuolingoPageHeader(` |
 | [`lib/screens/seerah/seerah_screen.dart:587`](file:////Users/mdmansur/Desktop/apk/little_muslim/lib/screens/seerah/seerah_screen.dart#L587) | DuolingoPageHeader | `DuolingoPageHeader(` |
-| [`lib/screens/settings/settings_screen.dart:466`](file:////Users/mdmansur/Desktop/apk/little_muslim/lib/screens/settings/settings_screen.dart#L466) | Inline avatar widget | `const CircleAvatar(` |
-| [`lib/screens/settings/settings_screen.dart:770`](file:////Users/mdmansur/Desktop/apk/little_muslim/lib/screens/settings/settings_screen.dart#L770) | Inline avatar widget | `CircleAvatar(` |
+| [`lib/screens/settings/settings_screen.dart:462`](file:////Users/mdmansur/Desktop/apk/little_muslim/lib/screens/settings/settings_screen.dart#L462) | Inline avatar widget | `const CircleAvatar(` |
+| [`lib/screens/settings/settings_screen.dart:766`](file:////Users/mdmansur/Desktop/apk/little_muslim/lib/screens/settings/settings_screen.dart#L766) | Inline avatar widget | `CircleAvatar(` |
 | [`lib/widgets/app_states.dart:81`](file:////Users/mdmansur/Desktop/apk/little_muslim/lib/widgets/app_states.dart#L81) | DuolingoCard widget | `child: DuolingoCard(` |
 | [`lib/widgets/app_states.dart:150`](file:////Users/mdmansur/Desktop/apk/little_muslim/lib/widgets/app_states.dart#L150) | DuolingoCard widget | `child: DuolingoCard(` |
 | [`lib/widgets/duolingo_appbar.dart:250`](file:////Users/mdmansur/Desktop/apk/little_muslim/lib/widgets/duolingo_appbar.dart#L250) | DuolingoPageHeader | `typedef DuolingoPageHeader = DuolingoHeader;` |
@@ -123,7 +123,7 @@ Each offending line is assigned to exactly one primary category, ensuring **zero
 
 ---
 
-## 4. All Fixed Dimensions / Overflow Risks (58 occurrences)
+## 4. All Fixed Dimensions / Overflow Risks (57 occurrences)
 
 | File & Line | Component | Code Snippet |
 |---|---|---|
@@ -164,7 +164,6 @@ Each offending line is assigned to exactly one primary category, ensuring **zero
 | [`lib/screens/qaida/qaida_lesson_screen.dart:416`](file:////Users/mdmansur/Desktop/apk/little_muslim/lib/screens/qaida/qaida_lesson_screen.dart#L416) | Fixed dimension on Container containing text (overflow risk) | `height: 76,` |
 | [`lib/screens/qaida/qaida_lesson_screen.dart:584`](file:////Users/mdmansur/Desktop/apk/little_muslim/lib/screens/qaida/qaida_lesson_screen.dart#L584) | Fixed dimension on SizedBox containing text (overflow risk) | `height: 50,` |
 | [`lib/screens/qaida/qaida_lesson_screen.dart:924`](file:////Users/mdmansur/Desktop/apk/little_muslim/lib/screens/qaida/qaida_lesson_screen.dart#L924) | Fixed dimension on SizedBox containing text (overflow risk) | `height: 37,` |
-| [`lib/screens/qaida/qaida_lesson_screen.dart:928`](file:////Users/mdmansur/Desktop/apk/little_muslim/lib/screens/qaida/qaida_lesson_screen.dart#L928) | Fixed dimension on SizedBox containing text (overflow risk) | `separatorBuilder: (_, __) =&gt; const SizedBox(width: 6),` |
 | [`lib/screens/qaida/qaida_lesson_screen.dart:978`](file:////Users/mdmansur/Desktop/apk/little_muslim/lib/screens/qaida/qaida_lesson_screen.dart#L978) | Fixed dimension on Container containing text (overflow risk) | `width: 68,` |
 | [`lib/screens/qaida/qaida_lesson_screen.dart:979`](file:////Users/mdmansur/Desktop/apk/little_muslim/lib/screens/qaida/qaida_lesson_screen.dart#L979) | Fixed dimension on Container containing text (overflow risk) | `height: 68,` |
 | [`lib/screens/qaida/qaida_report_screen.dart:749`](file:////Users/mdmansur/Desktop/apk/little_muslim/lib/screens/qaida/qaida_report_screen.dart#L749) | Fixed dimension on DSButton containing text (overflow risk) | `height: 42,` |
@@ -176,9 +175,9 @@ Each offending line is assigned to exactly one primary category, ensuring **zero
 | [`lib/screens/quran/quran_screen.dart:694`](file:////Users/mdmansur/Desktop/apk/little_muslim/lib/screens/quran/quran_screen.dart#L694) | Fixed dimension on Container containing text (overflow risk) | `height: 40,` |
 | [`lib/screens/quran/quran_screen.dart:892`](file:////Users/mdmansur/Desktop/apk/little_muslim/lib/screens/quran/quran_screen.dart#L892) | Fixed dimension on Container containing text (overflow risk) | `width: 44,` |
 | [`lib/screens/quran/quran_screen.dart:893`](file:////Users/mdmansur/Desktop/apk/little_muslim/lib/screens/quran/quran_screen.dart#L893) | Fixed dimension on Container containing text (overflow risk) | `height: 44,` |
-| [`lib/screens/settings/settings_screen.dart:562`](file:////Users/mdmansur/Desktop/apk/little_muslim/lib/screens/settings/settings_screen.dart#L562) | Fixed dimension on Column containing text (overflow risk) | `const Divider(height: 16),` |
-| [`lib/screens/settings/settings_screen.dart:570`](file:////Users/mdmansur/Desktop/apk/little_muslim/lib/screens/settings/settings_screen.dart#L570) | Fixed dimension on SizedBox containing text (overflow risk) | `height: 50,` |
-| [`lib/screens/settings/settings_screen.dart:603`](file:////Users/mdmansur/Desktop/apk/little_muslim/lib/screens/settings/settings_screen.dart#L603) | Fixed dimension on Column containing text (overflow risk) | `const Divider(height: 12),` |
+| [`lib/screens/settings/settings_screen.dart:558`](file:////Users/mdmansur/Desktop/apk/little_muslim/lib/screens/settings/settings_screen.dart#L558) | Fixed dimension on Column containing text (overflow risk) | `const Divider(height: 16),` |
+| [`lib/screens/settings/settings_screen.dart:566`](file:////Users/mdmansur/Desktop/apk/little_muslim/lib/screens/settings/settings_screen.dart#L566) | Fixed dimension on SizedBox containing text (overflow risk) | `height: 50,` |
+| [`lib/screens/settings/settings_screen.dart:599`](file:////Users/mdmansur/Desktop/apk/little_muslim/lib/screens/settings/settings_screen.dart#L599) | Fixed dimension on Column containing text (overflow risk) | `const Divider(height: 12),` |
 | [`lib/widgets/duolingo_appbar.dart:383`](file:////Users/mdmansur/Desktop/apk/little_muslim/lib/widgets/duolingo_appbar.dart#L383) | Fixed dimension on AnimatedContainer containing text (overflow risk) | `height: 40,` |
 | [`lib/widgets/duolingo_path_view.dart:328`](file:////Users/mdmansur/Desktop/apk/little_muslim/lib/widgets/duolingo_path_view.dart#L328) | Fixed dimension on Duolingo3DButton containing text (overflow risk) | `height: 46,` |
 | [`lib/widgets/duolingo_path_view.dart:399`](file:////Users/mdmansur/Desktop/apk/little_muslim/lib/widgets/duolingo_path_view.dart#L399) | Fixed dimension on Duolingo3DButton containing text (overflow risk) | `height: 48,` |

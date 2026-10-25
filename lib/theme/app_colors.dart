@@ -66,13 +66,80 @@ class AppColors {
   static const Color infoLight = Color(0xFFEFF6FF);
   static const Color infoBorder = Color(0xFFBFDBFE);
 
-  // ── Transparent / Opacity Helpers ────────────────────────────────────────
-  static const Color transparent = Color(0x00000000);
+  static const Color warningText = Color(0xFF92400E);
+  static const Color warningSubtext = Color(0xFFB45309);
+  static const Color warningDark = Color(0xFFD97706);
+  static const Color blueText = Color(0xFF1D4ED8);
+  static const Color blueAccent = Color(0xFF2563EB);
+  static const Color purpleText = Color(0xFF7E22CE);
+  static const Color purpleBorder = Color(0xFFE9D5FF);
+  static const Color orangeText = Color(0xFFC2410C);
+  static const Color orangeBorder = Color(0xFFFDBA74);
+  static const Color greenText = Color(0xFF15803D);
+
+  // ── Palette Shades & Semantic Tints ───────────────────────────────────────
+  static const Color white = Color(0xFFFFFFFF);
+  static const Color black = Color(0xFF000000);
+  static const Color black06 = Color(0x10000000);
   static const Color black10 = Color(0x1A000000);
+  static const Color black12 = Color(0x1F000000);
   static const Color black20 = Color(0x33000000);
   static const Color white10 = Color(0x1AFFFFFF);
   static const Color white20 = Color(0x33FFFFFF);
+  static const Color white70 = Color(0xB3FFFFFF);
   static const Color white80 = Color(0xCCFFFFFF);
+  static const Color transparent = Color(0x00000000);
+
+  // Slate Neutrals
+  static const Color slate50 = Color(0xFFF8FAFC);
+  static const Color slate100 = Color(0xFFF1F5F9);
+  static const Color slate200 = Color(0xFFE2E8F0);
+  static const Color slate300 = Color(0xFFCBD5E1);
+  static const Color slate400 = Color(0xFF94A3B8);
+  static const Color slate500 = Color(0xFF64748B);
+  static const Color slate600 = Color(0xFF475569);
+  static const Color slate700 = Color(0xFF334155);
+  static const Color slate800 = Color(0xFF1E293B);
+  static const Color slate900 = Color(0xFF0F172A);
+
+  // Gray / Indigo / Accents
+  static const Color gray200 = Color(0xFFE5E7EB);
+  static const Color gray400 = Color(0xFF9CA3AF);
+  static const Color gray800 = Color(0xFF1F2937);
+  static const Color green50 = Color(0xFFF0FDF4);
+  static const Color green100 = Color(0xFFDCFCE7);
+  static const Color green200 = Color(0xFFBBF7D0);
+  static const Color green300 = Color(0xFF86EFAC);
+  static const Color green500 = Color(0xFF22C55E);
+  static const Color green600 = Color(0xFF16A34A);
+  static const Color greenDarkText = Color(0xFF2D6A00);
+  static const Color emerald500 = Color(0xFF10B981);
+  static const Color blue50 = Color(0xFFEFF6FF);
+  static const Color blue100 = Color(0xFFDBEAFE);
+  static const Color blue200 = Color(0xFFBFDBFE);
+  static const Color blue500 = Color(0xFF3B82F6);
+  static const Color blue600 = Color(0xFF2563EB);
+  static const Color blue700 = Color(0xFF1D4ED8);
+  static const Color indigo50 = Color(0xFFEEF2FF);
+  static const Color indigo200 = Color(0xFFC7D2FE);
+  static const Color indigo500 = Color(0xFF6366F1);
+  static const Color purple50 = Color(0xFFFAF5FF);
+  static const Color purple200 = Color(0xFFE9D5FF);
+  static const Color purple600 = Color(0xFF9333EA);
+  static const Color purple700 = Color(0xFF7E22CE);
+  static const Color amber50 = Color(0xFFFFFBEB);
+  static const Color amber100 = Color(0xFFFEF3C7);
+  static const Color amber200 = Color(0xFFFDE68A);
+  static const Color amber300 = Color(0xFFFCD34D);
+  static const Color amber400 = Color(0xFFFBBF24);
+  static const Color amber500 = Color(0xFFF59E0B);
+  static const Color amber600 = Color(0xFFD97706);
+  static const Color amber700 = Color(0xFFB45309);
+  static const Color amber800 = Color(0xFF92400E);
+  static const Color orange50 = Color(0xFFFFF7ED);
+  static const Color orange200 = Color(0xFFFDBA74);
+  static const Color orange500 = Color(0xFFF97316);
+  static const Color goldLight = Color(0xFFFFE39A);
 }
 
 /// AppColorsDark: Dark-mode ready pairs for future theme expansion.

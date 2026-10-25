@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../core/localization/app_fonts.dart';
-import '../l10n/app_localizations.dart';
 import 'app_colors.dart';
 
 /// AppTextStyles: Centralized typographic scales bound to multilingual fonts.
@@ -131,6 +130,63 @@ class AppTextStyles {
       fontSize: 12,
       fontWeight: fontWeight ?? FontWeight.w700,
       color: color ?? AppColors.textPrimary,
+      height: 1.2,
+    );
+  }
+
+  static TextStyle badge(
+    BuildContext context, {
+    Color? color,
+    FontWeight? fontWeight,
+  }) {
+    return AppFonts.getTextStyle(
+      context,
+      fontSize: 11,
+      fontWeight: fontWeight ?? FontWeight.w700,
+      color: color ?? AppColors.textPrimary,
+      height: 1.2,
+    );
+  }
+
+  static TextStyle arabic(
+    BuildContext context, {
+    double fontSize = 26,
+    Color? color,
+    FontWeight? fontWeight,
+  }) {
+    return AppFonts.getTextStyle(
+      context,
+      fontSize: fontSize,
+      fontWeight: fontWeight ?? FontWeight.w700,
+      color: color ?? AppColors.textPrimary,
+      height: 1.2,
+    );
+  }
+
+  static TextStyle navItem(
+    BuildContext context, {
+    Color? color,
+    FontWeight? fontWeight,
+  }) {
+    return AppFonts.getTextStyle(
+      context,
+      fontSize: 11,
+      fontWeight: fontWeight ?? FontWeight.w800,
+      color: color ?? AppColors.textTertiary,
+      height: 1.2,
+    );
+  }
+
+  static TextStyle adminBanner(
+    BuildContext context, {
+    Color? color,
+    FontWeight? fontWeight,
+  }) {
+    return AppFonts.getTextStyle(
+      context,
+      fontSize: 12,
+      fontWeight: fontWeight ?? FontWeight.w800,
+      color: color ?? AppColors.warningText,
       height: 1.2,
     );
   }

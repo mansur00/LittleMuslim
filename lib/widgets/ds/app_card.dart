@@ -14,6 +14,7 @@ class AppCard extends StatelessWidget {
     this.borderWidth = AppStroke.regular,
     this.borderRadius = AppRadius.borderLg,
     this.boxShadow = AppElevation.shadowCard,
+    this.accentColor,
     this.onTap,
   });
 
@@ -22,6 +23,7 @@ class AppCard extends StatelessWidget {
   final EdgeInsetsGeometry margin;
   final Color color;
   final Color borderColor;
+  final Color? accentColor;
   final double borderWidth;
   final BorderRadius borderRadius;
   final List<BoxShadow>? boxShadow;
@@ -29,6 +31,7 @@ class AppCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final effectiveBorderColor = accentColor ?? borderColor;
     Widget content = Container(
       margin: margin,
       padding: padding,
@@ -36,7 +39,7 @@ class AppCard extends StatelessWidget {
         color: color,
         borderRadius: borderRadius,
         border: borderWidth > 0
-            ? Border.all(color: borderColor, width: borderWidth)
+            ? Border.all(color: effectiveBorderColor, width: borderWidth)
             : null,
         boxShadow: boxShadow,
       ),

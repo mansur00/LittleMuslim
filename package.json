@@ -4,8 +4,9 @@
   "description": "Little Muslim gamified Islamic learning app for children",
   "scripts": {
     "i18n:check": "node tools/i18n_check.js",
+    "design:check": "node tools/design_check.js",
     "test": "flutter test",
-    "lint": "flutter analyze && node tools/i18n_check.js"
+    "lint": "flutter analyze && node tools/i18n_check.js && node tools/design_check.js"
   },
   "keywords": [
     "flutter",

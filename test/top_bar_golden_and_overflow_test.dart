@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
@@ -62,6 +63,46 @@ void main() {
 
   setUpAll(() async {
     Directory('docs/screenshots').createSync(recursive: true);
+
+    // Load real typography and icon fonts so tests do not fall back to Ahem mock rectangles
+    final iconFile = File('/Users/mdmansur/flutter/bin/cache/artifacts/material_fonts/MaterialIcons-Regular.otf');
+    if (iconFile.existsSync()) {
+      final iconLoader = FontLoader('MaterialIcons');
+      iconLoader.addFont(Future.value(ByteData.view(iconFile.readAsBytesSync().buffer)));
+      await iconLoader.load();
+    }
+
+    final robotoFile = File('/Users/mdmansur/flutter/bin/cache/artifacts/material_fonts/Roboto-Regular.ttf');
+    if (robotoFile.existsSync()) {
+      final robotoBytes = robotoFile.readAsBytesSync().buffer;
+      final interLoader = FontLoader('Inter');
+      interLoader.addFont(Future.value(ByteData.view(robotoBytes)));
+      await interLoader.load();
+
+      final rLoader = FontLoader('Roboto');
+      rLoader.addFont(Future.value(ByteData.view(robotoBytes)));
+      await rLoader.load();
+    }
+
+    final arialUnicodeFile = File('/System/Library/Fonts/Supplemental/Arial Unicode.ttf');
+    if (arialUnicodeFile.existsSync()) {
+      final arialBytes = arialUnicodeFile.readAsBytesSync().buffer;
+      final bnLoader = FontLoader('Noto Sans Bengali');
+      bnLoader.addFont(Future.value(ByteData.view(arialBytes)));
+      await bnLoader.load();
+
+      final hiLoader = FontLoader('Noto Sans Devanagari');
+      hiLoader.addFont(Future.value(ByteData.view(arialBytes)));
+      await hiLoader.load();
+    }
+
+    final amiriFile = File('assets/fonts/Amiri-Regular.ttf');
+    if (amiriFile.existsSync()) {
+      final amiriLoader = FontLoader('Amiri');
+      amiriLoader.addFont(Future.value(ByteData.view(amiriFile.readAsBytesSync().buffer)));
+      await amiriLoader.load();
+    }
+
     const delegate = AppLocalizationsDelegate();
     final enLoc = await delegate.load(const Locale('en'));
     final bnLoc = await delegate.load(const Locale('bn'));
@@ -122,6 +163,8 @@ void main() {
               ),
             );
             await tester.pumpAndSettle();
+            await tester.runAsync(() async => Future<void>.delayed(const Duration(milliseconds: 20)));
+            await tester.pump();
 
             expect(
               caughtOverflow,
@@ -153,6 +196,7 @@ void main() {
                   child: RepaintBoundary(
                     key: pageKey,
                     child: AppTopBar.page(
+                      onBack: () {},
                       title: loc == 'bn'
                           ? 'অধ্যায় ১৪: র এবং লাম এর তাফখীম ও তারকীক নিয়মাবলী'
                           : loc == 'hi'
@@ -173,6 +217,8 @@ void main() {
               ),
             );
             await tester.pumpAndSettle();
+            await tester.runAsync(() async => Future<void>.delayed(const Duration(milliseconds: 20)));
+            await tester.pump();
 
             expect(
               caughtOverflow,

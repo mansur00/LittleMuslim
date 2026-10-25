@@ -7,7 +7,6 @@ import '../../theme/design_system.dart';
 import '../../utils/app_state.dart';
 import '../../widgets/vector_icons.dart';
 import '../../widgets/faceless_silhouette.dart';
-import '../../widgets/duolingo_appbar.dart';
 import '../../widgets/ds/ds.dart';
 
 import '../../data/qaida_curriculum_data.dart';
@@ -93,17 +92,17 @@ class _HomePathTab extends StatelessWidget {
       slivers: [
         SliverToBoxAdapter(
           child: Padding(
-            padding: EdgeInsets.fromLTRB(
+            padding: AppSpacing.fromLTRB(
               isTablet ? 36 : 18,
-              8,
+              AppSpacing.sm,
               isTablet ? 36 : 18,
-              0,
+              AppSpacing.none,
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
-                  padding: const EdgeInsets.only(bottom: AppSpacing.md, top: AppSpacing.sm),
+                  padding: AppSpacing.only(bottom: AppSpacing.md, top: AppSpacing.sm),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -111,7 +110,7 @@ class _HomePathTab extends StatelessWidget {
                         context.t('home.greeting'),
                         style: AppTextStyles.caption(context),
                       ),
-                      const SizedBox(height: AppSpacing.xs),
+                      AppSpacing.gapHXs,
                       Text(
                         context.select<AppState, String>((s) => s.userName.isNotEmpty ? s.userName : context.t('common.friend')),
                         style: AppTextStyles.title(context),
@@ -123,52 +122,38 @@ class _HomePathTab extends StatelessWidget {
                 ),
                 if (context.select<AppState, bool>((s) => s.isAdmin)) ...[
                   Container(
-                    margin: const EdgeInsets.only(bottom: 12),
-                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                    margin: AppSpacing.only(bottom: AppSpacing.md),
+                    padding: AppSpacing.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFFEF3C7),
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: const Color(0xFFF59E0B), width: 1.5),
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Color(0x10000000),
-                          blurRadius: 4,
-                          offset: Offset(0, 2),
-                        ),
-                      ],
+                      color: AppColors.amber100,
+                      borderRadius: AppRadius.borderLg,
+                      border: AppBorders.custom(color: AppColors.amber500, width: AppStroke.regular),
+                      boxShadow: AppElevation.shadow(color: AppColors.black06),
                     ),
                     child: Row(
                       children: [
                         const Icon(Icons.admin_panel_settings_rounded,
-                            color: Color(0xFFD97706), size: 20),
-                        const SizedBox(width: 8),
+                            color: AppColors.amber600, size: AppSizes.iconMd),
+                        AppSpacing.gapWSm,
                         Expanded(
                           child: LocalizedText(
                             context.t('home.admin_mode_notice'),
-                            style: const TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w800,
-                              color: Color(0xFF92400E),
-                            ),
+                            style: AppTextStyles.adminBanner(context),
                           ),
                         ),
                         InkWell(
                           onTap: () => context.read<AppState>().setUserRole('child'),
-                          borderRadius: BorderRadius.circular(8),
+                          borderRadius: AppRadius.borderSm,
                           child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            padding: AppSpacing.symmetric(horizontal: AppSpacing.sm, vertical: AppSpacing.xs),
                             decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(8),
-                              border: Border.all(color: const Color(0xFFF59E0B)),
+                              color: AppColors.white,
+                              borderRadius: AppRadius.borderSm,
+                              border: AppBorders.custom(color: AppColors.amber500),
                             ),
                             child: LocalizedText(
                               context.t('home.student_mode'),
-                              style: const TextStyle(
-                                fontSize: 11,
-                                fontWeight: FontWeight.w700,
-                                color: Color(0xFFB45309),
-                              ),
+                              style: AppTextStyles.badge(context, color: AppColors.amber700),
                             ),
                           ),
                         ),
@@ -191,7 +176,7 @@ class _HomePathTab extends StatelessWidget {
 
                 // Playful category selector pills
                 SizedBox(
-                  height: 38,
+                  height: AppSizes.pillHeight,
                   child: ListView(
                     scrollDirection: Axis.horizontal,
                     physics: const BouncingScrollPhysics(),
@@ -205,7 +190,7 @@ class _HomePathTab extends StatelessWidget {
                           ),
                         ),
                       ),
-                      const SizedBox(width: 8),
+                      AppSpacing.gapWSm,
                       _QuickPill(
                         label: context.t('nav.quran'),
                         icon: VectorIconType.book,
@@ -215,7 +200,7 @@ class _HomePathTab extends StatelessWidget {
                           ),
                         ),
                       ),
-                      const SizedBox(width: 8),
+                      AppSpacing.gapWSm,
                       _QuickPill(
                         label: context.t('nav.prayer'),
                         icon: VectorIconType.mosque,
@@ -225,7 +210,7 @@ class _HomePathTab extends StatelessWidget {
                           ),
                         ),
                       ),
-                      const SizedBox(width: 8),
+                      AppSpacing.gapWSm,
                       _QuickPill(
                         label: context.t('nav.dua'),
                         icon: VectorIconType.dua,
@@ -235,7 +220,7 @@ class _HomePathTab extends StatelessWidget {
                           ),
                         ),
                       ),
-                      const SizedBox(width: 8),
+                      AppSpacing.gapWSm,
                       _QuickPill(
                         label: context.t('nav.seerah'),
                         icon: VectorIconType.scroll,
@@ -248,7 +233,7 @@ class _HomePathTab extends StatelessWidget {
                     ],
                   ),
                 ),
-                const SizedBox(height: 12),
+                AppSpacing.gapHMd,
               ],
             ),
           ),
@@ -257,11 +242,11 @@ class _HomePathTab extends StatelessWidget {
         // Explore Modules Section
         SliverToBoxAdapter(
           child: Padding(
-            padding: EdgeInsets.fromLTRB(
+            padding: AppSpacing.fromLTRB(
               isTablet ? 36 : 18,
-              16,
+              AppSpacing.lg,
               isTablet ? 36 : 18,
-              32,
+              AppSpacing.xxxl,
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -273,7 +258,7 @@ class _HomePathTab extends StatelessWidget {
                 ),
                 SizedBox(height: isTablet ? 16 : 12),
                 _ModulesGrid(isTablet: isTablet),
-                const SizedBox(height: 20),
+                AppSpacing.gapHXl,
                 _TeacherLearningBanner(isTablet: isTablet),
               ],
             ),
@@ -320,7 +305,7 @@ class _HomeContinueTab extends StatelessWidget {
 
     return ListView(
       physics: const BouncingScrollPhysics(),
-      padding: EdgeInsets.fromLTRB(
+      padding: AppSpacing.fromLTRB(
         isTablet ? 36 : 18,
         14,
         isTablet ? 36 : 18,
@@ -329,21 +314,15 @@ class _HomeContinueTab extends StatelessWidget {
       children: [
         // ── 1. Personalized Header Banner ──
         Container(
-          padding: const EdgeInsets.all(18),
+          padding: AppSpacing.all(18),
           decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              colors: [Color(0xFF58CC02), Color(0xFF46A302)],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
+            gradient: AppGradients.brand,
+            borderRadius: AppRadius.borderXl,
+            boxShadow: AppElevation.shadow(
+              color: AppColors.brandDark.withValues(alpha: 0.28),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
             ),
-            borderRadius: BorderRadius.circular(20), // DS.rXl
-            boxShadow: [
-              BoxShadow(
-                color: const Color(0xFF46A302).withValues(alpha: 0.28),
-                blurRadius: 10,
-                offset: const Offset(0, 4),
-              ),
-            ],
           ),
           child: Row(
             children: [
@@ -351,8 +330,8 @@ class _HomeContinueTab extends StatelessWidget {
                 width: isTablet ? 64 : 54,
                 height: isTablet ? 64 : 54,
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.2),
-                  borderRadius: BorderRadius.circular(18),
+                  color: AppColors.white.withValues(alpha: 0.2),
+                  borderRadius: AppRadius.radius(18),
                 ),
                 child: Image.asset(
                   'assets/images/quran_3d_open.png',
@@ -361,27 +340,19 @@ class _HomeContinueTab extends StatelessWidget {
                   fit: BoxFit.contain,
                 ),
               ),
-              const SizedBox(width: 14),
+              AppSpacing.gapWMd,
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     LocalizedText(
                       context.t('dashboard.my_learning_title'),
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: isTablet ? 20 : 17,
-                        fontWeight: FontWeight.w900,
-                      ),
+                      style: AppTextStyles.title(context, color: AppColors.white),
                     ),
-                    const SizedBox(height: 3),
+                    AppSpacing.gapHXs,
                     LocalizedText(
                       context.t('dashboard.resume_subtitle'),
-                      style: const TextStyle(
-                        color: Colors.white70,
-                        fontSize: 12,
-                        height: 1.3,
-                      ),
+                      style: AppTextStyles.caption(context, color: AppColors.white70),
                     ),
                   ],
                 ),
@@ -389,7 +360,7 @@ class _HomeContinueTab extends StatelessWidget {
             ],
           ),
         ),
-        const SizedBox(height: 16),
+        AppSpacing.gapHLg,
 
         // ── 2. Primary 1-Tap Qaida Resume Card ──
         _SectionTitle(
@@ -397,86 +368,77 @@ class _HomeContinueTab extends StatelessWidget {
           subtitle: '${context.t("qaida.step", params: {"stepNumber": step.stepNumber})}: ${context.t(step.title)}',
           isTablet: isTablet,
         ),
-        const SizedBox(height: 10),
-        DuolingoCard(
-          accentColor: AppTheme.primaryGreen,
-          margin: EdgeInsets.zero,
-          padding: EdgeInsets.all(isTablet ? 20 : 16),
+        AppSpacing.gapHSm,
+        AppCard(
+          accentColor: AppColors.brandPrimary,
+          margin: AppSpacing.insetNone,
+          padding: isTablet ? AppSpacing.all(20) : AppSpacing.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Row(
                 children: [
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    padding: AppSpacing.symmetric(horizontal: AppSpacing.sm, vertical: AppSpacing.xs),
                     decoration: BoxDecoration(
-                      color: AppTheme.primaryGreen.withValues(alpha: 0.12),
-                      borderRadius: BorderRadius.circular(10),
+                      color: AppColors.brandPrimary.withValues(alpha: 0.12),
+                      borderRadius: AppRadius.borderSm,
                     ),
                     child: LocalizedText(
                       context.t('qaida.step_with_title', params: {
                         'stepNumber': context.formatDigits(step.stepNumber.toString()),
                         'title': context.t(step.titleKey),
                       }),
-                      style: const TextStyle(
-                        fontSize: 11.5,
-                        fontWeight: FontWeight.w800,
-                        color: AppTheme.primaryGreen,
-                      ),
+                      style: AppTextStyles.badge(context, color: AppColors.brandPrimary),
                     ),
                   ),
                   const Spacer(),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                    padding: AppSpacing.symmetric(horizontal: AppSpacing.sm, vertical: AppSpacing.xs),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFF1F5F9),
-                      borderRadius: BorderRadius.circular(10),
+                      color: AppColors.slate100,
+                      borderRadius: AppRadius.borderSm,
                     ),
                     child: Row(
                       children: [
                         const Icon(Icons.bolt_rounded,
-                            size: 14, color: Color(0xFFFF9600)),
-                        const SizedBox(width: 3),
+                            size: AppSizes.iconSm, color: AppColors.orange),
+                        AppSpacing.gapWXs,
                         LocalizedText(
                           context.t('qaida.lesson_progress', params: {
                             'current': context.formatDigits(nextLesson.lessonNumber.toString()),
                             'total': context.formatDigits(step.lessons.length.toString()),
                           }),
-                          style: const TextStyle(
-                            fontSize: 11,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF475569),
-                          ),
+                          style: AppTextStyles.badge(context, color: AppColors.slate600),
                         ),
                       ],
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 12),
+              AppSpacing.gapHMd,
               Row(
                 children: [
                   Container(
                     width: isTablet ? 66 : 56,
                     height: isTablet ? 66 : 56,
                     decoration: BoxDecoration(
-                      color: const Color(0xFFF0FDF4),
-                      borderRadius: BorderRadius.circular(18),
-                      border: Border.all(color: const Color(0xFF86EFAC), width: 1.5),
+                      color: AppColors.green50,
+                      borderRadius: AppRadius.radius(18),
+                      border: AppBorders.custom(color: AppColors.green300, width: AppStroke.regular),
                     ),
                     alignment: Alignment.center,
                     child: Text(
                       nextLesson.arabicDisplay,
-                      style: TextStyle(
-                        fontFamily: AppTheme.arabicFontFamily,
+                      style: AppTextStyles.arabic(
+                        context,
                         fontSize: isTablet ? 32 : 28,
-                        fontWeight: FontWeight.bold,
-                        color: const Color(0xFF0F172A),
+                        color: AppColors.slate900,
                       ),
                       textDirection: TextDirection.rtl,
                     ),
                   ),
-                  const SizedBox(width: 14),
+                  AppSpacing.gapWMd,
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -486,23 +448,15 @@ class _HomeContinueTab extends StatelessWidget {
                               ? context.t('qaida.lesson.letter_title',
                                   params: {'letter': context.t(nextLesson.titleKey)})
                               : context.t(nextLesson.titleKey),
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w900,
-                            color: Color(0xFF0F172A),
-                          ),
+                          style: AppTextStyles.titleSmall(context, color: AppColors.slate900),
                         ),
-                        const SizedBox(height: 3),
+                        AppSpacing.gapHXs,
                         LocalizedText(
                           nextLesson.trackId == 'step_1_mufradat'
                               ? context.t('qaida.lesson.letter_sub',
                                   params: {'letter': nextLesson.arabicDisplay})
                               : context.t(nextLesson.subtitleKey),
-                          style: const TextStyle(
-                            fontSize: 12,
-                            color: Color(0xFF64748B),
-                            fontWeight: FontWeight.w500,
-                          ),
+                          style: AppTextStyles.caption(context, color: AppColors.slate500),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -511,7 +465,7 @@ class _HomeContinueTab extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: 14),
+              AppSpacing.gapHMd,
               // Big 3D Duolingo Action Button
               InkWell(
                 onTap: () {
@@ -521,39 +475,33 @@ class _HomeContinueTab extends StatelessWidget {
                     ),
                   );
                 },
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: AppRadius.borderLg,
                 child: Container(
-                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  padding: AppSpacing.symmetric(vertical: AppSpacing.md),
                   decoration: BoxDecoration(
-                    color: AppTheme.duoGreen,
-                    borderRadius: BorderRadius.circular(16),
-                    boxShadow: const [
-                      BoxShadow(
-                        color: AppTheme.duoGreenDark,
-                        offset: Offset(0, 4),
-                        blurRadius: 0,
-                      ),
-                    ],
+                    color: AppColors.brandPrimary,
+                    borderRadius: AppRadius.borderLg,
+                    boxShadow: AppElevation.shadow(
+                      color: AppColors.brandDark,
+                      offset: const Offset(0, 4),
+                      blurRadius: 0,
+                    ),
                   ),
                   alignment: Alignment.center,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Icon(Icons.play_arrow_rounded, color: Colors.white, size: 24),
-                      const SizedBox(width: 8),
+                      const Icon(Icons.play_arrow_rounded, color: AppColors.white, size: AppSizes.iconLg),
+                      AppSpacing.gapWSm,
                       LocalizedText(
                         context.t('qaida.continue_lesson'),
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 15.5,
-                          fontWeight: FontWeight.w900,
-                        ),
+                        style: AppTextStyles.button(context, color: AppColors.white),
                       ),
                     ],
                   ),
                 ),
               ),
-              const SizedBox(height: 12),
+              AppSpacing.gapHMd,
               // Secondary shortcuts
               Row(
                 children: [
@@ -564,27 +512,23 @@ class _HomeContinueTab extends StatelessWidget {
                           builder: (_) => const QaidaChaptersScreen(),
                         ),
                       ),
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: AppRadius.borderMd,
                       child: Container(
-                        padding: const EdgeInsets.symmetric(vertical: 9, horizontal: 8),
+                        padding: AppSpacing.symmetric(vertical: AppSpacing.sm, horizontal: AppSpacing.sm),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFEFF6FF),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: const Color(0xFFBFDBFE)),
+                          color: AppColors.blue50,
+                          borderRadius: AppRadius.borderMd,
+                          border: AppBorders.custom(color: AppColors.blue200),
                         ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const Icon(Icons.map_rounded, size: 14, color: Color(0xFF2563EB)),
-                            const SizedBox(width: 5),
+                            const Icon(Icons.map_rounded, size: AppSizes.iconSm, color: AppColors.blue600),
+                            AppSpacing.gapWXs,
                             Flexible(
                               child: LocalizedText(
                                 context.t('dashboard.seventeen_steps_map'),
-                                style: const TextStyle(
-                                  fontSize: 11.5,
-                                  fontWeight: FontWeight.bold,
-                                  color: Color(0xFF1D4ED8),
-                                ),
+                                style: AppTextStyles.badge(context, color: AppColors.blue700),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                               ),
@@ -594,7 +538,7 @@ class _HomeContinueTab extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(width: 8),
+                  AppSpacing.gapWSm,
                   Expanded(
                     child: InkWell(
                       onTap: () => Navigator.of(context).push(
@@ -602,27 +546,23 @@ class _HomeContinueTab extends StatelessWidget {
                           builder: (_) => const QaidaReportScreen(),
                         ),
                       ),
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: AppRadius.borderMd,
                       child: Container(
-                        padding: const EdgeInsets.symmetric(vertical: 9, horizontal: 8),
+                        padding: AppSpacing.symmetric(vertical: AppSpacing.sm, horizontal: AppSpacing.sm),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFFAF5FF),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: const Color(0xFFE9D5FF)),
+                          color: AppColors.purple50,
+                          borderRadius: AppRadius.borderMd,
+                          border: AppBorders.custom(color: AppColors.purple200),
                         ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const Icon(Icons.insights_rounded, size: 14, color: Color(0xFF9333EA)),
-                            const SizedBox(width: 5),
+                            const Icon(Icons.insights_rounded, size: AppSizes.iconSm, color: AppColors.purple600),
+                            AppSpacing.gapWXs,
                             Flexible(
                               child: LocalizedText(
                                 context.t('dashboard.progress_report_heatmap'),
-                                style: const TextStyle(
-                                  fontSize: 11.5,
-                                  fontWeight: FontWeight.bold,
-                                  color: Color(0xFF7E22CE),
-                                ),
+                                style: AppTextStyles.badge(context, color: AppColors.purple700),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                               ),
@@ -637,7 +577,7 @@ class _HomeContinueTab extends StatelessWidget {
             ],
           ),
         ),
-        const SizedBox(height: 18),
+        AppSpacing.gapHLg,
 
         // ── 3. Spaced Repetition / Smart Review ──
         if (hasDue || hasMistakes) ...[
@@ -648,9 +588,9 @@ class _HomeContinueTab extends StatelessWidget {
                 : context.t('dashboard.revision_routine_hint'),
             isTablet: isTablet,
           ),
-          const SizedBox(height: 10),
+          AppSpacing.gapHSm,
           _ReviewRecommendationCard(isTablet: isTablet),
-          const SizedBox(height: 18),
+          AppSpacing.gapHLg,
         ],
 
         // ── 4. Quran Bookmark Resume Card ──
@@ -664,20 +604,20 @@ class _HomeContinueTab extends StatelessWidget {
               : context.t('quran.start_from_fatihah'),
           isTablet: isTablet,
         ),
-        const SizedBox(height: 10),
-        DuolingoCard(
-          accentColor: const Color(0xFFF97316),
-          margin: EdgeInsets.zero,
-          padding: EdgeInsets.all(isTablet ? 18 : 14),
+        AppSpacing.gapHSm,
+        AppCard(
+          accentColor: AppColors.orange500,
+          margin: AppSpacing.insetNone,
+          padding: isTablet ? AppSpacing.all(18) : AppSpacing.all(14),
           child: Row(
             children: [
               Container(
                 width: 50,
                 height: 50,
                 decoration: BoxDecoration(
-                  color: const Color(0xFFFFF7ED),
-                  borderRadius: BorderRadius.circular(14),
-                  border: Border.all(color: const Color(0xFFFDBA74)),
+                  color: AppColors.orange50,
+                  borderRadius: AppRadius.radius(14),
+                  border: AppBorders.custom(color: AppColors.orange200),
                 ),
                 child: Image.asset(
                   'assets/images/quran_3d_open.png',
@@ -686,7 +626,7 @@ class _HomeContinueTab extends StatelessWidget {
                   fit: BoxFit.contain,
                 ),
               ),
-              const SizedBox(width: 14),
+              AppSpacing.gapWMd,
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -698,25 +638,20 @@ class _HomeContinueTab extends StatelessWidget {
                               'ayah': context.formatNumber(quranPos.ayahNumber),
                             })
                           : context.t('quran.fatihah_first_ayah'),
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w900,
-                        fontSize: 14.5,
-                        color: Color(0xFF1E293B),
-                      ),
+                      style: AppTextStyles.subtitle(context, color: AppColors.slate800),
                     ),
-                    const SizedBox(height: 2),
+                    AppSpacing.gapHXs,
                     LocalizedText(
                       context.t('quran.recitation_meaning_subtitle'),
-                      style: const TextStyle(color: Color(0xFF64748B), fontSize: 11),
+                      style: AppTextStyles.caption(context, color: AppColors.slate500),
                     ),
                   ],
                 ),
               ),
+              AppSpacing.gapWSm,
               DSButton(
                 label: context.t('common.read'),
                 variant: DSButtonVariant.orange,
-                height: 38,
-                width: 84,
                 onPressed: () => Navigator.of(context).push(
                   MaterialPageRoute<void>(builder: (_) => const QuranScreen()),
                 ),
@@ -724,7 +659,7 @@ class _HomeContinueTab extends StatelessWidget {
             ],
           ),
         ),
-        const SizedBox(height: 18),
+        AppSpacing.gapHLg,
 
         // ── 5. Prayer Adhan & Learning Alarm Audio Panel ──
         _SectionTitle(
@@ -732,11 +667,11 @@ class _HomeContinueTab extends StatelessWidget {
           subtitle: context.t('dashboard.adhan_alarm_subtitle'),
           isTablet: isTablet,
         ),
-        const SizedBox(height: 10),
-        DuolingoCard(
-          accentColor: const Color(0xFF3B82F6),
-          margin: EdgeInsets.zero,
-          padding: const EdgeInsets.all(14),
+        AppSpacing.gapHSm,
+        AppCard(
+          accentColor: AppColors.blue500,
+          margin: AppSpacing.insetNone,
+          padding: AppSpacing.all(14),
           child: Column(
             children: [
               ValueListenableBuilder<AlertSoundType?>(
@@ -751,24 +686,19 @@ class _HomeContinueTab extends StatelessWidget {
                       Expanded(
                         child: InkWell(
                           onTap: () => AlertSoundService.instance.playAdhan(),
-                          borderRadius: BorderRadius.circular(14),
+                          borderRadius: AppRadius.radius(14),
                           child: Container(
-                            padding: const EdgeInsets.symmetric(vertical: 11),
+                            padding: AppSpacing.symmetric(vertical: AppSpacing.sm),
                             decoration: BoxDecoration(
                               color: isAdhanPlaying
-                                  ? const Color(0xFFEF4444)
-                                  : const Color(0xFF10B981),
-                              borderRadius: BorderRadius.circular(14),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: (isAdhanPlaying
-                                          ? const Color(0xFFEF4444)
-                                          : const Color(0xFF10B981))
-                                      .withValues(alpha: 0.25),
-                                  blurRadius: 4,
-                                  offset: const Offset(0, 2),
-                                ),
-                              ],
+                                  ? AppColors.error
+                                  : AppColors.emerald500,
+                              borderRadius: AppRadius.radius(14),
+                              boxShadow: AppElevation.shadow(
+                                color: isAdhanPlaying ? AppColors.error.withValues(alpha: 0.25) : AppColors.emerald500.withValues(alpha: 0.25),
+                                blurRadius: 4,
+                                offset: const Offset(0, 2),
+                              ),
                             ),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -777,20 +707,16 @@ class _HomeContinueTab extends StatelessWidget {
                                   isAdhanPlaying
                                       ? Icons.stop_rounded
                                       : Icons.volume_up_rounded,
-                                  color: Colors.white,
-                                  size: 17,
+                                  color: AppColors.white,
+                                  size: AppSizes.iconSm,
                                 ),
-                                const SizedBox(width: 5),
+                                AppSpacing.gapWXs,
                                 Flexible(
                                   child: LocalizedText(
                                     isAdhanPlaying
                                         ? context.t('prayer.stop_adhan')
                                         : context.t('prayer.play_adhan'),
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w800,
-                                      fontSize: 12,
-                                    ),
+                                    style: AppTextStyles.badge(context, color: AppColors.white),
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                   ),
@@ -800,29 +726,24 @@ class _HomeContinueTab extends StatelessWidget {
                           ),
                         ),
                       ),
-                      const SizedBox(width: 10),
+                      AppSpacing.gapWSm,
                       // Learning Alarm Button
                       Expanded(
                         child: InkWell(
                           onTap: () => AlertSoundService.instance.playLearningAlarm(),
-                          borderRadius: BorderRadius.circular(14),
+                          borderRadius: AppRadius.radius(14),
                           child: Container(
-                            padding: const EdgeInsets.symmetric(vertical: 11),
+                            padding: AppSpacing.symmetric(vertical: AppSpacing.sm),
                             decoration: BoxDecoration(
                               color: isAlarmPlaying
-                                  ? const Color(0xFFEF4444)
-                                  : const Color(0xFFF59E0B),
-                              borderRadius: BorderRadius.circular(14),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: (isAlarmPlaying
-                                          ? const Color(0xFFEF4444)
-                                          : const Color(0xFFF59E0B))
-                                      .withValues(alpha: 0.25),
-                                  blurRadius: 4,
-                                  offset: const Offset(0, 2),
-                                ),
-                              ],
+                                  ? AppColors.error
+                                  : AppColors.amber500,
+                              borderRadius: AppRadius.radius(14),
+                              boxShadow: AppElevation.shadow(
+                                color: isAlarmPlaying ? AppColors.error.withValues(alpha: 0.25) : AppColors.amber500.withValues(alpha: 0.25),
+                                blurRadius: 4,
+                                offset: const Offset(0, 2),
+                              ),
                             ),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -831,20 +752,16 @@ class _HomeContinueTab extends StatelessWidget {
                                   isAlarmPlaying
                                       ? Icons.stop_rounded
                                       : Icons.play_arrow_rounded,
-                                  color: Colors.white,
-                                  size: 18,
+                                  color: AppColors.white,
+                                  size: AppSizes.iconSm,
                                 ),
-                                const SizedBox(width: 4),
+                                AppSpacing.gapWXs,
                                 Flexible(
                                   child: LocalizedText(
                                     isAlarmPlaying
                                         ? context.t('settings.stop_alarm')
                                         : context.t('settings.test_alarm'),
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w800,
-                                      fontSize: 12,
-                                    ),
+                                    style: AppTextStyles.badge(context, color: AppColors.white),
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                   ),
@@ -858,7 +775,7 @@ class _HomeContinueTab extends StatelessWidget {
                   );
                 },
               ),
-              const SizedBox(height: 10),
+              AppSpacing.gapHSm,
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -866,11 +783,7 @@ class _HomeContinueTab extends StatelessWidget {
                     context.t('settings.alarm_time', params: {
                       'time': _formatTime(state.learningAlarmTime, context),
                     }),
-                    style: const TextStyle(
-                      fontSize: 11.5,
-                      fontWeight: FontWeight.w700,
-                      color: Color(0xFF475569),
-                    ),
+                    style: AppTextStyles.badge(context, color: AppColors.slate600),
                   ),
                   InkWell(
                     onTap: () => Navigator.of(context).push(
@@ -878,11 +791,7 @@ class _HomeContinueTab extends StatelessWidget {
                     ),
                     child: LocalizedText(
                       context.t('prayer.view_schedule'),
-                      style: const TextStyle(
-                        fontSize: 11.5,
-                        fontWeight: FontWeight.w800,
-                        color: Color(0xFF2563EB),
-                      ),
+                      style: AppTextStyles.badge(context, color: AppColors.blue600),
                     ),
                   ),
                 ],
@@ -890,7 +799,7 @@ class _HomeContinueTab extends StatelessWidget {
             ],
           ),
         ),
-        const SizedBox(height: 22),
+        AppSpacing.gapHXl,
 
         // ── 6. Compact Subject Directory (All Modules) ──
         _SectionTitle(
@@ -900,7 +809,7 @@ class _HomeContinueTab extends StatelessWidget {
         ),
         SizedBox(height: isTablet ? 16 : 12),
         _ModulesGrid(isTablet: isTablet),
-        const SizedBox(height: 20),
+        AppSpacing.gapHXl,
         _TeacherLearningBanner(isTablet: isTablet),
       ],
     );
@@ -922,25 +831,23 @@ class _QuranSpeechCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(14),
+      padding: AppSpacing.all(14),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: const Color(0xFFE5E7EB), width: 1.5),
-        boxShadow: [
-          BoxShadow(
-            color: const Color(0xFF58CC02).withValues(alpha: 0.08),
-            blurRadius: 16,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        color: AppColors.white,
+        borderRadius: AppRadius.borderXl,
+        border: AppBorders.custom(color: AppColors.gray200, width: AppStroke.regular),
+        boxShadow: AppElevation.shadow(
+          color: AppColors.brandPrimary.withValues(alpha: 0.08),
+          blurRadius: 16,
+          offset: const Offset(0, 4),
+        ),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           // 3D Quran book image — no face, no limbs
           ClipRRect(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: AppRadius.borderMd,
             child: Image.asset(
               'assets/images/quran_3d.png',
               width: isTablet ? 68 : 58,
@@ -948,37 +855,28 @@ class _QuranSpeechCard extends StatelessWidget {
               fit: BoxFit.contain,
             ),
           ),
-          const SizedBox(width: 14),
+          AppSpacing.gapWMd,
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 8, vertical: 3),
+                  padding: AppSpacing.symmetric(
+                      horizontal: AppSpacing.sm, vertical: AppSpacing.xs),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF58CC02),
-                    borderRadius: BorderRadius.circular(8),
+                    color: AppColors.brandPrimary,
+                    borderRadius: AppRadius.borderSm,
                   ),
                   child: LocalizedText(
                     context.t('home.quran_says'),
-                    style: const TextStyle(
-                      fontSize: 10,
-                      fontWeight: FontWeight.w800,
-                      color: Colors.white,
-                    ),
+                    style: AppTextStyles.badge(context, color: AppColors.white),
                   ),
                 ),
-                const SizedBox(height: 6),
+                AppSpacing.gapHXs,
                 LocalizedText(
                   message,
-                  style: const TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w700,
-                    color: Color(0xFF1F2937),
-                    height: 1.35,
-                  ),
+                  style: AppTextStyles.subtitle(context, color: AppColors.gray800),
                 ),
               ],
             ),
@@ -1007,42 +905,43 @@ class _ReviewRecommendationCard extends StatelessWidget {
         ? context.t('home.review_mistakes_desc')
         : context.t('home.review_spaced_desc');
     final icon = hasMistakes ? Icons.auto_fix_high_rounded : Icons.replay_rounded;
-    final color = hasMistakes ? const Color(0xFFF59E0B) : const Color(0xFF6366F1);
+    final color = hasMistakes ? AppColors.amber500 : AppColors.indigo500;
     final bgColor =
-        hasMistakes ? const Color(0xFFFEF3C7) : const Color(0xFFEEF2FF);
+        hasMistakes ? AppColors.amber100 : AppColors.indigo50;
     final borderColor =
-        hasMistakes ? const Color(0xFFFDE68A) : const Color(0xFFC7D2FE);
+        hasMistakes ? AppColors.amber200 : AppColors.indigo200;
     final btnLabel =
         hasMistakes ? context.t('home.fix_mistakes') : context.t('home.practice_again');
+    final iconBgColor = hasMistakes ? AppColors.amber500.withValues(alpha: 0.15) : AppColors.indigo500.withValues(alpha: 0.15);
 
     return Padding(
-      padding: EdgeInsets.only(bottom: isTablet ? 12 : 10),
+      padding: AppSpacing.only(bottom: isTablet ? 12 : 10),
       child: InkWell(
         onTap: () => Navigator.of(context).push(
           MaterialPageRoute<void>(
             builder: (_) => const QaidaRevisionScreen(),
           ),
         ),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: AppRadius.borderLg,
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+          padding: AppSpacing.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.md),
           decoration: BoxDecoration(
             color: bgColor,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: borderColor, width: 1.5),
+            borderRadius: AppRadius.borderLg,
+            border: AppBorders.custom(color: borderColor, width: AppStroke.regular),
           ),
           child: Row(
             children: [
               Container(
-                width: 40,
-                height: 40,
+                width: AppSizes.avatarMd,
+                height: AppSizes.avatarMd,
                 decoration: BoxDecoration(
-                  color: color.withValues(alpha: 0.15),
+                  color: iconBgColor,
                   shape: BoxShape.circle,
                 ),
-                child: Icon(icon, color: color, size: 22),
+                child: Icon(icon, color: color, size: AppSizes.iconButtonSm),
               ),
-              const SizedBox(width: 12),
+              AppSpacing.gapWMd,
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -1051,39 +950,27 @@ class _ReviewRecommendationCard extends StatelessWidget {
                       hasMistakes
                           ? context.t('home.fix_mistakes')
                           : context.t('home.practice_again'),
-                      style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.bold,
-                        color: color,
-                      ),
+                      style: AppTextStyles.subtitle(context, color: color),
                     ),
-                    const SizedBox(height: 2),
+                    AppSpacing.gapHXs,
                     LocalizedText(
                       message,
-                      style: TextStyle(
-                        fontSize: 11,
-                        color: color.withValues(alpha: 0.8),
-                        height: 1.3,
-                      ),
+                      style: AppTextStyles.caption(context, color: color),
                     ),
                   ],
                 ),
               ),
-              const SizedBox(width: 8),
+              AppSpacing.gapWSm,
               Container(
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                    AppSpacing.symmetric(horizontal: AppSpacing.sm, vertical: AppSpacing.xs),
                 decoration: BoxDecoration(
                   color: color,
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: AppRadius.borderSm,
                 ),
                 child: LocalizedText(
                   btnLabel,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 11,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: AppTextStyles.badge(context, color: AppColors.white),
                 ),
               ),
             ],
@@ -1114,18 +1001,16 @@ class _ContinueLearningCard extends StatelessWidget {
         NuraniQaidaData.steps.first;
 
     return Container(
-      padding: EdgeInsets.all(isTablet ? 18 : 14),
+      padding: isTablet ? AppSpacing.all(18) : AppSpacing.all(14),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(22),
-        border: Border.all(color: const Color(0xFFE2E8F0), width: 1.8),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
-            offset: const Offset(0, 4),
-            blurRadius: 10,
-          ),
-        ],
+        color: AppColors.white,
+        borderRadius: AppRadius.borderXxl,
+        border: AppBorders.custom(color: AppColors.slate200, width: AppStroke.strong),
+        boxShadow: AppElevation.shadow(
+          color: AppColors.black.withValues(alpha: 0.04),
+          offset: const Offset(0, 4),
+          blurRadius: 10,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -1133,94 +1018,77 @@ class _ContinueLearningCard extends StatelessWidget {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
+                padding: AppSpacing.symmetric(horizontal: AppSpacing.sm, vertical: AppSpacing.xs),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFE8F8D8),
-                  borderRadius: BorderRadius.circular(10),
+                  color: AppColors.brandLight,
+                  borderRadius: AppRadius.borderSm,
                 ),
                 child: LocalizedText(
                   '${context.t('common.in_progress')}: ${context.t('qaida.step_with_title', params: {
                     'stepNumber': context.formatDigits(step.stepNumber.toString()),
                     'title': context.t(step.titleKey),
                   })}',
-                  style: const TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF2D6A00),
-                  ),
+                  style: AppTextStyles.badge(context, color: AppColors.textBrand),
                 ),
               ),
               const Spacer(),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                padding: AppSpacing.symmetric(horizontal: AppSpacing.sm, vertical: AppSpacing.xs),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFF1F5F9),
-                  borderRadius: BorderRadius.circular(10),
+                  color: AppColors.slate100,
+                  borderRadius: AppRadius.borderSm,
                 ),
                 child: Row(
                   children: [
                     const Icon(Icons.bolt_rounded,
-                        size: 14, color: Color(0xFFFF9600)),
-                    const SizedBox(width: 4),
+                        size: AppSizes.iconSm, color: AppColors.orange),
+                    AppSpacing.gapWXs,
                     LocalizedText(
                       context.t('qaida.lesson_progress', params: {
                         'current': context.formatDigits(nextLesson.lessonNumber.toString()),
                         'total': context.formatDigits(step.lessons.length.toString()),
                       }),
-                      style: const TextStyle(
-                        fontSize: 11,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF475569),
-                      ),
+                      style: AppTextStyles.badge(context, color: AppColors.slate600),
                     ),
                   ],
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 10),
+          AppSpacing.gapHSm,
           Row(
             children: [
               Container(
-                width: 54,
-                height: 54,
+                width: AppSizes.lessonIconBox,
+                height: AppSizes.lessonIconBox,
                 decoration: BoxDecoration(
-                  color: const Color(0xFFF8FAFC),
-                  borderRadius: BorderRadius.circular(14),
-                  border: Border.all(color: const Color(0xFFE2E8F0)),
+                  color: AppColors.slate50,
+                  borderRadius: AppRadius.radius(14),
+                  border: AppBorders.custom(color: AppColors.slate200),
                 ),
                 alignment: Alignment.center,
                 child: Text(
                   nextLesson.arabicDisplay,
-                  style: TextStyle(
-                    fontFamily: AppTheme.arabicFontFamily,
-                    fontSize: 26,
-                    fontWeight: FontWeight.bold,
-                    color: const Color(0xFF0F172A),
+                  style: AppTextStyles.arabic(
+                    context,
+                    color: AppColors.slate900,
                   ),
                   textDirection: TextDirection.rtl,
                 ),
               ),
-              const SizedBox(width: 12),
+              AppSpacing.gapWMd,
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     LocalizedText(
                       nextLesson.title,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF0F172A),
-                      ),
+                      style: AppTextStyles.titleSmall(context, color: AppColors.slate900),
                     ),
-                    const SizedBox(height: 2),
+                    AppSpacing.gapHXs,
                     LocalizedText(
                       nextLesson.subtitle,
-                      style: const TextStyle(
-                        fontSize: 12,
-                        color: Color(0xFF64748B),
-                      ),
+                      style: AppTextStyles.caption(context, color: AppColors.slate500),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -1229,7 +1097,7 @@ class _ContinueLearningCard extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          AppSpacing.gapHMd,
           // Primary Obvious Action: Continue Learning Button
           InkWell(
             onTap: () {
@@ -1239,39 +1107,33 @@ class _ContinueLearningCard extends StatelessWidget {
                 ),
               );
             },
-            borderRadius: BorderRadius.circular(14),
+            borderRadius: AppRadius.radius(14),
             child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 13),
+              padding: AppSpacing.symmetric(vertical: AppSpacing.md),
               decoration: BoxDecoration(
-                color: AppTheme.duoGreen,
-                borderRadius: BorderRadius.circular(14),
-                boxShadow: const [
-                  BoxShadow(
-                    color: AppTheme.duoGreenDark,
-                    offset: Offset(0, 3.5),
-                    blurRadius: 0,
-                  ),
-                ],
+                color: AppColors.brandPrimary,
+                borderRadius: AppRadius.radius(14),
+                boxShadow: AppElevation.shadow(
+                  color: AppColors.brandDark,
+                  offset: const Offset(0, 3.5),
+                  blurRadius: 0,
+                ),
               ),
               alignment: Alignment.center,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.play_arrow_rounded, color: Colors.white, size: 22),
-                  const SizedBox(width: 6),
+                  const Icon(Icons.play_arrow_rounded, color: AppColors.white, size: AppSizes.iconButtonSm),
+                  AppSpacing.gapWXs,
                   LocalizedText(
                     context.t('qaida.continue_lesson'),
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: AppTextStyles.button(context, color: AppColors.white),
                   ),
                 ],
               ),
             ),
           ),
-          const SizedBox(height: 10),
+          AppSpacing.gapHSm,
           // Secondary row: 8 Tracks & Teacher Help
           Row(
             children: [
@@ -1284,29 +1146,25 @@ class _ContinueLearningCard extends StatelessWidget {
                       ),
                     );
                   },
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: AppRadius.borderSm,
                   child: Container(
                     padding:
-                        const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+                        AppSpacing.symmetric(vertical: AppSpacing.sm, horizontal: AppSpacing.sm),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFEFF6FF),
-                      borderRadius: BorderRadius.circular(10),
-                      border: Border.all(color: const Color(0xFFBFDBFE)),
+                      color: AppColors.blue50,
+                      borderRadius: AppRadius.borderSm,
+                      border: AppBorders.custom(color: AppColors.blue200),
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         const Icon(Icons.auto_stories_rounded,
-                            size: 13, color: Color(0xFF2563EB)),
-                        const SizedBox(width: 4),
+                            size: AppSizes.iconXs, color: AppColors.blue600),
+                        AppSpacing.gapWXs,
                         Flexible(
                           child: LocalizedText(
                             context.t('qaida.seventeen_steps'),
-                            style: const TextStyle(
-                              fontSize: 11,
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFF1D4ED8),
-                            ),
+                            style: AppTextStyles.badge(context, color: AppColors.blue700),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -1316,7 +1174,7 @@ class _ContinueLearningCard extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(width: 8),
+              AppSpacing.gapWSm,
               Expanded(
                 child: InkWell(
                   onTap: () {
@@ -1326,29 +1184,25 @@ class _ContinueLearningCard extends StatelessWidget {
                       ),
                     );
                   },
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: AppRadius.borderSm,
                   child: Container(
                     padding:
-                        const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+                        AppSpacing.symmetric(vertical: AppSpacing.sm, horizontal: AppSpacing.sm),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFFAF5FF),
-                      borderRadius: BorderRadius.circular(10),
-                      border: Border.all(color: const Color(0xFFE9D5FF)),
+                      color: AppColors.purple50,
+                      borderRadius: AppRadius.borderSm,
+                      border: AppBorders.custom(color: AppColors.purple200),
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         const Icon(Icons.school_rounded,
-                            size: 13, color: Color(0xFF9333EA)),
-                        const SizedBox(width: 4),
+                            size: AppSizes.iconXs, color: AppColors.purple600),
+                        AppSpacing.gapWXs,
                         Flexible(
                           child: LocalizedText(
                             context.t('live.teacher_help'),
-                            style: const TextStyle(
-                              fontSize: 11,
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFF7E22CE),
-                            ),
+                            style: AppTextStyles.badge(context, color: AppColors.purple700),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -1368,7 +1222,6 @@ class _ContinueLearningCard extends StatelessWidget {
 
 
 class _SectionTitle extends StatelessWidget {
-
   const _SectionTitle({
     required this.title,
     required this.subtitle,
@@ -1385,20 +1238,12 @@ class _SectionTitle extends StatelessWidget {
       children: [
         LocalizedText(
           title,
-          style: TextStyle(
-            fontSize: isTablet ? 20 : 17,
-            fontWeight: FontWeight.w900,
-            color: AppTheme.darkText,
-          ),
+          style: AppTextStyles.title(context, color: AppColors.textPrimary),
         ),
-        const SizedBox(height: 2),
+        AppSpacing.gapHXs,
         LocalizedText(
           subtitle,
-          style: TextStyle(
-            fontSize: 12,
-            color: AppTheme.darkText.withValues(alpha: 0.5),
-            fontWeight: FontWeight.w500,
-          ),
+          style: AppTextStyles.caption(context, color: AppColors.textSecondary),
         ),
       ],
     );
@@ -1443,31 +1288,25 @@ class _TeacherLearningBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: Colors.transparent,
-      borderRadius: BorderRadius.circular(24),
+      color: AppColors.transparent,
+      borderRadius: AppRadius.borderXxl,
       child: InkWell(
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: AppRadius.borderXxl,
         onTap: () => Navigator.of(context).push(
           MaterialPageRoute<void>(
             builder: (_) => const LiveLearningScreen(),
           ),
         ),
         child: Ink(
-          padding: EdgeInsets.all(isTablet ? 20 : 16),
+          padding: isTablet ? AppSpacing.all(AppSpacing.xl) : AppSpacing.all(AppSpacing.lg),
           decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              colors: [Color(0xFF58CC02), Color(0xFF46A302)],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
+            gradient: AppGradients.brand,
+            borderRadius: AppRadius.borderXl,
+            boxShadow: AppElevation.shadow(
+              color: AppColors.brandPrimary.withValues(alpha: .22),
+              blurRadius: 14,
+              offset: const Offset(0, 6),
             ),
-            borderRadius: BorderRadius.circular(20), // DS.rXl
-            boxShadow: [
-              BoxShadow(
-                color: AppTheme.primaryGreen.withValues(alpha: .22),
-                blurRadius: 14,
-                offset: const Offset(0, 6),
-              ),
-            ],
           ),
           child: Row(
             children: [
@@ -1475,39 +1314,30 @@ class _TeacherLearningBanner extends StatelessWidget {
                 width: isTablet ? 56 : 50,
                 height: isTablet ? 56 : 50,
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: .18),
-                  borderRadius: BorderRadius.circular(16),
+                  color: AppColors.white.withValues(alpha: .18),
+                  borderRadius: AppRadius.borderLg,
                 ),
                 child: const Icon(Icons.video_call_rounded,
-                    color: Colors.white, size: 28),
+                    color: AppColors.white, size: AppSizes.iconXl),
               ),
-              const SizedBox(width: 13),
+              AppSpacing.gapWMd,
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     LocalizedText(
                       context.t('live.banner_title'),
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: isTablet ? 16 : 14,
-                        fontWeight: FontWeight.w900,
-                      ),
+                      style: AppTextStyles.titleSmall(context, color: AppColors.white),
                     ),
-                    const SizedBox(height: 3),
+                    AppSpacing.gapHXs,
                     LocalizedText(
                       context.t('live.banner_subtitle'),
-                      style: const TextStyle(
-                          color: Colors.white70, fontSize: 11, height: 1.3),
+                      style: AppTextStyles.caption(context, color: AppColors.white70),
                     ),
-                    const SizedBox(height: 6),
+                    AppSpacing.gapHSm,
                     LocalizedText(
                       context.t('live.view_schedule_btn'),
-                      style: const TextStyle(
-                        color: Color(0xFFFFE39A),
-                        fontSize: 12,
-                        fontWeight: FontWeight.w900,
-                      ),
+                      style: AppTextStyles.label(context, color: AppColors.goldLight),
                     ),
                   ],
                 ),
@@ -1537,22 +1367,18 @@ class _DuolingoBottomNavBar extends StatelessWidget {
     return SafeArea(
       top: false,
       child: Container(
-        padding: EdgeInsets.symmetric(
+        padding: AppSpacing.symmetric(
           horizontal: isTablet ? 36 : 12,
-          vertical: 8,
+          vertical: AppSpacing.sm,
         ),
         decoration: BoxDecoration(
-          color: Colors.white,
-          border: const Border(
-            top: BorderSide(color: Color(0xFFE5E7EB), width: 1.5),
+          color: AppColors.white,
+          border: AppBorders.borderTop(color: AppColors.gray200, width: AppStroke.regular),
+          boxShadow: AppElevation.shadow(
+            color: AppColors.black.withValues(alpha: 0.04),
+            blurRadius: 10,
+            offset: const Offset(0, -3),
           ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.04),
-              blurRadius: 10,
-              offset: const Offset(0, -3),
-            ),
-          ],
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -1617,16 +1443,16 @@ class _NavBarItem extends StatelessWidget {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 180),
         curve: Curves.easeOut,
-        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
+        padding: AppSpacing.symmetric(horizontal: AppSpacing.xs, vertical: 6),
         decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFFE8F8D8) : Colors.transparent,
-          borderRadius: BorderRadius.circular(16),
+          color: isSelected ? AppColors.brandLight : AppColors.transparent,
+          borderRadius: AppRadius.borderLg,
           border: isSelected
-              ? Border.all(
-                  color: const Color(0xFF58CC02).withValues(alpha: 0.45),
-                  width: 1.5,
+              ? AppBorders.custom(
+                  color: AppColors.brandPrimary.withValues(alpha: 0.45),
+                  width: AppStroke.regular,
                 )
-              : Border.all(color: Colors.transparent, width: 1.5),
+              : AppBorders.custom(color: AppColors.transparent, width: AppStroke.regular),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -1647,15 +1473,14 @@ class _NavBarItem extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(height: 3),
+            AppSpacing.gapHXs,
             LocalizedText(
               label,
-              style: TextStyle(
-                fontSize: 11,
-                fontWeight: isSelected ? FontWeight.w900 : FontWeight.w700,
+              style: AppTextStyles.navItem(
+                context,
                 color: isSelected
-                    ? const Color(0xFF2D6A00)
-                    : const Color(0xFF9CA3AF),
+                    ? AppColors.greenDarkText
+                    : AppColors.gray400,
               ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
@@ -1685,40 +1510,36 @@ class _QuickPill extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+        padding: AppSpacing.symmetric(horizontal: AppSpacing.md, vertical: 7),
         decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFF58CC02) : Colors.white,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color:
-                isSelected ? const Color(0xFF46A302) : const Color(0xFFE5E7EB),
-            width: 1.5,
+          color: isSelected ? AppColors.brandPrimary : AppColors.white,
+          borderRadius: AppRadius.borderXl,
+          border: AppBorders.custom(
+            color: isSelected ? AppColors.brandDark : AppColors.gray200,
+            width: AppStroke.regular,
           ),
-          boxShadow: [
-            BoxShadow(
-              color: isSelected
-                  ? const Color(0xFF58CC02).withValues(alpha: 0.3)
-                  : Colors.black.withValues(alpha: 0.03),
-              blurRadius: 6,
-              offset: const Offset(0, 2),
-            ),
-          ],
+          boxShadow: AppElevation.shadow(
+            color: isSelected
+                ? AppColors.brandPrimary.withValues(alpha: 0.3)
+                : AppColors.black.withValues(alpha: 0.03),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
+          ),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             VectorIcon(
               type: icon,
-              size: 16,
-              color: isSelected ? Colors.white : AppTheme.primaryGreen,
+              size: AppSizes.iconSm,
+              color: isSelected ? AppColors.white : AppColors.brandPrimary,
             ),
-            const SizedBox(width: 6),
+            AppSpacing.gapWXs,
             LocalizedText(
               label,
-              style: TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w800,
-                color: isSelected ? Colors.white : AppTheme.darkText,
+              style: AppTextStyles.label(
+                context,
+                color: isSelected ? AppColors.white : AppColors.textPrimary,
               ),
             ),
           ],

@@ -36,6 +36,35 @@ class AppSpacing {
   static const EdgeInsets insetButton = EdgeInsets.symmetric(horizontal: lg, vertical: md);
   static const EdgeInsets insetChip = EdgeInsets.symmetric(horizontal: md, vertical: xs);
   static const EdgeInsets insetCard = EdgeInsets.all(lg);
+
+  // Spacing gaps
+  static const SizedBox gapXs = SizedBox(width: xs, height: xs);
+  static const SizedBox gapSm = SizedBox(width: sm, height: sm);
+  static const SizedBox gapMd = SizedBox(width: md, height: md);
+  static const SizedBox gapLg = SizedBox(width: lg, height: lg);
+  static const SizedBox gapXl = SizedBox(width: xl, height: xl);
+  static const SizedBox gapXxl = SizedBox(width: xxl, height: xxl);
+
+  static const SizedBox gapWXs = SizedBox(width: xs);
+  static const SizedBox gapWSm = SizedBox(width: sm);
+  static const SizedBox gapWMd = SizedBox(width: md);
+  static const SizedBox gapWLg = SizedBox(width: lg);
+  static const SizedBox gapWXl = SizedBox(width: xl);
+
+  static const SizedBox gapHXs = SizedBox(height: xs);
+  static const SizedBox gapHSm = SizedBox(height: sm);
+  static const SizedBox gapHMd = SizedBox(height: md);
+  static const SizedBox gapHLg = SizedBox(height: lg);
+  static const SizedBox gapHXl = SizedBox(height: xl);
+  static const SizedBox gapHXxl = SizedBox(height: xxl);
+
+  static EdgeInsets all(double v) => EdgeInsets.all(v);
+  static EdgeInsets symmetric({double horizontal = 0, double vertical = 0}) =>
+      EdgeInsets.symmetric(horizontal: horizontal, vertical: vertical);
+  static EdgeInsets only({double left = 0, double top = 0, double right = 0, double bottom = 0}) =>
+      EdgeInsets.only(left: left, top: top, right: right, bottom: bottom);
+  static EdgeInsets fromLTRB(double l, double t, double r, double b) =>
+      EdgeInsets.fromLTRB(l, t, r, b);
 }
 
 /// AppRadius: Standardized corner radii across components.
@@ -61,6 +90,15 @@ class AppRadius {
 
   // Sheet / Modal rounded tops
   static const BorderRadius sheetTop = BorderRadius.vertical(top: Radius.circular(xl));
+
+  static BorderRadius radius(double r) => BorderRadius.circular(r);
+  static BorderRadius only({double topLeft = 0, double topRight = 0, double bottomLeft = 0, double bottomRight = 0}) =>
+      BorderRadius.only(
+        topLeft: Radius.circular(topLeft),
+        topRight: Radius.circular(topRight),
+        bottomLeft: Radius.circular(bottomLeft),
+        bottomRight: Radius.circular(bottomRight),
+      );
 }
 
 /// AppStroke: Standard border and outline stroke widths.
@@ -115,6 +153,14 @@ class AppElevation {
       blurRadius: 6,
     ),
   ];
+
+  static List<BoxShadow> shadow({
+    Color color = AppColors.black10,
+    double blurRadius = 4,
+    Offset offset = const Offset(0, 2),
+  }) => [
+    BoxShadow(color: color, blurRadius: blurRadius, offset: offset),
+  ];
 }
 
 /// AppSizes: Standard dimensions for icons, avatars, buttons, and app bars.
@@ -122,19 +168,23 @@ class AppSizes {
   AppSizes._();
 
   // Icons
+  static const double iconXs = 12;
   static const double iconSm = 16;
   static const double iconMd = 20;
+  static const double iconButtonSm = 22;
   static const double iconLg = 24;
   static const double iconXl = 32;
 
-  // Avatars
+  // Avatars & Lesson Boxes
   static const double avatarSm = 32;
   static const double avatarMd = 40;
   static const double avatarLg = 48;
+  static const double lessonIconBox = 54;
   static const double avatarXl = 64;
 
   // Touch targets & Heights
   static const double touchTargetMin = 44; // Minimum accessible touch target
+  static const double pillHeight = 38;
   static const double buttonHeightSm = 36;
   static const double buttonHeightMd = 44;
   static const double buttonHeightLg = 52;
@@ -142,4 +192,53 @@ class AppSizes {
   // App Bar & Top Bar
   static const double topBarHeight = 60;
   static const double pageHeaderHeight = 56;
+}
+
+/// AppBorders: Standardized border strokes.
+class AppBorders {
+  AppBorders._();
+
+  static const Border hairline = Border.fromBorderSide(BorderSide(color: AppColors.border, width: AppStroke.hairline));
+  static const Border regular = Border.fromBorderSide(BorderSide(color: AppColors.border, width: AppStroke.regular));
+  static const Border warning = Border.fromBorderSide(BorderSide(color: AppColors.warning, width: AppStroke.regular));
+  static const Border brand = Border.fromBorderSide(BorderSide(color: AppColors.brandPrimary, width: AppStroke.regular));
+  static const Border greenAccent = Border.fromBorderSide(BorderSide(color: AppColors.borderBrand, width: AppStroke.regular));
+  static const Border blue = Border.fromBorderSide(BorderSide(color: AppColors.infoBorder, width: AppStroke.regular));
+  static const Border purple = Border.fromBorderSide(BorderSide(color: AppColors.purpleBorder, width: AppStroke.regular));
+  static const Border orange = Border.fromBorderSide(BorderSide(color: AppColors.orangeBorder, width: AppStroke.regular));
+  static const Border none = Border.fromBorderSide(BorderSide(color: AppColors.transparent, width: AppStroke.none));
+  static const Border topHairline = Border(top: BorderSide(color: AppColors.border, width: AppStroke.regular));
+
+  static Border custom({Color color = AppColors.border, double width = AppStroke.regular}) =>
+      Border.all(color: color, width: width);
+  static Border sideOnly({
+    BorderSide top = BorderSide.none,
+    BorderSide right = BorderSide.none,
+    BorderSide bottom = BorderSide.none,
+    BorderSide left = BorderSide.none,
+  }) => Border(top: top, right: right, bottom: bottom, left: left);
+  static Border borderTop({Color color = AppColors.border, double width = AppStroke.regular}) =>
+      Border(top: BorderSide(color: color, width: width));
+}
+
+/// AppGradients: Pre-defined multi-color gradients.
+class AppGradients {
+  AppGradients._();
+
+  static const LinearGradient brand = LinearGradient(
+    colors: [AppColors.brandPrimary, AppColors.brandDark],
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+  );
+  static const LinearGradient gold = LinearGradient(
+    colors: [AppColors.brandAccent, AppColors.orange],
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+  );
+
+  static LinearGradient linear({
+    required List<Color> colors,
+    AlignmentGeometry begin = Alignment.topLeft,
+    AlignmentGeometry end = Alignment.bottomRight,
+  }) => LinearGradient(colors: colors, begin: begin, end: end);
 }
