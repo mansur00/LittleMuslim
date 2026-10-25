@@ -828,7 +828,7 @@ class _StepIslandCard extends StatelessWidget {
                           ),
                           const SizedBox(height: 2),
                           Text(
-                            step.description,
+                            context.t(step.descriptionKey),
                             style: AppFonts.getTextStyle(context, 
                               fontSize: 12,
                               color: !isUnlocked

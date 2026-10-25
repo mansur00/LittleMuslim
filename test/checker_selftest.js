@@ -6,7 +6,8 @@ const FIXTURES = path.join(ROOT, 'tools', '__fixtures__');
 
 // Regex patterns matching tools/i18n_check.js
 const REGEX_BENGALI = /[\u0980-\u09FF]/;
-const REGEX_DEVANAGARI = /[\u0900-\u097F]/;
+// Exclude Danda \u0964 and double danda \u0965 (shared Indic punctuation)
+const REGEX_DEVANAGARI = /[\u0900-\u0963\u0966-\u097F]/;
 const REGEX_LATIN_PROSE = /[A-Z][a-z]{2,}\s+[a-z]{2,}/;
 const REGEX_PURE_ARABIC = /^[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\s\d.,!?:;()[\]{}\-—"'/«»ـ]+$/;
 
@@ -136,6 +137,15 @@ function checkDartFile(filePath, masterKeys) {
     }
   }
 
+  const keyRefRegex = /\b(?:descriptionKey|titleKey|phaseNameKey|gardenPlantKey)\s*:\s*['"]([a-zA-Z0-9_\-.]+)['"]/g;
+  let km;
+  while ((km = keyRefRegex.exec(content)) !== null) {
+    const key = km[1];
+    if (masterKeys && !masterKeys.has(key)) {
+      violations.push({ rule: 'CHECK_C_MISSING_KEY', text: key });
+    }
+  }
+
   return violations;
 }
 
@@ -232,6 +242,14 @@ function runSelfTests() {
   // 12. Hindi/Bengali string inside a ternary and switch-case return
   const bad12 = checkDartFile(path.join(FIXTURES, 'bad_12_ternary_switch_indic.dart'), masterKeys);
   assertRule('bad_12_ternary_switch_indic.dart', bad12, 'CHECK_A_INDIC_SCRIPT');
+
+  // 13. Quran data file with hardcoded Bangla translation leak
+  const bad13 = checkDartFile(path.join(FIXTURES, 'bad_13_quran_bangla_leak.dart'), masterKeys);
+  assertRule('bad_13_quran_bangla_leak.dart', bad13, 'CHECK_A_INDIC_SCRIPT');
+
+  // 14. Step data file referencing non-existent key
+  const bad14 = checkDartFile(path.join(FIXTURES, 'bad_14_nonexistent_step_key.dart'), masterKeys);
+  assertRule('bad_14_nonexistent_step_key.dart', bad14, 'CHECK_C_MISSING_KEY');
 
   // --- GOOD SAMPLES ---
   console.log('\n--- Testing 5 Good Samples ---');

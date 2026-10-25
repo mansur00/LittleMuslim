@@ -30,6 +30,7 @@ const ruleCounts = {
   CHECK_B_EMPTY_OR_TODO: 0,
   CHECK_B_UNUSED_KEY: 0,
   CHECK_C_MISSING_KEY: 0,
+  CHECK_C_DYNAMIC_KEY_EXISTS: 0,
 };
 
 function recordViolation(rule, location, target, text) {
@@ -179,7 +180,7 @@ function isInsideEnclosure(code, quoteIdx, funcNames) {
 const SKIP_ENCLOSURES = [
   'assert', 'RegExp', 'throw', 'Exception', 'FormatException',
   'ArgumentError', 'StateError', 'UnsupportedError', 'ClientException',
-  'AssertionError', 'PrayerTimesException', 'print', 'debugPrint',
+  'AssertionError', 'PrayerTimesException', 'FlutterError', 'print', 'debugPrint',
   'Key', 't', 'tr', 'uiText'
 ];
 
@@ -344,8 +345,8 @@ function scanSourceFiles() {
       const prefix = tok.prefix;
 
       if (
-        /\b(t|tr|uiText|Key|debugPrint|print|assert|throw|Exception|FormatException|ArgumentError|StateError|UnsupportedError|ClientException|AssertionError|PrayerTimesException|RegExp)\s*\(\s*$/.test(prefix) ||
-        /\b(?:assert|throw|RegExp)\s*\(.*,\s*$/.test(prefix) ||
+        /\b(t|tr|uiText|Key|debugPrint|print|assert|throw|Exception|FormatException|ArgumentError|StateError|UnsupportedError|ClientException|AssertionError|PrayerTimesException|FlutterError|RegExp)\s*\(\s*$/.test(prefix) ||
+        /\b(?:assert|throw|RegExp|FlutterError)\s*\(.*,\s*$/.test(prefix) ||
         /\bl10n\.[a-zA-Z0-9_]+\s*\(\s*$/.test(prefix) ||
         /@RoutePage|@pragma/.test(prefix) ||
         isInsideEnclosure(rawContent, tok.quoteIdx, SKIP_ENCLOSURES)
@@ -695,10 +696,56 @@ function checkKeyUsage(masterKeys) {
             }
           }
         }
+
+        // Match model key properties: descriptionKey, titleKey, subtitleKey, etc.
+        const keyRefRegex = /\b(?:descriptionKey|titleKey|phaseNameKey|gardenPlantKey|subtitleKey)\s*:\s*['"]([a-zA-Z0-9_\-.]+)['"]/g;
+        while ((m = keyRefRegex.exec(content)) !== null) {
+          const key = m[1];
+          if (!masterKeys.has(key)) {
+            recordViolation('CHECK_C_MISSING_KEY', rel, key, `Referenced model key '${key}' does not exist in locales/en.json`);
+          }
+        }
       }
     }
   }
   scanDir(path.join(ROOT, 'lib'));
+}
+
+function checkDynamicKeyExpansion(masterKeys) {
+  console.log('\n--- DYNAMIC KEY EXPANSION (CHECK_C_DYNAMIC_KEY_EXISTS) ---');
+  const enCatalogPath = path.join(ROOT, 'locales', 'en.json');
+  const en = JSON.parse(fs.readFileSync(enCatalogPath, 'utf8'));
+
+  const patterns = {};
+  for (const prop of ['desc', 'title', 'phase_name', 'garden_plant']) {
+    patterns[`qaida.step.$n.${prop}`] = Array.from({ length: 17 }, (_, i) => `qaida.step.${i + 1}.${prop}`);
+  }
+  for (const prop of ['name', 'meaning']) {
+    patterns[`quran.surah.$n.${prop}`] = Array.from({ length: 114 }, (_, i) => `quran.surah.${i + 1}.${prop}`);
+  }
+  patterns['hijri.month.$n'] = Array.from({ length: 12 }, (_, i) => `hijri.month.${i + 1}`);
+  const prayerMethods = [0, 1, 2, 3, 4, 5, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23];
+  patterns['prayer.method.$id'] = prayerMethods.map(id => `prayer.method.${id}`);
+  const actTypes = Object.keys(en).filter(k => k.startsWith('qaida.activity_type.'));
+  patterns['qaida.activity_type.$type'] = actTypes;
+  patterns['qaida.letter.$id.*'] = Object.keys(en).filter(k => k.startsWith('qaida.letter.'));
+  patterns['duas.item.$id.*'] = Object.keys(en).filter(k => k.startsWith('duas.item.'));
+  patterns['seerah.story.$id.*'] = Object.keys(en).filter(k => k.startsWith('seerah.story.'));
+
+  let totalExpanded = 0;
+  for (const [pattern, keys] of Object.entries(patterns)) {
+    totalExpanded += keys.length;
+    let missingCount = 0;
+    for (const key of keys) {
+      if (!masterKeys.has(key)) {
+        missingCount++;
+        recordViolation('CHECK_C_DYNAMIC_KEY_EXISTS', 'dynamic', key, `Expanded key '${key}' for pattern '${pattern}' does not exist in locales/en.json`);
+      }
+    }
+    const status = missingCount === 0 ? `✅ ${keys.length}/${keys.length} keys verified` : `❌ ${missingCount} keys missing!`;
+    console.log(`  Pattern ${pattern.padEnd(28)} : ${status}`);
+  }
+  console.log(`Total dynamic keys expanded & verified: ${totalExpanded}\n`);
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -711,6 +758,7 @@ console.log('================================================================\n'
 scanSourceFiles();
 const masterKeys = checkLocaleFiles();
 checkKeyUsage(masterKeys);
+checkDynamicKeyExpansion(masterKeys);
 
 // ─────────────────────────────────────────────────────────────────────────────
 // PRINT RESULTS & WRITE REPORT

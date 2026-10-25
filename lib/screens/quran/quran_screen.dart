@@ -58,7 +58,7 @@ class _QuranScreenState extends State<QuranScreen> {
         _surahs = surahs;
         _loading = false;
       });
-    } catch (_) {
+    } catch (e) {
       if (!mounted) return;
       setState(() {
         _loading = false;
@@ -113,7 +113,9 @@ class _QuranScreenState extends State<QuranScreen> {
                       _ContinueReadingCard(
                         surahLabel: continueSurah == null
                             ? context.t('quran.wait_load_retry')
-                            : context.t('quran.surah_prefix', params: {'name': continueSurah.englishName}),
+                            : context.t('quran.surah_prefix', params: {
+                                'name': context.t('quran.surah.${continueSurah.number}.name', fallback: continueSurah.englishName),
+                              }),
                         ayahNumber: position?.$2,
                         canResume: continueSurah != null,
                         onTap: () => _openReader(
@@ -189,15 +191,26 @@ class _QuranScreenState extends State<QuranScreen> {
                         else ...[
                           () {
                             final filtered = _surahs
-                                .where((item) =>
-                                    _search.isEmpty ||
-                                    item.englishName
-                                        .toLowerCase()
-                                        .contains(_search) ||
-                                    item.nameMeaning
-                                        .toLowerCase()
-                                        .contains(_search) ||
-                                    item.arabicName.contains(_search))
+                                .where((item) {
+                                  if (_search.isEmpty) return true;
+                                  final localizedName = context
+                                      .t('quran.surah.${item.number}.name',
+                                          fallback: item.englishName)
+                                      .toLowerCase();
+                                  final localizedMeaning = context
+                                      .t('quran.surah.${item.number}.meaning',
+                                          fallback: item.nameMeaning)
+                                      .toLowerCase();
+                                  return item.englishName
+                                          .toLowerCase()
+                                          .contains(_search) ||
+                                      item.nameMeaning
+                                          .toLowerCase()
+                                          .contains(_search) ||
+                                      localizedName.contains(_search) ||
+                                      localizedMeaning.contains(_search) ||
+                                      item.arabicName.contains(_search);
+                                })
                                 .toList();
                             if (filtered.isEmpty && _search.isNotEmpty) {
                               return _SearchEmptySurahs(
@@ -212,15 +225,15 @@ class _QuranScreenState extends State<QuranScreen> {
                               children: [
                                 for (final surah in filtered)
                                   _SurahCard(
-                                    number: '${surah.number}',
+                                    number: context.formatDigits('${surah.number}'),
                                     arabicName: surah.arabicName,
-                                    title: surah.englishName,
+                                    title: context.t('quran.surah.${surah.number}.name', fallback: surah.englishName),
                                     detail: context.t('quran.surah_meta', params: {
                                       'ayahs': context.formatDigits(surah.ayahCount.toString()),
                                       'revelation': surah.revelationType == 'Meccan'
                                           ? context.t('quran.meccan')
                                           : context.t('quran.medinan'),
-                                      'meaning': surah.nameMeaning,
+                                      'meaning': context.t('quran.surah.${surah.number}.meaning', fallback: surah.nameMeaning),
                                     }),
                                     onTap: () => _openReader(context, surah),
                                   ),
@@ -917,7 +930,8 @@ class _JuzCard extends StatelessWidget {
           ),
           subtitle: LocalizedText(
             context.t('quran.juz_start_info', params: {
-              'surah': juz.startSurahName,
+              'surah': context.t('quran.surah.${juz.startSurahNumber}.name',
+                  fallback: juz.startSurahName),
               'ayah': context.formatDigits('${juz.startAyahNumber}'),
             }),
             style: const TextStyle(fontSize: 11, color: Colors.black54),
@@ -968,7 +982,8 @@ class _BookmarkCard extends StatelessWidget {
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               LocalizedText(
                   context.t('quran.bookmark_item_title', params: {
-                    'surah': surah.englishName,
+                    'surah': context.t('quran.surah.${surah.number}.name',
+                        fallback: surah.englishName),
                     'ayah': context.formatDigits('$ayahNumber'),
                   }),
                   style: const TextStyle(
@@ -976,7 +991,8 @@ class _BookmarkCard extends StatelessWidget {
                       fontSize: 14,
                       color: AppTheme.darkText)),
               const SizedBox(height: 2),
-              LocalizedText('${surah.arabicName} · ${surah.nameMeaning}',
+              LocalizedText(
+                  '${surah.arabicName} · ${context.t('quran.surah.${surah.number}.meaning', fallback: surah.nameMeaning)}',
                   style: const TextStyle(fontSize: 11, color: Colors.black54)),
             ]),
           ),

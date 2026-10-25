@@ -115,9 +115,9 @@ void main() {
               utf8.encode(jsonEncode({
                 'verses': [
                   {
-                    'verse_key': '1:1',
+                    'verse_key': '999:1',
                     'text_uthmani_tajweed':
-                        'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ',
+                        'أَلَمْ تَرَ كَيْفَ فَعَلَ رَبُّكَ بِأَصْحَابِ الْفِيلِ',
                   }
                 ]
               })),
@@ -132,21 +132,21 @@ void main() {
 
       final repo = AlQuranCloudRepository(client: mockClient);
       const surah = QuranSurah(
-        number: 1,
-        arabicName: 'الفاتحة',
-        englishName: 'Al-Fatiha',
-        nameMeaning: 'The Opening',
+        number: 999,
+        arabicName: 'الفِيل',
+        englishName: 'Al-Fil',
+        nameMeaning: 'The Elephant',
         ayahCount: 1,
         revelationType: 'Meccan',
       );
 
       // 1st call online
-      final onlineContent = await repo.getSurah(surah);
+      final onlineContent = await repo.getSurah(surah, locale: 'bn');
       expect(onlineContent.ayahs.length, 1);
       expect(onlineContent.ayahs.first.number, 1);
 
       // 2nd call offline
-      final cachedContent = await repo.getSurah(surah);
+      final cachedContent = await repo.getSurah(surah, locale: 'bn');
       expect(cachedContent.ayahs.length, 1);
       expect(cachedContent.ayahs.first.arabic,
           'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ');

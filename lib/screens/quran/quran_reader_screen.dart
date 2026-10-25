@@ -82,21 +82,33 @@ class _QuranReaderScreenState extends State<QuranReaderScreen>
     return _audioPlayer!;
   }
 
+  String? _loadedLocale;
+
   @override
   void initState() {
     super.initState();
     _currentAyah = widget.initialAyah;
     WidgetsBinding.instance.addObserver(this);
-    _loadSurah();
   }
 
-  Future<void> _loadSurah() async {
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final loc = context.currentLanguageCode;
+    if (_loadedLocale != loc) {
+      _loadedLocale = loc;
+      _loadSurah(loc);
+    }
+  }
+
+  Future<void> _loadSurah([String? targetLocale]) async {
     setState(() {
       _loading = true;
       _loadError = null;
     });
     try {
-      final result = await _repository.getSurah(_surah);
+      final loc = targetLocale ?? (mounted ? context.currentLanguageCode : 'en');
+      final result = await _repository.getSurah(_surah, locale: loc);
       if (!mounted) return;
       final initialAyah = result.ayahs.isEmpty
           ? 1
@@ -495,7 +507,9 @@ class _SurahHeading extends StatelessWidget {
                   fontWeight: FontWeight.w700)),
           const SizedBox(height: 4),
           LocalizedText(
-              context.t('quran.surah_title_with_name', params: {'name': surah.englishName}),
+              context.t('quran.surah_title_with_name', params: {
+                'name': context.t('quran.surah.${surah.number}.name', fallback: surah.englishName),
+              }),
               style: const TextStyle(
                   color: AppTheme.darkText,
                   fontSize: 18,
@@ -507,7 +521,7 @@ class _SurahHeading extends StatelessWidget {
                     ? context.t('quran.meccan')
                     : context.t('quran.medinan'),
                 'ayahCount': context.formatDigits('${surah.ayahCount}'),
-                'meaning': context.uiText(surah.nameMeaning),
+                'meaning': context.t('quran.surah.${surah.number}.meaning', fallback: surah.nameMeaning),
               }),
               style: const TextStyle(color: Colors.black54, fontSize: 12)),
           const SizedBox(height: 14),

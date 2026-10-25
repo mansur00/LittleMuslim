@@ -45,6 +45,8 @@ flutter:
     - assets/audio/duas/
     - assets/l10n/
     - assets/locales/
+    - assets/quran/
+    - assets/quran/translations/
   fonts:
     - family: Amiri
       fonts:

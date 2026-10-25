@@ -392,7 +392,7 @@ class NuraniQaidaData {
       id: 'step_1_mufradat',
       titleKey: 'qaida.step.1.title',
       arabicTitle: 'الْمُفْرَدَات',
-      description: 'د',
+      descriptionKey: 'qaida.step.1.desc',
       phaseNumber: 1,
       phaseNameKey: 'qaida.step.1.phase_name',
       lessons: lessons,

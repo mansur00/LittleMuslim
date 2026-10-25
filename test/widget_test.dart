@@ -36,10 +36,10 @@ class _FakeQuranRepository implements QuranRepository {
   );
 
   @override
-  Future<List<QuranSurah>> getSurahs() async => const [surah];
+  Future<List<QuranSurah>> getSurahs({String? locale}) async => const [surah];
 
   @override
-  Future<QuranSurahContent> getSurah(QuranSurah surah) async =>
+  Future<QuranSurahContent> getSurah(QuranSurah surah, {String? locale}) async =>
       QuranSurahContent(
         surah: surah,
         ayahs: [
@@ -65,21 +65,21 @@ class _RetryQuranRepository extends _FakeQuranRepository {
   bool failSurahContent = true;
 
   @override
-  Future<List<QuranSurah>> getSurahs() async {
+  Future<List<QuranSurah>> getSurahs({String? locale}) async {
     if (failSurahList) {
       failSurahList = false;
       throw Exception('offline');
     }
-    return super.getSurahs();
+    return super.getSurahs(locale: locale);
   }
 
   @override
-  Future<QuranSurahContent> getSurah(QuranSurah surah) async {
+  Future<QuranSurahContent> getSurah(QuranSurah surah, {String? locale}) async {
     if (failSurahContent) {
       failSurahContent = false;
       throw Exception('offline');
     }
-    return super.getSurah(surah);
+    return super.getSurah(surah, locale: locale);
   }
 }
 

@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -8,17 +7,12 @@ import 'package:little_muslim/utils/app_state.dart';
 import 'package:little_muslim/l10n/app_localizations.dart';
 import 'package:little_muslim/screens/achievements/achievements_screen.dart';
 import 'package:little_muslim/screens/duas/duas_screen.dart';
-import 'package:little_muslim/screens/home/home_screen.dart';
-import 'package:little_muslim/screens/live_learning/live_learning_screen.dart';
 import 'package:little_muslim/screens/missions/daily_missions_screen.dart';
 import 'package:little_muslim/screens/onboarding/language_page.dart';
-import 'package:little_muslim/screens/onboarding/onboarding_screen.dart';
 import 'package:little_muslim/screens/prayer/prayer_screen.dart';
 import 'package:little_muslim/screens/profile/login_screen.dart';
 import 'package:little_muslim/screens/profile/profile_screen.dart';
 import 'package:little_muslim/screens/qaida/qaida_chapters_screen.dart';
-import 'package:little_muslim/screens/qaida/qaida_exam_screen.dart';
-import 'package:little_muslim/screens/qaida/qaida_lesson_screen.dart';
 import 'package:little_muslim/screens/qaida/qaida_report_screen.dart';
 import 'package:little_muslim/screens/quran/quran_screen.dart';
 import 'package:little_muslim/screens/seerah/seerah_screen.dart';
@@ -102,19 +96,22 @@ void main() {
       final state = AppState();
       await state.loadFromPrefs();
 
+      BuildContext? savedContext;
       await tester.pumpWidget(
         _VerificationApp(
           state: state,
           child: Builder(
             builder: (context) {
+              savedContext = context;
               // Known key that exists
               final known = context.t('settings.title');
-              // Key that doesn't exist anywhere
-              final missing = context.t('non.existent.dummy.key');
+              // Key that has explicit fallback
+              final withFallback =
+                  context.t('non.existent.dummy.key', fallback: 'Fallback Value');
               return Column(
                 children: [
                   Text('Known: $known'),
-                  Text('Missing: $missing'),
+                  Text('Fallback: $withFallback'),
                 ],
               );
             },
@@ -124,8 +121,13 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Known: सेटिंग्स'), findsOneWidget);
-      // Untranslated keys gracefully return the key itself without crashing
-      expect(find.text('Missing: non.existent.dummy.key'), findsOneWidget);
+      expect(find.text('Fallback: Fallback Value'), findsOneWidget);
+
+      // Verify that unhandled missing key throws FlutterError in debug/test mode (Task 1 e)
+      expect(
+        () => savedContext!.t('completely.non.existent.key'),
+        throwsA(isA<FlutterError>()),
+      );
     });
   });
 
@@ -265,7 +267,9 @@ void main() {
           _VerificationApp(state: state, child: const QuranScreen()),
         );
         await tester.runAsync(
-            () => Future<void>.delayed(const Duration(milliseconds: 100)));
+            () => Future<void>.delayed(const Duration(milliseconds: 300)));
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 300));
         await tester.pumpAndSettle();
 
         expect(find.byType(QuranScreen), findsOneWidget);

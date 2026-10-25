@@ -12442,6 +12442,914 @@
   },
   "quran.surah.1.meaning": "The Opening",
   "@quran.surah.1.meaning": {
-    "description": "Translation for quran.surah.1.meaning"
+    "description": "Quran surah name or meaning for key quran.surah.1.meaning"
+  },
+  "quran.surah.1.name": "Al-Fatihah",
+  "@quran.surah.1.name": {
+    "description": "Quran surah name or meaning for key quran.surah.1.name"
+  },
+  "quran.surah.2.name": "Al-Baqarah",
+  "@quran.surah.2.name": {
+    "description": "Quran surah name or meaning for key quran.surah.2.name"
+  },
+  "quran.surah.2.meaning": "The Cow",
+  "@quran.surah.2.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.2.meaning"
+  },
+  "quran.surah.3.name": "Ali Imran",
+  "@quran.surah.3.name": {
+    "description": "Quran surah name or meaning for key quran.surah.3.name"
+  },
+  "quran.surah.3.meaning": "Family of Imran",
+  "@quran.surah.3.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.3.meaning"
+  },
+  "quran.surah.4.name": "An-Nisa",
+  "@quran.surah.4.name": {
+    "description": "Quran surah name or meaning for key quran.surah.4.name"
+  },
+  "quran.surah.4.meaning": "The Women",
+  "@quran.surah.4.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.4.meaning"
+  },
+  "quran.surah.5.name": "Al-Ma'idah",
+  "@quran.surah.5.name": {
+    "description": "Quran surah name or meaning for key quran.surah.5.name"
+  },
+  "quran.surah.5.meaning": "The Table Spread",
+  "@quran.surah.5.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.5.meaning"
+  },
+  "quran.surah.6.name": "Al-An'am",
+  "@quran.surah.6.name": {
+    "description": "Quran surah name or meaning for key quran.surah.6.name"
+  },
+  "quran.surah.6.meaning": "The Cattle",
+  "@quran.surah.6.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.6.meaning"
+  },
+  "quran.surah.7.name": "Al-A'raf",
+  "@quran.surah.7.name": {
+    "description": "Quran surah name or meaning for key quran.surah.7.name"
+  },
+  "quran.surah.7.meaning": "The Heights",
+  "@quran.surah.7.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.7.meaning"
+  },
+  "quran.surah.8.name": "Al-Anfal",
+  "@quran.surah.8.name": {
+    "description": "Quran surah name or meaning for key quran.surah.8.name"
+  },
+  "quran.surah.8.meaning": "The Spoils of War",
+  "@quran.surah.8.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.8.meaning"
+  },
+  "quran.surah.9.name": "At-Tawbah",
+  "@quran.surah.9.name": {
+    "description": "Quran surah name or meaning for key quran.surah.9.name"
+  },
+  "quran.surah.9.meaning": "The Repentance",
+  "@quran.surah.9.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.9.meaning"
+  },
+  "quran.surah.10.name": "Yunus",
+  "@quran.surah.10.name": {
+    "description": "Quran surah name or meaning for key quran.surah.10.name"
+  },
+  "quran.surah.10.meaning": "Jonah",
+  "@quran.surah.10.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.10.meaning"
+  },
+  "quran.surah.11.name": "Hud",
+  "@quran.surah.11.name": {
+    "description": "Quran surah name or meaning for key quran.surah.11.name"
+  },
+  "quran.surah.11.meaning": "Hud",
+  "@quran.surah.11.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.11.meaning"
+  },
+  "quran.surah.12.name": "Yusuf",
+  "@quran.surah.12.name": {
+    "description": "Quran surah name or meaning for key quran.surah.12.name"
+  },
+  "quran.surah.12.meaning": "Joseph",
+  "@quran.surah.12.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.12.meaning"
+  },
+  "quran.surah.13.name": "Ar-Ra'd",
+  "@quran.surah.13.name": {
+    "description": "Quran surah name or meaning for key quran.surah.13.name"
+  },
+  "quran.surah.13.meaning": "The Thunder",
+  "@quran.surah.13.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.13.meaning"
+  },
+  "quran.surah.14.name": "Ibrahim",
+  "@quran.surah.14.name": {
+    "description": "Quran surah name or meaning for key quran.surah.14.name"
+  },
+  "quran.surah.14.meaning": "Abraham",
+  "@quran.surah.14.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.14.meaning"
+  },
+  "quran.surah.15.name": "Al-Hijr",
+  "@quran.surah.15.name": {
+    "description": "Quran surah name or meaning for key quran.surah.15.name"
+  },
+  "quran.surah.15.meaning": "The Rocky Tract",
+  "@quran.surah.15.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.15.meaning"
+  },
+  "quran.surah.16.name": "An-Nahl",
+  "@quran.surah.16.name": {
+    "description": "Quran surah name or meaning for key quran.surah.16.name"
+  },
+  "quran.surah.16.meaning": "The Bee",
+  "@quran.surah.16.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.16.meaning"
+  },
+  "quran.surah.17.name": "Al-Isra",
+  "@quran.surah.17.name": {
+    "description": "Quran surah name or meaning for key quran.surah.17.name"
+  },
+  "quran.surah.17.meaning": "The Night Journey",
+  "@quran.surah.17.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.17.meaning"
+  },
+  "quran.surah.18.name": "Al-Kahf",
+  "@quran.surah.18.name": {
+    "description": "Quran surah name or meaning for key quran.surah.18.name"
+  },
+  "quran.surah.18.meaning": "The Cave",
+  "@quran.surah.18.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.18.meaning"
+  },
+  "quran.surah.19.name": "Maryam",
+  "@quran.surah.19.name": {
+    "description": "Quran surah name or meaning for key quran.surah.19.name"
+  },
+  "quran.surah.19.meaning": "Mary",
+  "@quran.surah.19.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.19.meaning"
+  },
+  "quran.surah.20.name": "Taha",
+  "@quran.surah.20.name": {
+    "description": "Quran surah name or meaning for key quran.surah.20.name"
+  },
+  "quran.surah.20.meaning": "Ta-Ha",
+  "@quran.surah.20.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.20.meaning"
+  },
+  "quran.surah.21.name": "Al-Anbiya",
+  "@quran.surah.21.name": {
+    "description": "Quran surah name or meaning for key quran.surah.21.name"
+  },
+  "quran.surah.21.meaning": "The Prophets",
+  "@quran.surah.21.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.21.meaning"
+  },
+  "quran.surah.22.name": "Al-Hajj",
+  "@quran.surah.22.name": {
+    "description": "Quran surah name or meaning for key quran.surah.22.name"
+  },
+  "quran.surah.22.meaning": "The Pilgrimage",
+  "@quran.surah.22.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.22.meaning"
+  },
+  "quran.surah.23.name": "Al-Mu'minun",
+  "@quran.surah.23.name": {
+    "description": "Quran surah name or meaning for key quran.surah.23.name"
+  },
+  "quran.surah.23.meaning": "The Believers",
+  "@quran.surah.23.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.23.meaning"
+  },
+  "quran.surah.24.name": "An-Nur",
+  "@quran.surah.24.name": {
+    "description": "Quran surah name or meaning for key quran.surah.24.name"
+  },
+  "quran.surah.24.meaning": "The Light",
+  "@quran.surah.24.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.24.meaning"
+  },
+  "quran.surah.25.name": "Al-Furqan",
+  "@quran.surah.25.name": {
+    "description": "Quran surah name or meaning for key quran.surah.25.name"
+  },
+  "quran.surah.25.meaning": "The Criterion",
+  "@quran.surah.25.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.25.meaning"
+  },
+  "quran.surah.26.name": "Ash-Shu'ara",
+  "@quran.surah.26.name": {
+    "description": "Quran surah name or meaning for key quran.surah.26.name"
+  },
+  "quran.surah.26.meaning": "The Poets",
+  "@quran.surah.26.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.26.meaning"
+  },
+  "quran.surah.27.name": "An-Naml",
+  "@quran.surah.27.name": {
+    "description": "Quran surah name or meaning for key quran.surah.27.name"
+  },
+  "quran.surah.27.meaning": "The Ant",
+  "@quran.surah.27.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.27.meaning"
+  },
+  "quran.surah.28.name": "Al-Qasas",
+  "@quran.surah.28.name": {
+    "description": "Quran surah name or meaning for key quran.surah.28.name"
+  },
+  "quran.surah.28.meaning": "The Stories",
+  "@quran.surah.28.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.28.meaning"
+  },
+  "quran.surah.29.name": "Al-Ankabut",
+  "@quran.surah.29.name": {
+    "description": "Quran surah name or meaning for key quran.surah.29.name"
+  },
+  "quran.surah.29.meaning": "The Spider",
+  "@quran.surah.29.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.29.meaning"
+  },
+  "quran.surah.30.name": "Ar-Rum",
+  "@quran.surah.30.name": {
+    "description": "Quran surah name or meaning for key quran.surah.30.name"
+  },
+  "quran.surah.30.meaning": "The Romans",
+  "@quran.surah.30.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.30.meaning"
+  },
+  "quran.surah.31.name": "Luqman",
+  "@quran.surah.31.name": {
+    "description": "Quran surah name or meaning for key quran.surah.31.name"
+  },
+  "quran.surah.31.meaning": "Luqman",
+  "@quran.surah.31.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.31.meaning"
+  },
+  "quran.surah.32.name": "As-Sajdah",
+  "@quran.surah.32.name": {
+    "description": "Quran surah name or meaning for key quran.surah.32.name"
+  },
+  "quran.surah.32.meaning": "The Prostration",
+  "@quran.surah.32.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.32.meaning"
+  },
+  "quran.surah.33.name": "Al-Ahzab",
+  "@quran.surah.33.name": {
+    "description": "Quran surah name or meaning for key quran.surah.33.name"
+  },
+  "quran.surah.33.meaning": "The Combined Forces",
+  "@quran.surah.33.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.33.meaning"
+  },
+  "quran.surah.34.name": "Saba",
+  "@quran.surah.34.name": {
+    "description": "Quran surah name or meaning for key quran.surah.34.name"
+  },
+  "quran.surah.34.meaning": "Sheba",
+  "@quran.surah.34.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.34.meaning"
+  },
+  "quran.surah.35.name": "Fatir",
+  "@quran.surah.35.name": {
+    "description": "Quran surah name or meaning for key quran.surah.35.name"
+  },
+  "quran.surah.35.meaning": "The Originator",
+  "@quran.surah.35.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.35.meaning"
+  },
+  "quran.surah.36.name": "Ya-Sin",
+  "@quran.surah.36.name": {
+    "description": "Quran surah name or meaning for key quran.surah.36.name"
+  },
+  "quran.surah.36.meaning": "Ya-Sin",
+  "@quran.surah.36.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.36.meaning"
+  },
+  "quran.surah.37.name": "As-Saffat",
+  "@quran.surah.37.name": {
+    "description": "Quran surah name or meaning for key quran.surah.37.name"
+  },
+  "quran.surah.37.meaning": "Those Ranked in Rows",
+  "@quran.surah.37.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.37.meaning"
+  },
+  "quran.surah.38.name": "Sad",
+  "@quran.surah.38.name": {
+    "description": "Quran surah name or meaning for key quran.surah.38.name"
+  },
+  "quran.surah.38.meaning": "The Letter Sad",
+  "@quran.surah.38.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.38.meaning"
+  },
+  "quran.surah.39.name": "Az-Zumar",
+  "@quran.surah.39.name": {
+    "description": "Quran surah name or meaning for key quran.surah.39.name"
+  },
+  "quran.surah.39.meaning": "The Groups",
+  "@quran.surah.39.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.39.meaning"
+  },
+  "quran.surah.40.name": "Ghafir",
+  "@quran.surah.40.name": {
+    "description": "Quran surah name or meaning for key quran.surah.40.name"
+  },
+  "quran.surah.40.meaning": "The Forgiver",
+  "@quran.surah.40.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.40.meaning"
+  },
+  "quran.surah.41.name": "Fussilat",
+  "@quran.surah.41.name": {
+    "description": "Quran surah name or meaning for key quran.surah.41.name"
+  },
+  "quran.surah.41.meaning": "Explained in Detail",
+  "@quran.surah.41.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.41.meaning"
+  },
+  "quran.surah.42.name": "Ash-Shura",
+  "@quran.surah.42.name": {
+    "description": "Quran surah name or meaning for key quran.surah.42.name"
+  },
+  "quran.surah.42.meaning": "The Consultation",
+  "@quran.surah.42.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.42.meaning"
+  },
+  "quran.surah.43.name": "Az-Zukhruf",
+  "@quran.surah.43.name": {
+    "description": "Quran surah name or meaning for key quran.surah.43.name"
+  },
+  "quran.surah.43.meaning": "The Gold Adornment",
+  "@quran.surah.43.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.43.meaning"
+  },
+  "quran.surah.44.name": "Ad-Dukhan",
+  "@quran.surah.44.name": {
+    "description": "Quran surah name or meaning for key quran.surah.44.name"
+  },
+  "quran.surah.44.meaning": "The Smoke",
+  "@quran.surah.44.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.44.meaning"
+  },
+  "quran.surah.45.name": "Al-Jathiyah",
+  "@quran.surah.45.name": {
+    "description": "Quran surah name or meaning for key quran.surah.45.name"
+  },
+  "quran.surah.45.meaning": "The Crouching",
+  "@quran.surah.45.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.45.meaning"
+  },
+  "quran.surah.46.name": "Al-Ahqaf",
+  "@quran.surah.46.name": {
+    "description": "Quran surah name or meaning for key quran.surah.46.name"
+  },
+  "quran.surah.46.meaning": "The Wind-Curved Sandhills",
+  "@quran.surah.46.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.46.meaning"
+  },
+  "quran.surah.47.name": "Muhammad",
+  "@quran.surah.47.name": {
+    "description": "Quran surah name or meaning for key quran.surah.47.name"
+  },
+  "quran.surah.47.meaning": "Muhammad",
+  "@quran.surah.47.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.47.meaning"
+  },
+  "quran.surah.48.name": "Al-Fath",
+  "@quran.surah.48.name": {
+    "description": "Quran surah name or meaning for key quran.surah.48.name"
+  },
+  "quran.surah.48.meaning": "The Victory",
+  "@quran.surah.48.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.48.meaning"
+  },
+  "quran.surah.49.name": "Al-Hujurat",
+  "@quran.surah.49.name": {
+    "description": "Quran surah name or meaning for key quran.surah.49.name"
+  },
+  "quran.surah.49.meaning": "The Rooms",
+  "@quran.surah.49.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.49.meaning"
+  },
+  "quran.surah.50.name": "Qaf",
+  "@quran.surah.50.name": {
+    "description": "Quran surah name or meaning for key quran.surah.50.name"
+  },
+  "quran.surah.50.meaning": "The Letter Qaf",
+  "@quran.surah.50.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.50.meaning"
+  },
+  "quran.surah.51.name": "Adh-Dhariyat",
+  "@quran.surah.51.name": {
+    "description": "Quran surah name or meaning for key quran.surah.51.name"
+  },
+  "quran.surah.51.meaning": "The Winnowing Winds",
+  "@quran.surah.51.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.51.meaning"
+  },
+  "quran.surah.52.name": "At-Tur",
+  "@quran.surah.52.name": {
+    "description": "Quran surah name or meaning for key quran.surah.52.name"
+  },
+  "quran.surah.52.meaning": "The Mount",
+  "@quran.surah.52.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.52.meaning"
+  },
+  "quran.surah.53.name": "An-Najm",
+  "@quran.surah.53.name": {
+    "description": "Quran surah name or meaning for key quran.surah.53.name"
+  },
+  "quran.surah.53.meaning": "The Star",
+  "@quran.surah.53.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.53.meaning"
+  },
+  "quran.surah.54.name": "Al-Qamar",
+  "@quran.surah.54.name": {
+    "description": "Quran surah name or meaning for key quran.surah.54.name"
+  },
+  "quran.surah.54.meaning": "The Moon",
+  "@quran.surah.54.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.54.meaning"
+  },
+  "quran.surah.55.name": "Ar-Rahman",
+  "@quran.surah.55.name": {
+    "description": "Quran surah name or meaning for key quran.surah.55.name"
+  },
+  "quran.surah.55.meaning": "The Beneficent",
+  "@quran.surah.55.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.55.meaning"
+  },
+  "quran.surah.56.name": "Al-Waqi'ah",
+  "@quran.surah.56.name": {
+    "description": "Quran surah name or meaning for key quran.surah.56.name"
+  },
+  "quran.surah.56.meaning": "The Inevitable",
+  "@quran.surah.56.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.56.meaning"
+  },
+  "quran.surah.57.name": "Al-Hadid",
+  "@quran.surah.57.name": {
+    "description": "Quran surah name or meaning for key quran.surah.57.name"
+  },
+  "quran.surah.57.meaning": "The Iron",
+  "@quran.surah.57.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.57.meaning"
+  },
+  "quran.surah.58.name": "Al-Mujadila",
+  "@quran.surah.58.name": {
+    "description": "Quran surah name or meaning for key quran.surah.58.name"
+  },
+  "quran.surah.58.meaning": "The Pleading Woman",
+  "@quran.surah.58.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.58.meaning"
+  },
+  "quran.surah.59.name": "Al-Hashr",
+  "@quran.surah.59.name": {
+    "description": "Quran surah name or meaning for key quran.surah.59.name"
+  },
+  "quran.surah.59.meaning": "The Exile",
+  "@quran.surah.59.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.59.meaning"
+  },
+  "quran.surah.60.name": "Al-Mumtahanah",
+  "@quran.surah.60.name": {
+    "description": "Quran surah name or meaning for key quran.surah.60.name"
+  },
+  "quran.surah.60.meaning": "She That Is to Be Examined",
+  "@quran.surah.60.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.60.meaning"
+  },
+  "quran.surah.61.name": "As-Saff",
+  "@quran.surah.61.name": {
+    "description": "Quran surah name or meaning for key quran.surah.61.name"
+  },
+  "quran.surah.61.meaning": "The Ranks",
+  "@quran.surah.61.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.61.meaning"
+  },
+  "quran.surah.62.name": "Al-Jumu'ah",
+  "@quran.surah.62.name": {
+    "description": "Quran surah name or meaning for key quran.surah.62.name"
+  },
+  "quran.surah.62.meaning": "The Congregation",
+  "@quran.surah.62.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.62.meaning"
+  },
+  "quran.surah.63.name": "Al-Munafiqun",
+  "@quran.surah.63.name": {
+    "description": "Quran surah name or meaning for key quran.surah.63.name"
+  },
+  "quran.surah.63.meaning": "The Hypocrites",
+  "@quran.surah.63.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.63.meaning"
+  },
+  "quran.surah.64.name": "At-Taghabun",
+  "@quran.surah.64.name": {
+    "description": "Quran surah name or meaning for key quran.surah.64.name"
+  },
+  "quran.surah.64.meaning": "The Mutual Disillusion",
+  "@quran.surah.64.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.64.meaning"
+  },
+  "quran.surah.65.name": "At-Talaq",
+  "@quran.surah.65.name": {
+    "description": "Quran surah name or meaning for key quran.surah.65.name"
+  },
+  "quran.surah.65.meaning": "The Divorce",
+  "@quran.surah.65.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.65.meaning"
+  },
+  "quran.surah.66.name": "At-Tahrim",
+  "@quran.surah.66.name": {
+    "description": "Quran surah name or meaning for key quran.surah.66.name"
+  },
+  "quran.surah.66.meaning": "The Prohibition",
+  "@quran.surah.66.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.66.meaning"
+  },
+  "quran.surah.67.name": "Al-Mulk",
+  "@quran.surah.67.name": {
+    "description": "Quran surah name or meaning for key quran.surah.67.name"
+  },
+  "quran.surah.67.meaning": "The Sovereignty",
+  "@quran.surah.67.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.67.meaning"
+  },
+  "quran.surah.68.name": "Al-Qalam",
+  "@quran.surah.68.name": {
+    "description": "Quran surah name or meaning for key quran.surah.68.name"
+  },
+  "quran.surah.68.meaning": "The Pen",
+  "@quran.surah.68.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.68.meaning"
+  },
+  "quran.surah.69.name": "Al-Haqqah",
+  "@quran.surah.69.name": {
+    "description": "Quran surah name or meaning for key quran.surah.69.name"
+  },
+  "quran.surah.69.meaning": "The Reality",
+  "@quran.surah.69.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.69.meaning"
+  },
+  "quran.surah.70.name": "Al-Ma'arij",
+  "@quran.surah.70.name": {
+    "description": "Quran surah name or meaning for key quran.surah.70.name"
+  },
+  "quran.surah.70.meaning": "The Ascending Stairways",
+  "@quran.surah.70.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.70.meaning"
+  },
+  "quran.surah.71.name": "Nuh",
+  "@quran.surah.71.name": {
+    "description": "Quran surah name or meaning for key quran.surah.71.name"
+  },
+  "quran.surah.71.meaning": "Noah",
+  "@quran.surah.71.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.71.meaning"
+  },
+  "quran.surah.72.name": "Al-Jinn",
+  "@quran.surah.72.name": {
+    "description": "Quran surah name or meaning for key quran.surah.72.name"
+  },
+  "quran.surah.72.meaning": "The Jinn",
+  "@quran.surah.72.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.72.meaning"
+  },
+  "quran.surah.73.name": "Al-Muzzammil",
+  "@quran.surah.73.name": {
+    "description": "Quran surah name or meaning for key quran.surah.73.name"
+  },
+  "quran.surah.73.meaning": "The Enshrouded One",
+  "@quran.surah.73.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.73.meaning"
+  },
+  "quran.surah.74.name": "Al-Muddaththir",
+  "@quran.surah.74.name": {
+    "description": "Quran surah name or meaning for key quran.surah.74.name"
+  },
+  "quran.surah.74.meaning": "The Cloaked One",
+  "@quran.surah.74.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.74.meaning"
+  },
+  "quran.surah.75.name": "Al-Qiyamah",
+  "@quran.surah.75.name": {
+    "description": "Quran surah name or meaning for key quran.surah.75.name"
+  },
+  "quran.surah.75.meaning": "The Resurrection",
+  "@quran.surah.75.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.75.meaning"
+  },
+  "quran.surah.76.name": "Al-Insan",
+  "@quran.surah.76.name": {
+    "description": "Quran surah name or meaning for key quran.surah.76.name"
+  },
+  "quran.surah.76.meaning": "The Human",
+  "@quran.surah.76.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.76.meaning"
+  },
+  "quran.surah.77.name": "Al-Mursalat",
+  "@quran.surah.77.name": {
+    "description": "Quran surah name or meaning for key quran.surah.77.name"
+  },
+  "quran.surah.77.meaning": "The Emissaries",
+  "@quran.surah.77.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.77.meaning"
+  },
+  "quran.surah.78.name": "An-Naba",
+  "@quran.surah.78.name": {
+    "description": "Quran surah name or meaning for key quran.surah.78.name"
+  },
+  "quran.surah.78.meaning": "The Tidings",
+  "@quran.surah.78.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.78.meaning"
+  },
+  "quran.surah.79.name": "An-Nazi'at",
+  "@quran.surah.79.name": {
+    "description": "Quran surah name or meaning for key quran.surah.79.name"
+  },
+  "quran.surah.79.meaning": "Those Who Drag Forth",
+  "@quran.surah.79.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.79.meaning"
+  },
+  "quran.surah.80.name": "Abasa",
+  "@quran.surah.80.name": {
+    "description": "Quran surah name or meaning for key quran.surah.80.name"
+  },
+  "quran.surah.80.meaning": "He Frowned",
+  "@quran.surah.80.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.80.meaning"
+  },
+  "quran.surah.81.name": "At-Takwir",
+  "@quran.surah.81.name": {
+    "description": "Quran surah name or meaning for key quran.surah.81.name"
+  },
+  "quran.surah.81.meaning": "The Overthrowing",
+  "@quran.surah.81.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.81.meaning"
+  },
+  "quran.surah.82.name": "Al-Infitar",
+  "@quran.surah.82.name": {
+    "description": "Quran surah name or meaning for key quran.surah.82.name"
+  },
+  "quran.surah.82.meaning": "The Cleaving",
+  "@quran.surah.82.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.82.meaning"
+  },
+  "quran.surah.83.name": "Al-Mutaffifin",
+  "@quran.surah.83.name": {
+    "description": "Quran surah name or meaning for key quran.surah.83.name"
+  },
+  "quran.surah.83.meaning": "The Defrauding",
+  "@quran.surah.83.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.83.meaning"
+  },
+  "quran.surah.84.name": "Al-Inshiqaq",
+  "@quran.surah.84.name": {
+    "description": "Quran surah name or meaning for key quran.surah.84.name"
+  },
+  "quran.surah.84.meaning": "The Splitting Open",
+  "@quran.surah.84.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.84.meaning"
+  },
+  "quran.surah.85.name": "Al-Buruj",
+  "@quran.surah.85.name": {
+    "description": "Quran surah name or meaning for key quran.surah.85.name"
+  },
+  "quran.surah.85.meaning": "The Great Stars",
+  "@quran.surah.85.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.85.meaning"
+  },
+  "quran.surah.86.name": "At-Tariq",
+  "@quran.surah.86.name": {
+    "description": "Quran surah name or meaning for key quran.surah.86.name"
+  },
+  "quran.surah.86.meaning": "The Night Comer",
+  "@quran.surah.86.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.86.meaning"
+  },
+  "quran.surah.87.name": "Al-A'la",
+  "@quran.surah.87.name": {
+    "description": "Quran surah name or meaning for key quran.surah.87.name"
+  },
+  "quran.surah.87.meaning": "The Most High",
+  "@quran.surah.87.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.87.meaning"
+  },
+  "quran.surah.88.name": "Al-Ghashiyah",
+  "@quran.surah.88.name": {
+    "description": "Quran surah name or meaning for key quran.surah.88.name"
+  },
+  "quran.surah.88.meaning": "The Overwhelming",
+  "@quran.surah.88.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.88.meaning"
+  },
+  "quran.surah.89.name": "Al-Fajr",
+  "@quran.surah.89.name": {
+    "description": "Quran surah name or meaning for key quran.surah.89.name"
+  },
+  "quran.surah.89.meaning": "The Dawn",
+  "@quran.surah.89.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.89.meaning"
+  },
+  "quran.surah.90.name": "Al-Balad",
+  "@quran.surah.90.name": {
+    "description": "Quran surah name or meaning for key quran.surah.90.name"
+  },
+  "quran.surah.90.meaning": "The City",
+  "@quran.surah.90.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.90.meaning"
+  },
+  "quran.surah.91.name": "Ash-Shams",
+  "@quran.surah.91.name": {
+    "description": "Quran surah name or meaning for key quran.surah.91.name"
+  },
+  "quran.surah.91.meaning": "The Sun",
+  "@quran.surah.91.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.91.meaning"
+  },
+  "quran.surah.92.name": "Al-Layl",
+  "@quran.surah.92.name": {
+    "description": "Quran surah name or meaning for key quran.surah.92.name"
+  },
+  "quran.surah.92.meaning": "The Night",
+  "@quran.surah.92.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.92.meaning"
+  },
+  "quran.surah.93.name": "Ad-Duha",
+  "@quran.surah.93.name": {
+    "description": "Quran surah name or meaning for key quran.surah.93.name"
+  },
+  "quran.surah.93.meaning": "The Morning Hours",
+  "@quran.surah.93.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.93.meaning"
+  },
+  "quran.surah.94.name": "Ash-Sharh",
+  "@quran.surah.94.name": {
+    "description": "Quran surah name or meaning for key quran.surah.94.name"
+  },
+  "quran.surah.94.meaning": "The Relief",
+  "@quran.surah.94.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.94.meaning"
+  },
+  "quran.surah.95.name": "At-Tin",
+  "@quran.surah.95.name": {
+    "description": "Quran surah name or meaning for key quran.surah.95.name"
+  },
+  "quran.surah.95.meaning": "The Fig",
+  "@quran.surah.95.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.95.meaning"
+  },
+  "quran.surah.96.name": "Al-Alaq",
+  "@quran.surah.96.name": {
+    "description": "Quran surah name or meaning for key quran.surah.96.name"
+  },
+  "quran.surah.96.meaning": "The Clot",
+  "@quran.surah.96.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.96.meaning"
+  },
+  "quran.surah.97.name": "Al-Qadr",
+  "@quran.surah.97.name": {
+    "description": "Quran surah name or meaning for key quran.surah.97.name"
+  },
+  "quran.surah.97.meaning": "The Power",
+  "@quran.surah.97.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.97.meaning"
+  },
+  "quran.surah.98.name": "Al-Bayyinah",
+  "@quran.surah.98.name": {
+    "description": "Quran surah name or meaning for key quran.surah.98.name"
+  },
+  "quran.surah.98.meaning": "The Clear Proof",
+  "@quran.surah.98.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.98.meaning"
+  },
+  "quran.surah.99.name": "Az-Zalzalah",
+  "@quran.surah.99.name": {
+    "description": "Quran surah name or meaning for key quran.surah.99.name"
+  },
+  "quran.surah.99.meaning": "The Earthquake",
+  "@quran.surah.99.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.99.meaning"
+  },
+  "quran.surah.100.name": "Al-Adiyat",
+  "@quran.surah.100.name": {
+    "description": "Quran surah name or meaning for key quran.surah.100.name"
+  },
+  "quran.surah.100.meaning": "The Courser",
+  "@quran.surah.100.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.100.meaning"
+  },
+  "quran.surah.101.name": "Al-Qari'ah",
+  "@quran.surah.101.name": {
+    "description": "Quran surah name or meaning for key quran.surah.101.name"
+  },
+  "quran.surah.101.meaning": "The Calamity",
+  "@quran.surah.101.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.101.meaning"
+  },
+  "quran.surah.102.name": "At-Takathur",
+  "@quran.surah.102.name": {
+    "description": "Quran surah name or meaning for key quran.surah.102.name"
+  },
+  "quran.surah.102.meaning": "The Rivalry in World Increase",
+  "@quran.surah.102.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.102.meaning"
+  },
+  "quran.surah.103.name": "Al-Asr",
+  "@quran.surah.103.name": {
+    "description": "Quran surah name or meaning for key quran.surah.103.name"
+  },
+  "quran.surah.103.meaning": "The Declining Day",
+  "@quran.surah.103.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.103.meaning"
+  },
+  "quran.surah.104.name": "Al-Humazah",
+  "@quran.surah.104.name": {
+    "description": "Quran surah name or meaning for key quran.surah.104.name"
+  },
+  "quran.surah.104.meaning": "The Traducer",
+  "@quran.surah.104.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.104.meaning"
+  },
+  "quran.surah.105.name": "Al-Fil",
+  "@quran.surah.105.name": {
+    "description": "Quran surah name or meaning for key quran.surah.105.name"
+  },
+  "quran.surah.105.meaning": "The Elephant",
+  "@quran.surah.105.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.105.meaning"
+  },
+  "quran.surah.106.name": "Quraysh",
+  "@quran.surah.106.name": {
+    "description": "Quran surah name or meaning for key quran.surah.106.name"
+  },
+  "quran.surah.106.meaning": "Quraysh",
+  "@quran.surah.106.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.106.meaning"
+  },
+  "quran.surah.107.name": "Al-Ma'un",
+  "@quran.surah.107.name": {
+    "description": "Quran surah name or meaning for key quran.surah.107.name"
+  },
+  "quran.surah.107.meaning": "The Small Kindnesses",
+  "@quran.surah.107.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.107.meaning"
+  },
+  "quran.surah.108.name": "Al-Kawthar",
+  "@quran.surah.108.name": {
+    "description": "Quran surah name or meaning for key quran.surah.108.name"
+  },
+  "quran.surah.108.meaning": "The Abundance",
+  "@quran.surah.108.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.108.meaning"
+  },
+  "quran.surah.109.name": "Al-Kafirun",
+  "@quran.surah.109.name": {
+    "description": "Quran surah name or meaning for key quran.surah.109.name"
+  },
+  "quran.surah.109.meaning": "The Disbelievers",
+  "@quran.surah.109.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.109.meaning"
+  },
+  "quran.surah.110.name": "An-Nasr",
+  "@quran.surah.110.name": {
+    "description": "Quran surah name or meaning for key quran.surah.110.name"
+  },
+  "quran.surah.110.meaning": "The Divine Support",
+  "@quran.surah.110.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.110.meaning"
+  },
+  "quran.surah.111.name": "Al-Masad",
+  "@quran.surah.111.name": {
+    "description": "Quran surah name or meaning for key quran.surah.111.name"
+  },
+  "quran.surah.111.meaning": "The Palm Fiber",
+  "@quran.surah.111.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.111.meaning"
+  },
+  "quran.surah.112.name": "Al-Ikhlas",
+  "@quran.surah.112.name": {
+    "description": "Quran surah name or meaning for key quran.surah.112.name"
+  },
+  "quran.surah.112.meaning": "The Sincerity",
+  "@quran.surah.112.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.112.meaning"
+  },
+  "quran.surah.113.name": "Al-Falaq",
+  "@quran.surah.113.name": {
+    "description": "Quran surah name or meaning for key quran.surah.113.name"
+  },
+  "quran.surah.113.meaning": "The Daybreak",
+  "@quran.surah.113.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.113.meaning"
+  },
+  "quran.surah.114.name": "An-Nas",
+  "@quran.surah.114.name": {
+    "description": "Quran surah name or meaning for key quran.surah.114.name"
+  },
+  "quran.surah.114.meaning": "Mankind",
+  "@quran.surah.114.meaning": {
+    "description": "Quran surah name or meaning for key quran.surah.114.meaning"
   }
 }

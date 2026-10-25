@@ -18,8 +18,8 @@ class AppLocalizations {
   static AppLocalizations? of(BuildContext context) =>
       Localizations.of<AppLocalizations>(context, AppLocalizations);
 
-  /// Resolves a namespaced key or source text with optional interpolation and pluralization.
-  String translate(String source, {Map<String, dynamic>? params, int? count}) {
+  /// Resolves a namespaced key or source text with optional interpolation, pluralization, and fallback.
+  String translate(String source, {Map<String, dynamic>? params, int? count, String? fallback}) {
     if (source.isEmpty) return source;
 
     String? result;
@@ -40,8 +40,38 @@ class AppLocalizations {
         translations[source.trim()] ??
         _translateTemplate(source);
 
-    // 3. Fallback to raw source if no dictionary entry exists
-    result ??= source;
+    // 3. Fallback resolution and missing key verification
+    final isKeyPattern = RegExp(r'^[a-z][a-zA-Z0-9_]*(\.[a-zA-Z0-9_]+)+$').hasMatch(source.trim());
+    if (result == null) {
+      // 3a. Try static fallback for current locale
+      result = StaticTranslations.get(locale.languageCode)[source] ??
+          StaticTranslations.get(locale.languageCode)[source.trim()];
+
+      // 3b. Try canonical English fallback
+      if (result == null && locale.languageCode != 'en') {
+        result = StaticTranslations.en[source] ?? StaticTranslations.en[source.trim()];
+        if (result != null && kDebugMode) {
+          debugPrint('[i18n FALLBACK] Key "$source" missing in "${locale.languageCode}", using English.');
+        }
+      }
+
+      // 3c. Still missing
+      if (result == null) {
+        if (fallback != null && fallback.isNotEmpty) {
+          result = fallback;
+        } else if (isKeyPattern) {
+          if (kDebugMode) {
+            throw FlutterError(
+              'Missing translation key "$source" for locale "${locale.languageCode}". '
+              'The key was not found in the "${locale.languageCode}" catalog nor in the English fallback.',
+            );
+          }
+          result = source;
+        } else {
+          result = source;
+        }
+      }
+    }
 
     // 4. Interpolation: replace {{param}} and {param}
     final effectiveParams = <String, dynamic>{};
@@ -63,8 +93,8 @@ class AppLocalizations {
   }
 
   /// Semantic namespaced translation shortcut (e.g. `tr('nav.home')`).
-  String tr(String key, {Map<String, dynamic>? params, int? count}) =>
-      translate(key, params: params, count: count);
+  String tr(String key, {Map<String, dynamic>? params, int? count, String? fallback}) =>
+      translate(key, params: params, count: count, fallback: fallback);
 
   /// Pluralization translation shortcut (e.g. `plural('missions.streak_days', count)`).
   String plural(String key, int count, {Map<String, dynamic>? params}) =>
@@ -436,18 +466,19 @@ class AppLocalizationsDelegate
 
 extension LocalizedBuildContext on BuildContext {
   /// Standard translation helper with optional interpolation parameters and pluralization count.
-  String tr(String key, {Map<String, dynamic>? params, int? count}) {
+  String tr(String key, {Map<String, dynamic>? params, int? count, String? fallback}) {
     final instance = AppLocalizations.of(this) ??
         AppLocalizationsDelegate._cache[currentLanguageCode] ??
         AppLocalizationsDelegate._cache['bn'] ??
         AppLocalizationsDelegate._cache['en'];
     if (instance != null) {
-      return instance.translate(key, params: params, count: count);
+      return instance.translate(key, params: params, count: count, fallback: fallback);
     }
     final lang = currentLanguageCode;
     final fallbackVal = staticTranslations[lang]?[key] ??
         staticTranslations['bn']?[key] ??
-        staticTranslations['en']?[key];
+        staticTranslations['en']?[key] ??
+        fallback;
     if (fallbackVal != null) {
       String res = fallbackVal;
       if (params != null) {
@@ -458,16 +489,17 @@ extension LocalizedBuildContext on BuildContext {
       }
       return res;
     }
-    return key;
+    return fallback ?? key;
   }
 
   /// Short translation alias for t('key', params: ...).
-  String t(String key, {Map<String, dynamic>? params, int? count}) =>
-      tr(key, params: params, count: count);
+  String t(String key, {Map<String, dynamic>? params, int? count, String? fallback}) =>
+      tr(key, params: params, count: count, fallback: fallback);
 
   /// Pluralization translation shortcut.
   String plural(String key, int count, {Map<String, dynamic>? params}) =>
-      AppLocalizations.of(this)?.plural(key, count, params: params) ?? key;
+      AppLocalizations.of(this)?.plural(key, count, params: params) ??
+      tr(key, count: count, params: params);
 
   /// Legacy UI text resolver preserving backward compatibility.
   String uiText(String source, {Map<String, dynamic>? params, int? count}) =>

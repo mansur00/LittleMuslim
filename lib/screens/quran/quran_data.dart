@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -100,8 +101,8 @@ const List<QuranJuz> quranJuzList = [
 ];
 
 abstract interface class QuranRepository {
-  Future<List<QuranSurah>> getSurahs();
-  Future<QuranSurahContent> getSurah(QuranSurah surah);
+  Future<List<QuranSurah>> getSurahs({String? locale});
+  Future<QuranSurahContent> getSurah(QuranSurah surah, {String? locale});
 }
 
 class AlQuranCloudRepository implements QuranRepository {
@@ -109,6 +110,20 @@ class AlQuranCloudRepository implements QuranRepository {
       : _client = client ?? http.Client();
 
   final http.Client _client;
+
+  static String editionForLocale(String locale) {
+    switch (locale.toLowerCase()) {
+      case 'bn':
+        return 'bn.bengali';
+      case 'hi':
+        return 'hi.hindi';
+      case 'it':
+        return 'it.piccardo';
+      case 'en':
+      default:
+        return 'en.sahih';
+    }
+  }
 
   Future<List<QuranSurah>?> _loadCachedSurahs() async {
     try {
@@ -131,10 +146,12 @@ class AlQuranCloudRepository implements QuranRepository {
     } catch (_) {}
   }
 
-  Future<QuranSurahContent?> _loadCachedSurahContent(QuranSurah surah) async {
+  Future<QuranSurahContent?> _loadCachedSurahContent(
+      QuranSurah surah, String locale) async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      final raw = prefs.getString('quran_surah_${surah.number}_cache');
+      final raw =
+          prefs.getString('quran_surah_${surah.number}_${locale}_cache');
       if (raw == null) return null;
       final list = jsonDecode(raw) as List<dynamic>;
       final ayahs = list.map((item) {
@@ -154,7 +171,7 @@ class AlQuranCloudRepository implements QuranRepository {
   }
 
   Future<void> _saveCachedSurahContent(
-      int surahNumber, List<QuranAyah> ayahs) async {
+      int surahNumber, String locale, List<QuranAyah> ayahs) async {
     try {
       final prefs = await SharedPreferences.getInstance();
       final list = ayahs
@@ -166,16 +183,113 @@ class AlQuranCloudRepository implements QuranRepository {
               })
           .toList(growable: false);
       await prefs.setString(
-          'quran_surah_${surahNumber}_cache', jsonEncode(list));
+          'quran_surah_${surahNumber}_${locale}_cache', jsonEncode(list));
     } catch (_) {}
   }
 
+  static List<QuranSurah>? _bundledSurahsCache;
+  static Map<String, dynamic>? _bundledSurahsCacheMap;
+  static final Map<String, Map<String, dynamic>> _translationsCacheMap = {};
+
+  static Future<void> preloadBundledData() async {
+    try {
+      if (_bundledSurahsCache == null) {
+        final bundledList =
+            await rootBundle.loadString('assets/quran/surahs_list.json');
+        final data = jsonDecode(bundledList) as List<dynamic>;
+        _bundledSurahsCache = data
+            .map((entry) => QuranSurah.fromJson(entry as Map<String, dynamic>))
+            .toList(growable: false);
+      }
+      if (_bundledSurahsCacheMap == null) {
+        final cacheRaw =
+            await rootBundle.loadString('assets/quran/surahs_cache.json');
+        _bundledSurahsCacheMap = jsonDecode(cacheRaw) as Map<String, dynamic>;
+      }
+      for (final loc in ['en', 'bn', 'hi', 'it']) {
+        if (!_translationsCacheMap.containsKey(loc)) {
+          try {
+            final transRaw = await rootBundle
+                .loadString('assets/quran/translations/$loc.json');
+            _translationsCacheMap[loc] =
+                jsonDecode(transRaw) as Map<String, dynamic>;
+          } catch (_) {}
+        }
+      }
+    } catch (_) {}
+  }
+
+  Future<QuranSurahContent?> _loadBundledSurahContent(
+      QuranSurah surah, String locale) async {
+    try {
+      if (_bundledSurahsCacheMap == null) {
+        await preloadBundledData();
+      }
+      final surahData =
+          _bundledSurahsCacheMap?[surah.number.toString()] as Map<String, dynamic>?;
+      if (surahData == null) return null;
+
+      var transMap = _translationsCacheMap[locale];
+      if (transMap == null) {
+        try {
+          final transRaw = await rootBundle
+              .loadString('assets/quran/translations/$locale.json');
+          transMap = jsonDecode(transRaw) as Map<String, dynamic>;
+          _translationsCacheMap[locale] = transMap;
+        } catch (_) {
+          transMap = _translationsCacheMap['en'] ?? {};
+        }
+      }
+
+      final arabicAyahs = surahData['ayahs'] as List<dynamic>;
+      final ayahs = <QuranAyah>[];
+      for (final a in arabicAyahs) {
+        final m = a as Map<String, dynamic>;
+        final numInSurah = m['numberInSurah'] as int;
+        final key = '${surah.number}:$numInSurah';
+        final translationText = transMap[key] as String? ?? '';
+        ayahs.add(QuranAyah(
+          number: numInSurah,
+          arabic: m['text'] as String,
+          tajweedText: m['text'] as String,
+          translation: translationText,
+        ));
+      }
+      return QuranSurahContent(surah: surah, ayahs: ayahs);
+    } catch (_) {
+      return null;
+    }
+  }
+
   @override
-  Future<List<QuranSurah>> getSurahs() async {
+  Future<List<QuranSurah>> getSurahs({String? locale}) async {
+    if (_bundledSurahsCache != null && _bundledSurahsCache!.length == 114) {
+      return _bundledSurahsCache!;
+    }
+
+    // 1. Check bundled asset
+    try {
+      final bundledList =
+          await rootBundle.loadString('assets/quran/surahs_list.json');
+      final data = jsonDecode(bundledList) as List<dynamic>;
+      final surahs = data
+          .map((entry) => QuranSurah.fromJson(entry as Map<String, dynamic>))
+          .toList(growable: false);
+      if (surahs.length == 114) {
+        _bundledSurahsCache = surahs;
+        return surahs;
+      }
+    } catch (_) {}
+
+    // 2. Check persistent cache
+    final cached = await _loadCachedSurahs();
+    if (cached != null && cached.length == 114) return cached;
+
+    // 3. Online fetch as fallback
     try {
       final response = await _client
           .get(Uri.parse('https://api.alquran.cloud/v1/surah'))
-          .timeout(const Duration(seconds: 15));
+          .timeout(const Duration(seconds: 5));
       final body = _decodeResponse(response);
       final data = body['data'] as List<dynamic>;
       final surahs = data
@@ -187,20 +301,33 @@ class AlQuranCloudRepository implements QuranRepository {
       await _saveCachedSurahs(data);
       return surahs;
     } catch (e) {
-      final cached = await _loadCachedSurahs();
-      if (cached != null && cached.length == 114) return cached;
       rethrow;
     }
   }
 
   @override
-  Future<QuranSurahContent> getSurah(QuranSurah surah) async {
+  Future<QuranSurahContent> getSurah(QuranSurah surah, {String? locale}) async {
+    final effectiveLocale =
+        (locale != null && locale.isNotEmpty) ? locale.toLowerCase() : 'en';
+
+    // 1. Check local persistent cache
+    final cached = await _loadCachedSurahContent(surah, effectiveLocale);
+    if (cached != null) return cached;
+
+    // 2. Check bundled asset translations
+    final bundled = await _loadBundledSurahContent(surah, effectiveLocale);
+    if (bundled != null && bundled.ayahs.isNotEmpty) {
+      return bundled;
+    }
+
+    // 3. Online fetch
     try {
+      final edition = editionForLocale(effectiveLocale);
       final responses = await Future.wait([
         _client
             .get(Uri.parse(
               'https://api.alquran.cloud/v1/surah/${surah.number}/editions/'
-              'quran-uthmani,bn.bengali',
+              'quran-uthmani,$edition',
             ))
             .timeout(const Duration(seconds: 20)),
         _client
@@ -228,7 +355,7 @@ class AlQuranCloudRepository implements QuranRepository {
       }
       final editions =
           (body['data'] as List<dynamic>).cast<Map<String, dynamic>>();
-      Map<String, dynamic>? edition(String id) {
+      Map<String, dynamic>? getEd(String id) {
         for (final item in editions) {
           if ((item['edition'] as Map<String, dynamic>?)?['identifier'] == id) {
             return item;
@@ -237,14 +364,14 @@ class AlQuranCloudRepository implements QuranRepository {
         return null;
       }
 
-      final arabic = edition('quran-uthmani');
-      final bengali = edition('bn.bengali');
-      if (arabic == null || bengali == null) {
+      final arabic = getEd('quran-uthmani');
+      final translationEd = getEd(edition);
+      if (arabic == null || translationEd == null) {
         throw const FormatException('The surah text was incomplete.');
       }
       final arabicAyahs = arabic['ayahs'] as List<dynamic>;
-      final bengaliAyahs = bengali['ayahs'] as List<dynamic>;
-      if (arabicAyahs.length != bengaliAyahs.length) {
+      final translationAyahs = translationEd['ayahs'] as List<dynamic>;
+      if (arabicAyahs.length != translationAyahs.length) {
         throw const FormatException(
             'Arabic and translation ayahs did not match.');
       }
@@ -259,18 +386,22 @@ class AlQuranCloudRepository implements QuranRepository {
               arabic: arabicAyah['text'] as String,
               tajweedText: tajweedByVerse['${surah.number}:$number'] ??
                   arabicAyah['text'] as String,
-              translation:
-                  (bengaliAyahs[i] as Map<String, dynamic>)['text'] as String,
+              translation: (translationAyahs[i]
+                  as Map<String, dynamic>)['text'] as String,
             );
           }(),
       ];
 
       final content = QuranSurahContent(surah: surah, ayahs: ayahs);
-      await _saveCachedSurahContent(surah.number, ayahs);
+      await _saveCachedSurahContent(surah.number, effectiveLocale, ayahs);
       return content;
     } catch (e) {
-      final cached = await _loadCachedSurahContent(surah);
-      if (cached != null) return cached;
+      // Fallback to English bundled or cached
+      final fallbackBundled =
+          await _loadBundledSurahContent(surah, 'en');
+      if (fallbackBundled != null) return fallbackBundled;
+      final fallbackCached = await _loadCachedSurahContent(surah, 'en');
+      if (fallbackCached != null) return fallbackCached;
       rethrow;
     }
   }

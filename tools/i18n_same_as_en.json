@@ -1,4 +1,8 @@
 {
+  "quran.surah.3.name": {
+    "value": "Ali Imran",
+    "reason": "Standard Arabic proper noun transliteration"
+  },
   "qaida.title": {
     "value": "Noorani Qaida",
     "reason": "Proper noun / Islamic term"

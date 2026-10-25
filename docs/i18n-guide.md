@@ -156,3 +156,25 @@ flutter test test/phase6_i18n_safeguards_test.dart
 npm run lint
 ```
 Executes `flutter analyze` followed by `node tools/i18n_check.js`.
+
+---
+
+## 6. Quran Translation Architecture & Licensing
+
+To maintain absolute script purity and respect Islamic scholarship integrity, Quran translations are **never machine-generated** or placed into UI string files. Instead, they are lazily loaded from dedicated per-locale datasets under `assets/quran/translations/{locale}.json`:
+
+### Verified Translation Editions & Provenance
+
+| Locale | Language | Translator / Organization | Source Edition Identifier | Source & License Status |
+|---|---|---|---|---|
+| `en` | English | Saheeh International (Emily Assami, Mary Kennedy, Amatullah Bantley) | `en.sahih` | source: https://api.alquran.cloud/v1/quran/en.sahih, license: UNVERIFIED, needs human check |
+| `bn` | Bengali | Maulana Muhiuddin Khan (Islamic Foundation Bangladesh) | `bn.bengali` | source: https://api.alquran.cloud/v1/quran/bn.bengali, license: UNVERIFIED, needs human check |
+| `hi` | Hindi | Maulana Suhel Farooq Khan & Maulana Saifur Rahman Nadwi | `hi.hindi` | source: https://api.alquran.cloud/v1/quran/hi.hindi, license: UNVERIFIED, needs human check |
+| `it` | Italian | Hamza Roberto Piccardo (UCOII - Unione delle Comunità Islamiche d'Italia) | `it.piccardo` | source: https://api.alquran.cloud/v1/quran/it.piccardo, license: UNVERIFIED, needs human check |
+
+### Architecture & Fallback Guarantees
+1. **Per-Locale Storage**: Complete translations for all 6,236 ayahs across all 114 surahs are bundled in `assets/quran/translations/{locale}.json` keyed by `"surah:ayah"` (e.g. `"1:1"`).
+2. **Offline Bundling**: All 114 surahs with complete Arabic ayahs are bundled inside `assets/quran/surahs_cache.json` and `assets/quran/surahs_list.json` for 100% offline access.
+3. **Lazy In-Memory Caching**: Preloaded into memory upon first access via `AlQuranCloudRepository.preloadBundledData()`.
+4. **Strict Script Fallback**: If an ayah translation is unavailable for a given language, the reader strictly falls back to the English (`en.sahih`) translation. **Bangla translations NEVER leak into Hindi or Italian interfaces, and religious texts are NEVER machine-synthesized.**
+

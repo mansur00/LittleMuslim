@@ -554,7 +554,7 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              lesson.title,
+                              context.uiText(lesson.title),
                               style: AppFonts.getTextStyle(context, 
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
@@ -562,7 +562,7 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
                               ),
                             ),
                             Text(
-                              lesson.subtitle,
+                              context.uiText(lesson.subtitle),
                               style: AppFonts.getTextStyle(context, 
                                 fontSize: 13,
                                 color: const Color(0xFF64748B),
@@ -601,7 +601,7 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          ruleText,
+                          context.uiText(ruleText),
                           style: AppFonts.getTextStyle(context, 
                             fontSize: 15,
                             color: const Color(0xFF334155),
