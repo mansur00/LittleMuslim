@@ -8,6 +8,7 @@ import '../../utils/app_state.dart';
 import '../../widgets/vector_icons.dart';
 import '../../widgets/faceless_silhouette.dart';
 import '../../widgets/duolingo_appbar.dart';
+import '../../widgets/ds/ds.dart';
 
 import '../../data/qaida_curriculum_data.dart';
 import '../../data/nurani_qaida_data.dart';
@@ -42,27 +43,12 @@ class _HomeScreenState extends State<HomeScreen> {
     final isTablet = size.shortestSide >= 600;
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.background,
+      appBar: const AppTopBar(showWordmark: true),
       body: SafeArea(
+        top: false,
         child: Column(
           children: [
-            // Pinned Duolingo-style Top Bar
-            Padding(
-              padding: EdgeInsets.fromLTRB(
-                isTablet ? 36 : 18,
-                10,
-                isTablet ? 36 : 18,
-                10,
-              ),
-              child: _HomeTopBar(
-                isTablet: isTablet,
-                onSettings: () => Navigator.of(context).push(
-                  MaterialPageRoute<void>(
-                    builder: (_) => const SettingsScreen(),
-                  ),
-                ),
-              ),
-            ),
             // Main content area based on selected tab
             Expanded(
               child: IndexedStack(
@@ -90,26 +76,6 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-class _HomeTopBar extends StatelessWidget {
-  const _HomeTopBar({required this.isTablet, required this.onSettings});
-
-  final bool isTablet;
-  final VoidCallback onSettings;
-
-  @override
-  Widget build(BuildContext context) {
-    final (userName, xp, streakDays) =
-        context.select<AppState, (String, int, int)>(
-            (state) => (state.userName, state.xp, state.streakDays));
-    return _TopBar(
-      name: userName.isNotEmpty ? userName : context.t('common.friend'),
-      xp: xp,
-      streakDays: streakDays,
-      isTablet: isTablet,
-      onSettings: onSettings,
-    );
-  }
-}
 
 /// The Main Learning Path tab (Duolingo-style roadmap & interactive journey)
 class _HomePathTab extends StatelessWidget {
@@ -136,6 +102,25 @@ class _HomePathTab extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                Padding(
+                  padding: const EdgeInsets.only(bottom: AppSpacing.md, top: AppSpacing.sm),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        context.t('home.greeting'),
+                        style: AppTextStyles.caption(context),
+                      ),
+                      const SizedBox(height: AppSpacing.xs),
+                      Text(
+                        context.select<AppState, String>((s) => s.userName.isNotEmpty ? s.userName : context.t('common.friend')),
+                        style: AppTextStyles.title(context),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
+                ),
                 if (context.select<AppState, bool>((s) => s.isAdmin)) ...[
                   Container(
                     margin: const EdgeInsets.only(bottom: 12),
@@ -431,7 +416,7 @@ class _HomeContinueTab extends StatelessWidget {
                     child: LocalizedText(
                       context.t('qaida.step_with_title', params: {
                         'stepNumber': context.formatDigits(step.stepNumber.toString()),
-                        'title': step.title,
+                        'title': context.t(step.titleKey),
                       }),
                       style: const TextStyle(
                         fontSize: 11.5,
@@ -922,156 +907,6 @@ class _HomeContinueTab extends StatelessWidget {
   }
 }
 
-/// Tactile, modern top header bar (Streak, XP, Settings)
-class _TopBar extends StatelessWidget {
-  const _TopBar({
-    required this.name,
-    required this.xp,
-    required this.streakDays,
-    required this.isTablet,
-    required this.onSettings,
-  });
-
-  final String name;
-  final int xp;
-  final int streakDays;
-  final bool isTablet;
-  final VoidCallback onSettings;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        // Faceless Silhouette Avatar (Tap to change avatar & color)
-        GestureDetector(
-          onTap: () => showAvatarCustomizerModal(context),
-          child: Tooltip(
-            message: context.t('avatar.customize_tooltip'),
-            child: FacelessSilhouette(
-              size: isTablet ? 48 : 42,
-              circleBackground: true,
-            ),
-          ),
-        ),
-        const SizedBox(width: 10),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              LocalizedText(
-                context.t('home.greeting'),
-                style: TextStyle(
-                  fontSize: isTablet ? 12 : 11,
-                  color: AppTheme.darkText.withValues(alpha: 0.55),
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              LocalizedText(
-                name,
-                style: TextStyle(
-                  fontSize: isTablet ? 19 : 16,
-                  fontWeight: FontWeight.w900,
-                  color: AppTheme.darkText,
-                ),
-              ),
-            ],
-          ),
-        ),
-        // 3D Streak counter chip
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-          decoration: BoxDecoration(
-            color: const Color(0xFFFFEAD6),
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: const Color(0xFFFF9600), width: 1.5),
-            boxShadow: const [
-              BoxShadow(
-                color: Color(0x15EA580C),
-                offset: Offset(0, 2),
-                blurRadius: 4,
-              ),
-            ],
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Real3DTopBarIcon(
-                type: Real3DTopType.flame,
-                size: 18,
-              ),
-              const SizedBox(width: 5),
-              LocalizedText(
-                '$streakDays',
-                style: const TextStyle(
-                  fontWeight: FontWeight.w900,
-                  fontSize: 12.5,
-                  color: Color(0xFFD45100),
-                ),
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(width: 8),
-        // 3D XP Chip
-        _XpChip(xp: xp),
-        const SizedBox(width: 6),
-        IconButton.filledTonal(
-          onPressed: onSettings,
-          tooltip: context.t('settings.title'),
-          icon: const Icon(Icons.settings_rounded, size: 20),
-          style: IconButton.styleFrom(
-            backgroundColor: Colors.white,
-            foregroundColor: AppTheme.primaryGreen,
-            elevation: 1,
-            shadowColor: Colors.black.withValues(alpha: 0.1),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _XpChip extends StatelessWidget {
-  const _XpChip({required this.xp});
-  final int xp;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-      decoration: BoxDecoration(
-        color: const Color(0xFFFFF3C4),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: const Color(0xFFFFD54F), width: 1.5),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x15D97706),
-            offset: Offset(0, 2),
-            blurRadius: 4,
-          ),
-        ],
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Real3DTopBarIcon(
-            type: Real3DTopType.xp,
-            size: 18,
-          ),
-          const SizedBox(width: 5),
-          LocalizedText(
-            '$xp XP',
-            style: const TextStyle(
-              fontWeight: FontWeight.w900,
-              fontSize: 12.5,
-              color: Color(0xFF8A6A00),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
 
 /// Duolingo-style speech card using the respectful 3D Quran book image mascot.
 /// Strictly no face, no limbs — just the holy book radiating light.
@@ -1306,7 +1141,7 @@ class _ContinueLearningCard extends StatelessWidget {
                 child: LocalizedText(
                   '${context.t('common.in_progress')}: ${context.t('qaida.step_with_title', params: {
                     'stepNumber': context.formatDigits(step.stepNumber.toString()),
-                    'title': step.title,
+                    'title': context.t(step.titleKey),
                   })}',
                   style: const TextStyle(
                     fontSize: 11,

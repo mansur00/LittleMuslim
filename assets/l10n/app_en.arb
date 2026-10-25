@@ -13351,5 +13351,61 @@
   "quran.surah.114.meaning": "Mankind",
   "@quran.surah.114.meaning": {
     "description": "Quran surah name or meaning for key quran.surah.114.meaning"
+  },
+  "menu.profile": "Profile",
+  "@menu.profile": {
+    "description": "Top bar menu: menu.profile"
+  },
+  "menu.avatar_color": "Choose Avatar & Color",
+  "@menu.avatar_color": {
+    "description": "Top bar menu: menu.avatar_color"
+  },
+  "menu.settings": "Settings",
+  "@menu.settings": {
+    "description": "Top bar menu: menu.settings"
+  },
+  "menu.language": "Language",
+  "@menu.language": {
+    "description": "Top bar menu: menu.language"
+  },
+  "menu.mode_student": "Student Mode",
+  "@menu.mode_student": {
+    "description": "Top bar menu: menu.mode_student"
+  },
+  "menu.mode_admin": "Admin Mode",
+  "@menu.mode_admin": {
+    "description": "Top bar menu: menu.mode_admin"
+  },
+  "menu.help": "Help & Support",
+  "@menu.help": {
+    "description": "Top bar menu: menu.help"
+  },
+  "menu.sign_in": "Sign In",
+  "@menu.sign_in": {
+    "description": "Top bar menu: menu.sign_in"
+  },
+  "menu.sign_out": "Sign Out",
+  "@menu.sign_out": {
+    "description": "Top bar menu: menu.sign_out"
+  },
+  "menu.header_greeting": "Assalamu Alaikum",
+  "@menu.header_greeting": {
+    "description": "Top bar menu: menu.header_greeting"
+  },
+  "menu.close": "Close",
+  "@menu.close": {
+    "description": "Top bar menu: menu.close"
+  },
+  "menu.learner_title": "Learner",
+  "@menu.learner_title": {
+    "description": "Top bar menu: menu.learner_title"
+  },
+  "menu.streak_tooltip": "Streak: {{count}} Days",
+  "@menu.streak_tooltip": {
+    "description": "Top bar menu: menu.streak_tooltip"
+  },
+  "menu.xp_tooltip": "Total XP: {{count}}",
+  "@menu.xp_tooltip": {
+    "description": "Top bar menu: menu.xp_tooltip"
   }
 }

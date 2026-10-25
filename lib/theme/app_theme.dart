@@ -1,32 +1,37 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../core/core.dart';
+import 'app_colors.dart';
+import 'app_spacing.dart';
+import 'app_text_styles.dart';
 
+export 'app_colors.dart';
+export 'app_spacing.dart';
+export 'app_text_styles.dart';
+
+/// AppTheme: Global theme configuration driven strictly by Design System tokens.
 class AppTheme {
-  // Brand Duolingo Gamification Palette
-  static const Color primaryGreen = Color(0xFF58CC02); // Signature gamified bright green
-  static const Color primaryDark = Color(0xFF46A302); // 3D bevel shadow green
-  static const Color secondaryGold = Color(0xFFFFC800); // Warm gold
-  static const Color cream = Color(0xFFFFFFFF); // Clean white background like Duolingo
-  static const Color softGreen = Color(0xFFE8F8D8); // Light green cards / badges
-  static const Color darkText = Color(0xFF3C3C3C); // Clean dark charcoal text
-  static const Color accentCoral =
-      Color(0xFFFF4B4B); // Duolingo heart/accent red
-  static const Color white = Color(0xFFFFFFFF);
-  static const Color lightGold = Color(0xFFFFF3C4);
+  // Brand Color Aliases for backward compatibility
+  static const Color primaryGreen = AppColors.brandPrimary;
+  static const Color primaryDark = AppColors.brandDark;
+  static const Color secondaryGold = AppColors.brandAccent;
+  static const Color cream = AppColors.background;
+  static const Color softGreen = AppColors.brandLight;
+  static const Color darkText = AppColors.textPrimary;
+  static const Color accentCoral = AppColors.error;
+  static const Color white = AppColors.surface;
+  static const Color lightGold = AppColors.warningLight;
 
-  // Signature Duolingo Gamification 3D Palette
-  static const Color duoGreen = Color(0xFF58CC02);
-  static const Color duoGreenDark = Color(0xFF46A302);
-  static const Color duoGold = Color(0xFFFFC800);
-  static const Color duoGoldDark = Color(0xFFE5A100);
-  static const Color duoBlue = Color(0xFF1CB0F6);
-  static const Color duoBlueDark = Color(0xFF1899D6);
-  static const Color duoRed = Color(0xFFFF4B4B);
+  static const Color duoGreen = AppColors.brandPrimary;
+  static const Color duoGreenDark = AppColors.brandDark;
+  static const Color duoGold = AppColors.brandAccent;
+  static const Color duoGoldDark = AppColors.brandAccentDark;
+  static const Color duoBlue = AppColors.blue;
+  static const Color duoBlueDark = AppColors.blueDark;
+  static const Color duoRed = AppColors.error;
   static const Color duoRedDark = Color(0xFFEA2B2B);
   static const Color duoGray = Color(0xFFE5E5E5);
   static const Color duoGrayDark = Color(0xFFAFAFAF);
-  static const Color duoBorder = Color(0xFFE5E7EB);
+  static const Color duoBorder = AppColors.border;
 
   static const String arabicFontFamily = 'Amiri';
 
@@ -40,7 +45,7 @@ class AppTheme {
       fontFamily: arabicFontFamily,
       fontSize: fontSize,
       fontWeight: fontWeight,
-      color: color ?? darkText,
+      color: color ?? AppColors.textPrimary,
       height: height ?? 1.8,
       fontFamilyFallback: AppFonts.globalFallbacks,
     );
@@ -48,166 +53,148 @@ class AppTheme {
 
   /// Builds a language-specific [ThemeData] with optimal typography and global glyph fallbacks.
   static ThemeData getThemeForLanguage(String langCode) {
-    final textTheme = AppFonts.getTextThemeForLang(langCode);
-    return lightTheme.copyWith(
-      textTheme: textTheme,
-      primaryTextTheme: textTheme,
-    );
+    final textTheme = AppTextStyles.buildTextTheme(langCode);
+    return _buildTheme(langCode, textTheme);
   }
 
-  static ThemeData get lightTheme {
+  static ThemeData get lightTheme => getThemeForLanguage('en');
+
+  static ThemeData _buildTheme(String langCode, TextTheme textTheme) {
     return ThemeData(
       useMaterial3: true,
       brightness: Brightness.light,
-      primaryColor: duoGreen,
-      scaffoldBackgroundColor: white,
-      colorScheme: ColorScheme.fromSeed(
-        seedColor: duoGreen,
-        primary: duoGreen,
-        secondary: duoGold,
-        surface: white,
-        onPrimary: white,
-        onSecondary: darkText,
+      primaryColor: AppColors.brandPrimary,
+      scaffoldBackgroundColor: AppColors.background,
+      colorScheme: const ColorScheme(
+        brightness: Brightness.light,
+        primary: AppColors.brandPrimary,
+        onPrimary: AppColors.textInverse,
+        secondary: AppColors.brandAccent,
+        onSecondary: AppColors.textPrimary,
+        surface: AppColors.surface,
+        onSurface: AppColors.textPrimary,
+        error: AppColors.error,
+        onError: AppColors.textInverse,
       ),
-      cardTheme: CardThemeData(
-        color: white,
-        elevation: 0,
-        margin: EdgeInsets.zero,
-        shadowColor: duoGreenDark.withValues(alpha: .14),
+      appBarTheme: AppBarTheme(
+        backgroundColor: AppColors.surface,
+        elevation: AppElevation.none,
+        scrolledUnderElevation: AppElevation.none,
+        toolbarHeight: AppSizes.topBarHeight,
+        centerTitle: false,
+        iconTheme: const IconThemeData(
+          color: AppColors.textPrimary,
+          size: AppSizes.iconLg,
+        ),
+        titleTextStyle: AppFonts.getTextStyleForLang(
+          langCode,
+          fontSize: 18,
+          fontWeight: FontWeight.w700,
+          color: AppColors.textPrimary,
+        ),
+      ),
+      cardTheme: const CardThemeData(
+        color: AppColors.surfaceCard,
+        elevation: AppElevation.none,
+        margin: AppSpacing.insetNone,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20), // DS.rXl (20px)
-          side: const BorderSide(
-              color: duoBorder, width: 2.0),
+          borderRadius: AppRadius.borderLg,
+          side: BorderSide(color: AppColors.border, width: AppStroke.regular),
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: white,
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+        fillColor: AppColors.surface,
+        contentPadding: AppSpacing.insetButton,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
-          borderSide: const BorderSide(color: duoBorder, width: 1.5),
+          borderRadius: AppRadius.borderMd,
+          borderSide: const BorderSide(color: AppColors.border, width: AppStroke.regular),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
-          borderSide: const BorderSide(color: duoBorder, width: 1.5),
+          borderRadius: AppRadius.borderMd,
+          borderSide: const BorderSide(color: AppColors.border, width: AppStroke.regular),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
-          borderSide: const BorderSide(color: duoGreen, width: 2),
+          borderRadius: AppRadius.borderMd,
+          borderSide: const BorderSide(color: AppColors.brandPrimary, width: AppStroke.strong),
         ),
       ),
-      textTheme: AppFonts.getTextThemeForLang('en'),
+      textTheme: textTheme,
+      primaryTextTheme: textTheme,
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: duoGreen,
-          foregroundColor: white,
-          elevation: 4,
-          shadowColor: duoGreenDark,
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16), // DS.rLg
+          backgroundColor: AppColors.brandPrimary,
+          foregroundColor: AppColors.textInverse,
+          elevation: AppElevation.none,
+          padding: AppSpacing.insetButton,
+          minimumSize: const Size(AppSizes.touchTargetMin, AppSizes.buttonHeightMd),
+          shape: const RoundedRectangleBorder(
+            borderRadius: AppRadius.borderMd,
           ),
           textStyle: AppFonts.getTextStyleForLang(
-            'en',
-            fontSize: 16,
+            langCode,
+            fontSize: 15,
             fontWeight: FontWeight.w700,
           ),
         ),
       ),
-      filledButtonTheme: FilledButtonThemeData(
-        style: ButtonStyle(
-          backgroundColor: const WidgetStatePropertyAll(duoGreen),
-          foregroundColor: const WidgetStatePropertyAll(white),
-          elevation: const WidgetStatePropertyAll(4),
-          shadowColor: const WidgetStatePropertyAll(duoGreenDark),
-          padding: const WidgetStatePropertyAll(
-            EdgeInsets.symmetric(horizontal: 22, vertical: 14),
-          ),
-          shape: WidgetStatePropertyAll(
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          ),
-        ),
-      ),
       outlinedButtonTheme: OutlinedButtonThemeData(
-        style: ButtonStyle(
-          padding: const WidgetStatePropertyAll(
-            EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+        style: OutlinedButton.styleFrom(
+          foregroundColor: AppColors.textPrimary,
+          padding: AppSpacing.insetButton,
+          minimumSize: const Size(AppSizes.touchTargetMin, AppSizes.buttonHeightMd),
+          side: const BorderSide(color: AppColors.border, width: AppStroke.regular),
+          shape: const RoundedRectangleBorder(
+            borderRadius: AppRadius.borderMd,
           ),
-          shape: WidgetStatePropertyAll(
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          ),
-          side: WidgetStatePropertyAll(
-            BorderSide(color: duoBorder, width: 2.0),
-          ),
-        ),
-      ),
-      iconButtonTheme: IconButtonThemeData(
-        style: ButtonStyle(
-          shape: WidgetStatePropertyAll(
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+          textStyle: AppFonts.getTextStyleForLang(
+            langCode,
+            fontSize: 15,
+            fontWeight: FontWeight.w700,
           ),
         ),
       ),
-      dialogTheme: DialogThemeData(
-        backgroundColor: cream,
-        elevation: 8,
-        shadowColor: duoGreenDark.withValues(alpha: .20),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20), // DS.rXl
-          side: const BorderSide(color: duoBorder, width: 2.0),
-        ),
-        titleTextStyle: AppFonts.getTextStyleForLang(
-          'en',
-          color: darkText,
-          fontSize: 19,
-          fontWeight: FontWeight.w900,
-        ),
-        contentTextStyle: AppFonts.getTextStyleForLang(
-          'en',
-          color: darkText.withValues(alpha: .78),
-          fontSize: 13,
-          height: 1.5,
-        ),
-      ),
-      bottomSheetTheme: BottomSheetThemeData(
-        backgroundColor: cream,
-        modalBackgroundColor: cream,
-        elevation: 12,
-        shadowColor: duoGreenDark.withValues(alpha: .20),
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-        ),
-        showDragHandle: true,
-        dragHandleColor: duoBorder,
-      ),
-      snackBarTheme: SnackBarThemeData(
-        behavior: SnackBarBehavior.floating,
-        backgroundColor: const Color(0xFF1A3C34),
-        contentTextStyle: AppFonts.getTextStyleForLang(
-          'en',
-          color: white,
-          fontWeight: FontWeight.w700,
-        ),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      ),
-      listTileTheme: ListTileThemeData(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        iconColor: primaryGreen,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
-      ),
-      appBarTheme: AppBarTheme(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        centerTitle: true,
-        titleTextStyle: AppFonts.getTextStyleForLang(
-          'en',
-          fontSize: 20,
+      chipTheme: ChipThemeData(
+        backgroundColor: AppColors.surfaceSubtle,
+        disabledColor: AppColors.surfaceSubtle,
+        selectedColor: AppColors.brandLight,
+        secondarySelectedColor: AppColors.brandLight,
+        padding: AppSpacing.insetChip,
+        labelStyle: AppFonts.getTextStyleForLang(
+          langCode,
+          fontSize: 12,
           fontWeight: FontWeight.w600,
-          color: darkText,
+          color: AppColors.textPrimary,
         ),
-        iconTheme: const IconThemeData(color: darkText),
+        secondaryLabelStyle: AppFonts.getTextStyleForLang(
+          langCode,
+          fontSize: 12,
+          fontWeight: FontWeight.w600,
+          color: AppColors.textBrand,
+        ),
+        shape: const RoundedRectangleBorder(
+          borderRadius: AppRadius.borderPill,
+          side: BorderSide(color: AppColors.border, width: AppStroke.hairline),
+        ),
+      ),
+      dialogTheme: const DialogThemeData(
+        backgroundColor: AppColors.surface,
+        elevation: AppElevation.lg,
+        shape: RoundedRectangleBorder(
+          borderRadius: AppRadius.borderXl,
+        ),
+      ),
+      bottomSheetTheme: const BottomSheetThemeData(
+        backgroundColor: AppColors.surface,
+        elevation: AppElevation.lg,
+        shape: RoundedRectangleBorder(
+          borderRadius: AppRadius.sheetTop,
+        ),
+      ),
+      dividerTheme: const DividerThemeData(
+        color: AppColors.divider,
+        thickness: AppStroke.hairline,
+        space: 1,
       ),
     );
   }

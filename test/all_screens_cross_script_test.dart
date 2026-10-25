@@ -88,6 +88,33 @@ List<String> _extractAllRenderedStrings(WidgetTester tester) {
 }
 
 final _rawKeyRegex = RegExp(r'^[a-z][a-zA-Z0-9_]*(\.[a-zA-Z0-9_]+)+$');
+final _embeddedRawKeyRegex = RegExp(r'\b[a-z][a-zA-Z0-9_]*(\.[a-zA-Z0-9_]+)+\b');
+
+const _allowedDottedTokens = {
+  'quran.com',
+  'alquran.cloud',
+  'api.alquran.cloud',
+  'meet.google.com',
+  'zoom.us',
+  'example.com',
+  'github.com',
+  'flutter.dev',
+  'e.g',
+  'i.e',
+};
+
+bool _isAllowedDottedToken(String token) {
+  if (_allowedDottedTokens.contains(token.toLowerCase())) return true;
+  if (token.endsWith('.mp3') ||
+      token.endsWith('.png') ||
+      token.endsWith('.jpg') ||
+      token.endsWith('.json')) {
+    return true;
+  }
+  if (RegExp(r'^v?\d+(\.\d+)+$').hasMatch(token)) return true;
+  return false;
+}
+
 final _bengaliRegex = RegExp(r'[\u0980-\u09FF]');
 // Indic dandas (\u0964, \u0965) are shared Indic punctuation. Exclude from pure Devanagari letters.
 final _devanagariRegex = RegExp(r'[\u0900-\u0963\u0966-\u097F]');
@@ -150,9 +177,13 @@ void _assertScreenStrings({
     final trimmed = str.trim();
     if (trimmed.isEmpty) continue;
 
-    // 1. Raw key assertion: Must NOT match raw key regex
-    if (_rawKeyRegex.hasMatch(trimmed)) {
-      fail('[$screenName in "$locale"] Raw translation key rendered in UI: "$trimmed"');
+    // 1. Raw key assertion: Must NOT match raw key regex (standalone or embedded)
+    final embeddedKeyMatches = _embeddedRawKeyRegex.allMatches(trimmed);
+    for (final match in embeddedKeyMatches) {
+      final keyCandidate = match.group(0)!;
+      if (!_isAllowedDottedToken(keyCandidate)) {
+        fail('[$screenName in "$locale"] Raw translation key rendered in UI: "$keyCandidate" inside "$trimmed"');
+      }
     }
 
     if (_bengaliRegex.hasMatch(str)) hasBengaliChar = true;
@@ -265,6 +296,12 @@ void main() {
       expect(_rawKeyRegex.hasMatch('अल्लाह के नाम से'), isFalse);
       expect(_rawKeyRegex.hasMatch('In nome di Allah'), isFalse);
       expect(_rawKeyRegex.hasMatch('In the name of Allah, the Entirely Merciful, the Especially Merciful.'), isFalse);
+
+      // Embedded raw key detection
+      expect(_embeddedRawKeyRegex.hasMatch('In Progress: Step 1: qaida.step.1.title'), isTrue);
+      expect(_embeddedRawKeyRegex.firstMatch('In Progress: Step 1: qaida.step.1.title')?.group(0), 'qaida.step.1.title');
+      expect(_isAllowedDottedToken('quran.com'), isTrue);
+      expect(_isAllowedDottedToken('qaida.step.1.title'), isFalse);
     });
   });
 
@@ -300,6 +337,7 @@ void main() {
           'user_age': 8,
           'streak_count': 5,
           'xp': 120,
+          'completed_lessons': ['qaida_step1_alif'],
         });
         final state = AppState();
         await state.loadFromPrefs();

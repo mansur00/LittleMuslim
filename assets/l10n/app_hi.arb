@@ -13351,5 +13351,61 @@
   "quran.surah.114.meaning": "मानव जाति",
   "@quran.surah.114.meaning": {
     "description": "Quran surah name or meaning for key quran.surah.114.meaning"
+  },
+  "menu.profile": "प्रोफ़ाइल",
+  "@menu.profile": {
+    "description": "Top bar menu: menu.profile"
+  },
+  "menu.avatar_color": "अवतार और रंग चुनें",
+  "@menu.avatar_color": {
+    "description": "Top bar menu: menu.avatar_color"
+  },
+  "menu.settings": "सेटिंग्स",
+  "@menu.settings": {
+    "description": "Top bar menu: menu.settings"
+  },
+  "menu.language": "भाषा",
+  "@menu.language": {
+    "description": "Top bar menu: menu.language"
+  },
+  "menu.mode_student": "विद्यार्थी मोड",
+  "@menu.mode_student": {
+    "description": "Top bar menu: menu.mode_student"
+  },
+  "menu.mode_admin": "व्यवस्थापक मोड",
+  "@menu.mode_admin": {
+    "description": "Top bar menu: menu.mode_admin"
+  },
+  "menu.help": "सहायता और सहयोग",
+  "@menu.help": {
+    "description": "Top bar menu: menu.help"
+  },
+  "menu.sign_in": "साइन इन करें",
+  "@menu.sign_in": {
+    "description": "Top bar menu: menu.sign_in"
+  },
+  "menu.sign_out": "साइन आउट करें",
+  "@menu.sign_out": {
+    "description": "Top bar menu: menu.sign_out"
+  },
+  "menu.header_greeting": "अस्सलामू अलैकुम",
+  "@menu.header_greeting": {
+    "description": "Top bar menu: menu.header_greeting"
+  },
+  "menu.close": "बंद करें",
+  "@menu.close": {
+    "description": "Top bar menu: menu.close"
+  },
+  "menu.learner_title": "शिक्षार्थी",
+  "@menu.learner_title": {
+    "description": "Top bar menu: menu.learner_title"
+  },
+  "menu.streak_tooltip": "लगातार: {{count}} दिन",
+  "@menu.streak_tooltip": {
+    "description": "Top bar menu: menu.streak_tooltip"
+  },
+  "menu.xp_tooltip": "कुल एक्सपी: {{count}}",
+  "@menu.xp_tooltip": {
+    "description": "Top bar menu: menu.xp_tooltip"
   }
 }

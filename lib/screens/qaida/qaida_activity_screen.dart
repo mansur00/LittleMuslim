@@ -4981,7 +4981,7 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      context.t('qaida.activity.completion.lesson_complete_title', params: {'title': widget.lesson.title}),
+                      context.t('qaida.activity.completion.lesson_complete_title', params: {'title': context.t(widget.lesson.titleKey)}),
                       style: AppFonts.getTextStyle(context, 
                         fontSize: 16,
                         color: const Color(0xFF64748B),
@@ -5019,7 +5019,7 @@ class _QaidaActivityScreenState extends State<QaidaActivityScreen>
                     const Spacer(),
                     if (next != null) ...[
                       Duolingo3DButton(
-                        text: context.t('qaida.activity.completion.next_lesson', params: {'title': next.title}),
+                        text: context.t('qaida.activity.completion.next_lesson', params: {'title': context.t(next.titleKey)}),
                         color: AppTheme.duoGreen,
                         onPressed: () {
                           Navigator.of(context).pushReplacement(

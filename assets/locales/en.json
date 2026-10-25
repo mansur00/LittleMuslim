@@ -2375,5 +2375,19 @@
   "quran.surah.113.name": "Al-Falaq",
   "quran.surah.113.meaning": "The Daybreak",
   "quran.surah.114.name": "An-Nas",
-  "quran.surah.114.meaning": "Mankind"
+  "quran.surah.114.meaning": "Mankind",
+  "menu.profile": "Profile",
+  "menu.avatar_color": "Choose Avatar & Color",
+  "menu.settings": "Settings",
+  "menu.language": "Language",
+  "menu.mode_student": "Student Mode",
+  "menu.mode_admin": "Admin Mode",
+  "menu.help": "Help & Support",
+  "menu.sign_in": "Sign In",
+  "menu.sign_out": "Sign Out",
+  "menu.header_greeting": "Assalamu Alaikum",
+  "menu.close": "Close",
+  "menu.learner_title": "Learner",
+  "menu.streak_tooltip": "Streak: {{count}} Days",
+  "menu.xp_tooltip": "Total XP: {{count}}"
 }

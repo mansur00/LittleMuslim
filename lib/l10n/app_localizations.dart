@@ -41,7 +41,7 @@ class AppLocalizations {
         _translateTemplate(source);
 
     // 3. Fallback resolution and missing key verification
-    final isKeyPattern = RegExp(r'^[a-z][a-zA-Z0-9_]*(\.[a-zA-Z0-9_]+)+$').hasMatch(source.trim());
+    final isKeyPattern = _isKeyPattern(source);
     if (result == null) {
       // 3a. Try static fallback for current locale
       result = StaticTranslations.get(locale.languageCode)[source] ??
@@ -82,7 +82,13 @@ class AppLocalizations {
 
     if (effectiveParams.isNotEmpty) {
       effectiveParams.forEach((paramKey, paramVal) {
-        final valStr = paramVal?.toString() ?? '';
+        var valStr = paramVal?.toString() ?? '';
+        if (paramVal is String && _isKeyPattern(valStr)) {
+          final translated = translate(valStr);
+          if (translated != valStr) {
+            valStr = translated;
+          }
+        }
         result = result!.replaceAll('{{$paramKey}}', valStr);
         result = result!.replaceAll('{$paramKey}', valStr);
       });
@@ -99,6 +105,9 @@ class AppLocalizations {
   /// Pluralization translation shortcut (e.g. `plural('missions.streak_days', count)`).
   String plural(String key, int count, {Map<String, dynamic>? params}) =>
       translate(key, params: params, count: count);
+
+  static bool _isKeyPattern(String s) =>
+      RegExp(r'^[a-z][a-zA-Z0-9_]*(\.[a-zA-Z0-9_]+)+$').hasMatch(s.trim());
 
 
   /// Parameterized regex templates that format numbers and dynamic slots across locales.

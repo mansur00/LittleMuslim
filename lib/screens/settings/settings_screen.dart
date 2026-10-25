@@ -6,8 +6,8 @@ import '../../core/localization/app_languages.dart';
 
 import '../../theme/app_theme.dart';
 import '../../utils/app_state.dart';
-import '../../widgets/duolingo_appbar.dart';
-import '../../widgets/vector_icons.dart';
+import '../../widgets/ds/app_card.dart';
+import '../../widgets/ds/app_top_bar.dart';
 import '../../widgets/faceless_silhouette.dart';
 import '../../services/notification_service.dart';
 import '../../services/alert_sound_service.dart';
@@ -21,21 +21,18 @@ class SettingsScreen extends StatelessWidget {
     final tablet = MediaQuery.sizeOf(context).shortestSide >= 600;
     final state = context.watch<AppState>();
     return Scaffold(
-      backgroundColor: AppTheme.cream,
+      backgroundColor: AppColors.background,
+      appBar: AppTopBar.page(
+        title: context.t('settings.title'),
+        subtitle: context.t('settings.subtitle'),
+      ),
       body: SafeArea(
         child: Center(
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 800),
             child: ListView(
-              padding: EdgeInsets.all(tablet ? 32 : 18),
+              padding: EdgeInsets.all(tablet ? AppSpacing.xxl : AppSpacing.lg),
               children: [
-                DuolingoPageHeader(
-                  title: context.t('settings.title'),
-                  subtitle: context.t('settings.subtitle'),
-                  iconType: VectorIconType.shield,
-                  gradientColors: const [Color(0xFF58CC02), Color(0xFF46A302)],
-                  onBack: () => Navigator.pop(context),
-                ),
                 _SettingsSection(
                   title: context.t('profile.title'),
                   child: Column(children: [
@@ -727,17 +724,15 @@ class _SettingsSection extends StatelessWidget {
   final Widget child;
 
   @override
-  Widget build(BuildContext context) => DuolingoCard(
-        accentColor: AppTheme.primaryGreen,
-        margin: EdgeInsets.zero,
-        padding: const EdgeInsets.all(17),
+  Widget build(BuildContext context) => AppCard(
+        margin: const EdgeInsets.only(bottom: AppSpacing.md),
+        padding: AppSpacing.insetCard,
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(title,
-              style: const TextStyle(
-                  color: AppTheme.darkText,
-                  fontWeight: FontWeight.w900,
-                  fontSize: 16)),
-          const SizedBox(height: 8),
+          Text(
+            title,
+            style: AppTextStyles.titleSmall(context, fontWeight: FontWeight.w800),
+          ),
+          const SizedBox(height: AppSpacing.sm),
           Material(type: MaterialType.transparency, child: child),
         ]),
       );

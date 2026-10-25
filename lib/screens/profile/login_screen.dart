@@ -1,10 +1,13 @@
 import '../../l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 
+import '../../theme/app_colors.dart';
+import '../../theme/app_spacing.dart';
+import '../../theme/app_text_styles.dart';
 import '../../theme/app_theme.dart';
-import '../../widgets/duolingo_appbar.dart';
+import '../../widgets/ds/app_card.dart';
+import '../../widgets/ds/app_top_bar.dart';
 import '../../widgets/duolingo_button.dart';
-import '../../widgets/vector_icons.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -21,23 +24,20 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     final tablet = MediaQuery.sizeOf(context).shortestSide >= 600;
     return Scaffold(
-      backgroundColor: AppTheme.cream,
+      backgroundColor: AppColors.background,
+      appBar: AppTopBar.page(
+        title: _createAccount
+            ? context.t('login.new_account')
+            : context.t('login.welcome_back'),
+        subtitle: context.t('login.subtitle'),
+      ),
       body: SafeArea(
         child: Center(
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 480),
             child: ListView(
-              padding: EdgeInsets.all(tablet ? 32 : 22),
+              padding: EdgeInsets.all(tablet ? AppSpacing.xxl : AppSpacing.lg),
               children: [
-                DuolingoPageHeader(
-                  title: _createAccount
-                      ? context.t('login.new_account')
-                      : context.t('login.welcome_back'),
-                  subtitle: context.t('login.subtitle'),
-                  iconType: VectorIconType.mosque,
-                  gradientColors: const [Color(0xFF58CC02), Color(0xFF46A302)],
-                  onBack: () => Navigator.pop(context),
-                ),
                 Text(
                   _createAccount
                       ? context.t('login.create_account_title')
@@ -55,8 +55,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     style: const TextStyle(
                         color: Colors.black54, fontSize: 13, height: 1.5)),
                 const SizedBox(height: 24),
-                DuolingoCard(
-                  accentColor: AppTheme.primaryGreen,
+                AppCard(
+                  borderColor: AppTheme.primaryGreen,
                   margin: EdgeInsets.zero,
                   padding: const EdgeInsets.all(18),
                   child: Column(children: [

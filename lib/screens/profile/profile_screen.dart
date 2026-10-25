@@ -2,11 +2,14 @@ import '../../l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../theme/app_colors.dart';
+import '../../theme/app_spacing.dart';
+import '../../theme/app_text_styles.dart';
 import '../../theme/app_theme.dart';
 import '../../theme/design_system.dart';
 import '../../utils/app_state.dart';
-import '../../widgets/duolingo_appbar.dart';
-import '../../widgets/vector_icons.dart';
+import '../../widgets/ds/app_card.dart';
+import '../../widgets/ds/app_top_bar.dart';
 import '../../widgets/faceless_silhouette.dart';
 import 'login_screen.dart';
 
@@ -40,21 +43,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final state = context.watch<AppState>();
     final tablet = MediaQuery.sizeOf(context).shortestSide >= 600;
     return Scaffold(
-      backgroundColor: AppTheme.cream,
+      backgroundColor: AppColors.background,
+      appBar: AppTopBar.page(
+        title: context.t('profile.title'),
+        subtitle: context.t('profile.subtitle'),
+      ),
       body: SafeArea(
         child: Center(
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 680),
             child: ListView(
-              padding: EdgeInsets.all(tablet ? 32 : 18),
+              padding: EdgeInsets.all(tablet ? AppSpacing.xxl : AppSpacing.lg),
               children: [
-                DuolingoPageHeader(
-                  title: context.t('profile.title'),
-                  subtitle: context.t('profile.subtitle'),
-                  iconType: VectorIconType.smile,
-                  gradientColors: const [Color(0xFF58CC02), Color(0xFF46A302)],
-                  onBack: () => Navigator.pop(context),
-                ),
                 Container(
                   padding: const EdgeInsets.all(21),
                   decoration: BoxDecoration(
@@ -122,8 +122,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
                 const SizedBox(height: 14),
                 // User Mode Switcher (Admin / Regular Child)
-                DuolingoCard(
-                  accentColor: state.isAdmin ? const Color(0xFFF59E0B) : AppTheme.primaryGreen,
+                AppCard(
+                  borderColor: state.isAdmin ? const Color(0xFFF59E0B) : AppTheme.primaryGreen,
                   margin: EdgeInsets.zero,
                   padding: const EdgeInsets.all(18),
                   child: Column(
@@ -205,8 +205,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                 ),
                 const SizedBox(height: 14),
-                DuolingoCard(
-                  accentColor: AppTheme.primaryGreen,
+                AppCard(
+                  borderColor: AppTheme.primaryGreen,
                   margin: EdgeInsets.zero,
                   padding: const EdgeInsets.all(18),
                   child: Column(
@@ -264,8 +264,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ]),
                 ),
                 const SizedBox(height: 14),
-                DuolingoCard(
-                  accentColor: const Color(0xFF58CC02),
+                AppCard(
+                  borderColor: const Color(0xFF58CC02),
                   margin: EdgeInsets.zero,
                   padding: const EdgeInsets.all(17),
                   child: Column(

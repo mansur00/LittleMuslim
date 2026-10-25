@@ -2375,5 +2375,19 @@
   "quran.surah.113.name": "আল-ফালাক",
   "quran.surah.113.meaning": "ঊষা",
   "quran.surah.114.name": "আন-নাস",
-  "quran.surah.114.meaning": "মানবজাতি"
+  "quran.surah.114.meaning": "মানবজাতি",
+  "menu.profile": "প্রোফাইল",
+  "menu.avatar_color": "অ্যাভাটার ও রং নির্বাচন",
+  "menu.settings": "সেটিংস",
+  "menu.language": "ভাষা",
+  "menu.mode_student": "শিক্ষার্থী মোড",
+  "menu.mode_admin": "অ্যাডমিন মোড",
+  "menu.help": "সাহায্য ও সাপোর্ট",
+  "menu.sign_in": "সাইন ইন",
+  "menu.sign_out": "সাইন আউট",
+  "menu.header_greeting": "আসসালামু আলাইকুম",
+  "menu.close": "বন্ধ করুন",
+  "menu.learner_title": "শিক্ষার্থী",
+  "menu.streak_tooltip": "ধারাবাহিকতা: {{count}} দিন",
+  "menu.xp_tooltip": "মোট এক্সপি: {{count}}"
 }

@@ -2375,5 +2375,19 @@
   "quran.surah.113.name": "Al-Falaq",
   "quran.surah.113.meaning": "L'Alba Nascente",
   "quran.surah.114.name": "An-Nas",
-  "quran.surah.114.meaning": "Gli Uomini"
+  "quran.surah.114.meaning": "Gli Uomini",
+  "menu.profile": "Profilo",
+  "menu.avatar_color": "Scegli avatar e colore",
+  "menu.settings": "Impostazioni",
+  "menu.language": "Lingua",
+  "menu.mode_student": "Modalità studente",
+  "menu.mode_admin": "Modalità amministratore",
+  "menu.help": "Aiuto e supporto",
+  "menu.sign_in": "Accedi",
+  "menu.sign_out": "Esci",
+  "menu.header_greeting": "La pace sia con voi",
+  "menu.close": "Chiudi",
+  "menu.learner_title": "Studente",
+  "menu.streak_tooltip": "Serie: {{count}} giorni",
+  "menu.xp_tooltip": "XP totali: {{count}}"
 }
