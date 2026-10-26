@@ -11,8 +11,32 @@ import 'app_button.dart';
 
 /// An unforgeable authorization token required to elevate user role to admin.
 /// Its constructor is library-private so only [ParentalGate] can mint it.
+/// It is valid for one-time use and expires after 60 seconds.
 class AdminElevationToken {
-  const AdminElevationToken._();
+  AdminElevationToken._({DateTime? createdAt, Duration? lifespan})
+      : _createdAt = createdAt ?? DateTime.now(),
+        _lifespan = lifespan ?? const Duration(seconds: 60);
+
+  final DateTime _createdAt;
+  final Duration _lifespan;
+  bool _isConsumed = false;
+
+  /// Whether this token has already been consumed.
+  bool get isConsumed => _isConsumed;
+
+  /// Whether this token has exceeded its validity lifetime (60 seconds).
+  bool get isExpired => DateTime.now().difference(_createdAt) > _lifespan;
+
+  /// Whether this token is active, unconsumed, and unexpired.
+  bool get isValid => !_isConsumed && !isExpired;
+
+  /// Consumes the token for elevation. Returns true on successful consumption,
+  /// or false if the token was already consumed or is expired.
+  bool consume() {
+    if (!isValid) return false;
+    _isConsumed = true;
+    return true;
+  }
 }
 
 /// ParentalGateDialog: Modal barrier requiring parents to solve a randomized
@@ -65,7 +89,7 @@ class _ParentalGateDialogState extends State<ParentalGateDialog> {
     final answer = int.tryParse(AppFormatters.toLatinDigits(text));
     if (answer == _expectedSum) {
       appState.recordGateSuccess();
-      Navigator.of(context).pop(const AdminElevationToken._());
+      Navigator.of(context).pop(AdminElevationToken._());
     } else {
       appState.recordGateFailure();
       setState(() {
@@ -225,5 +249,6 @@ class ParentalGate {
 
   /// Exclusively available for unit and widget tests to mint an authorized token.
   @visibleForTesting
-  static AdminElevationToken mintForTesting() => const AdminElevationToken._();
+  static AdminElevationToken mintForTesting({DateTime? createdAt, Duration? lifespan}) =>
+      AdminElevationToken._(createdAt: createdAt, lifespan: lifespan);
 }

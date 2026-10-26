@@ -750,14 +750,22 @@ class AppState extends ChangeNotifier {
 
   AdminElevationToken? _pendingAdminToken;
 
-  void setPendingAdminToken(AdminElevationToken token) {
+  /// Registers a verified token for pending admin onboarding.
+  /// The token is consumed immediately upon registration (one-time use).
+  /// Returns true if the token was valid and successfully consumed, false otherwise.
+  bool setPendingAdminToken(AdminElevationToken token) {
+    if (isGateLockedOut || !token.consume()) {
+      _pendingAdminToken = null;
+      return false;
+    }
     _pendingAdminToken = token;
+    return true;
   }
 
   Future<bool> setUserRole(String role, {AdminElevationToken? token}) async {
     final next = role == 'admin' ? 'admin' : 'child';
     if (next == 'admin') {
-      if (token == null || isGateLockedOut) return false;
+      if (token == null || isGateLockedOut || !token.consume()) return false;
       recordGateSuccess();
     }
     if (_userRole == next) return true;
@@ -778,7 +786,7 @@ class AppState extends ChangeNotifier {
   }
 
   Future<bool> quickAdminEnter({required AdminElevationToken token}) async {
-    if (isGateLockedOut) return false;
+    if (isGateLockedOut || !token.isValid) return false;
     draftName = 'Admin';
     draftAge = 10;
     draftRole = 'admin';
@@ -788,23 +796,30 @@ class AppState extends ChangeNotifier {
 
   Future<void> updateLanguage(String language) async {
     final nextLanguage = _validLang(language);
-    if (_selectedLanguage == nextLanguage) return;
     _selectedLanguage = nextLanguage;
+    draftLanguage = nextLanguage;
     final targetLang = AppLanguages.byCode(nextLanguage);
     setHtmlLangAndDir(nextLanguage, targetLang?.dirString ?? 'ltr');
     notifyListeners();
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('language', nextLanguage);
+    await prefs.setString(StorageKeys.language, nextLanguage);
   }
 
   /// Returns a validated language code; falls back to default if unknown.
   static String _validLang(String? lang) => AppLanguages.validate(lang);
 
   Future<void> completeOnboarding({String? role, AdminElevationToken? token}) async {
-    final tokenToUse = token ?? _pendingAdminToken;
+    final bool hasValidElevation;
+    if (token != null) {
+      hasValidElevation = token.consume();
+    } else {
+      hasValidElevation = _pendingAdminToken != null && !_pendingAdminToken!.isExpired;
+    }
     _pendingAdminToken = null;
+
     final requestedRole = role ?? (draftRole == 'admin' ? 'admin' : 'child');
-    final roleToSave = (requestedRole == 'admin' && tokenToUse != null && !isGateLockedOut)
+    final roleToSave = (requestedRole == 'admin' && hasValidElevation && !isGateLockedOut)
         ? 'admin'
         : 'child';
     if (roleToSave == 'admin') {

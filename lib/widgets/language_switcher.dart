@@ -245,7 +245,9 @@ class _SearchableLanguageSheetContentState
                                   color: AppTheme.primaryGreen)
                               : null,
                           onTap: () {
-                            context.read<AppState>().updateLanguage(lang.code);
+                            final appState = context.read<AppState>();
+                            appState.updateDraftLanguage(lang.code);
+                            appState.updateLanguage(lang.code);
                             try {
                               context.read<LanguageProvider>().setLanguage(lang.code);
                             } catch (_) {}

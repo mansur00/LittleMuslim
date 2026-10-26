@@ -8,16 +8,20 @@ import '../../theme/design_system.dart';
 import '../../utils/app_state.dart';
 import '../../widgets/vector_icons.dart';
 
+import '../../widgets/ds/app_top_bar.dart';
+
 class LanguagePage extends StatefulWidget {
   final bool isTablet;
   final VoidCallback onNext;
   final VoidCallback onBack;
+  final bool isStandalone;
 
   const LanguagePage({
     super.key,
     required this.isTablet,
     required this.onNext,
     required this.onBack,
+    this.isStandalone = false,
   });
 
   @override
@@ -33,19 +37,33 @@ class _LanguagePageState extends State<LanguagePage> {
     super.didChangeDependencies();
     if (!_initialized) {
       final appState = context.read<AppState>();
-      _selectedLang = appState.draftLanguage;
+      _selectedLang = appState.hasCompletedOnboarding
+          ? appState.selectedLanguage
+          : appState.draftLanguage;
       _initialized = true;
     }
   }
 
   void _selectLanguage(String code) {
     setState(() => _selectedLang = code);
-    context.read<AppState>().updateDraftLanguage(code);
+    final appState = context.read<AppState>();
+    appState.updateDraftLanguage(code);
+    appState.updateLanguage(code);
+    try {
+      context.read<LanguageProvider>().setLanguage(code);
+    } catch (_) {}
+
+    if (widget.isStandalone) {
+      Future.delayed(const Duration(milliseconds: 250), () {
+        if (mounted) Navigator.maybePop(context);
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
+    final body = SingleChildScrollView(
+      physics: const BouncingScrollPhysics(),
       padding: EdgeInsets.symmetric(horizontal: widget.isTablet ? 64 : 28),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -171,7 +189,7 @@ class _LanguagePageState extends State<LanguagePage> {
                 .fadeIn(delay: (150 * index).ms, duration: 400.ms)
                 .slideX(begin: 0.1, end: 0);
           }),
-          const Spacer(),
+          AppSpacing.gapHMd,
           Container(
             padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(
@@ -203,5 +221,20 @@ class _LanguagePageState extends State<LanguagePage> {
         ],
       ),
     );
+
+    if (widget.isStandalone) {
+      return Scaffold(
+        backgroundColor: AppColors.surface,
+        appBar: AppTopBar.page(
+          title: context.t('menu.language'),
+          onBack: () => Navigator.maybePop(context),
+        ),
+        body: SafeArea(
+          child: body,
+        ),
+      );
+    }
+
+    return body;
   }
 }

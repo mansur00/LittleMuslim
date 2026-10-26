@@ -292,5 +292,87 @@ void main() {
       expect(find.textContaining('Too many attempts'), findsOneWidget);
       expect(find.byType(TextField), findsNothing);
     });
+
+    test('AdminElevationToken cannot be reused (one-time use)', () async {
+      final token = ParentalGate.mintForTesting();
+      expect(token.isValid, isTrue);
+      expect(token.isConsumed, isFalse);
+
+      // First use succeeds
+      final firstUse = await state.setUserRole('admin', token: token);
+      expect(firstUse, isTrue);
+      expect(state.isAdmin, isTrue);
+      expect(token.isConsumed, isTrue);
+      expect(token.isValid, isFalse);
+
+      // Reset to child
+      await state.setUserRole('child');
+      expect(state.isAdmin, isFalse);
+
+      // Second use with the EXACT same token MUST FAIL
+      final secondUse = await state.setUserRole('admin', token: token);
+      expect(secondUse, isFalse);
+      expect(state.isAdmin, isFalse);
+    });
+
+    test('AdminElevationToken expires after 60 seconds', () async {
+      // Token minted 61 seconds in the past
+      final expiredToken = ParentalGate.mintForTesting(
+        createdAt: DateTime.now().subtract(const Duration(seconds: 61)),
+      );
+      expect(expiredToken.isExpired, isTrue);
+      expect(expiredToken.isValid, isFalse);
+
+      // Attempting to use expired token MUST FAIL
+      final success = await state.setUserRole('admin', token: expiredToken);
+      expect(success, isFalse);
+      expect(state.isAdmin, isFalse);
+
+      // Fresh token within 60s succeeds
+      final freshToken = ParentalGate.mintForTesting(
+        createdAt: DateTime.now().subtract(const Duration(seconds: 30)),
+      );
+      expect(freshToken.isExpired, isFalse);
+      expect(freshToken.isValid, isTrue);
+      final freshSuccess = await state.setUserRole('admin', token: freshToken);
+      expect(freshSuccess, isTrue);
+      expect(state.isAdmin, isTrue);
+    });
+
+    test('setPendingAdminToken consumes token exactly once and rejects reuse/expiry', () async {
+      final token = ParentalGate.mintForTesting();
+      expect(token.isValid, isTrue);
+
+      // 1. First registration consumes token and returns true
+      final registered = state.setPendingAdminToken(token);
+      expect(registered, isTrue);
+      expect(token.isConsumed, isTrue);
+      expect(token.isValid, isFalse);
+
+      // 2. Second registration with SAME token MUST FAIL
+      final secondReg = state.setPendingAdminToken(token);
+      expect(secondReg, isFalse);
+
+      // 3. Expired token registration MUST FAIL
+      final expiredToken = ParentalGate.mintForTesting(
+        createdAt: DateTime.now().subtract(const Duration(seconds: 65)),
+      );
+      final expiredReg = state.setPendingAdminToken(expiredToken);
+      expect(expiredReg, isFalse);
+
+      // 4. completeOnboarding consumes the pending admin state and resets it
+      final freshToken = ParentalGate.mintForTesting();
+      state.setPendingAdminToken(freshToken);
+      state.draftRole = 'admin';
+      await state.completeOnboarding();
+      expect(state.isAdmin, isTrue);
+
+      // Re-running completeOnboarding without a new token falls back to child
+      await state.setUserRole('child');
+      expect(state.isAdmin, isFalse);
+      state.draftRole = 'admin';
+      await state.completeOnboarding();
+      expect(state.isAdmin, isFalse); // pending token was already consumed!
+    });
   });
 }

@@ -8,67 +8,584 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 // =============================================================================
-// PHASE B STYLE SPEC TOKENS (Aligned with References 1, 2, 3, 4 + User Overrides)
+// DESIGN SYSTEM TOKENS (Duolingo Style: #58CC02, 3D #46A302, Ref 1, 2, 3, 4)
 // =============================================================================
 
 class StyleKitColors {
-  // App Shell Theme (Gentle Mint / Light Green Family)
-  static const Color appDark = Color(0xFF047857);        // Primary button fill (CR 5.48:1 on white)
-  static const Color appDarkEdge = Color(0xFF064E3B);    // 3D bottom edge
-  static const Color appSoft = Color(0xFFECFDF5);        // Header panel & soft mint tiles
-  static const Color appSoftEdge = Color(0xFFD1FAE5);    // Secondary 3D edge
-  static const Color appIllus = Color(0xFFA7F3D0);       // Decorative mint lanterns & crescent
-  static const Color appText = Color(0xFF064E3B);        // High contrast text on soft (9.23:1)
+  // Duolingo Brand Green Family (The Core Little Muslim Brand Theme)
+  static const Color duoGreen = Color(0xFF58CC02);        // Vibrant Duolingo green
+  static const Color duoGreenDark = Color(0xFF46A302);    // 3D bevel / bottom edge
+  static const Color duoGreenSoft = Color(0xFFEDFED9);    // Soft pastel green panel
+  static const Color duoGreenSoftEdge = Color(0xFFD4F4B8);// Soft 3D edge
+  static const Color duoGreenIllus = Color(0xFFC7EFA4);   // Decorative star motif tint
+  static const Color duoGreenText = Color(0xFF2D6A00);    // High contrast text on soft (6.8:1)
 
-  // Qaida Module Theme (Strong Forest Green Family)
-  static const Color qaidaDark = Color(0xFF1E6B24);      // Primary button fill (CR 6.60:1 on white)
-  static const Color qaidaDarkEdge = Color(0xFF124317);  // 3D bottom edge
-  static const Color qaidaSoft = Color(0xFFE8F5E9);      // Header panel & soft tiles
-  static const Color qaidaSoftEdge = Color(0xFFC8E6C9);  // Secondary 3D edge
-  static const Color qaidaIllus = Color(0xFFC8E6C9);     // Decorative 8-point geometric star
-  static const Color qaidaText = Color(0xFF124317);      // High contrast text on soft (10.14:1)
+  // Qaida Module Theme (Duolingo Green Family)
+  static const Color qaidaDark = Color(0xFF58CC02);      // Primary Duolingo green button fill
+  static const Color qaidaDarkEdge = Color(0xFF46A302);  // 3D bottom bevel
+  static const Color qaidaSoft = Color(0xFFEDFED9);      // Header panel & soft tiles
+  static const Color qaidaSoftEdge = Color(0xFFD4F4B8);  // Secondary 3D edge
+  static const Color qaidaIllus = Color(0xFFC7EFA4);     // Decorative 8-point geometric star
+  static const Color qaidaText = Color(0xFF2D6A00);      // High contrast text on soft (6.8:1)
 
-  // Quran Module Theme (Gold / Ochre)
-  static const Color quranDark = Color(0xFF92400E);      // Primary button fill (CR 7.09:1 on white)
-  static const Color quranDarkEdge = Color(0xFF78350F);  // 3D bottom edge
+  // Ref-2 Warm Yellow Header Family (Drawing / Dashboard Hero)
+  static const Color headerYellow = Color(0xFFFFD233);    // Warm sunny header panel (Ref-2)
+  static const Color headerYellowEdge = Color(0xFFE5A100);// 3D bottom bevel for yellow header
+  static const Color headerYellowText = Color(0xFF4A3400);// Dark brown text on warm yellow (8.4:1)
+
+  // Quran Module Theme (Warm Gold / Amber)
+  static const Color quranDark = Color(0xFFD97706);      // Primary button fill
+  static const Color quranDarkEdge = Color(0xFFB45309);  // 3D bottom edge
   static const Color quranSoft = Color(0xFFFEF3C7);      // Header panel & soft tiles
   static const Color quranSoftEdge = Color(0xFFFDE68A);  // Secondary 3D edge
-  static const Color quranIllus = Color(0xFFFDE68A);     // Decorative mosque arch & dome
   static const Color quranText = Color(0xFF78350F);      // Text on soft (8.15:1)
 
-  // Neutral / Surface
-  static const Color pageBg = Color(0xFFF4FAF4);         // Gentle soft tinted page bg
+  // Surface / Neutral
+  static const Color pageBg = Color(0xFFF1F5F9);         // Cool neutral presentation background
+  static const Color deviceBg = Color(0xFFF8FAFC);       // Soft phone body background
   static const Color surface = Color(0xFFFFFFFF);        // Flat white card fill
   static const Color surfaceEdge = Color(0xFFCBD5E1);    // Tappable card 3D edge
   static const Color textDark = Color(0xFF0F172A);       // Dark slate heading text
   static const Color textMuted = Color(0xFF475569);      // Secondary body text (CR > 4.5:1)
-  static const Color inputBorder = Color(0xFF64748B);    // 1.5px border (CR 3.9:1 against white)
+  static const Color textSubtle = Color(0xFF64748B);     // Micro label text
   static const Color white = Color(0xFFFFFFFF);
 
-  // Path Nodes (Ref-3 Adventure Map style in module's own green family)
-  static const Color nodeComplete = Color(0xFF1E6B24);
-  static const Color nodeCompleteEdge = Color(0xFF124317);
-  static const Color nodeDone = Color(0xFF2E7D32);
-  static const Color nodeDoneEdge = Color(0xFF1B5E20);
-  static const Color nodeCurrent = Color(0xFF2E7D32);    // Module's own green family (NOT amber)
-  static const Color nodeCurrentEdge = Color(0xFF1E6B24);
-  static const Color nodeLocked = Color(0xFF94A3B8);
-  static const Color nodeLockedEdge = Color(0xFF64748B);
+  // Path Nodes (Duolingo Green Style!)
+  static const Color nodeComplete = Color(0xFF58CC02);   // Duolingo green
+  static const Color nodeCompleteEdge = Color(0xFF46A302);// 3D bottom edge
+  static const Color nodeCurrent = Color(0xFF58CC02);    // Vibrant Duolingo green
+  static const Color nodeCurrentEdge = Color(0xFF46A302); // 3D bottom edge
+  static const Color nodeLocked = Color(0xFFE2E8F0);     // Slate soft grey
+  static const Color nodeLockedEdge = Color(0xFFCBD5E1); // Slate 3D edge
 
-  // Adventure Map Land & Water
-  static const Color mapLand = Color(0xFFDCFCE7);
-  static const Color mapLandDark = Color(0xFFBBF7D0);
-  static const Color mapWater = Color(0xFFBAE6FD);
-  static const Color mapRoad = Color(0xFFF1F5F9);
-  static const Color mapRoadEdge = Color(0xFFCBD5E1);
-  static const Color mapRoadDashes = Color(0xFF94A3B8);
+  // Adventure Map Palette (Ref-3 Island)
+  static const Color mapGrass = Color(0xFFE5F8D0);       // Fresh Duolingo meadow green
+  static const Color mapGrassAlt = Color(0xFFD7F4BD);    // Meadow contour
+  static const Color mapWater = Color(0xFFBAE6FD);       // Sky blue river/ocean
+  static const Color mapRiver = Color(0xFF7DD3FC);
+  static const Color mapRiverEdge = Color(0xFF38BDF8);
+  static const Color mapRoad = Color(0xFFF7F2E7);        // Sand trail
+  static const Color mapRoadEdge = Color(0xFFDFCDB2);
+  static const Color mapRoadDashes = Color(0xFFD5C3A5);
 }
 
-// -----------------------------------------------------------------------------
-// Vector Decorative Islamic Illustrations (ExcludeSemantics, Flat, Contrast-safe)
-// -----------------------------------------------------------------------------
+// =============================================================================
+// REUSABLE 3D EDGE CONTROLS (Tappable controls only, solid flat fills, no shadow)
+// =============================================================================
 
-/// 8-Point Islamic Star Pattern for Qaida Header
+class EdgeButton extends StatelessWidget {
+  const EdgeButton({
+    super.key,
+    required this.fillColor,
+    required this.edgeColor,
+    required this.child,
+    this.borderRadius = 16.0,
+    this.edgeHeight = 3.5,
+    this.minHeight = 44.0,
+    this.padding = const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+  });
+
+  final Color fillColor;
+  final Color edgeColor;
+  final Widget child;
+  final double borderRadius;
+  final double edgeHeight;
+  final double minHeight;
+  final EdgeInsetsGeometry padding;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: edgeColor,
+        borderRadius: BorderRadius.circular(borderRadius),
+      ),
+      child: Container(
+        margin: EdgeInsets.only(bottom: edgeHeight),
+        constraints: BoxConstraints(minHeight: minHeight),
+        padding: padding,
+        decoration: BoxDecoration(
+          color: fillColor,
+          borderRadius: BorderRadius.circular(borderRadius),
+        ),
+        alignment: Alignment.center,
+        child: child,
+      ),
+    );
+  }
+}
+
+class EdgeCard extends StatelessWidget {
+  const EdgeCard({
+    super.key,
+    required this.child,
+    this.fillColor = StyleKitColors.surface,
+    this.edgeColor = StyleKitColors.surfaceEdge,
+    this.borderRadius = 18.0,
+    this.edgeHeight = 3.0,
+    this.padding = const EdgeInsets.all(14),
+    this.margin,
+  });
+
+  final Widget child;
+  final Color fillColor;
+  final Color edgeColor;
+  final double borderRadius;
+  final double edgeHeight;
+  final EdgeInsetsGeometry padding;
+  final EdgeInsetsGeometry? margin;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: margin,
+      decoration: BoxDecoration(
+        color: edgeColor,
+        borderRadius: BorderRadius.circular(borderRadius),
+      ),
+      child: Container(
+        margin: EdgeInsets.only(bottom: edgeHeight),
+        padding: padding,
+        decoration: BoxDecoration(
+          color: fillColor,
+          borderRadius: BorderRadius.circular(borderRadius),
+        ),
+        child: child,
+      ),
+    );
+  }
+}
+
+// =============================================================================
+// ASSET LOADER (Figma SVGs & 3D PNG assets used AS-IS on flat surfaces)
+// =============================================================================
+
+class LocalAssetWidget extends StatelessWidget {
+  const LocalAssetWidget({
+    super.key,
+    required this.path,
+    this.width,
+    this.height,
+    this.fit = BoxFit.contain,
+  });
+
+  final String path;
+  final double? width;
+  final double? height;
+  final BoxFit fit;
+
+  @override
+  Widget build(BuildContext context) {
+    try {
+      final file = File(path);
+      if (file.existsSync()) {
+        if (path.endsWith('.svg')) {
+          return SvgPicture.string(
+            file.readAsStringSync(),
+            width: width,
+            height: height,
+            fit: fit,
+          );
+        } else if (path.endsWith('.png')) {
+          return Image.memory(
+            file.readAsBytesSync(),
+            width: width,
+            height: height,
+            fit: fit,
+          );
+        }
+      }
+    } catch (_) {}
+    return SizedBox(width: width, height: height);
+  }
+}
+
+// Backwards-compatible alias
+typedef FigmaSvgWidget = LocalAssetWidget;
+
+// =============================================================================
+// CLEAN 2D VECTOR MAP ELEMENTS (Ref-3 Wooden Bridge, Signpost, Summit Crescent)
+// =============================================================================
+
+class WoodenBridgePainter extends CustomPainter {
+  const WoodenBridgePainter();
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final w = size.width;
+    final h = size.height;
+
+    // Bridge deck base
+    final deckEdge = Paint()..color = const Color(0xFF78350F)..style = PaintingStyle.fill;
+    final deckRect = RRect.fromRectAndRadius(Rect.fromLTWH(0, 4, w, h - 8), const Radius.circular(5));
+    canvas.drawRRect(deckRect, deckEdge);
+
+    // Individual wooden planks
+    final plankPaint = Paint()..color = const Color(0xFFB45309)..style = PaintingStyle.fill;
+    const numPlanks = 6;
+    final plankW = (w - 4) / numPlanks;
+    for (int i = 0; i < numPlanks; i++) {
+      final pRect = RRect.fromRectAndRadius(
+        Rect.fromLTWH(2 + i * plankW + 1, 6, plankW - 2, h - 14),
+        const Radius.circular(2),
+      );
+      canvas.drawRRect(pRect, plankPaint);
+    }
+
+    // Side guide rails
+    final railPaint = Paint()
+      ..color = const Color(0xFF592B06)
+      ..strokeWidth = 3.5
+      ..style = PaintingStyle.stroke;
+    canvas.drawLine(Offset(0, 5), Offset(w, 5), railPaint);
+    canvas.drawLine(Offset(0, h - 5), Offset(w, h - 5), railPaint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+}
+
+class TrailSignpostPainter extends CustomPainter {
+  const TrailSignpostPainter();
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    // Wooden post
+    final postPaint = Paint()..color = const Color(0xFF78350F)..style = PaintingStyle.fill;
+    canvas.drawRect(Rect.fromLTWH(size.width * 0.44, size.height * 0.35, size.width * 0.12, size.height * 0.65), postPaint);
+
+    // Signboard plank with 3D bottom bevel
+    final boardEdge = Paint()..color = const Color(0xFFB45309)..style = PaintingStyle.fill;
+    final boardPaint = Paint()..color = const Color(0xFFD97706)..style = PaintingStyle.fill;
+
+    final rrectEdge = RRect.fromRectAndRadius(Rect.fromLTWH(0, 3, size.width, size.height * 0.42), const Radius.circular(4));
+    final rrect = RRect.fromRectAndRadius(Rect.fromLTWH(0, 0, size.width, size.height * 0.42 - 2), const Radius.circular(4));
+    canvas.drawRRect(rrectEdge, boardEdge);
+    canvas.drawRRect(rrect, boardPaint);
+
+    // Small trail indicator lines on the board
+    final textPaint = Paint()
+      ..color = Colors.white.withValues(alpha: 0.8)
+      ..strokeWidth = 2
+      ..strokeCap = StrokeCap.round;
+    canvas.drawLine(Offset(size.width * 0.2, size.height * 0.16), Offset(size.width * 0.8, size.height * 0.16), textPaint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+}
+
+class SummitMonumentPainter extends CustomPainter {
+  const SummitMonumentPainter();
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final goldPaint = Paint()..color = const Color(0xFFF59E0B)..style = PaintingStyle.fill;
+    final goldEdge = Paint()..color = const Color(0xFFD97706)..style = PaintingStyle.fill;
+
+    // Base pedestal
+    canvas.drawRRect(RRect.fromRectAndRadius(Rect.fromLTWH(size.width * 0.15, size.height * 0.58, size.width * 0.7, size.height * 0.36), const Radius.circular(5)), goldEdge);
+    canvas.drawRRect(RRect.fromRectAndRadius(Rect.fromLTWH(size.width * 0.15, size.height * 0.52, size.width * 0.7, size.height * 0.36), const Radius.circular(5)), goldPaint);
+
+    // Golden Crescent Moon on top
+    final crescentPath = Path()
+      ..addOval(Rect.fromCircle(center: Offset(size.width * 0.5, size.height * 0.30), radius: size.width * 0.26));
+    final cutPath = Path()
+      ..addOval(Rect.fromCircle(center: Offset(size.width * 0.58, size.height * 0.26), radius: size.width * 0.21));
+    final moon = Path.combine(PathOperation.difference, crescentPath, cutPath);
+    canvas.drawPath(moon, goldPaint);
+
+    // Mini star next to crescent
+    canvas.drawCircle(Offset(size.width * 0.68, size.height * 0.22), 2.5, goldPaint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+}
+
+// =============================================================================
+// 3D HEXAGON NODE PEDESTAL PAINTER (Direct from Ref-3 Adventure Map)
+// =============================================================================
+
+class HexagonPedestalPainter extends CustomPainter {
+  const HexagonPedestalPainter({
+    required this.fillColor,
+    required this.edgeColor,
+    this.edgeHeight = 6.0,
+  });
+
+  final Color fillColor;
+  final Color edgeColor;
+  final double edgeHeight;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final w = size.width;
+    final h = size.height - edgeHeight;
+    final cx = w / 2;
+    final cy = h / 2;
+    final r = math.min(w, h) / 2;
+
+    List<Offset> getHexPoints(double centerY) {
+      final pts = <Offset>[];
+      for (int i = 0; i < 6; i++) {
+        final angle = (i * 60 + 30) * math.pi / 180;
+        pts.add(Offset(cx + r * math.cos(angle), centerY + r * math.sin(angle)));
+      }
+      return pts;
+    }
+
+    final topPts = getHexPoints(cy);
+    final botPts = getHexPoints(cy + edgeHeight);
+
+    // 1. Draw 3D Bottom Extrusion Bevel
+    final edgePaint = Paint()
+      ..color = edgeColor
+      ..style = PaintingStyle.fill;
+    final edgePath = Path();
+    edgePath.moveTo(topPts[0].dx, topPts[0].dy);
+    edgePath.lineTo(topPts[1].dx, topPts[1].dy);
+    edgePath.lineTo(topPts[2].dx, topPts[2].dy);
+    edgePath.lineTo(topPts[3].dx, topPts[3].dy);
+    edgePath.lineTo(botPts[3].dx, botPts[3].dy);
+    edgePath.lineTo(botPts[2].dx, botPts[2].dy);
+    edgePath.lineTo(botPts[1].dx, botPts[1].dy);
+    edgePath.lineTo(botPts[0].dx, botPts[0].dy);
+    edgePath.close();
+    canvas.drawPath(edgePath, edgePaint);
+
+    // 2. Draw Top Hexagon Face
+    final topPaint = Paint()
+      ..color = fillColor
+      ..style = PaintingStyle.fill;
+    final topPath = Path();
+    topPath.moveTo(topPts[0].dx, topPts[0].dy);
+    for (int i = 1; i < 6; i++) {
+      topPath.lineTo(topPts[i].dx, topPts[i].dy);
+    }
+    topPath.close();
+    canvas.drawPath(topPath, topPaint);
+
+    // 3. Subtle Highlight Stroke on Top Face
+    final strokePaint = Paint()
+      ..color = Colors.white.withValues(alpha: 0.3)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.5;
+    canvas.drawPath(topPath, strokePaint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+}
+
+// =============================================================================
+// ADVENTURE MAP LANDSCAPE PAINTER (Clean Duolingo Island, Winding Trail & River)
+// =============================================================================
+
+class AdventureMapLandscapePainter extends CustomPainter {
+  const AdventureMapLandscapePainter();
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final w = size.width;
+    final h = size.height;
+
+    // 1. Base Island Meadow Background
+    final bgPaint = Paint()
+      ..color = StyleKitColors.mapGrass
+      ..style = PaintingStyle.fill;
+    canvas.drawRect(Rect.fromLTWH(0, 0, w, h), bgPaint);
+
+    // 2. Organic Grass Hill Contours
+    final hillPaint = Paint()
+      ..color = StyleKitColors.mapGrassAlt
+      ..style = PaintingStyle.fill;
+
+    final hillPath1 = Path();
+    hillPath1.moveTo(0, 0);
+    hillPath1.lineTo(w * 0.45, 0);
+    hillPath1.quadraticBezierTo(w * 0.40, h * 0.22, 0, h * 0.28);
+    hillPath1.close();
+    canvas.drawPath(hillPath1, hillPaint);
+
+    final hillPath2 = Path();
+    hillPath2.moveTo(w, h * 0.65);
+    hillPath2.quadraticBezierTo(w * 0.60, h * 0.75, w * 0.70, h);
+    hillPath2.lineTo(w, h);
+    hillPath2.close();
+    canvas.drawPath(hillPath2, hillPaint);
+
+    // 3. Sky Blue Ocean Water on Top Right Edge
+    final waterPaint = Paint()
+      ..color = StyleKitColors.mapWater
+      ..style = PaintingStyle.fill;
+    final oceanPath = Path();
+    oceanPath.moveTo(w * 0.78, 0);
+    oceanPath.quadraticBezierTo(w * 0.70, h * 0.12, w, h * 0.22);
+    oceanPath.lineTo(w, 0);
+    oceanPath.close();
+    canvas.drawPath(oceanPath, waterPaint);
+
+    // 4. Winding River Channel crossing the map
+    final riverPaint = Paint()
+      ..color = StyleKitColors.mapRiver
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 34
+      ..strokeCap = StrokeCap.round;
+
+    final riverEdgePaint = Paint()
+      ..color = StyleKitColors.mapRiverEdge
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 38
+      ..strokeCap = StrokeCap.round;
+
+    final riverPath = Path();
+    riverPath.moveTo(w + 10, h * 0.32);
+    riverPath.cubicTo(w * 0.65, h * 0.36, w * 0.45, h * 0.60, -10, h * 0.64);
+
+    canvas.drawPath(riverPath, riverEdgePaint);
+    canvas.drawPath(riverPath, riverPaint);
+
+    // 5. Winding Road (Warm Sand Beige with Outlines & Dashed Centerline)
+    final roadPath = Path();
+    // Connecting Node 1 -> Node 2 -> Bridge Crossing -> Node 3 -> Node 4 -> Node 5
+    roadPath.moveTo(85, 420);     // Node 1
+    roadPath.cubicTo(60, 365, 80, 335, 120, 320); // Towards Node 2
+    roadPath.cubicTo(155, 305, 170, 280, 180, 260); // Over River (Bridge Location)
+    roadPath.cubicTo(190, 240, 220, 235, 230, 215); // Towards Node 3
+    roadPath.cubicTo(240, 185, 140, 175, 115, 130); // Towards Node 4
+    roadPath.cubicTo(95, 90, 190, 75, 235, 45);    // Towards Node 5
+
+    // Outer Road Border
+    final roadBorderPaint = Paint()
+      ..color = StyleKitColors.mapRoadEdge
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 44
+      ..strokeCap = StrokeCap.round
+      ..strokeJoin = StrokeJoin.round;
+    canvas.drawPath(roadPath, roadBorderPaint);
+
+    // Inner Road Fill
+    final roadFillPaint = Paint()
+      ..color = StyleKitColors.mapRoad
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 38
+      ..strokeCap = StrokeCap.round
+      ..strokeJoin = StrokeJoin.round;
+    canvas.drawPath(roadPath, roadFillPaint);
+
+    // Dashed Centerline (Ref-3 Style)
+    final dashPaint = Paint()
+      ..color = StyleKitColors.mapRoadDashes
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2.5
+      ..strokeCap = StrokeCap.round;
+
+    final metrics = roadPath.computeMetrics();
+    for (final metric in metrics) {
+      double distance = 10.0;
+      const dashLength = 8.0;
+      const dashGap = 7.0;
+      while (distance < metric.length - 12) {
+        final extractPath = metric.extractPath(distance, distance + dashLength);
+        canvas.drawPath(extractPath, dashPaint);
+        distance += dashLength + dashGap;
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+}
+
+// =============================================================================
+// CLEAN 2D VECTOR FLORA PAINTER (Real planted trees & rocks, no dirt-cube blocks)
+// =============================================================================
+
+class MapFloraPainter extends CustomPainter {
+  const MapFloraPainter();
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    // Pine Tree helper (layered green triangles + brown trunk)
+    void drawPineTree(double x, double y, double scale) {
+      final trunkPaint = Paint()..color = const Color(0xFF78350F)..style = PaintingStyle.fill;
+      canvas.drawRect(Rect.fromLTWH(x - 3 * scale, y + 14 * scale, 6 * scale, 8 * scale), trunkPaint);
+
+      final foliagePaint = Paint()..color = const Color(0xFF46A302)..style = PaintingStyle.fill;
+      final highlightPaint = Paint()..color = const Color(0xFF58CC02)..style = PaintingStyle.fill;
+
+      // Bottom layer
+      final p1 = Path()
+        ..moveTo(x - 14 * scale, y + 15 * scale)
+        ..lineTo(x + 14 * scale, y + 15 * scale)
+        ..lineTo(x, y + 2 * scale)
+        ..close();
+      canvas.drawPath(p1, foliagePaint);
+
+      // Middle layer
+      final p2 = Path()
+        ..moveTo(x - 11 * scale, y + 8 * scale)
+        ..lineTo(x + 11 * scale, y + 8 * scale)
+        ..lineTo(x, y - 4 * scale)
+        ..close();
+      canvas.drawPath(p2, foliagePaint);
+
+      // Top layer
+      final p3 = Path()
+        ..moveTo(x - 8 * scale, y + 1 * scale)
+        ..lineTo(x + 8 * scale, y + 1 * scale)
+        ..lineTo(x, y - 10 * scale)
+        ..close();
+      canvas.drawPath(p3, highlightPaint);
+    }
+
+    // Round Oak Tree helper (cloud-like green circles + trunk)
+    void drawOakTree(double x, double y, double scale) {
+      final trunkPaint = Paint()..color = const Color(0xFF78350F)..style = PaintingStyle.fill;
+      canvas.drawRect(Rect.fromLTWH(x - 3 * scale, y + 10 * scale, 6 * scale, 10 * scale), trunkPaint);
+
+      final leafPaint = Paint()..color = const Color(0xFF58CC02)..style = PaintingStyle.fill;
+      final shadowLeafPaint = Paint()..color = const Color(0xFF46A302)..style = PaintingStyle.fill;
+
+      canvas.drawCircle(Offset(x - 6 * scale, y + 4 * scale), 9 * scale, shadowLeafPaint);
+      canvas.drawCircle(Offset(x + 6 * scale, y + 4 * scale), 9 * scale, shadowLeafPaint);
+      canvas.drawCircle(Offset(x, y - 4 * scale), 10 * scale, leafPaint);
+      canvas.drawCircle(Offset(x - 4 * scale, y), 8 * scale, leafPaint);
+      canvas.drawCircle(Offset(x + 4 * scale, y), 8 * scale, leafPaint);
+    }
+
+    // River Pebble/Rock helper (smooth rounded pebbles)
+    void drawRock(double x, double y, double r) {
+      final rockPaint = Paint()..color = const Color(0xFF94A3B8)..style = PaintingStyle.fill;
+      final rockEdge = Paint()..color = const Color(0xFF64748B)..style = PaintingStyle.fill;
+      canvas.drawOval(Rect.fromCenter(center: Offset(x, y + 2), width: r * 2.2, height: r * 1.5), rockEdge);
+      canvas.drawOval(Rect.fromCenter(center: Offset(x, y), width: r * 2.2, height: r * 1.4), rockPaint);
+    }
+
+    // Draw flora around the trail
+    drawPineTree(42, 120, 1.1);
+    drawPineTree(275, 130, 1.0);
+    drawPineTree(38, 290, 0.9);
+    drawOakTree(280, 310, 1.1);
+    drawOakTree(25, 360, 1.0);
+    drawOakTree(295, 70, 0.9);
+
+    // River pebbles
+    drawRock(135, 415, 6);
+    drawRock(150, 420, 8);
+    drawRock(260, 275, 7);
+    drawRock(275, 270, 5);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+}
+
+// =============================================================================
+// ISLAMIC STAR PATTERN PAINTER (Header Vector Motif, Flat, ExcludeSemantics)
+// =============================================================================
+
 class IslamicStarPatternPainter extends CustomPainter {
   const IslamicStarPatternPainter({required this.tintColor});
   final Color tintColor;
@@ -98,60 +615,552 @@ class IslamicStarPatternPainter extends CustomPainter {
       canvas.drawPath(path, paint);
     }
 
-    draw8PointStar(size.width - 38, size.height * 0.45, 36);
-    draw8PointStar(size.width - 95, size.height * 0.72, 20);
-    draw8PointStar(size.width - 25, size.height * 0.82, 14);
-    draw8PointStar(size.width - 120, size.height * 0.30, 14);
-
-    final crescentPath = Path()
-      ..addOval(Rect.fromCircle(center: Offset(size.width - 70, 24), radius: 16));
-    final cutout = Path()
-      ..addOval(Rect.fromCircle(center: Offset(size.width - 64, 21), radius: 14));
-    final diff = Path.combine(PathOperation.difference, crescentPath, cutout);
-    canvas.drawPath(diff, paint);
+    draw8PointStar(size.width - 32, size.height * 0.45, 30);
+    draw8PointStar(size.width - 80, size.height * 0.72, 16);
+    draw8PointStar(size.width - 20, size.height * 0.85, 12);
   }
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 
-/// Mosque Silhouette with Dome and Minaret for Quran Header
-class MosqueSilhouettePainter extends CustomPainter {
-  const MosqueSilhouettePainter({required this.tintColor});
-  final Color tintColor;
+// =============================================================================
+// SCREEN 1: QAIDA ADVENTURE MAP JOURNEY SCREEN (Full 360x800 Ref-3 Translation)
+// =============================================================================
+
+class AdventureMapScreenView extends StatelessWidget {
+  const AdventureMapScreenView({super.key, required this.isHindi});
+  final bool isHindi;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 360,
+      height: 800,
+      decoration: BoxDecoration(
+        color: StyleKitColors.deviceBg,
+        borderRadius: BorderRadius.circular(32),
+        border: Border.all(color: const Color(0xFFCBD5E1), width: 2),
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: Column(
+        children: [
+          // ── Device Top Status Bar ──
+          _buildPhoneStatusBar(),
+
+          // ── Floating Top Status Capsules Bar (Ref-3) ──
+          _buildFloatingStatusBar(isHindi: isHindi),
+
+          // ── Module Header Panel with Islamic Motif (Duolingo Soft Green) ──
+          _buildModuleHeaderPanel(isHindi: isHindi),
+
+          // ── Interactive Adventure Map Viewport ──
+          Expanded(
+            child: Stack(
+              children: [
+                // 1. Map Canvas (Island, River, Winding Road)
+                const Positioned.fill(
+                  child: CustomPaint(
+                    painter: AdventureMapLandscapePainter(),
+                  ),
+                ),
+
+                // 2. Clean 2D Planted Flora (Trees, River Pebbles)
+                const Positioned.fill(
+                  child: CustomPaint(
+                    painter: MapFloraPainter(),
+                  ),
+                ),
+
+                // 3. Wooden Bridge Spanning Over the River Crossing
+                Positioned(
+                  left: 146,
+                  top: 236,
+                  child: Transform.rotate(
+                    angle: -0.32,
+                    child: const LocalAssetWidget(
+                      path: 'assets/figma/illustrations/map/map_bridge.svg',
+                      width: 66,
+                      height: 56,
+                    ),
+                  ),
+                ),
+
+                // Signboard at Trailhead (Node 1)
+                const Positioned(
+                  left: 18,
+                  top: 405,
+                  child: LocalAssetWidget(
+                    path: 'assets/figma/illustrations/map/map_signboard.svg',
+                    width: 38,
+                    height: 38,
+                  ),
+                ),
+
+                // Garden Pavilion at Summit Destination (Node 5)
+                const Positioned(
+                  right: 18,
+                  top: 20,
+                  child: LocalAssetWidget(
+                    path: 'assets/figma/illustrations/map/garden_pavilion.svg',
+                    width: 54,
+                    height: 54,
+                  ),
+                ),
+
+                // Highland Pine Tree
+                const Positioned(
+                  left: 68,
+                  top: 175,
+                  child: LocalAssetWidget(
+                    path: 'assets/figma/illustrations/map/garden_tree_pine.svg',
+                    width: 46,
+                    height: 46,
+                  ),
+                ),
+
+                // Riverbank Oak Tree
+                const Positioned(
+                  right: 34,
+                  top: 275,
+                  child: LocalAssetWidget(
+                    path: 'assets/figma/illustrations/map/garden_tree_oak.svg',
+                    width: 44,
+                    height: 44,
+                  ),
+                ),
+
+                // River Rocks
+                const Positioned(
+                  left: 14,
+                  top: 348,
+                  child: LocalAssetWidget(
+                    path: 'assets/figma/illustrations/map/map_rocks.svg',
+                    width: 44,
+                    height: 44,
+                  ),
+                ),
+
+                // 4. The 5 Path Nodes (Large 3D Hexagon Pedestals + Stars / "Go!" + Labels)
+                // Node 1: Completed / Mastered (Trailhead)
+                Positioned(
+                  left: 58,
+                  top: 395,
+                  child: _buildMapNode(
+                    nodeNumber: isHindi ? '१' : '1',
+                    label: isHindi ? '१: वर्णमाला' : '1: Alphabet',
+                    state: _NodeState.complete,
+                    starCount: 3,
+                  ),
+                ),
+
+                // Node 2: Completed (River Approach)
+                Positioned(
+                  left: 92,
+                  top: 295,
+                  child: _buildMapNode(
+                    nodeNumber: isHindi ? '२' : '2',
+                    label: isHindi ? '२: स्वर' : '2: Vowels',
+                    state: _NodeState.complete,
+                    starCount: 2,
+                  ),
+                ),
+
+                // Node 3: Current Active (User's Next Level!)
+                Positioned(
+                  left: 202,
+                  top: 190,
+                  child: _buildMapNode(
+                    nodeNumber: isHindi ? '३' : '3',
+                    label: isHindi ? '३: हरकत' : '3: Harakat',
+                    state: _NodeState.current,
+                    isHindi: isHindi,
+                  ),
+                ),
+
+                // Node 4: Locked (Highland Trail)
+                Positioned(
+                  left: 88,
+                  top: 105,
+                  child: _buildMapNode(
+                    nodeNumber: isHindi ? '४' : '4',
+                    label: isHindi ? '४: तनवीन' : '4: Tanween',
+                    state: _NodeState.locked,
+                  ),
+                ),
+
+                // Node 5: Locked (Summit Milestone)
+                Positioned(
+                  left: 208,
+                  top: 20,
+                  child: _buildMapNode(
+                    nodeNumber: isHindi ? '५' : '5',
+                    label: isHindi ? '५: सुकून' : '5: Sukoon',
+                    state: _NodeState.locked,
+                  ),
+                ),
+
+                // 5. Floating Level Milestone Bottom Card (Ref-3)
+                Positioned(
+                  left: 12,
+                  right: 12,
+                  bottom: 72,
+                  child: _buildMilestoneBottomCard(isHindi: isHindi),
+                ),
+
+                // 6. Floating Bottom Navigation Dock (Ref-3)
+                Positioned(
+                  left: 12,
+                  right: 12,
+                  bottom: 10,
+                  child: _buildFloatingBottomDock(activeTab: 1, isHindi: isHindi),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildModuleHeaderPanel({required bool isHindi}) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+      decoration: BoxDecoration(
+        color: StyleKitColors.qaidaSoftEdge,
+        borderRadius: BorderRadius.circular(18),
+      ),
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 3),
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          color: StyleKitColors.qaidaSoft,
+          borderRadius: BorderRadius.circular(18),
+        ),
+        child: Stack(
+          children: [
+            const Positioned.fill(
+              child: ExcludeSemantics(
+                child: CustomPaint(
+                  painter: IslamicStarPatternPainter(
+                    tintColor: StyleKitColors.qaidaIllus,
+                  ),
+                ),
+              ),
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          isHindi ? 'नूरानी क़ायदा' : 'Noorani Qaida',
+                          style: const TextStyle(
+                            fontFamily: 'Baloo2',
+                            fontSize: 15,
+                            fontWeight: FontWeight.w800,
+                            color: StyleKitColors.qaidaText,
+                          ),
+                        ),
+                        Text(
+                          isHindi ? 'चरण ३: हरकत और अलफ़' : 'Step 3: Harakat & Vowels',
+                          style: const TextStyle(
+                            fontFamily: 'Baloo2',
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600,
+                            color: StyleKitColors.duoGreenDark,
+                          ),
+                        ),
+                      ],
+                    ),
+                    // Segmented View Switch (Map / List)
+                    Container(
+                      padding: const EdgeInsets.all(3),
+                      decoration: BoxDecoration(
+                        color: StyleKitColors.white,
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(color: StyleKitColors.qaidaSoftEdge, width: 1.5),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+                            decoration: BoxDecoration(
+                              color: StyleKitColors.qaidaDark,
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            child: Text(
+                              isHindi ? 'नक्शा' : 'Map',
+                              style: const TextStyle(
+                                fontFamily: 'Baloo2',
+                                fontSize: 10.5,
+                                fontWeight: FontWeight.w700,
+                                color: StyleKitColors.white,
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                            child: Text(
+                              isHindi ? 'सूची' : 'List',
+                              style: const TextStyle(
+                                fontFamily: 'Baloo2',
+                                fontSize: 10.5,
+                                fontWeight: FontWeight.w700,
+                                color: StyleKitColors.qaidaText,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 6),
+                // Flat Duolingo Progress Bar
+                Row(
+                  children: [
+                    Expanded(
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(6),
+                        child: Container(
+                          height: 8,
+                          color: StyleKitColors.white,
+                          child: FractionallySizedBox(
+                            alignment: Alignment.centerLeft,
+                            widthFactor: 0.60,
+                            child: Container(color: StyleKitColors.qaidaDark),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      isHindi ? '३/५ पूर्ण' : '3/5 Done',
+                      style: const TextStyle(
+                        fontFamily: 'Baloo2',
+                        fontSize: 10.5,
+                        fontWeight: FontWeight.w700,
+                        color: StyleKitColors.qaidaText,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMapNode({
+    required String nodeNumber,
+    required String label,
+    required _NodeState state,
+    int starCount = 0,
+    bool isHindi = false,
+    Widget? customIcon,
+  }) {
+    Color fillColor;
+    Color edgeColor;
+    Widget iconWidget;
+
+    switch (state) {
+      case _NodeState.complete:
+        fillColor = StyleKitColors.nodeComplete;
+        edgeColor = StyleKitColors.nodeCompleteEdge;
+        iconWidget = customIcon ?? const Icon(Icons.check_rounded, color: Colors.white, size: 26);
+        break;
+      case _NodeState.current:
+        fillColor = StyleKitColors.nodeCurrent;
+        edgeColor = StyleKitColors.nodeCurrentEdge;
+        iconWidget = customIcon ?? const Icon(Icons.play_arrow_rounded, color: Colors.white, size: 30);
+        break;
+      case _NodeState.locked:
+        fillColor = StyleKitColors.nodeLocked;
+        edgeColor = StyleKitColors.nodeLockedEdge;
+        iconWidget = customIcon ?? const Icon(Icons.lock_rounded, color: Color(0xFF64748B), size: 22);
+        break;
+    }
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        // 1. Above Node: Floating "Go!" Badge (for current) OR Stars (for completed)
+        if (state == _NodeState.current) ...[
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+            decoration: BoxDecoration(
+              color: StyleKitColors.textDark,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Text(
+              isHindi ? 'Go! शुरू' : 'Go!',
+              style: const TextStyle(
+                fontFamily: 'Baloo2',
+                fontSize: 11,
+                fontWeight: FontWeight.w900,
+                color: Colors.white,
+              ),
+            ),
+          ),
+          // Downward pointer triangle
+          const CustomPaint(
+            size: Size(10, 5),
+            painter: _DownwardTrianglePainter(color: StyleKitColors.textDark),
+          ),
+          const SizedBox(height: 2),
+        ] else if (state == _NodeState.complete) ...[
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: List.generate(
+              starCount,
+              (i) => const Icon(Icons.star_rounded, color: Color(0xFFFFB600), size: 15),
+            ),
+          ),
+          const SizedBox(height: 2),
+        ] else ...[
+          const SizedBox(height: 18),
+        ],
+
+        // 2. Large Tactile 3D Hexagon Pedestal (56x52)
+        CustomPaint(
+          size: const Size(56, 52),
+          painter: HexagonPedestalPainter(
+            fillColor: fillColor,
+            edgeColor: edgeColor,
+            edgeHeight: 5,
+          ),
+          child: SizedBox(
+            width: 56,
+            height: 47,
+            child: Center(child: iconWidget),
+          ),
+        ),
+
+        const SizedBox(height: 4),
+
+        // 3. Node Label Pill with 3D bottom edge
+        Container(
+          decoration: BoxDecoration(
+            color: const Color(0xFFCBD5E1),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Container(
+            margin: const EdgeInsets.only(bottom: 2),
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+            decoration: BoxDecoration(
+              color: StyleKitColors.white,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Text(
+              label,
+              style: TextStyle(
+                fontFamily: 'Baloo2',
+                fontSize: 10,
+                fontWeight: FontWeight.w700,
+                color: state == _NodeState.locked ? StyleKitColors.textSubtle : StyleKitColors.textDark,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildMilestoneBottomCard({required bool isHindi}) {
+    return Container(
+      decoration: BoxDecoration(
+        color: const Color(0xFFCBD5E1),
+        borderRadius: BorderRadius.circular(18),
+      ),
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 3),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        decoration: BoxDecoration(
+          color: StyleKitColors.white,
+          borderRadius: BorderRadius.circular(18),
+        ),
+        child: Row(
+          children: [
+            const LocalAssetWidget(
+              path: 'assets/figma/badges/badge_shield_gold.svg',
+              width: 40,
+              height: 40,
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    isHindi ? 'शुरुआती स्तर १' : 'Beginner Level 1',
+                    style: const TextStyle(
+                      fontFamily: 'Baloo2',
+                      fontSize: 13,
+                      fontWeight: FontWeight.w800,
+                      color: StyleKitColors.textDark,
+                    ),
+                  ),
+                  Text(
+                    isHindi ? 'बुनियादी अरबी अक्षर व मखरज' : 'Master letters & phonetics',
+                    style: const TextStyle(
+                      fontFamily: 'Baloo2',
+                      fontSize: 10.5,
+                      fontWeight: FontWeight.w600,
+                      color: StyleKitColors.textMuted,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            EdgeButton(
+              fillColor: StyleKitColors.duoGreen,
+              edgeColor: StyleKitColors.duoGreenDark,
+              borderRadius: 14,
+              edgeHeight: 2.5,
+              minHeight: 34,
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+              child: Text(
+                isHindi ? 'जारी रखें' : 'Continue',
+                style: const TextStyle(
+                  fontFamily: 'Baloo2',
+                  fontSize: 12,
+                  fontWeight: FontWeight.w800,
+                  color: StyleKitColors.white,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+enum _NodeState { complete, current, locked }
+
+class _DownwardTrianglePainter extends CustomPainter {
+  const _DownwardTrianglePainter({required this.color});
+  final Color color;
 
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = tintColor
+      ..color = color
       ..style = PaintingStyle.fill;
-
     final path = Path();
-    final baseH = size.height;
-    final right = size.width - 15;
-
-    // Minaret (far right)
-    path.moveTo(right - 18, baseH);
-    path.lineTo(right - 18, baseH - 60);
-    path.lineTo(right - 9, baseH - 80);
-    path.lineTo(right, baseH - 60);
-    path.lineTo(right, baseH);
-
-    // Central Mosque Dome
-    final domeCenterX = right - 60;
-    final domeCenterY = baseH - 10;
-    const domeR = 36.0;
-    path.moveTo(domeCenterX - domeR, baseH);
-    path.arcTo(
-      Rect.fromCircle(center: Offset(domeCenterX, domeCenterY), radius: domeR),
-      math.pi,
-      math.pi,
-      false,
-    );
-    path.lineTo(domeCenterX, domeCenterY - domeR - 8);
-    path.lineTo(domeCenterX + 2, domeCenterY - domeR);
-    path.lineTo(domeCenterX + domeR, baseH);
-
+    path.moveTo(0, 0);
+    path.lineTo(size.width, 0);
+    path.lineTo(size.width / 2, size.height);
     path.close();
     canvas.drawPath(path, paint);
   }
@@ -160,428 +1169,278 @@ class MosqueSilhouettePainter extends CustomPainter {
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 
-/// Crescent and Hanging Lantern Silhouette for App Shell Header
-class LanternCrescentPainter extends CustomPainter {
-  const LanternCrescentPainter({required this.tintColor});
-  final Color tintColor;
+// =============================================================================
+// SCREEN 2: DAILY LEARNING DASHBOARD (Ref-2 Warm Yellow Header + Duolingo Green)
+// =============================================================================
 
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = tintColor
-      ..style = PaintingStyle.fill;
-
-    final linePaint = Paint()
-      ..color = tintColor
-      ..strokeWidth = 2.0
-      ..style = PaintingStyle.stroke;
-
-    const x1 = 295.0;
-    canvas.drawLine(const Offset(x1, 0), const Offset(x1, 30), linePaint);
-    final lantern1 = Path()
-      ..moveTo(x1 - 7, 30)
-      ..lineTo(x1 + 7, 30)
-      ..lineTo(x1 + 10, 44)
-      ..lineTo(x1, 58)
-      ..lineTo(x1 - 10, 44)
-      ..close();
-    canvas.drawPath(lantern1, paint);
-
-    const x2 = 325.0;
-    canvas.drawLine(const Offset(x2, 0), const Offset(x2, 18), linePaint);
-    final lantern2 = Path()
-      ..moveTo(x2 - 5, 18)
-      ..lineTo(x2 + 5, 18)
-      ..lineTo(x2 + 8, 30)
-      ..lineTo(x2, 40)
-      ..lineTo(x2 - 8, 30)
-      ..close();
-    canvas.drawPath(lantern2, paint);
-
-    final crescent = Path()
-      ..addOval(const Rect.fromLTWH(245, 15, 30, 30));
-    final cut = Path()
-      ..addOval(const Rect.fromLTWH(252, 13, 27, 27));
-    final moon = Path.combine(PathOperation.difference, crescent, cut);
-    canvas.drawPath(moon, paint);
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
-}
-
-// -----------------------------------------------------------------------------
-// 3D Bottom Edge Tappable Control (No shadows, flat edge, press translation)
-// -----------------------------------------------------------------------------
-
-class EdgeButton extends StatefulWidget {
-  const EdgeButton({
-    super.key,
-    required this.child,
-    required this.fillColor,
-    required this.edgeColor,
-    this.edgeHeight = 4.0,
-    this.borderRadius = 16.0,
-    this.onTap,
-    this.minHeight = 48.0,
-    this.padding = const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-  });
-
-  final Widget child;
-  final Color fillColor;
-  final Color edgeColor;
-  final double edgeHeight;
-  final double borderRadius;
-  final VoidCallback? onTap;
-  final double minHeight;
-  final EdgeInsets padding;
-
-  @override
-  State<EdgeButton> createState() => _EdgeButtonState();
-}
-
-class _EdgeButtonState extends State<EdgeButton> {
-  bool _pressed = false;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTapDown: (_) => setState(() => _pressed = true),
-      onTapUp: (_) {
-        setState(() => _pressed = false);
-        widget.onTap?.call();
-      },
-      onTapCancel: () => setState(() => _pressed = false),
-      child: Container(
-        decoration: BoxDecoration(
-          color: widget.edgeColor,
-          borderRadius: BorderRadius.circular(widget.borderRadius),
-        ),
-        child: Container(
-          margin: EdgeInsets.only(
-            bottom: _pressed ? 0 : widget.edgeHeight,
-            top: _pressed ? widget.edgeHeight : 0,
-          ),
-          padding: widget.padding,
-          constraints: BoxConstraints(minHeight: widget.minHeight),
-          decoration: BoxDecoration(
-            color: widget.fillColor,
-            borderRadius: BorderRadius.circular(widget.borderRadius),
-          ),
-          alignment: Alignment.center,
-          child: widget.child,
-        ),
-      ),
-    );
-  }
-}
-
-// -----------------------------------------------------------------------------
-// Hexagon Painter for Path Nodes (3D bottom edge, clean flat bevel)
-// -----------------------------------------------------------------------------
-
-class HexagonPainter extends CustomPainter {
-  HexagonPainter({required this.fillColor, required this.edgeColor, this.edgeHeight = 4.0});
-  final Color fillColor;
-  final Color edgeColor;
-  final double edgeHeight;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final w = size.width;
-    final h = size.height - edgeHeight;
-
-    // Draw bottom edge
-    final edgePath = Path();
-    edgePath.moveTo(w * 0.5, h);
-    edgePath.lineTo(w, h * 0.75);
-    edgePath.lineTo(w, h * 0.75 + edgeHeight);
-    edgePath.lineTo(w * 0.5, h + edgeHeight);
-    edgePath.lineTo(0, h * 0.75 + edgeHeight);
-    edgePath.lineTo(0, h * 0.75);
-    edgePath.close();
-    canvas.drawPath(edgePath, Paint()..color = edgeColor);
-
-    // Draw main hexagon face
-    final facePath = Path();
-    facePath.moveTo(w * 0.5, 0);
-    facePath.lineTo(w, h * 0.25);
-    facePath.lineTo(w, h * 0.75);
-    facePath.lineTo(w * 0.5, h);
-    facePath.lineTo(0, h * 0.75);
-    facePath.lineTo(0, h * 0.25);
-    facePath.close();
-    canvas.drawPath(facePath, Paint()..color = fillColor);
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
-}
-
-// -----------------------------------------------------------------------------
-// Header Panel Component (Aligned with ref-2 & ref-4)
-// -----------------------------------------------------------------------------
-
-class StyleKitHeaderPanel extends StatelessWidget {
-  const StyleKitHeaderPanel({
-    super.key,
-    required this.panelColor,
-    required this.textColor,
-    required this.title,
-    required this.subtitle,
-    required this.illustrationPainter,
-    required this.streakText,
-    required this.xpText,
-    this.showBack = true,
-  });
-
-  final Color panelColor;
-  final Color textColor;
-  final String title;
-  final String subtitle;
-  final CustomPainter illustrationPainter;
-  final String streakText;
-  final String xpText;
-  final bool showBack;
+class LearningDashboardScreenView extends StatelessWidget {
+  const LearningDashboardScreenView({super.key, required this.isHindi});
+  final bool isHindi;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: double.infinity,
+      width: 360,
+      height: 800,
       decoration: BoxDecoration(
-        color: panelColor,
-        borderRadius: const BorderRadius.only(
-          bottomLeft: Radius.circular(24),
-          bottomRight: Radius.circular(24),
-        ),
+        color: StyleKitColors.deviceBg,
+        borderRadius: BorderRadius.circular(32),
+        border: Border.all(color: const Color(0xFFCBD5E1), width: 2),
       ),
-      child: Stack(
+      clipBehavior: Clip.antiAlias,
+      child: Column(
         children: [
-          Positioned.fill(
-            child: ExcludeSemantics(
-              child: CustomPaint(painter: illustrationPainter),
+          // ── Device Top Status Bar ──
+          _buildPhoneStatusBar(),
+
+          // ── Floating Top Status Capsules Bar (Ref-2 / Ref-3) ──
+          _buildFloatingStatusBar(isHindi: isHindi),
+
+          // ── Scrollable Dashboard Content ──
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(14, 4, 14, 10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // 1. Gentle Mint Green Islamic Header Panel
+                  _buildMintGreenHeader(isHindi: isHindi),
+                  const SizedBox(height: 10),
+
+                  // 2. Ref-2 Prominent Level Card with Thick Duolingo Green Progress Bar
+                  _buildRef2LevelCard(isHindi: isHindi),
+                  const SizedBox(height: 14),
+
+                  // 3. Category Squircle Icon Tiles (Clean Figma Icons)
+                  Text(
+                    isHindi ? 'शिक्षा श्रेणियां' : 'Learning Tracks',
+                    style: const TextStyle(
+                      fontFamily: 'Baloo2',
+                      fontSize: 13,
+                      fontWeight: FontWeight.w800,
+                      color: StyleKitColors.textDark,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _buildCategoryTile(
+                          iconPath: 'assets/figma/icons/islamic/ic_book.svg',
+                          title: isHindi ? 'क़ायदा' : 'Qaida',
+                          bg: StyleKitColors.qaidaSoft,
+                          edge: StyleKitColors.qaidaSoftEdge,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: _buildCategoryTile(
+                          iconPath: 'assets/figma/icons/islamic/ic_mosque.svg',
+                          title: isHindi ? 'क़ुरआन' : 'Quran',
+                          bg: StyleKitColors.quranSoft,
+                          edge: StyleKitColors.quranSoftEdge,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: _buildCategoryTile(
+                          iconPath: 'assets/figma/icons/islamic/ic_lantern.svg',
+                          title: isHindi ? 'दुआएं' : 'Duas',
+                          bg: const Color(0xFFE0F2FE),
+                          edge: const Color(0xFFBAE6FD),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: _buildCategoryTile(
+                          iconPath: 'assets/figma/icons/game/ic_trophy.svg',
+                          title: isHindi ? 'प्रगति' : 'Progress',
+                          bg: const Color(0xFFF3E8FF),
+                          edge: const Color(0xFFDDD6FE),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 14),
+
+                  // 4. Daily Challenges / Lesson Rows (Ref-2 + Ref-4)
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        isHindi ? 'आज के दैनिक सबक' : "Today's Lessons",
+                        style: const TextStyle(
+                          fontFamily: 'Baloo2',
+                          fontSize: 13,
+                          fontWeight: FontWeight.w800,
+                          color: StyleKitColors.textDark,
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: StyleKitColors.qaidaSoft,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Text(
+                          isHindi ? '३ शेष' : '3 Pending',
+                          style: const TextStyle(
+                            fontFamily: 'Baloo2',
+                            fontSize: 10.5,
+                            fontWeight: FontWeight.w700,
+                            color: StyleKitColors.duoGreenDark,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+
+                  // Challenge 1: Arabic Harakat
+                  _buildLessonRow(
+                    leadingWidget: _buildSquircleBadge('بَ', StyleKitColors.qaidaSoft, StyleKitColors.duoGreenDark),
+                    title: isHindi ? 'सबक ३: हरकत (ज़बर)' : 'Lesson 3: Harakat (Fatha)',
+                    subtitle: isHindi ? 'लघु स्वर व उच्चारण' : 'Short vowels & pronunciation',
+                    rewardText: isHindi ? '+१० अंक' : '+10 XP',
+                    actionText: isHindi ? 'शुरू' : 'Start',
+                    actionColor: StyleKitColors.duoGreen,
+                    actionEdge: StyleKitColors.duoGreenDark,
+                  ),
+                  const SizedBox(height: 8),
+
+                  // Challenge 2: Vocal Practice
+                  _buildLessonRow(
+                    leadingWidget: const FigmaSvgWidget(
+                      path: 'assets/figma/icons/game/ic_sound.svg',
+                      width: 22,
+                      height: 22,
+                    ),
+                    title: isHindi ? 'मखरज कंठ अभ्यास' : 'Makharij Throat Drill',
+                    subtitle: isHindi ? 'हलक़ के अक्षर: हा, ख़ा' : 'Throat letters: Ha & Kha',
+                    rewardText: isHindi ? '+१५ अंक' : '+15 XP',
+                    actionText: isHindi ? 'अभ्यास' : 'Drill',
+                    actionColor: StyleKitColors.duoGreen,
+                    actionEdge: StyleKitColors.duoGreenDark,
+                  ),
+                  const SizedBox(height: 8),
+
+                  // Challenge 3: Surah Al-Fatiha
+                  _buildLessonRow(
+                    leadingWidget: const FigmaSvgWidget(
+                      path: 'assets/figma/icons/islamic/ic_star.svg',
+                      width: 22,
+                      height: 22,
+                    ),
+                    title: isHindi ? 'सूरह अल-फ़ातिहा (१-३)' : 'Surah Al-Fatihah (1-3)',
+                    subtitle: isHindi ? 'तजवीद के साथ तिलावत' : 'Tajweed recitation with audio',
+                    rewardText: isHindi ? '+२० अंक' : '+20 XP',
+                    actionText: isHindi ? 'सुनें' : 'Listen',
+                    actionColor: StyleKitColors.quranDark,
+                    actionEdge: StyleKitColors.quranDarkEdge,
+                  ),
+                  const SizedBox(height: 14),
+
+                  // 5. Big Vibrant Duolingo Green Action Button
+                  EdgeButton(
+                    fillColor: StyleKitColors.duoGreen,
+                    edgeColor: StyleKitColors.duoGreenDark,
+                    borderRadius: 24,
+                    edgeHeight: 4,
+                    minHeight: 50,
+                    padding: const EdgeInsets.symmetric(vertical: 11),
+                    child: Text(
+                      isHindi ? 'आज का सबक शुरू करें' : "Start Today's Lesson",
+                      style: const TextStyle(
+                        fontFamily: 'Baloo2',
+                        fontSize: 14,
+                        fontWeight: FontWeight.w900,
+                        color: StyleKitColors.white,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 16, 16, 20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    if (showBack)
-                      Container(
-                        width: 38,
-                        height: 38,
-                        decoration: BoxDecoration(
-                          color: StyleKitColors.white,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Icon(Icons.arrow_back_rounded, color: textColor, size: 22),
-                      )
-                    else
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                        decoration: BoxDecoration(
-                          color: StyleKitColors.white,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Icon(Icons.menu_book_rounded, color: StyleKitColors.qaidaDark, size: 18),
-                            const SizedBox(width: 6),
-                            Text('Little Muslim',
-                                style: TextStyle(
-                                  fontFamily: 'Baloo2',
-                                  fontWeight: FontWeight.w700,
-                                  fontSize: 14,
-                                  color: textColor,
-                                )),
-                          ],
-                        ),
-                      ),
-                    const Spacer(),
-                    // Streak Pill
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                      decoration: BoxDecoration(
-                        color: StyleKitColors.white,
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Icon(Icons.local_fire_department_rounded, color: Color(0xFFEA580C), size: 18),
-                          const SizedBox(width: 4),
-                          Text(streakText,
-                              style: const TextStyle(
-                                fontFamily: 'Baloo2',
-                                fontWeight: FontWeight.w800,
-                                fontSize: 13,
-                                color: StyleKitColors.textDark,
-                              )),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    // XP Pill
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                      decoration: BoxDecoration(
-                        color: StyleKitColors.white,
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Icon(Icons.star_rounded, color: Color(0xFFD97706), size: 18),
-                          const SizedBox(width: 4),
-                          Text(xpText,
-                              style: const TextStyle(
-                                fontFamily: 'Baloo2',
-                                fontWeight: FontWeight.w800,
-                                fontSize: 13,
-                                color: StyleKitColors.textDark,
-                              )),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 18),
-                Text(
-                  title,
-                  style: TextStyle(
-                    fontFamily: 'Baloo2',
-                    fontSize: 22,
-                    fontWeight: FontWeight.w800,
-                    color: textColor,
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  subtitle,
-                  style: TextStyle(
-                    fontFamily: 'Baloo2',
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                    color: textColor.withValues(alpha: 0.85),
-                  ),
-                ),
-              ],
-            ),
+
+          // ── Floating Bottom Navigation Dock (Home Active) ──
+          Container(
+            padding: const EdgeInsets.fromLTRB(12, 0, 12, 10),
+            child: _buildFloatingBottomDock(activeTab: 0, isHindi: isHindi),
           ),
         ],
       ),
     );
   }
-}
 
-// -----------------------------------------------------------------------------
-// Qaida Map Path with 5 Nodes (Faithfully aligned with ref-3-adventure-map)
-// -----------------------------------------------------------------------------
-
-enum PathNodeState { complete, done, current, locked }
-
-class PathNodeData {
-  const PathNodeData({
-    required this.stepNumber,
-    required this.titleEn,
-    required this.titleHi,
-    required this.state,
-    required this.stars,
-    required this.alignLeft,
-  });
-
-  final int stepNumber;
-  final String titleEn;
-  final String titleHi;
-  final PathNodeState state;
-  final int stars;
-  final bool alignLeft;
-}
-
-class StyleKitAdventureMapSection extends StatelessWidget {
-  const StyleKitAdventureMapSection({super.key, required this.isHindi});
-  final bool isHindi;
-
-  static const nodes = [
-    PathNodeData(
-      stepNumber: 1,
-      titleEn: '1: Isolated Letters',
-      titleHi: '1: हुरूफ़े मुफ़रदात',
-      state: PathNodeState.complete,
-      stars: 3,
-      alignLeft: true,
-    ),
-    PathNodeData(
-      stepNumber: 2,
-      titleEn: '2: Compound Forms',
-      titleHi: '2: हुरूफ़ के रूप',
-      state: PathNodeState.done,
-      stars: 2,
-      alignLeft: false,
-    ),
-    PathNodeData(
-      stepNumber: 3,
-      titleEn: '3: Harakat Vowels',
-      titleHi: '3: हरकत (ज़बर, ज़ेर)',
-      state: PathNodeState.current,
-      stars: 1,
-      alignLeft: true,
-    ),
-    PathNodeData(
-      stepNumber: 4,
-      titleEn: '4: Tanween Double',
-      titleHi: '4: दो ज़बर, दो ज़ेर',
-      state: PathNodeState.locked,
-      stars: 0,
-      alignLeft: false,
-    ),
-    PathNodeData(
-      stepNumber: 5,
-      titleEn: '5: Sukoon & Jazm',
-      titleHi: '5: जज़्म व सकून',
-      state: PathNodeState.locked,
-      stars: 0,
-      alignLeft: true,
-    ),
-  ];
-
-  @override
-  Widget build(BuildContext context) {
+  Widget _buildMintGreenHeader({required bool isHindi}) {
     return Container(
-      width: double.infinity,
       decoration: BoxDecoration(
-        color: StyleKitColors.mapLand,
-        borderRadius: BorderRadius.circular(22),
+        color: StyleKitColors.qaidaSoftEdge,
+        borderRadius: BorderRadius.circular(20),
       ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(22),
-        child: Stack(
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 3),
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: StyleKitColors.qaidaSoft,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Row(
           children: [
-            // Flat vector landscape (Winding blue river + green islands)
-            Positioned.fill(
-              child: ExcludeSemantics(
-                child: CustomPaint(
-                  painter: _AdventureMapLandscapePainter(),
-                ),
+            // 3D Little Muslim Mascot Avatar
+            Container(
+              width: 44,
+              height: 44,
+              decoration: BoxDecoration(
+                color: StyleKitColors.white,
+                shape: BoxShape.circle,
+                border: Border.all(color: StyleKitColors.duoGreen, width: 2),
+              ),
+              clipBehavior: Clip.antiAlias,
+              child: const LocalAssetWidget(
+                path: 'assets/images/mascot_happy.png',
+                width: 44,
+                height: 44,
+                fit: BoxFit.cover,
               ),
             ),
-
-            // Winding Road & Nodes
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+            const SizedBox(width: 12),
+            Expanded(
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  for (int i = 0; i < nodes.length; i++) ...[
-                    _buildWindingNodeRow(nodes[i]),
-                    if (i < nodes.length - 1)
-                      _buildRoadSegment(isCurveLeft: !nodes[i].alignLeft),
-                  ],
+                  Text(
+                    isHindi ? 'अस्सलाम अलैकुम, हमज़ा' : 'Assalamu Alaikum, Hamza',
+                    style: const TextStyle(
+                      fontFamily: 'Baloo2',
+                      fontSize: 14.5,
+                      fontWeight: FontWeight.w800,
+                      color: StyleKitColors.qaidaText,
+                    ),
+                  ),
+                  Text(
+                    isHindi ? 'आज का सबक़ पूरा करने के लिए तैयार?' : 'Ready to master your Qaida lesson?',
+                    style: const TextStyle(
+                      fontFamily: 'Baloo2',
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                      color: StyleKitColors.duoGreenDark,
+                    ),
+                  ),
                 ],
               ),
+            ),
+            // Notification Bell
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: StyleKitColors.white,
+                shape: BoxShape.circle,
+                border: Border.all(color: StyleKitColors.qaidaSoftEdge, width: 1.5),
+              ),
+              child: const Icon(Icons.notifications_rounded, color: StyleKitColors.qaidaText, size: 16),
             ),
           ],
         ),
@@ -589,296 +1448,239 @@ class StyleKitAdventureMapSection extends StatelessWidget {
     );
   }
 
-  Widget _buildRoadSegment({required bool isCurveLeft}) {
-    return SizedBox(
-      height: 32,
-      child: Center(
-        child: Container(
-          width: 32,
-          height: 32,
-          decoration: BoxDecoration(
-            color: StyleKitColors.mapRoad,
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: StyleKitColors.mapRoadEdge, width: 2),
-          ),
-          child: Center(
-            child: Container(
-              width: 3,
-              height: 20,
-              color: StyleKitColors.mapRoadDashes,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildWindingNodeRow(PathNodeData data) {
-    Color fillColor;
-    Color edgeColor;
-    IconData stateIcon;
-    String statusLabelEn;
-    String statusLabelHi;
-
-    switch (data.state) {
-      case PathNodeState.complete:
-        fillColor = StyleKitColors.nodeComplete;
-        edgeColor = StyleKitColors.nodeCompleteEdge;
-        stateIcon = Icons.check_circle_rounded;
-        statusLabelEn = 'Mastered';
-        statusLabelHi = 'पूर्ण';
-        break;
-      case PathNodeState.done:
-        fillColor = StyleKitColors.nodeDone;
-        edgeColor = StyleKitColors.nodeDoneEdge;
-        stateIcon = Icons.check_rounded;
-        statusLabelEn = 'Done';
-        statusLabelHi = 'सम्पन्न';
-        break;
-      case PathNodeState.current:
-        fillColor = StyleKitColors.nodeCurrent;
-        edgeColor = StyleKitColors.nodeCurrentEdge;
-        stateIcon = Icons.play_arrow_rounded;
-        statusLabelEn = 'Start Here';
-        statusLabelHi = 'यहाँ से शुरू करें';
-        break;
-      case PathNodeState.locked:
-        fillColor = StyleKitColors.nodeLocked;
-        edgeColor = StyleKitColors.nodeLockedEdge;
-        stateIcon = Icons.lock_rounded;
-        statusLabelEn = 'Locked';
-        statusLabelHi = 'बंद';
-        break;
-    }
-
-    final isTappable = data.state != PathNodeState.locked;
-    final isCurrent = data.state == PathNodeState.current;
-
-    final nodeWidget = Semantics(
-      label: '${isHindi ? data.titleHi : data.titleEn}: ${isHindi ? statusLabelHi : statusLabelEn}',
-      button: isTappable,
+  Widget _buildRef2LevelCard({required bool isHindi}) {
+    return EdgeCard(
+      padding: const EdgeInsets.all(12),
       child: Column(
-        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Current Go marker badge (Directly from ref-3-adventure-map "Go!")
-          if (isCurrent)
-            Container(
-              margin: const EdgeInsets.only(bottom: 4),
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
-              decoration: BoxDecoration(
-                color: const Color(0xFF1E293B), // Dark pill badge matching ref-3 "Go!"
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Text(
-                isHindi ? 'Go! शुरू' : 'Go!',
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                isHindi ? 'दैनिक अध्ययन लक्ष्य' : 'Daily Study Goal',
                 style: const TextStyle(
                   fontFamily: 'Baloo2',
-                  fontSize: 11,
+                  fontSize: 13,
                   fontWeight: FontWeight.w800,
-                  color: StyleKitColors.white,
+                  color: StyleKitColors.textDark,
                 ),
               ),
-            ),
-          // 3D Hexagon Node
-          SizedBox(
-            width: 66,
-            height: 62,
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                CustomPaint(
-                  size: const Size(66, 62),
-                  painter: HexagonPainter(
-                    fillColor: fillColor,
-                    edgeColor: edgeColor,
-                    edgeHeight: isTappable ? 4.0 : 2.0,
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFEF3C7),
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: const Color(0xFFFDE68A), width: 1),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.local_fire_department_rounded, color: Color(0xFFD97706), size: 14),
+                    const SizedBox(width: 3),
+                    Text(
+                      isHindi ? '५ दिन स्ट्रीक' : '5 Days Streak',
+                      style: const TextStyle(
+                        fontFamily: 'Baloo2',
+                        fontSize: 10,
+                        fontWeight: FontWeight.w700,
+                        color: Color(0xFF92400E),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          // Thick, Rounded Duolingo Green Progress Bar (Height 14px, Ref-2)
+          Row(
+            children: [
+              Expanded(
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: Container(
+                    height: 14,
+                    color: const Color(0xFFE2E8F0),
+                    child: FractionallySizedBox(
+                      alignment: Alignment.centerLeft,
+                      widthFactor: 0.75,
+                      child: Container(color: StyleKitColors.duoGreen),
+                    ),
                   ),
                 ),
-                Padding(
-                  padding: EdgeInsets.only(bottom: isTappable ? 4.0 : 2.0),
-                  child: Icon(stateIcon, color: StyleKitColors.white, size: 28),
+              ),
+              const SizedBox(width: 8),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                decoration: BoxDecoration(
+                  color: StyleKitColors.duoGreenDark,
+                  borderRadius: BorderRadius.circular(8),
                 ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 4),
-          // Node Label & Stars
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-            decoration: BoxDecoration(
-              color: StyleKitColors.white,
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Column(
-              children: [
-                Text(
-                  isHindi ? data.titleHi : data.titleEn,
+                child: Text(
+                  isHindi ? 'स्तर १' : 'Lv 1',
                   style: const TextStyle(
                     fontFamily: 'Baloo2',
-                    fontSize: 11,
-                    fontWeight: FontWeight.w700,
-                    color: StyleKitColors.textDark,
+                    fontSize: 10,
+                    fontWeight: FontWeight.w900,
+                    color: StyleKitColors.white,
                   ),
                 ),
-                if (data.stars > 0)
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      for (int s = 0; s < 3; s++)
-                        Icon(
-                          Icons.star_rounded,
-                          size: 13,
-                          color: s < data.stars ? const Color(0xFFF59E0B) : const Color(0xFFCBD5E1),
-                        ),
-                    ],
-                  ),
-              ],
+              ),
+            ],
+          ),
+          const SizedBox(height: 6),
+          Text(
+            isHindi ? '१५/२० मिनट पूर्ण (७५%)' : '15 of 20 mins completed today (75%)',
+            style: const TextStyle(
+              fontFamily: 'Baloo2',
+              fontSize: 10.5,
+              fontWeight: FontWeight.w600,
+              color: StyleKitColors.textMuted,
             ),
           ),
         ],
       ),
     );
-
-    return Align(
-      alignment: data.alignLeft ? Alignment.centerLeft : Alignment.centerRight,
-      child: Padding(
-        padding: EdgeInsets.only(
-          left: data.alignLeft ? 28 : 0,
-          right: data.alignLeft ? 0 : 28,
-        ),
-        child: nodeWidget,
-      ),
-    );
-  }
-}
-
-class _AdventureMapLandscapePainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    // 1. Winding River (Ref-3)
-    final riverPaint = Paint()
-      ..color = StyleKitColors.mapWater
-      ..style = PaintingStyle.fill;
-    final riverPath = Path();
-    riverPath.moveTo(size.width * 0.45, 0);
-    riverPath.cubicTo(
-      size.width * 0.85, size.height * 0.25,
-      size.width * 0.05, size.height * 0.55,
-      size.width * 0.65, size.height,
-    );
-    riverPath.lineTo(size.width * 0.95, size.height);
-    riverPath.cubicTo(
-      size.width * 0.35, size.height * 0.55,
-      size.width * 1.10, size.height * 0.25,
-      size.width * 0.75, 0,
-    );
-    riverPath.close();
-    canvas.drawPath(riverPath, riverPaint);
-
-    // 2. Flat Green Hill Islands
-    final hillPaint = Paint()
-      ..color = StyleKitColors.mapLandDark
-      ..style = PaintingStyle.fill;
-    canvas.drawOval(
-      Rect.fromCenter(center: Offset(30, size.height * 0.3), width: 90, height: 60),
-      hillPaint,
-    );
-    canvas.drawOval(
-      Rect.fromCenter(center: Offset(size.width - 25, size.height * 0.7), width: 85, height: 55),
-      hillPaint,
-    );
-
-    // 3. Simple Flat Vector Tree Shapes (Cone trees)
-    void drawFlatTree(double cx, double cy, double h) {
-      final treePaint = Paint()..color = const Color(0xFF15803D);
-      final trunkPaint = Paint()..color = const Color(0xFF78350F);
-      canvas.drawRect(Rect.fromLTWH(cx - 2, cy, 4, h * 0.3), trunkPaint);
-      final tree = Path()
-        ..moveTo(cx, cy - h * 0.7)
-        ..lineTo(cx + h * 0.4, cy)
-        ..lineTo(cx - h * 0.4, cy)
-        ..close();
-      canvas.drawPath(tree, treePaint);
-    }
-
-    drawFlatTree(24, 70, 20);
-    drawFlatTree(46, 85, 16);
-    drawFlatTree(size.width - 32, size.height * 0.45, 18);
-    drawFlatTree(size.width - 48, size.height * 0.48, 14);
-    drawFlatTree(38, size.height * 0.82, 18);
   }
 
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
-}
-
-// -----------------------------------------------------------------------------
-// Level Badge Card Component (Directly modeled from ref-3 bottom card)
-// -----------------------------------------------------------------------------
-
-class StyleKitLevelBadgeCard extends StatelessWidget {
-  const StyleKitLevelBadgeCard({super.key, required this.isHindi});
-  final bool isHindi;
-
-  @override
-  Widget build(BuildContext context) {
+  Widget _buildCategoryTile({
+    required String iconPath,
+    required String title,
+    required Color bg,
+    required Color edge,
+  }) {
     return Container(
-      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: StyleKitColors.surface,
-        borderRadius: BorderRadius.circular(22),
+        color: edge,
+        borderRadius: BorderRadius.circular(16),
       ),
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 2.5),
+        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+        decoration: BoxDecoration(
+          color: bg,
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            FigmaSvgWidget(path: iconPath, width: 28, height: 28),
+            const SizedBox(height: 3),
+            Text(
+              title,
+              style: const TextStyle(
+                fontFamily: 'Baloo2',
+                fontSize: 11,
+                fontWeight: FontWeight.w700,
+                color: StyleKitColors.textDark,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSquircleBadge(String text, Color bg, Color textColor) {
+    return Container(
+      width: 32,
+      height: 32,
+      decoration: BoxDecoration(
+        color: bg,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      alignment: Alignment.center,
+      child: Text(
+        text,
+        style: TextStyle(
+          fontSize: 17,
+          fontWeight: FontWeight.bold,
+          color: textColor,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLessonRow({
+    required Widget leadingWidget,
+    required String title,
+    required String subtitle,
+    required String rewardText,
+    required String actionText,
+    required Color actionColor,
+    required Color actionEdge,
+  }) {
+    return EdgeCard(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
       child: Row(
         children: [
-          // Hexagon Emblem Badge
           Container(
-            width: 50,
-            height: 50,
+            width: 34,
+            height: 34,
             decoration: BoxDecoration(
-              color: StyleKitColors.quranSoft,
-              borderRadius: BorderRadius.circular(14),
+              color: const Color(0xFFF1F5F9),
+              borderRadius: BorderRadius.circular(10),
             ),
-            child: const Icon(Icons.workspace_premium_rounded, color: StyleKitColors.quranDark, size: 28),
+            alignment: Alignment.center,
+            child: leadingWidget,
           ),
-          const SizedBox(width: 14),
+          const SizedBox(width: 8),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  isHindi ? 'शुरुआती स्तर 1' : 'Beginner Level 1',
+                  title,
                   style: const TextStyle(
                     fontFamily: 'Baloo2',
-                    fontSize: 15,
+                    fontSize: 12,
                     fontWeight: FontWeight.w800,
                     color: StyleKitColors.textDark,
                   ),
                 ),
                 Text(
-                  isHindi ? 'बुनियादी अरबी अक्षर व मखरज' : 'Learners gain authentic Arabic phonetics',
+                  subtitle,
                   style: const TextStyle(
                     fontFamily: 'Baloo2',
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
+                    fontSize: 10,
+                    fontWeight: FontWeight.w600,
                     color: StyleKitColors.textMuted,
                   ),
                 ),
               ],
             ),
           ),
-          // View Action Button with 3D Edge
-          EdgeButton(
-            fillColor: StyleKitColors.qaidaDark,
-            edgeColor: StyleKitColors.qaidaDarkEdge,
-            edgeHeight: 3,
-            minHeight: 36,
-            borderRadius: 14,
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+            margin: const EdgeInsets.only(right: 6),
+            decoration: BoxDecoration(
+              color: const Color(0xFFFEF3C7),
+              borderRadius: BorderRadius.circular(6),
+            ),
             child: Text(
-              isHindi ? 'देखें' : 'View',
+              rewardText,
               style: const TextStyle(
                 fontFamily: 'Baloo2',
-                fontSize: 13,
+                fontSize: 10,
+                fontWeight: FontWeight.w800,
+                color: Color(0xFF92400E),
+              ),
+            ),
+          ),
+          EdgeButton(
+            fillColor: actionColor,
+            edgeColor: actionEdge,
+            borderRadius: 12,
+            edgeHeight: 2.5,
+            minHeight: 30,
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+            child: Text(
+              actionText,
+              style: const TextStyle(
+                fontFamily: 'Baloo2',
+                fontSize: 11,
                 fontWeight: FontWeight.w800,
                 color: StyleKitColors.white,
               ),
@@ -891,671 +1693,203 @@ class StyleKitLevelBadgeCard extends StatelessWidget {
 }
 
 // =============================================================================
-// FIGMA SVG ASSET WIDGET
+// SHARED SHELL WIDGETS (Phone Status Bar, Floating Capsules, Floating Nav Dock)
 // =============================================================================
 
-class FigmaSvgWidget extends StatelessWidget {
-  const FigmaSvgWidget({
-    super.key,
-    required this.path,
-    this.width,
-    this.height,
-    this.fit = BoxFit.contain,
-  });
+Widget _buildPhoneStatusBar() {
+  return Container(
+    padding: const EdgeInsets.fromLTRB(18, 8, 18, 4),
+    child: const Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          '9:41',
+          style: TextStyle(
+            fontFamily: 'Baloo2',
+            fontSize: 12,
+            fontWeight: FontWeight.w800,
+            color: StyleKitColors.textDark,
+          ),
+        ),
+        Row(
+          children: [
+            Icon(Icons.signal_cellular_alt_rounded, size: 14, color: StyleKitColors.textDark),
+            SizedBox(width: 4),
+            Icon(Icons.wifi_rounded, size: 14, color: StyleKitColors.textDark),
+            SizedBox(width: 4),
+            Icon(Icons.battery_full_rounded, size: 16, color: StyleKitColors.textDark),
+          ],
+        ),
+      ],
+    ),
+  );
+}
 
-  final String path;
-  final double? width;
-  final double? height;
-  final BoxFit fit;
+Widget _buildFloatingStatusBar({required bool isHindi}) {
+  return Container(
+    margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+    decoration: BoxDecoration(
+      color: const Color(0xFFCBD5E1),
+      borderRadius: BorderRadius.circular(20),
+    ),
+    child: Container(
+      margin: const EdgeInsets.only(bottom: 2),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+      decoration: BoxDecoration(
+        color: StyleKitColors.white,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.monetization_on_rounded, color: Color(0xFFEAB308), size: 15),
+              const SizedBox(width: 4),
+              Text(
+                isHindi ? '४५०' : '450',
+                style: const TextStyle(
+                  fontFamily: 'Baloo2',
+                  fontSize: 11,
+                  fontWeight: FontWeight.w800,
+                  color: StyleKitColors.textDark,
+                ),
+              ),
+            ],
+          ),
+          Row(
+            children: [
+              const Icon(Icons.diamond_rounded, color: Color(0xFF0284C7), size: 15),
+              const SizedBox(width: 4),
+              Text(
+                isHindi ? '८४' : '84',
+                style: const TextStyle(
+                  fontFamily: 'Baloo2',
+                  fontSize: 11,
+                  fontWeight: FontWeight.w800,
+                  color: StyleKitColors.textDark,
+                ),
+              ),
+            ],
+          ),
+          Row(
+            children: [
+              const Icon(Icons.local_fire_department_rounded, color: Color(0xFFEA580C), size: 15),
+              const SizedBox(width: 4),
+              Text(
+                isHindi ? '५ दिन' : '5 Days',
+                style: const TextStyle(
+                  fontFamily: 'Baloo2',
+                  fontSize: 11,
+                  fontWeight: FontWeight.w800,
+                  color: StyleKitColors.textDark,
+                ),
+              ),
+            ],
+          ),
+          // Mini 3D Mascot Avatar circle
+          Container(
+            width: 24,
+            height: 24,
+            decoration: BoxDecoration(
+              color: StyleKitColors.qaidaSoft,
+              shape: BoxShape.circle,
+              border: Border.all(color: StyleKitColors.duoGreen, width: 1.5),
+            ),
+            clipBehavior: Clip.antiAlias,
+            child: const LocalAssetWidget(
+              path: 'assets/images/mascot_happy.png',
+              width: 24,
+              height: 24,
+              fit: BoxFit.cover,
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+}
 
-  @override
-  Widget build(BuildContext context) {
-    try {
-      final file = File(path);
-      if (file.existsSync()) {
-        return SvgPicture.string(
-          file.readAsStringSync(),
-          width: width,
-          height: height,
-          fit: fit,
-        );
-      }
-    } catch (_) {}
-    return SizedBox(width: width, height: height);
+Widget _buildFloatingBottomDock({required int activeTab, required bool isHindi}) {
+  return Container(
+    decoration: BoxDecoration(
+      color: const Color(0xFFCBD5E1),
+      borderRadius: BorderRadius.circular(24),
+    ),
+    child: Container(
+      margin: const EdgeInsets.only(bottom: 2.5),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+      decoration: BoxDecoration(
+        color: StyleKitColors.white,
+        borderRadius: BorderRadius.circular(24),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          _buildDockItem(icon: Icons.mosque_rounded, label: isHindi ? 'होम' : 'Home', isActive: activeTab == 0),
+          _buildDockItem(icon: Icons.menu_book_rounded, label: isHindi ? 'क़ायदा' : 'Qaida', isActive: activeTab == 1),
+          _buildDockItem(icon: Icons.auto_stories_rounded, label: isHindi ? 'क़ुरआन' : 'Quran', isActive: activeTab == 2),
+          _buildDockItem(icon: Icons.person_rounded, label: isHindi ? 'प्रोफ़ाइल' : 'Profile', isActive: activeTab == 3),
+        ],
+      ),
+    ),
+  );
+}
+
+Widget _buildDockItem({required IconData icon, required String label, required bool isActive}) {
+  if (isActive) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+      decoration: BoxDecoration(
+        color: StyleKitColors.qaidaSoft,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: StyleKitColors.qaidaSoftEdge, width: 1),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, color: StyleKitColors.qaidaText, size: 16),
+          const SizedBox(width: 5),
+          Text(
+            label,
+            style: const TextStyle(
+              fontFamily: 'Baloo2',
+              fontSize: 10.5,
+              fontWeight: FontWeight.w800,
+              color: StyleKitColors.qaidaText,
+            ),
+          ),
+        ],
+      ),
+    );
   }
+  return Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+    child: Icon(icon, color: StyleKitColors.textSubtle, size: 19),
+  );
 }
 
 // =============================================================================
-// MAIN STYLE KIT MASTER SHOWCASE WIDGET
+// MASTER DUAL-SCREEN SHOWCASE (Side-by-Side 1:1 Scale Presentation: 740 x 820)
 // =============================================================================
 
-class StyleKitShowcase extends StatelessWidget {
-  const StyleKitShowcase({super.key, required this.isHindi});
+class MasterSideBySideShowcase extends StatelessWidget {
+  const MasterSideBySideShowcase({super.key, required this.isHindi});
   final bool isHindi;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       color: StyleKitColors.pageBg,
-      child: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // ── 1. HEADER PANELS WITH DECORATIVE ISLAMIC ILLUSTRATIONS ──
-            // A. Qaida Header Panel (Green Theme)
-            StyleKitHeaderPanel(
-              panelColor: StyleKitColors.qaidaSoft,
-              textColor: StyleKitColors.qaidaText,
-              title: isHindi ? 'नूरानी क़ायदा' : 'Noorani Qaida',
-              subtitle: isHindi ? 'चरण 3: हरकत और अलिफ़' : 'Step 3: Harakat & Alif',
-              illustrationPainter: const IslamicStarPatternPainter(tintColor: StyleKitColors.qaidaIllus),
-              streakText: isHindi ? '5 दिन' : '5 Days',
-              xpText: isHindi ? '120 अंक' : '120 XP',
-            ),
-            const SizedBox(height: 12),
-
-            // B. Quran Header Panel (Gold Theme)
-            StyleKitHeaderPanel(
-              panelColor: StyleKitColors.quranSoft,
-              textColor: StyleKitColors.quranText,
-              title: isHindi ? 'पवित्र क़ुरआन' : 'The Holy Quran',
-              subtitle: isHindi ? 'सूरह अल-फ़ातिहा (1-7 आयत)' : 'Surah Al-Fatihah (Ayahs 1-7)',
-              illustrationPainter: const MosqueSilhouettePainter(tintColor: StyleKitColors.quranIllus),
-              streakText: '5',
-              xpText: '120',
-            ),
-            const SizedBox(height: 12),
-
-            // C. App Shell Header Panel (Gentle Mint App Theme)
-            StyleKitHeaderPanel(
-              showBack: false,
-              panelColor: StyleKitColors.appSoft,
-              textColor: StyleKitColors.appText,
-              title: isHindi ? 'इस्लामी शिक्षा केंद्र' : 'Learning Dashboard',
-              subtitle: isHindi ? 'दैनिक प्रगति और अभ्यास' : 'Daily Progress & Habits',
-              illustrationPainter: const LanternCrescentPainter(tintColor: StyleKitColors.appIllus),
-              streakText: '5',
-              xpText: '120',
-            ),
-            const SizedBox(height: 20),
-
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  // ── 2. APP BUTTONS (Ref-2 & Ref-3 style) ──
-                  _buildSectionTitle(isHindi ? 'बटन घटक (3D बॉटम एज)' : 'Buttons (3D Bottom Edge)'),
-                  const SizedBox(height: 8),
-
-                  // Primary Button (Dark Fill + White Text + 3D Edge)
-                  EdgeButton(
-                    fillColor: StyleKitColors.qaidaDark,
-                    edgeColor: StyleKitColors.qaidaDarkEdge,
-                    child: Text(
-                      isHindi ? 'सबक शुरू करें' : 'Start Lesson',
-                      style: const TextStyle(
-                        fontFamily: 'Baloo2',
-                        fontWeight: FontWeight.w800,
-                        fontSize: 16,
-                        color: StyleKitColors.white,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-
-                  // Secondary Button (Soft Fill + Dark Text + 3D Edge)
-                  EdgeButton(
-                    fillColor: StyleKitColors.qaidaSoft,
-                    edgeColor: StyleKitColors.qaidaSoftEdge,
-                    child: Text(
-                      isHindi ? 'अभ्यास दोहराएं' : 'Practice Review',
-                      style: const TextStyle(
-                        fontFamily: 'Baloo2',
-                        fontWeight: FontWeight.w800,
-                        fontSize: 16,
-                        color: StyleKitColors.qaidaText,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-
-                  // Ghost Button (Text only)
-                  Center(
-                    child: TextButton(
-                      onPressed: () {},
-                      child: Text(
-                        isHindi ? 'बाद में करें' : 'Skip for Now',
-                        style: const TextStyle(
-                          fontFamily: 'Baloo2',
-                          fontWeight: FontWeight.w700,
-                          fontSize: 14,
-                          color: StyleKitColors.textMuted,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-
-                  // ── 3. TAPPABLE CARD (3D bottom edge, white fill, no border/shadow) ──
-                  _buildSectionTitle(isHindi ? 'टैप करने योग्य कार्ड (3D एज)' : 'Tappable Card (3D Edge)'),
-                  const SizedBox(height: 8),
-                  EdgeButton(
-                    fillColor: StyleKitColors.surface,
-                    edgeColor: StyleKitColors.surfaceEdge,
-                    borderRadius: 20,
-                    edgeHeight: 4,
-                    minHeight: 74,
-                    padding: const EdgeInsets.all(14),
-                    child: Row(
-                      children: [
-                        Container(
-                          width: 48,
-                          height: 48,
-                          decoration: BoxDecoration(
-                            color: StyleKitColors.qaidaSoft,
-                            borderRadius: BorderRadius.circular(14),
-                          ),
-                          child: const Icon(Icons.school_rounded, color: StyleKitColors.qaidaDark, size: 26),
-                        ),
-                        const SizedBox(width: 14),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                isHindi ? 'तजवीद के नियम' : 'Tajweed Mastery',
-                                style: const TextStyle(
-                                  fontFamily: 'Baloo2',
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w800,
-                                  color: StyleKitColors.textDark,
-                                ),
-                              ),
-                              Text(
-                                isHindi ? 'शुद्ध उच्चारण सीखें' : 'Master authentic phonetics',
-                                style: const TextStyle(
-                                  fontFamily: 'Baloo2',
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w500,
-                                  color: StyleKitColors.textMuted,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        const Icon(Icons.chevron_right_rounded, color: StyleKitColors.textMuted, size: 24),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-
-                  // ── 4. FLAT CARDS & PROGRESS BAR (Ref-2 & Ref-4) ──
-                  _buildSectionTitle(isHindi ? 'समतल कार्ड व प्रगति बार' : 'Flat Card & Progress Bar'),
-                  const SizedBox(height: 8),
-                  Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: StyleKitColors.surface,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Container(
-                              width: 44,
-                              height: 44,
-                              decoration: BoxDecoration(
-                                color: StyleKitColors.quranSoft,
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: const Icon(Icons.alarm_on_rounded, color: StyleKitColors.quranDark, size: 24),
-                            ),
-                            const SizedBox(width: 14),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    isHindi ? 'दैनिक अध्ययन लक्ष्य' : 'Daily Study Goal',
-                                    style: const TextStyle(
-                                      fontFamily: 'Baloo2',
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w800,
-                                      color: StyleKitColors.textDark,
-                                    ),
-                                  ),
-                                  Text(
-                                    isHindi ? '15 मिनट प्रतिदिन (लगातार 5 दिन)' : '15 mins/day (5-day streak maintained)',
-                                    style: const TextStyle(
-                                      fontFamily: 'Baloo2',
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w500,
-                                      color: StyleKitColors.textMuted,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 14),
-                        // Pill Progress Bar (Ref-2)
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(10),
-                          child: Container(
-                            height: 10,
-                            color: StyleKitColors.qaidaSoft,
-                            child: Align(
-                              alignment: Alignment.centerLeft,
-                              child: FractionallySizedBox(
-                                widthFactor: 0.72,
-                                child: Container(color: StyleKitColors.qaidaDark),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-
-                  // ── 5. LEVEL BADGE CARD (Ref-3 Adventure Map Bottom Card) ──
-                  _buildSectionTitle(isHindi ? 'स्तर बैज कार्ड (रेफरेंस 3 शैली)' : 'Level Badge Card (Ref-3 Style)'),
-                  const SizedBox(height: 8),
-                  StyleKitLevelBadgeCard(isHindi: isHindi),
-                  const SizedBox(height: 20),
-
-                  // ── 6. ICON TILES (Ref-1 & Ref-2) ──
-                  _buildSectionTitle(isHindi ? 'आइकन टाइल्स (सॉफ्ट टाइल + डार्क आइकन)' : 'Icon Tiles (Soft Tile + Dark Icon)'),
-                  const SizedBox(height: 8),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      _buildIconTile(
-                        icon: Icons.menu_book_rounded,
-                        bgColor: StyleKitColors.qaidaSoft,
-                        iconColor: StyleKitColors.qaidaDark,
-                        label: isHindi ? 'क़ायदा' : 'Qaida',
-                      ),
-                      _buildIconTile(
-                        icon: Icons.auto_stories_rounded,
-                        bgColor: StyleKitColors.quranSoft,
-                        iconColor: StyleKitColors.quranDark,
-                        label: isHindi ? 'क़ुरआन' : 'Quran',
-                      ),
-                      _buildIconTile(
-                        icon: Icons.mosque_rounded,
-                        bgColor: const Color(0xFFE0F2FE),
-                        iconColor: const Color(0xFF0369A1),
-                        label: isHindi ? 'नमाज़' : 'Prayer',
-                      ),
-                      _buildIconTile(
-                        icon: Icons.volunteer_activism_rounded,
-                        bgColor: const Color(0xFFF3E8FF),
-                        iconColor: const Color(0xFF7E22CE),
-                        label: isHindi ? 'दुआ' : 'Dua',
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 20),
-
-                  // ── 7. CHIPS & TABS (Ref-1 & Ref-4 Segmented Pills) ──
-                  _buildSectionTitle(isHindi ? 'चिप्स व टैब्स (3D बॉटम एज)' : 'Chips & Tabs (3D Edge)'),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: EdgeButton(
-                          fillColor: StyleKitColors.qaidaDark,
-                          edgeColor: StyleKitColors.qaidaDarkEdge,
-                          borderRadius: 24,
-                          edgeHeight: 3,
-                          minHeight: 36,
-                          padding: const EdgeInsets.symmetric(vertical: 6),
-                          child: Text(
-                            isHindi ? 'सभी पाठ' : 'All Lessons',
-                            style: const TextStyle(
-                              fontFamily: 'Baloo2',
-                              fontWeight: FontWeight.w700,
-                              fontSize: 13,
-                              color: StyleKitColors.white,
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: EdgeButton(
-                          fillColor: StyleKitColors.qaidaSoft,
-                          edgeColor: StyleKitColors.qaidaSoftEdge,
-                          borderRadius: 24,
-                          edgeHeight: 3,
-                          minHeight: 36,
-                          padding: const EdgeInsets.symmetric(vertical: 6),
-                          child: Text(
-                            isHindi ? 'अक्षर' : 'Letters',
-                            style: const TextStyle(
-                              fontFamily: 'Baloo2',
-                              fontWeight: FontWeight.w700,
-                              fontSize: 13,
-                              color: StyleKitColors.qaidaText,
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: EdgeButton(
-                          fillColor: StyleKitColors.qaidaSoft,
-                          edgeColor: StyleKitColors.qaidaSoftEdge,
-                          borderRadius: 24,
-                          edgeHeight: 3,
-                          minHeight: 36,
-                          padding: const EdgeInsets.symmetric(vertical: 6),
-                          child: Text(
-                            isHindi ? 'शब्द' : 'Words',
-                            style: const TextStyle(
-                              fontFamily: 'Baloo2',
-                              fontWeight: FontWeight.w700,
-                              fontSize: 13,
-                              color: StyleKitColors.qaidaText,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 20),
-
-                  // ── 8. ADVENTURE MAP PATH (Directly from Ref-3 with 5 Nodes in all states) ──
-                  _buildSectionTitle(isHindi ? 'क़ायदा साहसिक नक्शा (रेफरेंस 3 षट्कोण नोड्स)' : 'Qaida Adventure Map (Ref-3 Hexagon Path)'),
-                  const SizedBox(height: 8),
-                  StyleKitAdventureMapSection(isHindi: isHindi),
-                  const SizedBox(height: 20),
-
-                  // ── 9. TEXT FIELD (Ref-1 style, 1.5px border >= 3:1) ──
-                  _buildSectionTitle(isHindi ? 'इनपुट फ़ील्ड (1.5px बॉर्डर >= 3:1)' : 'Text Input (1.5px Border >= 3:1)'),
-                  const SizedBox(height: 8),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-                    decoration: BoxDecoration(
-                      color: StyleKitColors.white,
-                      borderRadius: BorderRadius.circular(14),
-                      border: Border.all(color: StyleKitColors.inputBorder, width: 1.5),
-                    ),
-                    child: Row(
-                      children: [
-                        const Icon(Icons.person_rounded, color: StyleKitColors.inputBorder, size: 20),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: Text(
-                            isHindi ? 'अपना नाम दर्ज करें...' : 'Enter student name...',
-                            style: const TextStyle(
-                              fontFamily: 'Baloo2',
-                              fontSize: 14,
-                              color: StyleKitColors.textMuted,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-
-                  // ── 10. FIGMA ASSETS SHOWCASE (Used AS-IS on Flat Surfaces) ──
-                  _buildSectionTitle(isHindi ? 'फ़िगमा एसेट्स (AS-IS वेक्टर + 3D एज)' : 'Figma Assets (AS-IS Vectors + 3D Edge)'),
-                  const SizedBox(height: 4),
-                  Text(
-                    isHindi
-                        ? 'स्रोत: फ़्रीपिक प्रीमियम (स्वामी सदस्यता)। सतहें समतल हैं, एसेट्स AS-IS हैं।'
-                        : 'Source: Freepik Premium (owner subscription). Assets AS-IS, UI surfaces flat solid.',
-                    style: const TextStyle(
-                      fontFamily: 'Baloo2',
-                      fontSize: 11,
-                      fontWeight: FontWeight.w600,
-                      color: StyleKitColors.textMuted,
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-
-                  // A. Figma Header Illustration (Mosque Dome & Arch)
-                  Container(
-                    height: 120,
-                    decoration: BoxDecoration(
-                      color: StyleKitColors.qaidaSoft,
-                      borderRadius: BorderRadius.circular(20),
-                      border: const Border(
-                        bottom: BorderSide(
-                          color: StyleKitColors.qaidaSoftEdge,
-                          width: 4,
-                        ),
-                      ),
-                    ),
-                    clipBehavior: Clip.antiAlias,
-                    child: Stack(
-                      children: [
-                        const Positioned(
-                          right: -10,
-                          bottom: -10,
-                          top: -10,
-                          child: Opacity(
-                            opacity: 0.9,
-                            child: FigmaSvgWidget(
-                              path: 'assets/figma/illustrations/islamic/mosque_dome_arch.svg',
-                              width: 140,
-                              fit: BoxFit.contain,
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(16),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                isHindi ? 'इस्लामी मस्जिद वास्तुकला' : 'Islamic Mosque Architecture',
-                                style: const TextStyle(
-                                  fontFamily: 'Baloo2',
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w800,
-                                  color: StyleKitColors.qaidaText,
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                isHindi ? 'वेक्टर चित्रण (फ़िगमा से)' : 'Figma SVG Illustration',
-                                style: const TextStyle(
-                                  fontFamily: 'Baloo2',
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w600,
-                                  color: StyleKitColors.qaidaText,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-
-                  // B. 8 Figma Icons on Flat 3D-Edged Soft Tiles
-                  Text(
-                    isHindi ? '8 फ़िगमा आइकन्स (सॉफ्ट टाइल्स पर 3D एज)' : '8 Figma Icons (3D Edge Soft Tiles)',
-                    style: const TextStyle(
-                      fontFamily: 'Baloo2',
-                      fontSize: 13,
-                      fontWeight: FontWeight.w700,
-                      color: StyleKitColors.textDark,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: [
-                      _buildFigmaIconTile('ic_game_star', 'assets/figma/icons/game/ic_game_star.svg', StyleKitColors.quranSoft, StyleKitColors.quranSoftEdge, isHindi ? 'तारा' : 'Star'),
-                      _buildFigmaIconTile('ic_heart', 'assets/figma/icons/game/ic_heart.svg', const Color(0xFFFCE7F3), const Color(0xFFFBCFE8), isHindi ? 'जीवन' : 'Heart'),
-                      _buildFigmaIconTile('ic_gem', 'assets/figma/icons/game/ic_gem.svg', const Color(0xFFE0F2FE), const Color(0xFFBAE6FD), isHindi ? 'रत्न' : 'Gem'),
-                      _buildFigmaIconTile('ic_check', 'assets/figma/icons/game/ic_check.svg', StyleKitColors.qaidaSoft, StyleKitColors.qaidaSoftEdge, isHindi ? 'सही' : 'Check'),
-                      _buildFigmaIconTile('ic_play', 'assets/figma/icons/game/ic_play.svg', StyleKitColors.appSoft, StyleKitColors.appSoftEdge, isHindi ? 'चलाएं' : 'Play'),
-                      _buildFigmaIconTile('ic_lock', 'assets/figma/icons/game/ic_lock.svg', const Color(0xFFF1F5F9), const Color(0xFFCBD5E1), isHindi ? 'ताला' : 'Lock'),
-                      _buildFigmaIconTile('ic_trophy', 'assets/figma/icons/game/ic_trophy.svg', StyleKitColors.quranSoft, StyleKitColors.quranSoftEdge, isHindi ? 'ट्रॉफी' : 'Trophy'),
-                      _buildFigmaIconTile('ic_lantern', 'assets/figma/icons/islamic/ic_lantern.svg', StyleKitColors.appSoft, StyleKitColors.appSoftEdge, isHindi ? 'फ़ानूस' : 'Lantern'),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-
-                  // C. 3 Figma Badges
-                  Text(
-                    isHindi ? '3 फ़िगमा बैज (समतल कार्ड + 3D बॉटम एज)' : '3 Figma Badges (Flat Surface + 3D Edge)',
-                    style: const TextStyle(
-                      fontFamily: 'Baloo2',
-                      fontSize: 13,
-                      fontWeight: FontWeight.w700,
-                      color: StyleKitColors.textDark,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _buildFigmaBadgeCard(
-                          path: 'assets/figma/badges/badge_shield_gold.svg',
-                          label: isHindi ? 'स्वर्ण शील्ड' : 'Gold Shield',
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: _buildFigmaBadgeCard(
-                          path: 'assets/figma/badges/badge_level_1.svg',
-                          label: isHindi ? 'स्तर 1' : 'Level 1',
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: _buildFigmaBadgeCard(
-                          path: 'assets/figma/badges/stars_reward_3.svg',
-                          label: isHindi ? '3 सितारे' : '3 Stars',
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 36),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSectionTitle(String title) {
-    return Text(
-      title,
-      style: const TextStyle(
-        fontFamily: 'Baloo2',
-        fontSize: 15,
-        fontWeight: FontWeight.w800,
-        color: StyleKitColors.textDark,
-      ),
-    );
-  }
-
-  Widget _buildIconTile({
-    required IconData icon,
-    required Color bgColor,
-    required Color iconColor,
-    required String label,
-  }) {
-    return Column(
-      children: [
-        Container(
-          width: 52,
-          height: 52,
-          decoration: BoxDecoration(
-            color: bgColor,
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: Icon(icon, color: iconColor, size: 28),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          label,
-          style: const TextStyle(
-            fontFamily: 'Baloo2',
-            fontSize: 12,
-            fontWeight: FontWeight.w700,
-            color: StyleKitColors.textDark,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildFigmaIconTile(String keyName, String path, Color bg, Color edge, String label) {
-    return Container(
-      width: 74,
-      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
-      decoration: BoxDecoration(
-        color: bg,
-        borderRadius: BorderRadius.circular(16),
-        border: Border(
-          bottom: BorderSide(color: edge, width: 3),
-        ),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
+      padding: const EdgeInsets.all(10),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          FigmaSvgWidget(path: path, width: 32, height: 32),
-          const SizedBox(height: 4),
-          Text(
-            label,
-            style: const TextStyle(
-              fontFamily: 'Baloo2',
-              fontSize: 11,
-              fontWeight: FontWeight.w700,
-              color: StyleKitColors.textDark,
-            ),
-            textAlign: TextAlign.center,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildFigmaBadgeCard({required String path, required String label}) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 6),
-      decoration: BoxDecoration(
-        color: StyleKitColors.surface,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: StyleKitColors.surfaceEdge, width: 1.5),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          FigmaSvgWidget(path: path, width: 44, height: 44),
-          const SizedBox(height: 6),
-          Text(
-            label,
-            style: const TextStyle(
-              fontFamily: 'Baloo2',
-              fontSize: 11,
-              fontWeight: FontWeight.w700,
-              color: StyleKitColors.textDark,
-            ),
-            textAlign: TextAlign.center,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
+          // Left Screen: Qaida Adventure Map (Ref 3)
+          AdventureMapScreenView(isHindi: isHindi),
+          const SizedBox(width: 14),
+          // Right Screen: Daily Learning Dashboard (Ref 2, 1, 4)
+          LearningDashboardScreenView(isHindi: isHindi),
         ],
       ),
     );
@@ -1588,9 +1922,10 @@ void main() {
     }
   });
 
-  testWidgets('Generate Style Kit Golden English (360px)', (tester) async {
+  // 1. Single Screen: Qaida Adventure Map Screen (360x800)
+  testWidgets('Generate Qaida Adventure Map Golden (360x800)', (tester) async {
     final boundaryKey = GlobalKey();
-    tester.view.physicalSize = const Size(360, 3100);
+    tester.view.physicalSize = const Size(360, 800);
     tester.view.devicePixelRatio = 1.0;
     addTearDown(() => tester.view.resetPhysicalSize());
 
@@ -1600,7 +1935,7 @@ void main() {
         theme: ThemeData(fontFamily: 'Baloo2'),
         home: MediaQuery(
           data: const MediaQueryData(
-            size: Size(360, 3100),
+            size: Size(360, 800),
             textScaler: TextScaler.linear(1.0),
           ),
           child: Material(
@@ -1608,8 +1943,102 @@ void main() {
               key: boundaryKey,
               child: const SizedBox(
                 width: 360,
-                height: 3100,
-                child: StyleKitShowcase(isHindi: false),
+                height: 800,
+                child: AdventureMapScreenView(isHindi: false),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    await tester.runAsync(() async => Future<void>.delayed(const Duration(milliseconds: 50)));
+    await tester.pump();
+
+    await tester.runAsync(() async {
+      final boundary = boundaryKey.currentContext?.findRenderObject() as RenderRepaintBoundary?;
+      if (boundary != null) {
+        final image = await boundary.toImage(pixelRatio: 1.0);
+        final byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+        if (byteData != null) {
+          final pngBytes = byteData.buffer.asUint8List();
+          File('docs/screenshots/qaida_map_360.png').writeAsBytesSync(pngBytes);
+          print('✅ Generated docs/screenshots/qaida_map_360.png (${pngBytes.length} bytes)');
+        }
+      }
+    });
+  });
+
+  // 2. Single Screen: Daily Learning Dashboard Screen (360x800)
+  testWidgets('Generate Daily Learning Dashboard Golden (360x800)', (tester) async {
+    final boundaryKey = GlobalKey();
+    tester.view.physicalSize = const Size(360, 800);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(() => tester.view.resetPhysicalSize());
+
+    await tester.pumpWidget(
+      MaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(fontFamily: 'Baloo2'),
+        home: MediaQuery(
+          data: const MediaQueryData(
+            size: Size(360, 800),
+            textScaler: TextScaler.linear(1.0),
+          ),
+          child: Material(
+            child: RepaintBoundary(
+              key: boundaryKey,
+              child: const SizedBox(
+                width: 360,
+                height: 800,
+                child: LearningDashboardScreenView(isHindi: false),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    await tester.runAsync(() async => Future<void>.delayed(const Duration(milliseconds: 50)));
+    await tester.pump();
+
+    await tester.runAsync(() async {
+      final boundary = boundaryKey.currentContext?.findRenderObject() as RenderRepaintBoundary?;
+      if (boundary != null) {
+        final image = await boundary.toImage(pixelRatio: 1.0);
+        final byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+        if (byteData != null) {
+          final pngBytes = byteData.buffer.asUint8List();
+          File('docs/screenshots/dashboard_360.png').writeAsBytesSync(pngBytes);
+          print('✅ Generated docs/screenshots/dashboard_360.png (${pngBytes.length} bytes)');
+        }
+      }
+    });
+  });
+
+  // 3. Master Side-by-Side English Showcase (760x820: Full 1:1 scale for both screens!)
+  testWidgets('Generate Style Kit Golden English (Side-by-Side 760x820)', (tester) async {
+    final boundaryKey = GlobalKey();
+    tester.view.physicalSize = const Size(760, 820);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(() => tester.view.resetPhysicalSize());
+
+    await tester.pumpWidget(
+      MaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(fontFamily: 'Baloo2'),
+        home: MediaQuery(
+          data: const MediaQueryData(
+            size: Size(760, 820),
+            textScaler: TextScaler.linear(1.0),
+          ),
+          child: Material(
+            child: RepaintBoundary(
+              key: boundaryKey,
+              child: const SizedBox(
+                width: 760,
+                height: 820,
+                child: MasterSideBySideShowcase(isHindi: false),
               ),
             ),
           ),
@@ -1628,15 +2057,17 @@ void main() {
         if (byteData != null) {
           final pngBytes = byteData.buffer.asUint8List();
           File('docs/screenshots/style_kit_360_en.png').writeAsBytesSync(pngBytes);
-          print('✅ Generated docs/screenshots/style_kit_360_en.png (${pngBytes.length} bytes)');
+          File('docs/screenshots/style_kit_360.png').writeAsBytesSync(pngBytes);
+          print('✅ Generated master docs/screenshots/style_kit_360.png (${pngBytes.length} bytes)');
         }
       }
     });
   });
 
-  testWidgets('Generate Style Kit Golden Hindi (360px)', (tester) async {
+  // 4. Master Side-by-Side Hindi Showcase (760x820)
+  testWidgets('Generate Style Kit Golden Hindi (Side-by-Side 760x820)', (tester) async {
     final boundaryKey = GlobalKey();
-    tester.view.physicalSize = const Size(360, 3100);
+    tester.view.physicalSize = const Size(760, 820);
     tester.view.devicePixelRatio = 1.0;
     addTearDown(() => tester.view.resetPhysicalSize());
 
@@ -1646,16 +2077,16 @@ void main() {
         theme: ThemeData(fontFamily: 'Baloo2'),
         home: MediaQuery(
           data: const MediaQueryData(
-            size: Size(360, 3100),
+            size: Size(760, 820),
             textScaler: TextScaler.linear(1.0),
           ),
           child: Material(
             child: RepaintBoundary(
               key: boundaryKey,
               child: const SizedBox(
-                width: 360,
-                height: 3100,
-                child: StyleKitShowcase(isHindi: true),
+                width: 760,
+                height: 820,
+                child: MasterSideBySideShowcase(isHindi: true),
               ),
             ),
           ),
@@ -1675,57 +2106,6 @@ void main() {
           final pngBytes = byteData.buffer.asUint8List();
           File('docs/screenshots/style_kit_360_hi.png').writeAsBytesSync(pngBytes);
           print('✅ Generated docs/screenshots/style_kit_360_hi.png (${pngBytes.length} bytes)');
-        }
-      }
-    });
-  });
-
-  testWidgets('Generate Combined Master Style Kit Golden (360px en and hi)', (tester) async {
-    final boundaryKey = GlobalKey();
-    tester.view.physicalSize = const Size(720, 3100);
-    tester.view.devicePixelRatio = 1.0;
-    addTearDown(() => tester.view.resetPhysicalSize());
-
-    await tester.pumpWidget(
-      MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(fontFamily: 'Baloo2'),
-        home: MediaQuery(
-          data: const MediaQueryData(
-            size: Size(720, 3100),
-            textScaler: TextScaler.linear(1.0),
-          ),
-          child: Material(
-            child: RepaintBoundary(
-              key: boundaryKey,
-              child: const SizedBox(
-                width: 720,
-                height: 3100,
-                child: Row(
-                  children: [
-                    SizedBox(width: 360, height: 3100, child: StyleKitShowcase(isHindi: false)),
-                    SizedBox(width: 360, height: 3100, child: StyleKitShowcase(isHindi: true)),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-    await tester.pumpAndSettle();
-    await tester.runAsync(() async => Future<void>.delayed(const Duration(milliseconds: 50)));
-    await tester.pump();
-
-    await tester.runAsync(() async {
-      final boundary = boundaryKey.currentContext?.findRenderObject() as RenderRepaintBoundary?;
-      if (boundary != null) {
-        final image = await boundary.toImage(pixelRatio: 1.0);
-        final byteData = await image.toByteData(format: ui.ImageByteFormat.png);
-        if (byteData != null) {
-          final pngBytes = byteData.buffer.asUint8List();
-          File('docs/screenshots/style_kit_360.png').writeAsBytesSync(pngBytes);
-          print('✅ Generated master docs/screenshots/style_kit_360.png (${pngBytes.length} bytes)');
         }
       }
     });

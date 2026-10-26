@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../l10n/app_localizations.dart';
+import '../../core/localization/app_languages.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 import '../../theme/app_text_styles.dart';
@@ -486,6 +487,8 @@ class _ProfileMenuContent extends StatelessWidget {
         // Language Picker
         AppListTile(
           title: context.t('menu.language'),
+          subtitle: AppLanguages.byCode(state?.selectedLanguage)?.name ??
+              AppLanguages.all.first.name,
           leading: const Icon(
             Icons.translate_rounded,
             color: AppColors.purple,
@@ -499,6 +502,7 @@ class _ProfileMenuContent extends StatelessWidget {
               MaterialPageRoute<void>(
                 builder: (pageCtx) => LanguagePage(
                   isTablet: MediaQuery.of(pageCtx).size.width >= 600,
+                  isStandalone: true,
                   onNext: () => Navigator.pop(pageCtx),
                   onBack: () => Navigator.pop(pageCtx),
                 ),

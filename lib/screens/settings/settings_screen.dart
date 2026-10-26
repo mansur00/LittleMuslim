@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../core/localization/app_languages.dart';
+import '../../core/localization/language_provider.dart';
 
 import '../../theme/app_theme.dart';
 import '../../utils/app_state.dart';
@@ -97,6 +98,9 @@ class SettingsScreen extends StatelessWidget {
                         onChanged: (language) {
                           if (language != null) {
                             context.read<AppState>().updateLanguage(language);
+                            try {
+                              context.read<LanguageProvider>().setLanguage(language);
+                            } catch (_) {}
                           }
                         },
                       ),
