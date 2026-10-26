@@ -9,6 +9,7 @@ import 'package:little_muslim/screens/qaida/qaida_chapters_screen.dart';
 import 'package:little_muslim/screens/qaida/qaida_exam_screen.dart';
 import 'package:little_muslim/screens/qaida/qaida_report_screen.dart';
 import 'package:little_muslim/utils/app_state.dart';
+import 'package:little_muslim/widgets/ds/parental_gate_dialog.dart';
 import 'package:little_muslim/widgets/qaida/garden_progress_widget.dart';
 
 void main() {
@@ -158,7 +159,7 @@ void main() {
       expect(find.text('লকড (৮০% প্রয়োজন)'), findsWidgets);
 
       // Now toggle Admin mode
-      await appState.setUserRole('admin');
+      await appState.setUserRole('admin', token: ParentalGate.mintForTesting());
       await tester.pumpAndSettle();
 
       // Scroll back up to verify Admin banner

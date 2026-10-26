@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import '../core/core.dart';
 import '../models/qaida/qaida_models.dart';
+import '../widgets/ds/parental_gate_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class QuranReadingPosition {
@@ -723,25 +724,66 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> setUserRole(String role) async {
+  int _failedGateAttempts = 0;
+  DateTime? _gateLockoutUntil;
+
+  int get failedGateAttempts => _failedGateAttempts;
+  bool get isGateLockedOut =>
+      _gateLockoutUntil != null && DateTime.now().isBefore(_gateLockoutUntil!);
+  int get gateLockoutSecondsRemaining => isGateLockedOut
+      ? _gateLockoutUntil!.difference(DateTime.now()).inSeconds + 1
+      : 0;
+
+  void recordGateFailure() {
+    _failedGateAttempts++;
+    if (_failedGateAttempts >= 3) {
+      _gateLockoutUntil = DateTime.now().add(const Duration(seconds: 30));
+    }
+    notifyListeners();
+  }
+
+  void recordGateSuccess() {
+    _failedGateAttempts = 0;
+    _gateLockoutUntil = null;
+    notifyListeners();
+  }
+
+  AdminElevationToken? _pendingAdminToken;
+
+  void setPendingAdminToken(AdminElevationToken token) {
+    _pendingAdminToken = token;
+  }
+
+  Future<bool> setUserRole(String role, {AdminElevationToken? token}) async {
     final next = role == 'admin' ? 'admin' : 'child';
-    if (_userRole == next) return;
+    if (next == 'admin') {
+      if (token == null || isGateLockedOut) return false;
+      recordGateSuccess();
+    }
+    if (_userRole == next) return true;
     _userRole = next;
     draftRole = next;
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('user_role', next);
     notifyListeners();
+    return true;
   }
 
-  Future<void> toggleAdminMode() async {
-    await setUserRole(isAdmin ? 'child' : 'admin');
+  Future<bool> toggleAdminMode({AdminElevationToken? token}) async {
+    if (isAdmin) {
+      return setUserRole('child');
+    } else {
+      return setUserRole('admin', token: token);
+    }
   }
 
-  Future<void> quickAdminEnter() async {
+  Future<bool> quickAdminEnter({required AdminElevationToken token}) async {
+    if (isGateLockedOut) return false;
     draftName = 'Admin';
     draftAge = 10;
     draftRole = 'admin';
-    await completeOnboarding(role: 'admin');
+    await completeOnboarding(role: 'admin', token: token);
+    return true;
   }
 
   Future<void> updateLanguage(String language) async {
@@ -758,13 +800,21 @@ class AppState extends ChangeNotifier {
   /// Returns a validated language code; falls back to default if unknown.
   static String _validLang(String? lang) => AppLanguages.validate(lang);
 
-  Future<void> completeOnboarding({String? role}) async {
+  Future<void> completeOnboarding({String? role, AdminElevationToken? token}) async {
+    final tokenToUse = token ?? _pendingAdminToken;
+    _pendingAdminToken = null;
+    final requestedRole = role ?? (draftRole == 'admin' ? 'admin' : 'child');
+    final roleToSave = (requestedRole == 'admin' && tokenToUse != null && !isGateLockedOut)
+        ? 'admin'
+        : 'child';
+    if (roleToSave == 'admin') {
+      recordGateSuccess();
+    }
     final name = draftName.isNotEmpty
         ? draftName
-        : (role == 'admin' || draftRole == 'admin' ? 'Admin' : '');
+        : (roleToSave == 'admin' ? 'Admin' : '');
     final age = draftAge;
     final language = _validLang(draftLanguage);
-    final roleToSave = role ?? (draftRole == 'admin' ? 'admin' : 'child');
 
     _avatarType = draftAvatarType;
     _avatarColor = draftAvatarColor;

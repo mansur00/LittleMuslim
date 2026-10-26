@@ -136,8 +136,8 @@ abstract class DS {
     glow: Color(0xFF14B8A6), label: Color(0xFF134E4A),
   );
   static const ModuleColors achievements = ModuleColors(
-    face: Color(0xFFF59E0B), bevel: Color(0xFFD97706),
-    glow: Color(0xFFF59E0B), label: Color(0xFF78350F),
+    face: Color(0xFFC2410C), bevel: Color(0xFF9A3412),
+    glow: Color(0xFFC2410C), label: Color(0xFF7C2D12),
   );
 
   // ── TYPOGRAPHY ─────────────────────────────────────────────────────────────

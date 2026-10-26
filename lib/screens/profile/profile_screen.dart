@@ -10,6 +10,7 @@ import '../../theme/design_system.dart';
 import '../../utils/app_state.dart';
 import '../../widgets/ds/app_card.dart';
 import '../../widgets/ds/app_top_bar.dart';
+import '../../widgets/ds/parental_gate_dialog.dart';
 import '../../widgets/faceless_silhouette.dart';
 import 'login_screen.dart';
 
@@ -179,7 +180,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   ? DSButtonVariant.gold
                                   : DSButtonVariant.outline,
                               onPressed: () async {
-                                await state.toggleAdminMode();
+                                AdminElevationToken? token;
+                                if (!state.isAdmin) {
+                                  token = await ParentalGate.verify(context);
+                                  if (token == null || !context.mounted) return;
+                                }
+                                await state.toggleAdminMode(token: token);
                                 if (!context.mounted) return;
                                 ScaffoldMessenger.of(context)
                                   ..hideCurrentSnackBar()

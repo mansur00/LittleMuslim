@@ -9,6 +9,7 @@ import '../../models/qaida/qaida_models.dart';
 import '../../theme/app_theme.dart';
 import '../../utils/app_state.dart';
 import '../../widgets/duolingo_appbar.dart';
+import '../../widgets/ds/parental_gate_dialog.dart';
 import '../../widgets/quran_book_mascot.dart';
 import '../../widgets/vector_icons.dart';
 import 'qaida_activity_screen.dart';
@@ -297,7 +298,12 @@ class _QaidaTrackLessonsScreenState extends State<QaidaTrackLessonsScreen>
                             const SizedBox(width: 8),
                             InkWell(
                               onTap: () async {
-                                await state.toggleAdminMode();
+                                AdminElevationToken? token;
+                                if (!state.isAdmin) {
+                                  token = await ParentalGate.verify(context);
+                                  if (token == null || !context.mounted) return;
+                                }
+                                await state.toggleAdminMode(token: token);
                               },
                               borderRadius: BorderRadius.circular(8),
                               child: Container(
@@ -758,7 +764,9 @@ class _LessonRoadNode extends StatelessWidget {
                         label: context.t('qaida.admin_unlock_action'),
                         textColor: Colors.amber,
                         onPressed: () async {
-                          await context.read<AppState>().setUserRole('admin');
+                          final token = await ParentalGate.verify(context);
+                          if (token == null || !context.mounted) return;
+                          await context.read<AppState>().setUserRole('admin', token: token);
                         },
                       ),
                     ),
@@ -1249,7 +1257,9 @@ class _LessonTile extends StatelessWidget {
                         label: context.t('qaida.admin_unlock_action'),
                         textColor: Colors.amber,
                         onPressed: () async {
-                          await context.read<AppState>().setUserRole('admin');
+                          final token = await ParentalGate.verify(context);
+                          if (token == null || !context.mounted) return;
+                          await context.read<AppState>().setUserRole('admin', token: token);
                         },
                       ),
                     ),

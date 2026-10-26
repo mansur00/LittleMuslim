@@ -186,22 +186,19 @@ class _IslamicGardenWidgetState extends State<IslamicGardenWidget>
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        Wrap(
+                          alignment: WrapAlignment.spaceBetween,
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          runSpacing: 4,
                           children: [
-                            Flexible(
-                              child: Text(
-                                context.t('garden.title'),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: AppFonts.getTextStyle(context, 
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold,
-                                  color: const Color(0xFF27352D),
-                                ),
+                            Text(
+                              context.t('garden.title'),
+                              style: AppFonts.getTextStyle(context, 
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: const Color(0xFF27352D),
                               ),
                             ),
-                            const SizedBox(width: 8),
                             Text(
                               context.t('garden.steps_ratio', params: {
                                 'completed': widget.completedStepsCount,

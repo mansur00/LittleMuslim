@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../../theme/app_theme.dart';
 import '../../theme/design_system.dart';
 import '../../utils/app_state.dart';
+import '../../widgets/ds/parental_gate_dialog.dart';
 import '../../widgets/faceless_silhouette.dart';
 
 class NameAgePage extends StatefulWidget {
@@ -168,7 +169,10 @@ class _NameAgePageState extends State<NameAgePage> {
                   color: DS.orange500,
                   shadowColor: DS.orange600,
                   isSelected: _selectedRole == 'admin',
-                  onTap: () {
+                  onTap: () async {
+                    final token = await ParentalGate.verify(context);
+                    if (token == null || !mounted) return;
+                    context.read<AppState>().setPendingAdminToken(token);
                     setState(() {
                       _selectedRole = 'admin';
                       if (_nameController.text.trim().isEmpty) {

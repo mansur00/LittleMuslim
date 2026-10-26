@@ -2389,5 +2389,13 @@
   "menu.close": "বন্ধ করুন",
   "menu.learner_title": "শিক্ষার্থী",
   "menu.streak_tooltip": "ধারাবাহিকতা: {{count}} দিন",
-  "menu.xp_tooltip": "মোট এক্সপি: {{count}}"
+  "menu.xp_tooltip": "মোট এক্সপি: {{count}}",
+  "admin.parental_gate_title": "অভিভাবক যাচাই",
+  "admin.parental_gate_prompt": "অ্যাডমিন মোডে প্রবেশ করতে এই গণিত সমাধান করতে আপনার অভিভাবককে বলুন।",
+  "admin.parental_gate_question": "{num1} + {num2} = কত?",
+  "admin.parental_gate_hint": "উত্তর লিখুন",
+  "admin.parental_gate_error": "ভুল উত্তর। আবার চেষ্টা করুন।",
+  "admin.parental_gate_confirm": "নিশ্চিত করুন",
+  "admin.parental_gate_cancel": "বাতিল",
+  "admin.parental_gate_lockout": "অতিরিক্ত ভুল প্রচেষ্টা। {seconds} সেকেন্ড পর আবার চেষ্টা করুন"
 }

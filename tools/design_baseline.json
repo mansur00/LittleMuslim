@@ -35,5 +35,245 @@
   "lib/widgets/qaida/garden_progress_widget.dart": 61,
   "lib/widgets/quran_book_mascot.dart": 30,
   "lib/widgets/vector_icons.dart": 109,
-  "lib/widgets/vector_mascot.dart": 18
+  "lib/widgets/vector_mascot.dart": 18,
+  "bannedRulesBaseline": {
+    "lib/l10n/static_translations.dart": {
+      "bannedWidgets": 2,
+      "shadowElevation": 0,
+      "gradient": 0,
+      "cardBorder": 0,
+      "total": 2
+    },
+    "lib/screens/achievements/achievements_screen.dart": {
+      "bannedWidgets": 0,
+      "shadowElevation": 2,
+      "gradient": 0,
+      "cardBorder": 0,
+      "total": 2
+    },
+    "lib/screens/basics/islam_basics_screen.dart": {
+      "bannedWidgets": 1,
+      "shadowElevation": 2,
+      "gradient": 1,
+      "cardBorder": 0,
+      "total": 4
+    },
+    "lib/screens/duas/duas_screen.dart": {
+      "bannedWidgets": 3,
+      "shadowElevation": 3,
+      "gradient": 3,
+      "cardBorder": 0,
+      "total": 9
+    },
+    "lib/screens/home/home_screen.dart": {
+      "bannedWidgets": 0,
+      "shadowElevation": 11,
+      "gradient": 0,
+      "cardBorder": 0,
+      "total": 11
+    },
+    "lib/screens/live_learning/live_learning_screen.dart": {
+      "bannedWidgets": 1,
+      "shadowElevation": 1,
+      "gradient": 1,
+      "cardBorder": 0,
+      "total": 3
+    },
+    "lib/screens/missions/daily_missions_screen.dart": {
+      "bannedWidgets": 0,
+      "shadowElevation": 1,
+      "gradient": 0,
+      "cardBorder": 0,
+      "total": 1
+    },
+    "lib/screens/onboarding/name_age_page.dart": {
+      "bannedWidgets": 1,
+      "shadowElevation": 6,
+      "gradient": 0,
+      "cardBorder": 0,
+      "total": 7
+    },
+    "lib/screens/onboarding/onboarding_screen.dart": {
+      "bannedWidgets": 1,
+      "shadowElevation": 0,
+      "gradient": 0,
+      "cardBorder": 0,
+      "total": 1
+    },
+    "lib/screens/onboarding/ready_page.dart": {
+      "bannedWidgets": 0,
+      "shadowElevation": 3,
+      "gradient": 0,
+      "cardBorder": 0,
+      "total": 3
+    },
+    "lib/screens/onboarding/welcome_page.dart": {
+      "bannedWidgets": 0,
+      "shadowElevation": 4,
+      "gradient": 0,
+      "cardBorder": 0,
+      "total": 4
+    },
+    "lib/screens/prayer/prayer_screen.dart": {
+      "bannedWidgets": 7,
+      "shadowElevation": 2,
+      "gradient": 0,
+      "cardBorder": 0,
+      "total": 9
+    },
+    "lib/screens/profile/login_screen.dart": {
+      "bannedWidgets": 3,
+      "shadowElevation": 0,
+      "gradient": 0,
+      "cardBorder": 0,
+      "total": 3
+    },
+    "lib/screens/profile/profile_screen.dart": {
+      "bannedWidgets": 3,
+      "shadowElevation": 1,
+      "gradient": 1,
+      "cardBorder": 0,
+      "total": 5
+    },
+    "lib/screens/qaida/qaida_activity_screen.dart": {
+      "bannedWidgets": 3,
+      "shadowElevation": 44,
+      "gradient": 8,
+      "cardBorder": 0,
+      "total": 55
+    },
+    "lib/screens/qaida/qaida_chapters_screen.dart": {
+      "bannedWidgets": 1,
+      "shadowElevation": 6,
+      "gradient": 0,
+      "cardBorder": 0,
+      "total": 7
+    },
+    "lib/screens/qaida/qaida_exam_screen.dart": {
+      "bannedWidgets": 1,
+      "shadowElevation": 2,
+      "gradient": 0,
+      "cardBorder": 0,
+      "total": 3
+    },
+    "lib/screens/qaida/qaida_lesson_screen.dart": {
+      "bannedWidgets": 3,
+      "shadowElevation": 2,
+      "gradient": 1,
+      "cardBorder": 0,
+      "total": 6
+    },
+    "lib/screens/qaida/qaida_next_course_screen.dart": {
+      "bannedWidgets": 1,
+      "shadowElevation": 1,
+      "gradient": 1,
+      "cardBorder": 0,
+      "total": 3
+    },
+    "lib/screens/qaida/qaida_report_screen.dart": {
+      "bannedWidgets": 2,
+      "shadowElevation": 5,
+      "gradient": 1,
+      "cardBorder": 0,
+      "total": 8
+    },
+    "lib/screens/qaida/qaida_revision_screen.dart": {
+      "bannedWidgets": 0,
+      "shadowElevation": 3,
+      "gradient": 1,
+      "cardBorder": 0,
+      "total": 4
+    },
+    "lib/screens/qaida/qaida_track_lessons_screen.dart": {
+      "bannedWidgets": 2,
+      "shadowElevation": 9,
+      "gradient": 4,
+      "cardBorder": 0,
+      "total": 15
+    },
+    "lib/screens/quran/quran_reader_screen.dart": {
+      "bannedWidgets": 1,
+      "shadowElevation": 1,
+      "gradient": 0,
+      "cardBorder": 0,
+      "total": 2
+    },
+    "lib/screens/quran/quran_screen.dart": {
+      "bannedWidgets": 3,
+      "shadowElevation": 3,
+      "gradient": 1,
+      "cardBorder": 0,
+      "total": 7
+    },
+    "lib/screens/seerah/seerah_screen.dart": {
+      "bannedWidgets": 2,
+      "shadowElevation": 3,
+      "gradient": 0,
+      "cardBorder": 0,
+      "total": 5
+    },
+    "lib/screens/settings/settings_screen.dart": {
+      "bannedWidgets": 5,
+      "shadowElevation": 1,
+      "gradient": 1,
+      "cardBorder": 0,
+      "total": 7
+    },
+    "lib/widgets/duolingo_appbar.dart": {
+      "bannedWidgets": 0,
+      "shadowElevation": 3,
+      "gradient": 2,
+      "cardBorder": 0,
+      "total": 5
+    },
+    "lib/widgets/duolingo_button.dart": {
+      "bannedWidgets": 0,
+      "shadowElevation": 1,
+      "gradient": 0,
+      "cardBorder": 0,
+      "total": 1
+    },
+    "lib/widgets/duolingo_path_view.dart": {
+      "bannedWidgets": 2,
+      "shadowElevation": 4,
+      "gradient": 0,
+      "cardBorder": 0,
+      "total": 6
+    },
+    "lib/widgets/faceless_silhouette.dart": {
+      "bannedWidgets": 0,
+      "shadowElevation": 3,
+      "gradient": 0,
+      "cardBorder": 0,
+      "total": 3
+    },
+    "lib/widgets/language_switcher.dart": {
+      "bannedWidgets": 1,
+      "shadowElevation": 0,
+      "gradient": 0,
+      "cardBorder": 0,
+      "total": 1
+    },
+    "lib/widgets/qaida/garden_progress_widget.dart": {
+      "bannedWidgets": 0,
+      "shadowElevation": 3,
+      "gradient": 2,
+      "cardBorder": 0,
+      "total": 5
+    },
+    "lib/widgets/vector_icons.dart": {
+      "bannedWidgets": 0,
+      "shadowElevation": 1,
+      "gradient": 1,
+      "cardBorder": 0,
+      "total": 2
+    },
+    "lib/widgets/vector_mascot.dart": {
+      "bannedWidgets": 0,
+      "shadowElevation": 1,
+      "gradient": 0,
+      "cardBorder": 0,
+      "total": 1
+    }
+  }
 }

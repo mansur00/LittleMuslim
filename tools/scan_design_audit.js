@@ -4,6 +4,12 @@ const path = require('path');
 const ROOT = path.resolve(__dirname, '..');
 const LIB_DIR = path.join(ROOT, 'lib');
 
+const MASCOT_ALLOWLIST = [
+  'lib/widgets/vector_mascot.dart',
+  'lib/widgets/faceless_silhouette.dart',
+  'lib/widgets/quran_book_mascot.dart',
+];
+
 function walk(dir) {
   let files = [];
   if (!fs.existsSync(dir)) return files;
@@ -64,10 +70,12 @@ function runAudit(options = {}) {
     decorations: { name: 'Hardcoded Borders, Shadows & Gradients', count: 0, items: [] },
     sizes: { name: 'Hardcoded Sizes', count: 0, items: [] },
     duplicatedWidgets: { name: 'Duplicated Headers, Cards & Avatars', count: 0, items: [] },
+    bannedWidgets: { name: 'Raw Banned Widgets (Use lib/widgets/ds/)', count: 0, items: [] },
     fixedOverflows: { name: 'Fixed Dimensions (Overflow Risks)', count: 0, items: [] },
   };
 
   const fileCounts = {};
+  const bannedRuleCounts = {};
 
   files.forEach(f => {
     const rel = path.relative(root, f).replace(/\\/g, '/');
@@ -76,6 +84,15 @@ function runAudit(options = {}) {
       fileCounts[rel].categories[k] = 0;
     }
 
+    const bannedForFile = {
+      bannedWidgets: 0,
+      shadowElevation: 0,
+      gradient: 0,
+      cardBorder: 0,
+      total: 0
+    };
+
+    const isMascot = MASCOT_ALLOWLIST.some(m => rel.endsWith(m) || rel === m);
     const content = fs.readFileSync(f, 'utf8');
     const lines = content.split('\n');
 
@@ -84,15 +101,42 @@ function runAudit(options = {}) {
       const trimmed = line.trim();
       if (trimmed.startsWith('//') || trimmed.startsWith('///') || trimmed.startsWith('*') || trimmed.startsWith('/*')) return;
 
-      function record(catKey, desc) {
+      // Track strict banned rules independently for the dedicated baseline section
+      if (/\b(ElevatedButton|TextField|Switch|Chip|ActionChip|FilterChip|ChoiceChip|RawChip|InputChip|SnackBar|AlertDialog)\b/.test(line)) {
+        bannedForFile.bannedWidgets++;
+        categories.bannedWidgets.count++;
+        categories.bannedWidgets.items.push({ file: rel, line: lineNum, snippet: trimmed, desc: 'Raw widget outside lib/widgets/ds/' });
+      }
+
+      if (/\b(BoxShadow|AppElevation)\b/.test(line) || /\belevation\s*:\s*(?!0(\.0)?\b)[0-9]/.test(line)) {
+        bannedForFile.shadowElevation++;
+      }
+
+      if (!isMascot && /\b(LinearGradient|RadialGradient|SweepGradient)\b/.test(line)) {
+        bannedForFile.gradient++;
+      }
+
+      let isCardBorder = false;
+      if (/\b(side\s*:|BorderSide)\b/.test(line)) {
+        let charPos = lines.slice(0, idx).join('\n').length + 1;
+        let searchStart = Math.max(0, charPos - 500);
+        let chunk = content.slice(searchStart, charPos);
+        if (/\bCard\s*\(/.test(chunk)) {
+          isCardBorder = true;
+        }
+      }
+      if (isCardBorder) {
+        bannedForFile.cardBorder++;
+      }
+
+      // Legacy priority chain for never-increase baseline preservation (zero double-counting)
+      function recordLegacy(catKey, desc) {
         categories[catKey].count++;
         categories[catKey].items.push({ file: rel, line: lineNum, snippet: trimmed, desc });
         fileCounts[rel].total++;
         fileCounts[rel].categories[catKey]++;
       }
 
-      // Mutual exclusivity priority chain: Each line is evaluated once, ensuring zero double-counting across categories.
-      
       // 1. Duplicated widgets (DuolingoAppBar, DuolingoPageHeader, custom AppBar, DuolingoCard, DuolingoButton, Duolingo3DButton, inline avatars)
       if (/\b(DuolingoAppBar|DuolingoPageHeader|DuolingoCard|DuolingoButton|Duolingo3DButton|_TopiBoyAvatar|_HijabGirlAvatar|CircleAvatar)\b/.test(line) ||
           (/\bAppBar\s*\(/.test(line) && !/ThemeData|Theme\./.test(line))) {
@@ -103,12 +147,11 @@ function runAudit(options = {}) {
         else if (/DuolingoCard/.test(line)) desc = 'DuolingoCard widget';
         else if (/Duolingo3DButton|DuolingoButton/.test(line)) desc = 'Duolingo button widget';
         else if (/CircleAvatar|_TopiBoyAvatar|_HijabGirlAvatar/.test(line)) desc = 'Inline avatar widget';
-        record('duplicatedWidgets', desc);
+        recordLegacy('duplicatedWidgets', desc);
         return;
       }
 
       // 2. Fixed overflow risks: MUST NOT flag SizedBox spacers, icon/avatar boxes, or dividers.
-      // Only flag fixed width/height on containers, buttons, chips or labels that contain Text.
       const isSpacer = /\b(const\s+)?SizedBox\s*\(\s*(width|height)\s*:\s*\d+(\.\d+)?\s*\)/.test(line);
       const isBorderStroke = /border|stroke|BorderSide|elevation|Border\.all/i.test(line);
       const isResponsive = /isTablet|mediaQuery|size\.(width|height)|constraints/i.test(line);
@@ -126,7 +169,7 @@ function runAudit(options = {}) {
           const isDivider = /\b(Divider|VerticalDivider)\b/.test(enclosing.widgetName) || (/width\s*:\s*1(\.0)?\b/.test(line) && !hasTextChild);
 
           if ((isButtonOrChip || hasTextChild) && !isIconOrAvatarOnly && !isDivider) {
-            record('fixedOverflows', `Fixed dimension on ${enclosing.widgetName} containing text (overflow risk)`);
+            recordLegacy('fixedOverflows', `Fixed dimension on ${enclosing.widgetName} containing text (overflow risk)`);
             return;
           }
         }
@@ -138,19 +181,17 @@ function runAudit(options = {}) {
         if (/Border\.all|BorderSide/.test(line)) desc = 'Border.all / BorderSide stroke';
         else if (/BoxShadow/.test(line)) desc = 'BoxShadow decoration';
         else if (/Gradient/.test(line)) desc = 'Gradient decoration';
-        record('decorations', desc);
+        recordLegacy('decorations', desc);
         return;
       }
 
       // 4. Radii
       if (/\b(BorderRadius\.circular|Radius\.circular|BorderRadius\.all|BorderRadius\.only)\b/.test(line)) {
-        record('radii', 'BorderRadius / Radius literal number');
+        recordLegacy('radii', 'BorderRadius / Radius literal number');
         return;
       }
 
       // 5. Colors (Color(0x...), Colors.xxx, withValues/withOpacity, Hex string)
-      // Must not match AppColors.x. Uses negative lookbehind (?<![A-Za-z0-9_])Colors\.
-      // Treat Colors.transparent as allowed.
       const hasColorHex = /Color\(0x[0-9a-fA-F]+\)/.test(line);
       const hasColorsConst = /(?<![A-Za-z0-9_])Colors\.(?!transparent\b)[a-zA-Z]+/.test(line);
       const hasOpacity = /\.(withOpacity|withValues)\(/.test(line) && !/AppColors\./.test(line);
@@ -163,7 +204,7 @@ function runAudit(options = {}) {
         else if (hasColorsConst) desc = 'Colors.xxx literal';
         else if (hasOpacity) desc = 'Opacity / withValues modifier';
         else if (hasHexString) desc = 'Hex color string literal';
-        record('colors', desc);
+        recordLegacy('colors', desc);
         return;
       }
 
@@ -179,7 +220,7 @@ function runAudit(options = {}) {
         else if (/FontWeight/.test(line)) desc = 'FontWeight literal';
         else if (/letterSpacing/.test(line)) desc = 'letterSpacing literal';
         else if (/GoogleFonts/.test(line)) desc = 'GoogleFonts direct call';
-        record('textStyles', desc);
+        recordLegacy('textStyles', desc);
         return;
       }
 
@@ -191,7 +232,7 @@ function runAudit(options = {}) {
         if (/EdgeInsets/.test(line)) desc = 'EdgeInsets literal';
         else if (/SizedBox/.test(line)) desc = 'SizedBox spacer literal dimension';
         else if (/Padding/.test(line)) desc = 'Padding widget with inline EdgeInsets';
-        record('spacing', desc);
+        recordLegacy('spacing', desc);
         return;
       }
 
@@ -202,15 +243,21 @@ function runAudit(options = {}) {
         let desc = 'Hardcoded size';
         if (/toolbarHeight|preferredSize/.test(line)) desc = 'App bar height literal';
         else desc = 'Icon or widget size literal';
-        record('sizes', desc);
+        recordLegacy('sizes', desc);
         return;
       }
     });
+
+    bannedForFile.total = bannedForFile.bannedWidgets + bannedForFile.shadowElevation + bannedForFile.gradient + bannedForFile.cardBorder;
+    bannedRuleCounts[rel] = bannedForFile;
+    fileCounts[rel].bannedRules = bannedForFile;
   });
 
   let grandTotal = 0;
   for (const [key, cat] of Object.entries(categories)) {
-    grandTotal += cat.count;
+    if (key !== 'bannedWidgets') {
+      grandTotal += cat.count;
+    }
   }
 
   const sortedFiles = Object.entries(fileCounts)
@@ -220,6 +267,7 @@ function runAudit(options = {}) {
   return {
     categories,
     fileCounts,
+    bannedRuleCounts,
     grandTotal,
     sortedFiles
   };
@@ -231,83 +279,17 @@ if (require.main === module) {
   for (const [key, cat] of Object.entries(result.categories)) {
     console.log(`${cat.name}: ${cat.count}`);
   }
-  console.log(`TOTAL OFFENDING LINES: ${result.grandTotal}`);
+  console.log(`TOTAL OFFENDING LINES (LEGACY): ${result.grandTotal}`);
 
   console.log('\nTop 10 Offending Files:');
   result.sortedFiles.slice(0, 10).forEach(([file, data], idx) => {
     console.log(`${idx + 1}. ${file}: ${data.total} lines`);
   });
-
-  // Write updated docs/design-audit.md
-  let md = `# Design Audit Report (Validated)
-
-This report catalogs all design system violations across \`lib/\` (**excluding \`lib/theme/\` and \`lib/widgets/ds/\`** where tokens and shared components live).
-Each offending line is assigned to exactly one primary category, ensuring **zero double-counting** across categories.
-
----
-
-## 1. Summary by Category
-
-| Category | Offending Lines Count | Detection Rule & Description |
-|---|:---:|---|
-| **Hardcoded Colors** | **${result.categories.colors.count}** | Raw \`Color(0x...)\`, \`Colors.xxx\` (excluding \`Colors.transparent\` and \`AppColors\`), hex strings, and inline opacity modifiers |
-| **Hardcoded Text Styles** | **${result.categories.textStyles.count}** | Inline \`TextStyle\`, \`fontSize\`, \`FontWeight\`, \`letterSpacing\`, and direct font calls |
-| **Hardcoded Spacing** | **${result.categories.spacing.count}** | Literal \`EdgeInsets\`, \`SizedBox(height/width)\` spacers, and \`Padding\` values |
-| **Hardcoded Radii** | **${result.categories.radii.count}** | Explicit \`BorderRadius.circular(n)\` and \`Radius.circular(n)\` numbers |
-| **Borders, Shadows & Gradients** | **${result.categories.decorations.count}** | Inline \`Border.all\`, \`BorderSide\`, \`BoxShadow\`, and \`LinearGradient\` decorations |
-| **Hardcoded Sizes** | **${result.categories.sizes.count}** | Fixed icon sizes, avatar radii, and app bar height literals |
-| **Duplicated UI Widgets** | **${result.categories.duplicatedWidgets.count}** | Scattered headers (\`DuolingoAppBar\`, \`DuolingoPageHeader\`, custom \`AppBar\`), cards, buttons, and inline avatars |
-| **Fixed Overflow Risks** | **${result.categories.fixedOverflows.count}** | Hardcoded container/button/chip widths with Text vulnerable to overflow in longer languages (\`bn\`, \`hi\`, \`it\`) |
-| **TOTAL UNIQUE OFFENDING LINES** | **${result.grandTotal}** | **Total design system violations (Zero double-counted lines)** |
-
----
-
-## 2. Top 10 Offending Files
-
-| Rank | File Path | Total Lines | Category Breakdown (Directly Computed) |
-|:---:|---|:---:|---|
-`;
-
-  result.sortedFiles.slice(0, 10).forEach(([file, data], idx) => {
-    const breakdown = Object.entries(data.categories)
-      .filter(([_, count]) => count > 0)
-      .map(([catKey, c]) => `${result.categories[catKey].name}: ${c}`)
-      .join(', ');
-    md += `| ${idx + 1} | [\`${file}\`](file:///${path.join(ROOT, file)}) | **${data.total}** | ${breakdown} |\n`;
-  });
-
-  md += `\n---
-
-## 3. All Duplicated Widgets (${result.categories.duplicatedWidgets.count} occurrences)
-
-| File & Line | Component | Code Snippet |
-|---|---|---|
-`;
-
-  result.categories.duplicatedWidgets.items.forEach(item => {
-    const escaped = item.snippet.replace(/\|/g, '\\|').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    md += `| [\`${item.file}:${item.line}\`](file:///${path.join(ROOT, item.file)}#L${item.line}) | ${item.desc} | \`${escaped}\` |\n`;
-  });
-
-  md += `\n---
-
-## 4. All Fixed Dimensions / Overflow Risks (${result.categories.fixedOverflows.count} occurrences)
-
-| File & Line | Component | Code Snippet |
-|---|---|---|
-`;
-
-  result.categories.fixedOverflows.items.forEach(item => {
-    const escaped = item.snippet.replace(/\|/g, '\\|').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    md += `| [\`${item.file}:${item.line}\`](file:///${path.join(ROOT, item.file)}#L${item.line}) | ${item.desc} | \`${escaped}\` |\n`;
-  });
-
-  fs.writeFileSync(path.join(ROOT, 'docs/design-audit.md'), md, 'utf8');
-  console.log('Successfully wrote validated docs/design-audit.md');
 }
 
 module.exports = {
   walk,
   getEnclosingWidget,
-  runAudit
+  runAudit,
+  MASCOT_ALLOWLIST
 };

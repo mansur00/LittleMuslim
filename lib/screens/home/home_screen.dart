@@ -128,20 +128,13 @@ class _HomePathTab extends StatelessWidget {
                       color: AppColors.amber100,
                       borderRadius: AppRadius.borderLg,
                       border: AppBorders.custom(color: AppColors.amber500, width: AppStroke.regular),
-                      boxShadow: AppElevation.shadow(color: AppColors.black06),
                     ),
-                    child: Row(
-                      children: [
-                        const Icon(Icons.admin_panel_settings_rounded,
-                            color: AppColors.amber600, size: AppSizes.iconMd),
-                        AppSpacing.gapWSm,
-                        Expanded(
-                          child: LocalizedText(
-                            context.t('home.admin_mode_notice'),
-                            style: AppTextStyles.adminBanner(context),
-                          ),
-                        ),
-                        InkWell(
+                    child: Builder(
+                      builder: (context) {
+                        final textScale = MediaQuery.textScalerOf(context).scale(1.0);
+                        final isCompact = textScale > 1.15;
+
+                        final studentButton = InkWell(
                           onTap: () => context.read<AppState>().setUserRole('child'),
                           borderRadius: AppRadius.borderSm,
                           child: Container(
@@ -154,10 +147,54 @@ class _HomePathTab extends StatelessWidget {
                             child: LocalizedText(
                               context.t('home.student_mode'),
                               style: AppTextStyles.badge(context, color: AppColors.amber700),
+                              textAlign: TextAlign.center,
                             ),
                           ),
-                        ),
-                      ],
+                        );
+
+                        if (isCompact) {
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Icon(Icons.admin_panel_settings_rounded,
+                                      color: AppColors.amber600, size: AppSizes.iconMd),
+                                  AppSpacing.gapWSm,
+                                  Expanded(
+                                    child: LocalizedText(
+                                      context.t('home.admin_mode_notice'),
+                                      style: AppTextStyles.adminBanner(context),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              AppSpacing.gapHSm,
+                              Align(
+                                alignment: Alignment.centerRight,
+                                child: studentButton,
+                              ),
+                            ],
+                          );
+                        }
+
+                        return Row(
+                          children: [
+                            const Icon(Icons.admin_panel_settings_rounded,
+                                color: AppColors.amber600, size: AppSizes.iconMd),
+                            AppSpacing.gapWSm,
+                            Expanded(
+                              child: LocalizedText(
+                                context.t('home.admin_mode_notice'),
+                                style: AppTextStyles.adminBanner(context),
+                              ),
+                            ),
+                            AppSpacing.gapWSm,
+                            studentButton,
+                          ],
+                        );
+                      },
                     ),
                   ),
                 ],

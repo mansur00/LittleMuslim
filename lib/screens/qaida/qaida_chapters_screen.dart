@@ -10,6 +10,7 @@ import '../../theme/app_theme.dart';
 import '../../theme/design_system.dart';
 import '../../utils/app_state.dart';
 import '../../widgets/duolingo_appbar.dart';
+import '../../widgets/ds/parental_gate_dialog.dart';
 import '../../widgets/vector_icons.dart';
 import '../../widgets/qaida/garden_progress_widget.dart';
 import 'qaida_exam_screen.dart';
@@ -506,7 +507,12 @@ class QaidaChaptersScreen extends StatelessWidget {
                             ? DSButtonVariant.gold
                             : DSButtonVariant.primary,
                         onPressed: () async {
-                          await state.toggleAdminMode();
+                          AdminElevationToken? token;
+                          if (!state.isAdmin) {
+                            token = await ParentalGate.verify(context);
+                            if (token == null || !context.mounted) return;
+                          }
+                          await state.toggleAdminMode(token: token);
                         },
                       ),
                     ],
@@ -731,7 +737,9 @@ class _StepIslandCard extends StatelessWidget {
                         label: context.t('qaida.admin_unlock_action'),
                         textColor: Colors.amber,
                         onPressed: () async {
-                          await state.setUserRole('admin');
+                          final token = await ParentalGate.verify(context);
+                          if (token == null || !context.mounted) return;
+                          await state.setUserRole('admin', token: token);
                         },
                       ),
                     ),

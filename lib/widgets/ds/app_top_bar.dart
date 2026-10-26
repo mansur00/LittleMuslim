@@ -14,6 +14,7 @@ import 'app_avatar.dart';
 import 'app_bottom_sheet.dart';
 import 'app_dialog.dart';
 import 'app_list_tile.dart';
+import 'parental_gate_dialog.dart';
 
 /// AppTopBar: The single, unified top bar for Little Muslim.
 /// Provides two variants:
@@ -46,10 +47,15 @@ class AppTopBar extends StatelessWidget implements PreferredSizeWidget {
   final List<Widget>? actions;
 
   @override
-  Size get preferredSize => const Size.fromHeight(AppSizes.topBarHeight);
+  Size get preferredSize => Size.fromHeight(
+        isPageVariant && subtitle != null && subtitle!.isNotEmpty
+            ? 88.0
+            : AppSizes.topBarHeight,
+      );
 
   @override
   Widget build(BuildContext context) {
+    final hasSubtitle = isPageVariant && subtitle != null && subtitle!.isNotEmpty;
     return Container(
       decoration: const BoxDecoration(
         color: AppColors.surface,
@@ -62,8 +68,11 @@ class AppTopBar extends StatelessWidget implements PreferredSizeWidget {
       ),
       child: SafeArea(
         bottom: false,
-        child: SizedBox(
-          height: AppSizes.topBarHeight,
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+            minHeight: hasSubtitle ? 88.0 : AppSizes.topBarHeight,
+            maxHeight: hasSubtitle ? 88.0 : AppSizes.topBarHeight,
+          ),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
             child: isPageVariant
@@ -99,26 +108,31 @@ class AppTopBar extends StatelessWidget implements PreferredSizeWidget {
           const SizedBox(width: AppSpacing.sm),
         const SizedBox(width: AppSpacing.xs),
         Expanded(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title ?? '',
-                style: AppTextStyles.titleSmall(context),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-              if (subtitle != null && subtitle!.isNotEmpty) ...[
-                const SizedBox(height: 2),
-                Text(
-                  subtitle!,
-                  style: AppTextStyles.caption(context),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
-            ],
+          child: Builder(
+            builder: (context) {
+              final showSubtitle = subtitle != null && subtitle!.isNotEmpty;
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title ?? '',
+                    style: AppTextStyles.titleSmall(context),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  if (showSubtitle) ...[
+                    const SizedBox(height: 2),
+                    Text(
+                      subtitle!,
+                      style: AppTextStyles.caption(context),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ],
+              );
+            },
           ),
         ),
         if (actions != null) ...actions!,
@@ -506,12 +520,26 @@ class _ProfileMenuContent extends StatelessWidget {
           trailing: Switch(
             value: isAdmin,
             activeThumbColor: AppColors.brandPrimary,
-            onChanged: (val) {
-              state?.setUserRole(val ? 'admin' : 'child');
+            onChanged: (val) async {
+              if (val) {
+                final token = await ParentalGate.verify(context);
+                if (token != null) {
+                  state?.setUserRole('admin', token: token);
+                }
+              } else {
+                state?.setUserRole('child');
+              }
             },
           ),
-          onTap: () {
-            state?.setUserRole(isAdmin ? 'child' : 'admin');
+          onTap: () async {
+            if (!isAdmin) {
+              final token = await ParentalGate.verify(context);
+              if (token != null) {
+                state?.setUserRole('admin', token: token);
+              }
+            } else {
+              state?.setUserRole('child');
+            }
           },
         ),
 

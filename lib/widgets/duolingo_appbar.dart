@@ -129,6 +129,7 @@ class DuolingoHeader extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         if (onBack != null)
                           Semantics(
@@ -158,9 +159,16 @@ class DuolingoHeader extends StatelessWidget {
                                 ),
                               ),
                             ),
+                          )
+                        else
+                          const SizedBox.shrink(),
+                        if (trailing != null)
+                          Flexible(
+                            child: Align(
+                              alignment: Alignment.centerRight,
+                              child: trailing!,
+                            ),
                           ),
-                        const Spacer(),
-                        if (trailing != null) trailing!,
                       ],
                     ),
                     const SizedBox(height: 10),

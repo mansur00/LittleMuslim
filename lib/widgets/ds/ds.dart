@@ -17,3 +17,4 @@ export 'app_list_tile.dart';
 export 'app_progress_bar.dart';
 export 'app_section_header.dart';
 export 'app_top_bar.dart';
+export 'parental_gate_dialog.dart';

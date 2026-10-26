@@ -5,8 +5,9 @@
   "scripts": {
     "i18n:check": "node tools/i18n_check.js",
     "design:check": "node tools/design_check.js",
+    "secret:check": "node tools/secret_scan.js --all",
     "test": "flutter test",
-    "lint": "flutter analyze && node tools/i18n_check.js && node tools/design_check.js"
+    "lint": "flutter analyze && node tools/i18n_check.js && node tools/design_check.js && node tools/secret_scan.js --all"
   },
   "keywords": [
     "flutter",

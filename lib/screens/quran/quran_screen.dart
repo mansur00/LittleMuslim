@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../theme/app_theme.dart';
+import '../../theme/app_spacing.dart';
 import '../../theme/design_system.dart';
 import '../../utils/app_state.dart';
 import '../../widgets/vector_icons.dart';
@@ -704,27 +705,40 @@ class _SurahCardState extends State<_SurahCard> {
             ),
             const SizedBox(width: 12),
             Expanded(
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    LocalizedText(widget.title,
-                        style: const TextStyle(
-                            color: AppTheme.darkText,
-                            fontWeight: FontWeight.w800,
-                            fontSize: 14)),
-                    const SizedBox(height: 3),
-                    LocalizedText(widget.detail,
-                        style: const TextStyle(
-                            color: Colors.black54, fontSize: 11)),
-                  ]),
+              child: Wrap(
+                alignment: WrapAlignment.spaceBetween,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                runSpacing: 4,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      LocalizedText(widget.title,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                              color: AppTheme.darkText,
+                              fontWeight: FontWeight.w800,
+                              fontSize: 14)),
+                      const SizedBox(height: 3),
+                      LocalizedText(widget.detail,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                              color: Colors.black54, fontSize: 11)),
+                    ],
+                  ),
+                  LocalizedText(widget.arabicName,
+                      textDirection: TextDirection.rtl,
+                      style: const TextStyle(
+                          color: AppTheme.primaryGreen,
+                          fontSize: 20,
+                          fontWeight: FontWeight.w700)),
+                ],
+              ),
             ),
-            LocalizedText(widget.arabicName,
-                textDirection: TextDirection.rtl,
-                style: const TextStyle(
-                    color: AppTheme.primaryGreen,
-                    fontSize: 20,
-                    fontWeight: FontWeight.w700)),
-            const SizedBox(width: 8),
+            AppSpacing.gapWSm,
             Container(
               width: 28,
               height: 28,

@@ -2389,5 +2389,13 @@
   "menu.close": "Close",
   "menu.learner_title": "Learner",
   "menu.streak_tooltip": "Streak: {{count}} Days",
-  "menu.xp_tooltip": "Total XP: {{count}}"
+  "menu.xp_tooltip": "Total XP: {{count}}",
+  "admin.parental_gate_title": "Parental Gate",
+  "admin.parental_gate_prompt": "Ask your parent to solve this challenge to enter Admin Mode.",
+  "admin.parental_gate_question": "What is {num1} + {num2}?",
+  "admin.parental_gate_hint": "Enter answer",
+  "admin.parental_gate_error": "Incorrect answer. Please try again.",
+  "admin.parental_gate_confirm": "Confirm",
+  "admin.parental_gate_cancel": "Cancel",
+  "admin.parental_gate_lockout": "Too many attempts. Try again in {seconds}s"
 }

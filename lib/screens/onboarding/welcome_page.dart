@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../../theme/app_theme.dart';
 import '../../theme/design_system.dart';
 import '../../utils/app_state.dart';
+import '../../widgets/ds/parental_gate_dialog.dart';
 import '../../widgets/vector_icons.dart';
 import '../../widgets/faceless_silhouette.dart';
 
@@ -201,7 +202,9 @@ class WelcomePage extends StatelessWidget {
           // Admin quick entry for test & review
           TextButton.icon(
             onPressed: () async {
-              await context.read<AppState>().quickAdminEnter();
+              final token = await ParentalGate.verify(context);
+              if (token == null || !context.mounted) return;
+              await context.read<AppState>().quickAdminEnter(token: token);
             },
             icon: const Icon(Icons.admin_panel_settings_rounded, size: 18, color: DS.orange600),
             label: Text(

@@ -1,0 +1,29 @@
+<svg width="97" height="97" viewBox="0 0 97 97" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g filter="url(#filter0_d_1_3751)">
+<use xlink:href="#stroke0_1_3751" fill="white"/>
+<use xlink:href="#stroke1_1_3751" fill="white"/>
+<mask id="stroke2_1_3751" maskUnits="userSpaceOnUse" x="11.5" y="9.5" width="74" height="73" fill="black">
+<rect fill="white" x="11.5" y="9.5" width="74" height="73"/>
+<use xlink:href="#stroke0_1_3751"/>
+<use xlink:href="#stroke1_1_3751"/>
+</mask>
+<path d="M41.6914 13.3744C39.3792 9.46246 33.7868 9.56285 31.62 13.5572C24.6079 26.4839 12.5 49.9198 12.5 57.6233C12.5 70.8665 23.2411 81.6022 36.491 81.6022C40.0398 81.6022 43.4083 80.8313 46.439 79.4492C42.5426 74.9441 40.2588 69.1001 40.2588 62.8284C40.2588 54.6829 48.0608 40.0381 52.1337 32.4963C49.5586 26.955 45.1672 19.2549 41.6914 13.3744ZM73.7142 36.2251C71.3116 31.5726 70.1102 29.2463 68.2595 28.3804C66.7121 27.6564 64.7213 27.6564 63.1739 28.3804C61.3232 29.2463 60.1219 31.5726 57.7192 36.2251C52.608 46.1226 46.9332 58.162 46.9332 62.8283C46.9332 73.1968 55.3428 81.6022 65.7167 81.6022C76.0904 81.6022 84.5 73.1968 84.5 62.8283C84.5001 58.1617 78.8254 46.1224 73.7142 36.2251Z" stroke-linecap="round" stroke="url(#paint0_linear_1_3751)" style="mix-blend-mode:color-burn" mask="url(#stroke2_1_3751)"/>
+</g>
+<defs>
+<filter id="filter0_d_1_3751" x="0" y="0" width="97" height="96.1022" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+<feOffset dy="2"/>
+<feGaussianBlur stdDeviation="6"/>
+<feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.12 0"/>
+<feBlend mode="plus-darker" in2="BackgroundImageFix" result="effect1_dropShadow_1_3751"/>
+<feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_1_3751" result="shape"/>
+</filter>
+<linearGradient id="paint0_linear_1_3751" x1="48.5" y1="10.5" x2="48.5" y2="81.6022" gradientUnits="userSpaceOnUse">
+<stop stop-color="#DFDFDF"/>
+<stop offset="1" stop-color="#A9A9A9"/>
+</linearGradient>
+<path id="stroke0_1_3751" d="M31.62 13.5572C33.7868 9.56285 39.3792 9.46246 41.6914 13.3744C45.1672 19.2549 49.5586 26.955 52.1337 32.4963C48.0608 40.0381 40.2588 54.6829 40.2588 62.8284C40.2588 69.1001 42.5426 74.9441 46.439 79.4492C43.4083 80.8313 40.0398 81.6022 36.491 81.6022C23.2411 81.6022 12.5 70.8665 12.5 57.6233C12.5 49.9198 24.6079 26.4839 31.62 13.5572Z"/>
+<path id="stroke1_1_3751" d="M68.2595 28.3804C70.1102 29.2463 71.3116 31.5726 73.7142 36.2251C78.8254 46.1224 84.5001 58.1617 84.5 62.8283C84.5 73.1968 76.0904 81.6022 65.7167 81.6022C55.3428 81.6022 46.9332 73.1968 46.9332 62.8283C46.9332 58.162 52.608 46.1226 57.7192 36.2251C60.1219 31.5726 61.3232 29.2463 63.1739 28.3804C64.7213 27.6564 66.7121 27.6564 68.2595 28.3804Z"/>
+</defs>
+</svg>

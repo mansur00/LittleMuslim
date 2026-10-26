@@ -13407,5 +13407,37 @@
   "menu.xp_tooltip": "कुल एक्सपी: {{count}}",
   "@menu.xp_tooltip": {
     "description": "Top bar menu: menu.xp_tooltip"
+  },
+  "admin.parental_gate_title": "अभिभावक सत्यापन",
+  "@admin.parental_gate_title": {
+    "description": "Parental gate: admin.parental_gate_title"
+  },
+  "admin.parental_gate_prompt": "एडमिन मोड में प्रवेश करने के लिए अपने अभिभावक से इस प्रश्न को हल करवाएं।",
+  "@admin.parental_gate_prompt": {
+    "description": "Parental gate: admin.parental_gate_prompt"
+  },
+  "admin.parental_gate_question": "{num1} + {num2} कितना होता है?",
+  "@admin.parental_gate_question": {
+    "description": "Parental gate: admin.parental_gate_question"
+  },
+  "admin.parental_gate_hint": "उत्तर दर्ज करें",
+  "@admin.parental_gate_hint": {
+    "description": "Parental gate: admin.parental_gate_hint"
+  },
+  "admin.parental_gate_error": "गलत उत्तर। कृपया पुनः प्रयास करें।",
+  "@admin.parental_gate_error": {
+    "description": "Parental gate: admin.parental_gate_error"
+  },
+  "admin.parental_gate_confirm": "पुष्टि करें",
+  "@admin.parental_gate_confirm": {
+    "description": "Parental gate: admin.parental_gate_confirm"
+  },
+  "admin.parental_gate_cancel": "रद्द करें",
+  "@admin.parental_gate_cancel": {
+    "description": "Parental gate: admin.parental_gate_cancel"
+  },
+  "admin.parental_gate_lockout": "बहुत अधिक गलत प्रयास। {seconds} सेकंड बाद पुनः प्रयास करें",
+  "@admin.parental_gate_lockout": {
+    "description": "Parental gate: admin.parental_gate_lockout"
   }
 }

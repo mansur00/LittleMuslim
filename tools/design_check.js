@@ -7,7 +7,6 @@ const BASELINE_PATH = path.join(ROOT, 'tools', 'design_baseline.json');
 
 function checkDesignBaseline(options = {}) {
   const baselineFile = options.baselinePath || BASELINE_PATH;
-  const updateBaseline = options.update || process.argv.includes('--update');
   
   if (!fs.existsSync(baselineFile)) {
     console.error(`ERROR: Baseline file not found at ${baselineFile}`);
@@ -21,6 +20,10 @@ function checkDesignBaseline(options = {}) {
     files: options.files
   });
 
+  const legacyBaseline = { ...baseline };
+  delete legacyBaseline.bannedRulesBaseline;
+  const bannedRulesBaseline = baseline.bannedRulesBaseline || {};
+
   const errors = [];
   const improvements = [];
   const currentCounts = {};
@@ -31,9 +34,9 @@ function checkDesignBaseline(options = {}) {
     }
   }
 
-  // 1. Check for regressions or unbaselined new files
+  // 1. Check for legacy regressions or unbaselined new files
   for (const [file, count] of Object.entries(currentCounts)) {
-    const baseCount = baseline[file];
+    const baseCount = legacyBaseline[file];
     if (baseCount === undefined) {
       errors.push(`[NEW FILE WITH VIOLATIONS] ${file} has ${count} design system violations but is not recorded in baseline.`);
     } else if (count > baseCount) {
@@ -45,16 +48,43 @@ function checkDesignBaseline(options = {}) {
     }
   }
 
-  // 2. Check for files completely resolved (present in baseline, now 0)
-  for (const [file, baseCount] of Object.entries(baseline)) {
+  // 2. Check for legacy files completely resolved
+  for (const [file, baseCount] of Object.entries(legacyBaseline)) {
     if (!currentCounts[file]) {
       improvements.push(`${file}: -${baseCount} (FULLY RESOLVED, now 0)`);
     }
   }
 
-  if (updateBaseline) {
-    fs.writeFileSync(baselineFile, JSON.stringify(currentCounts, null, 2) + '\n', 'utf8');
-    console.log(`Updated baseline at ${baselineFile} with ${Object.keys(currentCounts).length} offending files.`);
+  // 3. Check separate bannedRulesBaseline (bannedWidgets, shadowElevation, gradient, cardBorder)
+  const currentBanned = audit.bannedRuleCounts || {};
+  for (const [file, counts] of Object.entries(currentBanned)) {
+    if (counts.total === 0) continue;
+    const baseEntry = bannedRulesBaseline[file];
+    if (!baseEntry) {
+      errors.push(`[NEW FILE WITH BANNED RULES] ${file} has ${counts.total} banned design rules (widgets: ${counts.bannedWidgets}, shadow/elevation: ${counts.shadowElevation}, gradients: ${counts.gradient}, cardBorders: ${counts.cardBorder}) but is not in bannedRulesBaseline.`);
+    } else {
+      if (counts.bannedWidgets > baseEntry.bannedWidgets) {
+        errors.push(`[BANNED RULE REGRESSION] ${file} bannedWidgets increased by +${counts.bannedWidgets - baseEntry.bannedWidgets} (was ${baseEntry.bannedWidgets}, now ${counts.bannedWidgets}).`);
+      }
+      if (counts.shadowElevation > baseEntry.shadowElevation) {
+        errors.push(`[BANNED RULE REGRESSION] ${file} shadowElevation increased by +${counts.shadowElevation - baseEntry.shadowElevation} (was ${baseEntry.shadowElevation}, now ${counts.shadowElevation}).`);
+      }
+      if (counts.gradient > baseEntry.gradient) {
+        errors.push(`[BANNED RULE REGRESSION] ${file} gradients outside mascot increased by +${counts.gradient - baseEntry.gradient} (was ${baseEntry.gradient}, now ${counts.gradient}).`);
+      }
+      if (counts.cardBorder > baseEntry.cardBorder) {
+        errors.push(`[BANNED RULE REGRESSION] ${file} cardBorder increased by +${counts.cardBorder - baseEntry.cardBorder} (was ${baseEntry.cardBorder}, now ${counts.cardBorder}).`);
+      }
+      if (counts.total < baseEntry.total) {
+        improvements.push(`${file} (banned rules): -${baseEntry.total - counts.total} (was ${baseEntry.total}, now ${counts.total})`);
+      }
+    }
+  }
+
+  for (const [file, baseEntry] of Object.entries(bannedRulesBaseline)) {
+    if (!currentBanned[file] || currentBanned[file].total === 0) {
+      improvements.push(`${file} (banned rules): FULLY RESOLVED, now 0 (was ${baseEntry.total})`);
+    }
   }
 
   return {
@@ -62,6 +92,7 @@ function checkDesignBaseline(options = {}) {
     errors,
     improvements,
     currentCounts,
+    currentBanned,
     grandTotal: audit.grandTotal
   };
 }
@@ -86,8 +117,8 @@ if (require.main === module) {
     console.error('Violations must NEVER increase. Use DS tokens in lib/theme/ and lib/widgets/ds/.\n');
     process.exit(1);
   } else {
-    console.log(`✅ All ${Object.keys(result.currentCounts).length} files adhere strictly to never-increase baseline.`);
-    console.log(`✅ Total active violations: ${result.grandTotal} (Zero regressions)`);
+    console.log(`✅ All ${Object.keys(result.currentCounts).length} files adhere strictly to legacy baseline (${result.grandTotal} legacy violations).`);
+    console.log(`✅ All ${Object.keys(result.currentBanned).length} files adhere strictly to banned rules baseline (Zero regressions).`);
     console.log('================================================================\n');
   }
 }

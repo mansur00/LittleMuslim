@@ -2389,5 +2389,13 @@
   "menu.close": "Chiudi",
   "menu.learner_title": "Studente",
   "menu.streak_tooltip": "Serie: {{count}} giorni",
-  "menu.xp_tooltip": "XP totali: {{count}}"
+  "menu.xp_tooltip": "XP totali: {{count}}",
+  "admin.parental_gate_title": "Controllo genitori",
+  "admin.parental_gate_prompt": "Chiedi ai tuoi genitori di risolvere questo calcolo per entrare in Modalità Amministratore.",
+  "admin.parental_gate_question": "Quanto fa {num1} + {num2}?",
+  "admin.parental_gate_hint": "Inserisci la risposta",
+  "admin.parental_gate_error": "Risposta errata. Riprova.",
+  "admin.parental_gate_confirm": "Conferma",
+  "admin.parental_gate_cancel": "Annulla",
+  "admin.parental_gate_lockout": "Troppi tentativi. Riprova tra {seconds}s"
 }
